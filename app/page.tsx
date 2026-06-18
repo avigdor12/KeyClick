@@ -125,7 +125,7 @@ export default function Home() {
         {languages.map((l, i) => (
           <button key={l.code} onClick={() => changeLang(i)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-            <Image src={`/flags/${l.flag}${langIdx === i ? '1' : ''}.png`} alt={l.flag} width={38} height={38}
+            <Image src={`/flags/${l.code}${langIdx === i ? '1' : ''}.png`} alt={l.flag} width={38} height={38}
               style={{ borderRadius: '50%', border: langIdx === i ? '2px solid #fff' : '2px solid transparent', display: 'block', marginTop: l.code === 'hi' ? '2px' : '0px' }} />
             <span style={{ fontSize: '9px', color: langIdx === i ? '#fff' : '#aaa', whiteSpace: 'nowrap', marginTop: l.code === 'hi' ? '2px' : '0px', display: 'block' }}>{l.name}</span>
           </button>
@@ -149,7 +149,7 @@ export default function Home() {
           <div style={{ padding: '4px 6px 8px', borderBottom: '1px solid #333' }}>
             <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '23px', color: '#FFD700', fontWeight: 'bold', textAlign: 'center' }}>KeyClick</div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '44px', marginTop: '6px' }}>
-              <Image src={`/flags/${lang.flag}1.png`} alt={lang.flag} width={55} height={55} />
+              <Image src={`/flags/${lang.code}1.png`} alt={lang.flag} width={55} height={55} />
             </div>
           </div>
           {lang.menu.map((item, idx) => (
@@ -216,7 +216,7 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Image src="/Pictures/Welcome Label1.jpg" alt="scroll" fill style={{ objectFit: 'fill' }} priority />
       <div style={{ position: 'absolute', left: '5%', top: '42%', transform: 'translateY(-50%)', zIndex: 10 }}>
-        <Image src={`/flags/${lang.flag}1.png`} alt={lang.flag} width={100} height={100} style={{ display: 'block' }} />
+        <Image src={`/flags/${lang.code}1.png`} alt={lang.flag} width={100} height={100} style={{ display: 'block' }} />
       </div>
       <div style={{ position: 'absolute', left: '1%', top: '62%', width: '15%', textAlign: 'center', fontFamily: 'var(--font-dancing), Georgia, serif', fontWeight: 'bold', fontSize: '36px', color: '#cc00cc', zIndex: 10 }}>
         KeyClick
