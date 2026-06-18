@@ -45,7 +45,11 @@ export default function Home() {
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
   const [debugLog, setDebugLog]     = useState<string[]>([])
   const [showDebug, setShowDebug]   = useState(false)
-  const debugEndRef = useRef<HTMLDivElement>(null)
+  const [debugPaused, setDebugPaused] = useState(false)
+  const [debugPos, setDebugPos]     = useState({ x: 24, y: 24 })
+  const debugEndRef  = useRef<HTMLDivElement>(null)
+  const debugPausedRef = useRef(false)
+  const dragState    = useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<{
     id: number; name: string; email: string; language: string; license_type: string; is_active: boolean
   } | null>(null)
@@ -74,7 +78,40 @@ export default function Home() {
   function dbg(msg: string) {
     const ts = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     setDebugLog(prev => [...prev, `${ts}  ${msg}`])
-    setTimeout(() => debugEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+    if (!debugPausedRef.current)
+      setTimeout(() => debugEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+  }
+
+  function toggleDebugPause() {
+    const next = !debugPausedRef.current
+    debugPausedRef.current = next
+    setDebugPaused(next)
+    if (!next) setTimeout(() => debugEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+  }
+
+  function popOutDebug() {
+    const win = window.open('', 'DebugOut', 'width=680,height=480,resizable=yes,scrollbars=yes')
+    if (!win) return
+    win.document.open()
+    win.document.write(`<!DOCTYPE html><html><head><title>Debug</title>
+      <style>body{background:#1e1e1e;color:#d4d4d4;font-family:Consolas,monospace;font-size:13px;padding:12px;margin:0;white-space:pre-wrap;line-height:1.6}</style>
+      </head><body>${debugLog.join('\n')}</body></html>`)
+    win.document.close()
+  }
+
+  function onDebugDragStart(e: React.MouseEvent) {
+    dragState.current = { sx: e.clientX, sy: e.clientY, ox: debugPos.x, oy: debugPos.y }
+    const onMove = (ev: MouseEvent) => {
+      if (!dragState.current) return
+      setDebugPos({ x: dragState.current.ox + (ev.clientX - dragState.current.sx), y: dragState.current.oy + (ev.clientY - dragState.current.sy) })
+    }
+    const onUp = () => {
+      dragState.current = null
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+    }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
   }
 
   function checkIfInstalled(): Promise<boolean> {
@@ -152,20 +189,37 @@ export default function Home() {
       )}
 
       {showDebug && (
-        <div style={{ position: 'fixed', bottom: 24, left: 24, width: 560, zIndex: 2000, boxShadow: '0 8px 32px rgba(0,0,0,0.8)', borderRadius: 6, overflow: 'hidden', border: '1px solid #555', fontFamily: 'Consolas, monospace' }}>
-          <div style={{ background: '#3c3c6e', color: '#fff', padding: '6px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, fontWeight: 'bold' }}>
-            <span>Debug Output</span>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => setDebugLog([])} style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>נקה</button>
-              <button onClick={() => setShowDebug(false)} style={{ background: '#aa3333', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>×</button>
+        <div style={{ position: 'fixed', left: debugPos.x, top: debugPos.y, width: 620, zIndex: 2000, boxShadow: '0 8px 40px rgba(0,0,0,0.85)', borderRadius: 6, overflow: 'hidden', border: '1px solid #444', fontFamily: 'Consolas, monospace', userSelect: 'none' }}>
+          {/* Title bar */}
+          <div onMouseDown={onDebugDragStart}
+            style={{ background: '#3c3c6e', color: '#fff', padding: '5px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, fontWeight: 'bold', cursor: 'grab' }}>
+            <span>Debug</span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button onClick={toggleDebugPause}
+                title={debugPaused ? 'המשך' : 'עצור'}
+                style={{ background: debugPaused ? '#226622' : '#666', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12, minWidth: 52 }}>
+                {debugPaused ? '▶ המשך' : '⏸ עצור'}
+              </button>
+              <button onClick={() => setDebugLog([])} title="נקה"
+                style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>נקה</button>
+              <button onClick={popOutDebug} title="פתח בחלון נפרד"
+                style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>↗</button>
+              <button onClick={() => setShowDebug(false)} title="סגור"
+                style={{ background: '#aa3333', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>×</button>
             </div>
           </div>
-          <div style={{ background: '#1e1e1e', color: '#d4d4d4', height: 280, overflowY: 'auto', padding: '10px 14px', fontSize: 13, lineHeight: 1.6 }}>
+          {/* Log area */}
+          <div style={{ background: '#1e1e1e', color: '#d4d4d4', height: 320, overflowY: 'auto', padding: '10px 14px', fontSize: 13, lineHeight: 1.7, cursor: 'text', userSelect: 'text' }}>
             {debugLog.length === 0
-              ? <span style={{ color: '#666' }}>ממתין לפעולה...</span>
+              ? <span style={{ color: '#555' }}>ממתין לפעולה...</span>
               : debugLog.map((line, i) => <div key={i}>{line}</div>)
             }
             <div ref={debugEndRef} />
+          </div>
+          {/* Status bar */}
+          <div style={{ background: '#252526', color: '#888', fontSize: 11, padding: '3px 12px', display: 'flex', justifyContent: 'space-between' }}>
+            <span>{debugLog.length} שורות</span>
+            <span>{debugPaused ? '⏸ מושהה' : '● פעיל'}</span>
           </div>
         </div>
       )}
