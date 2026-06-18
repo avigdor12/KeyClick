@@ -114,24 +114,6 @@ export default function Home() {
     window.addEventListener('mouseup', onUp)
   }
 
-  function checkIfInstalled(): Promise<boolean> {
-    return new Promise((resolve) => {
-      const timeout = setTimeout(() => {
-        window.removeEventListener('blur', onBlur)
-        resolve(false)
-      }, 1500)
-      function onBlur() {
-        clearTimeout(timeout)
-        window.removeEventListener('blur', onBlur)
-        resolve(true)
-      }
-      window.addEventListener('blur', onBlur)
-      const a = document.createElement('a')
-      a.href = 'mfinance://'
-      a.click()
-    })
-  }
-
   async function handleInstall() {
     setDebugLog([])
     setShowDebug(true)
@@ -195,16 +177,16 @@ export default function Home() {
             style={{ background: '#3c3c6e', color: '#fff', padding: '5px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, fontWeight: 'bold', cursor: 'grab' }}>
             <span>Debug</span>
             <div style={{ display: 'flex', gap: 6 }}>
-              <button onClick={toggleDebugPause}
+              <button onMouseDown={e => e.stopPropagation()} onClick={toggleDebugPause}
                 title={debugPaused ? 'המשך' : 'עצור'}
                 style={{ background: debugPaused ? '#226622' : '#666', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12, minWidth: 52 }}>
                 {debugPaused ? '▶ המשך' : '⏸ עצור'}
               </button>
-              <button onClick={() => setDebugLog([])} title="נקה"
+              <button onMouseDown={e => e.stopPropagation()} onClick={() => setDebugLog([])} title="נקה"
                 style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>נקה</button>
-              <button onClick={popOutDebug} title="פתח בחלון נפרד"
+              <button onMouseDown={e => e.stopPropagation()} onClick={popOutDebug} title="פתח בחלון נפרד"
                 style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>↗</button>
-              <button onClick={() => setShowDebug(false)} title="סגור"
+              <button onMouseDown={e => e.stopPropagation()} onClick={() => setShowDebug(false)} title="סגור"
                 style={{ background: '#aa3333', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>×</button>
             </div>
           </div>
