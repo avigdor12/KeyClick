@@ -87,10 +87,7 @@ export default function Home() {
   }
 
   async function handleInstall() {
-    setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'בודק...' })
-    const installed = await checkIfInstalled()
-    const msg = installed ? 'מותקן — מוריד עדכון...' : 'הורד קובץ התקנה'
-    setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: msg })
+    setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'הורד קובץ התקנה' })
     try {
       const res  = await fetch('/api/download-mfinance')
       const blob = await res.blob()
@@ -101,7 +98,7 @@ export default function Home() {
       a.click()
       await new Promise(r => setTimeout(r, 1000))
       URL.revokeObjectURL(url)
-      setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: installed ? 'הורד — הרץ לעדכון' : 'התקנה בוצעה' })
+      setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'התקנה בוצעה' })
     } catch {
       setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'שגיאה בהורדה\nנסה שוב', bodyColor: '#ff6600' })
     }
