@@ -43,6 +43,9 @@ export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
+  const [debugLog, setDebugLog]     = useState<string[]>([])
+  const [showDebug, setShowDebug]   = useState(false)
+  const debugEndRef = useRef<HTMLDivElement>(null)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<{
     id: number; name: string; email: string; language: string; license_type: string; is_active: boolean
   } | null>(null)
@@ -68,6 +71,12 @@ export default function Home() {
     })
   }, [])
 
+  function dbg(msg: string) {
+    const ts = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    setDebugLog(prev => [...prev, `${ts}  ${msg}`])
+    setTimeout(() => debugEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+  }
+
   function checkIfInstalled(): Promise<boolean> {
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
@@ -87,19 +96,28 @@ export default function Home() {
   }
 
   async function handleInstall() {
+    setDebugLog([])
+    setShowDebug(true)
+    dbg('לחיצה על התקנה')
     setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'הורד קובץ התקנה' })
+    dbg('שולח בקשה ל-/api/download-mfinance...')
     try {
       const res  = await fetch('/api/download-mfinance')
+      dbg(`תגובה: ${res.status} ${res.statusText}`)
       const blob = await res.blob()
+      dbg(`blob נתקבל — גודל: ${(blob.size / 1024 / 1024).toFixed(2)} MB`)
       const url  = URL.createObjectURL(blob)
       const a    = document.createElement('a')
       a.href     = url
       a.download = 'M_Finance_Setup.exe'
+      dbg('מתחיל הורדה...')
       a.click()
       await new Promise(r => setTimeout(r, 1000))
       URL.revokeObjectURL(url)
+      dbg('הורדה הושלמה')
       setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'התקנה בוצעה' })
-    } catch {
+    } catch (err) {
+      dbg(`שגיאה: ${String(err)}`)
       setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'שגיאה בהורדה\nנסה שוב', bodyColor: '#ff6600' })
     }
   }
@@ -129,6 +147,25 @@ export default function Home() {
             {popupMsg.subtitle && <div style={{ color: '#FFD700', fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>{popupMsg.subtitle}</div>}
             <div style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', color: popupMsg.bodyColor ?? '#FFD700', fontSize: '32px', lineHeight: '1.4', marginBottom: '8px', whiteSpace: 'pre-line' }}>{popupMsg.body}</div>
             <div onClick={() => setPopupMsg(null)} style={{ position: 'absolute', right: '12px', bottom: '10px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>לחץ</div>
+          </div>
+        </div>
+      )}
+
+      {showDebug && (
+        <div style={{ position: 'fixed', bottom: 24, left: 24, width: 560, zIndex: 2000, boxShadow: '0 8px 32px rgba(0,0,0,0.8)', borderRadius: 6, overflow: 'hidden', border: '1px solid #555', fontFamily: 'Consolas, monospace' }}>
+          <div style={{ background: '#3c3c6e', color: '#fff', padding: '6px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, fontWeight: 'bold' }}>
+            <span>Debug Output</span>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => setDebugLog([])} style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>נקה</button>
+              <button onClick={() => setShowDebug(false)} style={{ background: '#aa3333', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>×</button>
+            </div>
+          </div>
+          <div style={{ background: '#1e1e1e', color: '#d4d4d4', height: 280, overflowY: 'auto', padding: '10px 14px', fontSize: 13, lineHeight: 1.6 }}>
+            {debugLog.length === 0
+              ? <span style={{ color: '#666' }}>ממתין לפעולה...</span>
+              : debugLog.map((line, i) => <div key={i}>{line}</div>)
+            }
+            <div ref={debugEndRef} />
           </div>
         </div>
       )}
