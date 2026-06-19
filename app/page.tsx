@@ -64,6 +64,13 @@ export default function Home() {
   }, [Current_User_Pointer_to_DB])
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('installed') === '1') {
+      localStorage.setItem('mf_installed', '1')
+      setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'התקנה הושלמה' })
+      window.history.replaceState({}, '', window.location.pathname)
+      dbg('installCallback', 'installed=1 detected => mf_installed saved')
+    }
     const last = Number(localStorage.getItem('kc_last_version_check') || '0')
     const elapsedH = Math.round((Date.now() - last) / 3600000)
     dbg('periodicCheck', `last=${last ? new Date(last).toLocaleString() : 'never'} elapsed=${elapsedH}h threshold=24h run=${elapsedH >= 24}`)
@@ -207,19 +214,8 @@ export default function Home() {
       a.click()
       await new Promise(r => setTimeout(r, 1000))
       URL.revokeObjectURL(url)
-      dbg('handleInstall', 'revokeObjectURL done => success')
-      if (Current_User_Pointer_to_DB) {
-        dbg('handleInstall', `fetch POST /api/set-mfinance-installed email="${Current_User_Pointer_to_DB.email}"`)
-        fetch('/api/set-mfinance-installed', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: Current_User_Pointer_to_DB.email }),
-        }).then(r => {
-          dbg('handleInstall', `set-mfinance-installed res.status=${r.status} res.ok=${r.ok}`)
-          set_Current_User_Pointer_to_DB({ ...Current_User_Pointer_to_DB, is_m_finance_installed: true })
-        }).catch(err => dbg('handleInstall', `set-mfinance-installed failed err="${String(err)}"`))
-      }
-      setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'התקנה בוצעה' })
+      dbg('handleInstall', 'revokeObjectURL done => file ready')
+      setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה' })
     } catch (err) {
       dbg('handleInstall', `catch err="${String(err)}"`)
       setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'שגיאה בהורדה\nנסה שוב', bodyColor: '#ff6600' })
