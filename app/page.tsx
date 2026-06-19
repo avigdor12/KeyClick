@@ -598,7 +598,7 @@ function RegisterCard({ lang, initialPhase = 'default', onClose, onLogin, onNavi
     const data = await res.json()
     onDbg('handleLogin', `res.status=${res.status} res.ok=${res.ok}`)
     if (!res.ok) { onDbg('handleLogin', `res.ok=false err="${data.error}"`); setError(data.error); return }
-    onDbg('handleLogin', `success user.id=${data.user?.id} email="${data.user?.email}" => onLogin => onClose`)
+    onDbg('handleLogin', `success user.id=${data.user?.id} email="${data.user?.email}" last_ip="${data.user?.last_ip}" => onLogin => onClose`)
     onLogin(data.user)
     setSavedName('')
     setSavedEmail('')
