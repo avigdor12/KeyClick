@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   if (id) {
     const result = await pool.query(
-      'SELECT id, name, email, language, license_type, is_active FROM users WHERE id = $1',
+      'SELECT id, name, email, language, license_type, is_active, is_m_finance_installed FROM users WHERE id = $1',
       [id]
     )
     if (result.rows.length === 0) return NextResponse.json({ exists: false, user: null })
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   if (email) {
     const result = await pool.query(
-      'SELECT id, name, email, language, license_type, is_active FROM users WHERE email = $1',
+      'SELECT id, name, email, language, license_type, is_active, is_m_finance_installed FROM users WHERE email = $1',
       [email]
     )
     if (result.rows.length === 0) return NextResponse.json({ exists: false, user: null })

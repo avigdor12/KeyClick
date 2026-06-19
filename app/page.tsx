@@ -39,120 +39,213 @@ const languages = [
     card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें' } },
 ]
 
+type UserRecord = { id: number; name: string; email: string; language: string; license_type: string; is_active: boolean; is_m_finance_installed: boolean }
+
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
-  const [debugLog, setDebugLog]     = useState<string[]>([])
-  const [showDebug, setShowDebug]   = useState(false)
+  const [debugLog, setDebugLog]       = useState<string[]>([])
   const [debugPaused, setDebugPaused] = useState(false)
-  const [debugPos, setDebugPos]     = useState({ x: 24, y: 24 })
-  const debugEndRef  = useRef<HTMLDivElement>(null)
+  const debugEndRef    = useRef<HTMLDivElement>(null)
   const debugPausedRef = useRef(false)
-  const dragState    = useRef<{ sx: number; sy: number; ox: number; oy: number } | null>(null)
-  const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<{
-    id: number; name: string; email: string; language: string; license_type: string; is_active: boolean
-  } | null>(null)
+  const debugWinRef    = useRef<Window | null>(null)
+  const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
   const lang = languages[langIdx]
 
   useEffect(() => {
     if (!Current_User_Pointer_to_DB) return
+    dbg('userEffect', `id=${Current_User_Pointer_to_DB.id} email="${Current_User_Pointer_to_DB.email}" language="${Current_User_Pointer_to_DB.language}" license="${Current_User_Pointer_to_DB.license_type}" active=${Current_User_Pointer_to_DB.is_active}`)
     const idx = languages.findIndex(l => l.name === Current_User_Pointer_to_DB.language)
+    dbg('userEffect', `findIndex language="${Current_User_Pointer_to_DB.language}" => idx=${idx}`)
     if (idx !== -1) setLangIdx(idx)
     localStorage.setItem('kc_user', String(Current_User_Pointer_to_DB.id))
+    dbg('userEffect', `localStorage.setItem kc_user="${Current_User_Pointer_to_DB.id}"`)
   }, [Current_User_Pointer_to_DB])
 
   useEffect(() => {
+    const last = Number(localStorage.getItem('kc_last_version_check') || '0')
+    const elapsedH = Math.round((Date.now() - last) / 3600000)
+    dbg('periodicCheck', `last=${last ? new Date(last).toLocaleString() : 'never'} elapsed=${elapsedH}h threshold=24h run=${elapsedH >= 24}`)
+    if (elapsedH >= 24) checkVersion()
+    const onUnload = () => { debugWinRef.current?.close() }
+    window.addEventListener('beforeunload', onUnload)
+    return () => window.removeEventListener('beforeunload', onUnload)
+  }, [])
+
+  useEffect(() => {
     const id = localStorage.getItem('kc_user')
-    if (!id) return
+    dbg('initEffect', `localStorage kc_user="${id}"`)
+    if (!id) { dbg('initEffect', 'no saved user => skip'); return }
+    dbg('initEffect', `fetch POST /api/check-user id=${id}`)
     fetch('/api/check-user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: Number(id) }),
     }).then(r => r.json()).then(data => {
+      dbg('initEffect', `check-user data.user=${data.user ? `id=${data.user.id} email="${data.user.email}"` : 'null'}`)
       if (!data.user) return
       set_Current_User_Pointer_to_DB(data.user)
-    })
+    }).catch(err => dbg('initEffect', `check-user failed err="${String(err)}"`))
   }, [])
 
-  function dbg(msg: string) {
-    const ts = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-    setDebugLog(prev => [...prev, `${ts}  ${msg}`])
-    if (!debugPausedRef.current)
-      setTimeout(() => debugEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+  function openDebugWin() {
+    if (debugWinRef.current && !debugWinRef.current.closed) debugWinRef.current.close()
+    const w = 400, h = 300
+    const left = window.screenX + Math.floor((window.outerWidth  - w) / 2)
+    const top  = window.screenY + Math.floor((window.outerHeight - h) / 2)
+    const win  = window.open('', 'KeyClickDebug', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no`)
+    if (!win) return
+    const esc = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    const parsed = debugLog.map(l => {
+      const m = l.match(/^(\S+:\S+:\S+)\s{2}([^:]+):\s(.*)$/)
+      return m ? { ts: m[1], fn: m[2], msg: m[3] } : { ts: '', fn: '', msg: l }
+    })
+    const rows = parsed.map(r =>
+      `<div class="r"><span class="ts">${esc(r.ts)}</span>&nbsp;&nbsp;<span class="fn">${esc(r.fn)}:</span> ${esc(r.msg)}</div>`
+    ).join('')
+    win.document.open()
+    win.document.write(`<!DOCTYPE html><html><head><title></title><style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{background:#1e1e1e;color:#d4d4d4;font-family:Consolas,monospace;font-size:17px;font-weight:bold;display:flex;flex-direction:column;height:100vh}
+      #tb{background:#3c3c6e;padding:5px 10px;display:flex;gap:6px;align-items:center;flex-shrink:0}
+      #tb span{color:#fff;font-weight:bold;font-size:22px;margin-right:auto}
+      button{background:#003399;border:none;color:#FFD700;padding:3px 12px;border-radius:3px;cursor:pointer;font-size:15px;font-weight:bold;font-family:inherit}
+      button:hover{background:#0044cc} button.on{background:#226622}
+      #log{flex:1;overflow-y:auto;padding:8px 12px;line-height:1.9}
+      .r{border-bottom:1px solid #2a2a2a;padding:2px 0}
+      .ts{color:#777} .fn{color:#FFD700;font-weight:bold}
+      #sb{background:#252526;color:#888;font-size:12px;padding:3px 10px;display:flex;justify-content:space-between;flex-shrink:0}
+    </style></head><body>
+    <div id="tb"><span>Debug</span>
+      <button onclick="document.getElementById('log').innerHTML='';upd()">נקה</button>
+      <button id="pb" onclick="tog()">עצור</button>
+    </div>
+    <div id="log">${rows}</div>
+    <div id="sb"><span id="cnt">${debugLog.length} שורות</span><span id="st">● פעיל</span></div>
+    <script>
+      var p=false,log=document.getElementById('log');
+      function e(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+      function sc(){if(!p)log.scrollTop=log.scrollHeight;}
+      function upd(){document.getElementById('cnt').textContent=log.children.length+' שורות';}
+      function tog(){p=!p;var b=document.getElementById('pb');b.textContent=p?'המשך':'עצור';b.className=p?'on':'';document.getElementById('st').textContent=p?'מושהה':'● פעיל';if(!p)sc();}
+      window.addLine=function(ts,fn,msg){var d=document.createElement('div');d.className='r';d.innerHTML='<span class="ts">'+e(ts)+'</span>&nbsp;&nbsp;<span class="fn">'+e(fn)+':</span> '+e(msg);log.appendChild(d);upd();sc();}
+      if(window.opener){window.opener.addEventListener('beforeunload',function(){window.close();});}
+      sc();
+    </script></body></html>`)
+    win.document.close()
+    debugWinRef.current = win
+  }
+
+  useEffect(() => {
+    if (activePage === 'system') {
+      openDebugWin()
+      setTimeout(() => {
+        dbg('system', 'page opened')
+        dbg('session', `user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} id=${Current_User_Pointer_to_DB?.id ?? 'none'} license=${Current_User_Pointer_to_DB?.license_type ?? 'none'} active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
+        dbg('lang', `idx=${langIdx} code=${languages[langIdx].code} name=${languages[langIdx].name}`)
+      }, 80)
+    }
+  }, [activePage])
+
+  function dbg(func: string, msg: string) {
+    const ts   = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    const line = `${ts}  ${func}: ${msg}`
+    setDebugLog(prev => [...prev, line])
+    if (debugWinRef.current && !debugWinRef.current.closed)
+      try { (debugWinRef.current as Window & { addLine?: (ts:string,fn:string,msg:string)=>void }).addLine?.(ts, func, msg) } catch { /* closed */ }
   }
 
   function toggleDebugPause() {
     const next = !debugPausedRef.current
     debugPausedRef.current = next
     setDebugPaused(next)
-    if (!next) setTimeout(() => debugEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
   }
 
-  function popOutDebug() {
-    const win = window.open('', 'DebugOut', 'width=680,height=480,resizable=yes,scrollbars=yes')
-    if (!win) return
-    win.document.open()
-    win.document.write(`<!DOCTYPE html><html><head><title>Debug</title>
-      <style>body{background:#1e1e1e;color:#d4d4d4;font-family:Consolas,monospace;font-size:13px;padding:12px;margin:0;white-space:pre-wrap;line-height:1.6}</style>
-      </head><body>${debugLog.join('\n')}</body></html>`)
-    win.document.close()
-  }
+  const VERSION_URL = 'https://api.github.com/repos/avigdor12/KeyClick/releases/latest'
+  const LOCAL_VERSION = 'v67.0.0'
 
-  function onDebugDragStart(e: React.MouseEvent) {
-    dragState.current = { sx: e.clientX, sy: e.clientY, ox: debugPos.x, oy: debugPos.y }
-    const onMove = (ev: MouseEvent) => {
-      if (!dragState.current) return
-      setDebugPos({ x: dragState.current.ox + (ev.clientX - dragState.current.sx), y: dragState.current.oy + (ev.clientY - dragState.current.sy) })
+  async function checkVersion() {
+    dbg('checkVersion', `fetch GET ${VERSION_URL}`)
+    try {
+      const r = await fetch(VERSION_URL)
+      const data = await r.json()
+      const tag: string = data.tag_name ?? 'unknown'
+      const pub: string = data.published_at?.slice(0, 10) ?? 'unknown'
+      const match = tag === LOCAL_VERSION
+      dbg('checkVersion', `github.latest="${tag}" published="${pub}" route.serves="${LOCAL_VERSION}" route.synced=${match}`)
+      localStorage.setItem('kc_last_version_check', String(Date.now()))
+    } catch (err) {
+      dbg('checkVersion', `failed err="${String(err)}"`)
     }
-    const onUp = () => {
-      dragState.current = null
-      window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseup', onUp)
-    }
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseup', onUp)
   }
 
   async function handleInstall() {
+    if (Current_User_Pointer_to_DB?.is_m_finance_installed) {
+      setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'כבר מותקן\nאין צורך בהתקנה' })
+      return
+    }
     setDebugLog([])
-    setShowDebug(true)
-    dbg('לחיצה על התקנה')
+    dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} is_m_finance_installed=${Current_User_Pointer_to_DB?.is_m_finance_installed ?? 'unknown'}`)
     setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'הורד קובץ התקנה' })
-    dbg('שולח בקשה ל-/api/download-mfinance...')
+    dbg('handleInstall', 'fetch GET /api/download-mfinance')
     try {
-      const res  = await fetch('/api/download-mfinance')
-      dbg(`תגובה: ${res.status} ${res.statusText}`)
+      const res = await fetch('/api/download-mfinance')
+      dbg('handleInstall', `res.status=${res.status} res.ok=${res.ok}`)
+      if (!res.ok) {
+        dbg('handleInstall', `res.status=${res.status} res.statusText="${res.statusText}" => throw`)
+        throw new Error(`HTTP ${res.status}`)
+      }
       const blob = await res.blob()
-      dbg(`blob נתקבל — גודל: ${(blob.size / 1024 / 1024).toFixed(2)} MB`)
-      const url  = URL.createObjectURL(blob)
-      const a    = document.createElement('a')
-      a.href     = url
+      dbg('handleInstall', `blob.size=${blob.size} (${(blob.size/1024/1024).toFixed(2)}MB) blob.type="${blob.type}" size>1MB=${blob.size > 1024*1024}`)
+      const url = URL.createObjectURL(blob)
+      dbg('handleInstall', `objectURL="${url.substring(0,50)}..."`)
+      const a = document.createElement('a')
+      a.href = url
       a.download = 'M_Finance_Setup.exe'
-      dbg('מתחיל הורדה...')
+      dbg('handleInstall', `a.download="${a.download}" => a.click()`)
       a.click()
       await new Promise(r => setTimeout(r, 1000))
       URL.revokeObjectURL(url)
-      dbg('הורדה הושלמה')
+      dbg('handleInstall', 'revokeObjectURL done => success')
+      if (Current_User_Pointer_to_DB) {
+        dbg('handleInstall', `fetch POST /api/set-mfinance-installed email="${Current_User_Pointer_to_DB.email}"`)
+        fetch('/api/set-mfinance-installed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: Current_User_Pointer_to_DB.email }),
+        }).then(r => {
+          dbg('handleInstall', `set-mfinance-installed res.status=${r.status} res.ok=${r.ok}`)
+          set_Current_User_Pointer_to_DB({ ...Current_User_Pointer_to_DB, is_m_finance_installed: true })
+        }).catch(err => dbg('handleInstall', `set-mfinance-installed failed err="${String(err)}"`))
+      }
       setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'התקנה בוצעה' })
     } catch (err) {
-      dbg(`שגיאה: ${String(err)}`)
+      dbg('handleInstall', `catch err="${String(err)}"`)
       setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'שגיאה בהורדה\nנסה שוב', bodyColor: '#ff6600' })
     }
   }
 
   function handleRun() {
-    window.open('mfinance://', '_self')
+    dbg('handleRun', 'mfinance:// via hidden iframe')
+    const iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.src = 'mfinance://'
+    document.body.appendChild(iframe)
+    setTimeout(() => { try { document.body.removeChild(iframe) } catch { /* */ } }, 1000)
   }
 
   function changeLang(i: number) {
+    dbg('changeLang', `i=${i} code=${languages[i].code} name="${languages[i].name}" userLoggedIn=${!!Current_User_Pointer_to_DB}`)
     setLangIdx(i)
     if (Current_User_Pointer_to_DB) {
+      dbg('changeLang', `fetch POST /api/update-language email="${Current_User_Pointer_to_DB.email}" language="${languages[i].name}"`)
       fetch('/api/update-language', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: Current_User_Pointer_to_DB.email, language: languages[i].name }),
-      })
+      }).then(r => dbg('changeLang', `update-language res.status=${r.status} res.ok=${r.ok}`))
+        .catch(err => dbg('changeLang', `update-language failed err="${String(err)}"`))
     }
   }
 
@@ -166,42 +259,6 @@ export default function Home() {
             {popupMsg.subtitle && <div style={{ color: '#FFD700', fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>{popupMsg.subtitle}</div>}
             <div style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', color: popupMsg.bodyColor ?? '#FFD700', fontSize: '32px', lineHeight: '1.4', marginBottom: '8px', whiteSpace: 'pre-line' }}>{popupMsg.body}</div>
             <div onClick={() => setPopupMsg(null)} style={{ position: 'absolute', right: '12px', bottom: '10px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>לחץ</div>
-          </div>
-        </div>
-      )}
-
-      {showDebug && (
-        <div style={{ position: 'fixed', left: debugPos.x, top: debugPos.y, width: 620, zIndex: 2000, boxShadow: '0 8px 40px rgba(0,0,0,0.85)', borderRadius: 6, overflow: 'hidden', border: '1px solid #444', fontFamily: 'Consolas, monospace', userSelect: 'none' }}>
-          {/* Title bar */}
-          <div onMouseDown={onDebugDragStart}
-            style={{ background: '#3c3c6e', color: '#fff', padding: '5px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13, fontWeight: 'bold', cursor: 'grab' }}>
-            <span>Debug</span>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button onMouseDown={e => e.stopPropagation()} onClick={toggleDebugPause}
-                title={debugPaused ? 'המשך' : 'עצור'}
-                style={{ background: debugPaused ? '#226622' : '#666', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12, minWidth: 52 }}>
-                {debugPaused ? '▶ המשך' : '⏸ עצור'}
-              </button>
-              <button onMouseDown={e => e.stopPropagation()} onClick={() => setDebugLog([])} title="נקה"
-                style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>נקה</button>
-              <button onMouseDown={e => e.stopPropagation()} onClick={popOutDebug} title="פתח בחלון נפרד"
-                style={{ background: '#555', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>↗</button>
-              <button onMouseDown={e => e.stopPropagation()} onClick={() => setShowDebug(false)} title="סגור"
-                style={{ background: '#aa3333', border: 'none', color: '#fff', padding: '2px 10px', borderRadius: 3, cursor: 'pointer', fontSize: 12 }}>×</button>
-            </div>
-          </div>
-          {/* Log area */}
-          <div style={{ background: '#1e1e1e', color: '#d4d4d4', height: 320, overflowY: 'auto', padding: '10px 14px', fontSize: 13, lineHeight: 1.7, cursor: 'text', userSelect: 'text' }}>
-            {debugLog.length === 0
-              ? <span style={{ color: '#555' }}>ממתין לפעולה...</span>
-              : debugLog.map((line, i) => <div key={i}>{line}</div>)
-            }
-            <div ref={debugEndRef} />
-          </div>
-          {/* Status bar */}
-          <div style={{ background: '#252526', color: '#888', fontSize: 11, padding: '3px 12px', display: 'flex', justifyContent: 'space-between' }}>
-            <span>{debugLog.length} שורות</span>
-            <span>{debugPaused ? '⏸ מושהה' : '● פעיל'}</span>
           </div>
         </div>
       )}
@@ -226,7 +283,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} />
+            <PageContent page={activePage} lang={lang} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} />
           )}
         </main>
 
@@ -273,7 +330,15 @@ export default function Home() {
           </div>
 
           <div style={{ flex: 1 }} />
-          <button onClick={() => setActivePage('system')}
+          <button onClick={() => {
+              if (activePage === 'system') {
+                debugWinRef.current?.close()
+                debugWinRef.current = null
+                setActivePage(null)
+              } else {
+                setActivePage('system')
+              }
+            }}
             style={{
               background: activePage === 'system' ? '#4a1a6e' : 'none', border: 'none',
               borderTop: '2px solid #555', color: activePage === 'system' ? '#fff' : '#888',
@@ -290,7 +355,7 @@ export default function Home() {
       {/* BOTTOM */}
       <footer style={{ background: '#111', color: '#666', padding: '6px 16px', fontSize: '12px', minHeight: '36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
         <span style={{ color: '#FFD700' }}>KeyClick · M Solution Group</span>
-        <span style={{ color: '#FFD700' }}>Ver: 2.00 &nbsp; 17.06.2026 00:30</span>
+        <span style={{ color: '#FFD700' }}>Ver: 3.00 &nbsp; 19.06.2026 00:30</span>
       </footer>
 
     </div>
@@ -319,14 +384,13 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
   )
 }
 
-type UserRecord = { id: number; name: string; email: string; language: string; license_type: string; is_active: boolean }
 
-function PageContent({ page, lang, onClose, onLogin, onNavigate, onMsg }: { page: string; lang: typeof languages[0]; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void }) {
-  if (page === 'mf-login')    return <RegisterCard lang={lang} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} />
-  if (page === 'mf-register') return <RegisterCard lang={lang} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} />
+function PageContent({ page, lang, onClose, onLogin, onNavigate, onMsg, onDbg }: { page: string; lang: typeof languages[0]; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
+  if (page === 'mf-login')    return <RegisterCard lang={lang} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-register') return <RegisterCard lang={lang} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'system') return (
-    <div style={{ width: '100%', height: '100%', background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '40px', fontFamily: 'Arial, sans-serif' }}>
-      <div style={{ fontSize: '32px', fontWeight: 'bold', color: '#003399' }}>KeyClick מערכת</div>
+    <div style={{ width: '100%', height: '100%', background: '#fff', fontFamily: 'Arial, sans-serif' }}>
+      <div style={{ fontSize: 32, fontWeight: 'bold', color: '#003399', textAlign: 'center', paddingTop: 24 }}>KeyClick מערכת</div>
     </div>
   )
   return (
@@ -345,7 +409,7 @@ function handFont(code: string) {
   return 'var(--font-dancing),"Dancing Script",Georgia,serif'
 }
 
-function RegisterCard({ lang, initialPhase = 'default', onClose, onLogin, onNavigate, onMsg }: { lang: typeof languages[0]; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void }) {
+function RegisterCard({ lang, initialPhase = 'default', onClose, onLogin, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
   const font = handFont(lang.code)
@@ -387,38 +451,47 @@ function RegisterCard({ lang, initialPhase = 'default', onClose, onLogin, onNavi
   const locked: React.CSSProperties = { background: '#222', color: '#777', cursor: 'default' }
 
   function handleRegister() {
+    onDbg('handleRegister', 'called => setPhase register')
     setPhase('register')
   }
 
   async function handleUpdate() {
+    onDbg('handleUpdate', `name="${savedName}" email="${savedEmail}" pass.len=${savedPass.length} conf.len=${savedConf.length}`)
     setError('')
-    if (!savedName)                              { setError(c.errName);     return }
-    if (!savedEmail || !savedEmail.includes('@')) { setError(c.errEmail);    return }
-    if (savedPass && savedPass.length < 6)       { setError(c.errPassLen);  return }
-    if (savedPass !== savedConf)                 { setError(c.errPassMatch); return }
+    if (!savedName)                               { onDbg('handleUpdate', 'name empty => errName'); setError(c.errName); return }
+    if (!savedEmail || !savedEmail.includes('@')) { onDbg('handleUpdate', `email="${savedEmail}" invalid => errEmail`); setError(c.errEmail); return }
+    if (savedPass && savedPass.length < 6)        { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
+    if (savedPass !== savedConf)                  { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
+    onDbg('handleUpdate', `fetch POST /api/register name="${savedName}" email="${savedEmail}" language="${lang.name}"`)
     const res = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: savedName, email: savedEmail, password: savedPass || null, language: lang.name }),
     })
     const data = await res.json()
-    if (!res.ok) { setError(c.errEmailExists); return }
+    onDbg('handleUpdate', `res.status=${res.status} res.ok=${res.ok} data="${JSON.stringify(data).substring(0,80)}"`)
+    if (!res.ok) { onDbg('handleUpdate', 'res.ok=false => errEmailExists'); setError(c.errEmailExists); return }
     setSavedPass('')
     setSavedConf('')
     setError('')
+    onDbg('handleUpdate', 'success => onMsg')
     onMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'הרשמה הושלמה' })
   }
 
   async function handleLogin() {
+    onDbg('handleLogin', `email="${savedEmail}" pass.len=${savedPass.length}`)
     setError('')
-    if (!savedPass) { setError(c.errPassLen); return }
+    if (!savedPass) { onDbg('handleLogin', 'pass empty => errPassLen'); setError(c.errPassLen); return }
+    onDbg('handleLogin', `fetch POST /api/login email="${savedEmail}"`)
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: savedEmail, password: savedPass }),
     })
     const data = await res.json()
-    if (!res.ok) { setError(data.error); return }
+    onDbg('handleLogin', `res.status=${res.status} res.ok=${res.ok}`)
+    if (!res.ok) { onDbg('handleLogin', `res.ok=false err="${data.error}"`); setError(data.error); return }
+    onDbg('handleLogin', `success user.id=${data.user?.id} email="${data.user?.email}" => onLogin => onClose`)
     onLogin(data.user)
     setSavedName('')
     setSavedEmail('')
