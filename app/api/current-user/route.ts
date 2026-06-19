@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
                 ?? req.headers.get('x-real-ip')
                 ?? (req as NextRequest & { ip?: string }).ip
-                ?? 'unknown'
+                ?? 'localhost'
 
     const cur = await pool.query("SELECT value FROM system_DB_Records WHERE key='Current_User'")
     const userId = Number(cur.rows[0]?.value ?? 0)
