@@ -39,7 +39,7 @@ const languages = [
     card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें' } },
 ]
 
-type UserRecord = { id: number; name: string; email: string; language: string; license_type: string; is_active: boolean; is_m_finance_installed: boolean }
+type UserRecord = { id: number; name: string; email: string; language: string; license_type: string; is_active: boolean; is_m_finance_installed: boolean; last_ip?: string }
 
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
@@ -86,7 +86,8 @@ export default function Home() {
     fetch('/api/current-user')
       .then(r => r.json())
       .then(data => {
-        dbg('initEffect', `current-user data.user=${data.user ? `id=${data.user.id} email="${data.user.email}"` : 'null'}`)
+        dbg('initEffect', `identified_by="${data.identified_by}" current_ip="${data.current_ip ?? 'unknown'}"`)
+        dbg('initEffect', `Current_User=${data.user?.id ?? 0}  email="${data.user?.email ?? 'none'}"  IP="${data.user?.last_ip ?? data.current_ip ?? 'none'}"`)
         if (!data.user) return
         set_Current_User_Pointer_to_DB(data.user)
       })
@@ -146,7 +147,8 @@ export default function Home() {
       openDebugWin()
       setTimeout(() => {
         dbg('system', 'page opened')
-        dbg('session', `user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} id=${Current_User_Pointer_to_DB?.id ?? 'none'} license=${Current_User_Pointer_to_DB?.license_type ?? 'none'} active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
+        dbg('session', `Current_User=${Current_User_Pointer_to_DB?.id ?? 0}  email="${Current_User_Pointer_to_DB?.email ?? 'none'}"  IP="${Current_User_Pointer_to_DB?.last_ip ?? 'none'}"`)
+        dbg('session', `license="${Current_User_Pointer_to_DB?.license_type ?? 'none'}"  active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
         dbg('lang', `idx=${langIdx} code=${languages[langIdx].code} name=${languages[langIdx].name}`)
       }, 80)
     }
