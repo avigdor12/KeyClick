@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
 
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
               ?? req.headers.get('x-real-ip')
+              ?? (req as NextRequest & { ip?: string }).ip
               ?? 'unknown'
 
   await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(user.id)])
