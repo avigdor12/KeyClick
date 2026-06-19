@@ -231,13 +231,22 @@ export default function Home() {
     }
   }
 
-  function handleRun() {
-    dbg('handleRun', 'mfinance:// via hidden iframe')
+  async function handleRun() {
+    dbg('handleRun', 'mfinance:// via hidden iframe — waiting for blur')
+    let appOpened = false
+    const onBlur = () => { appOpened = true }
+    window.addEventListener('blur', onBlur)
     const iframe = document.createElement('iframe')
     iframe.style.display = 'none'
     iframe.src = 'mfinance://'
     document.body.appendChild(iframe)
-    setTimeout(() => { try { document.body.removeChild(iframe) } catch { /* */ } }, 1000)
+    await new Promise(r => setTimeout(r, 1500))
+    window.removeEventListener('blur', onBlur)
+    try { document.body.removeChild(iframe) } catch { /* */ }
+    dbg('handleRun', `appOpened=${appOpened}`)
+    if (!appOpened) {
+      setPopupMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'ניהול תקציב בית לא מותקן\nאנא לחץ על כפתור ההתקנה', bodyColor: '#ff6600' })
+    }
   }
 
   function changeLang(i: number) {
