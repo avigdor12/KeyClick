@@ -20,11 +20,11 @@ export async function POST(req: NextRequest) {
     if (!valid) return NextResponse.json({ error: 'סיסמה שגויה' }, { status: 401 })
   }
 
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
-              ?? req.headers.get('x-real-ip')
-              ?? (req as NextRequest & { ip?: string }).ip
-              ?? clientIp
-              ?? 'localhost'
+  const rawIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
+               ?? req.headers.get('x-real-ip')
+               ?? (req as NextRequest & { ip?: string }).ip
+  const isLoopback = !rawIp || rawIp === '::1' || rawIp === '127.0.0.1'
+  const ip = isLoopback ? (clientIp || rawIp || 'localhost') : rawIp
 
   await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(user.id)])
   await pool.query('UPDATE users SET last_ip=$1 WHERE id=$2', [ip, user.id])
