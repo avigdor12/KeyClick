@@ -45,6 +45,7 @@ export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
+  const [siteVersion, setSiteVersion] = useState({ line1: '', line2: '' })
   const [debugLog, setDebugLog]       = useState<string[]>([])
   const [debugPaused, setDebugPaused] = useState(false)
   const debugEndRef    = useRef<HTMLDivElement>(null)
@@ -64,6 +65,7 @@ export default function Home() {
   }, [Current_User_Pointer_to_DB])
 
   useEffect(() => {
+    fetch('/api/site-version').then(r => r.json()).then(data => setSiteVersion(data)).catch(() => {})
     const params = new URLSearchParams(window.location.search)
     if (params.get('installed') === '1') {
       localStorage.setItem('mf_installed', '1')
@@ -350,8 +352,8 @@ export default function Home() {
 
       {/* BOTTOM */}
       <footer style={{ background: '#111', color: '#666', padding: '6px 16px', fontSize: '12px', minHeight: '36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-        <span style={{ color: '#FFD700' }}>KeyClick · M Solution Group</span>
-        <span style={{ color: '#FFD700' }}>Ver: 3.00 &nbsp; 19.06.2026 00:30</span>
+        <span style={{ color: '#FFD700' }}>{siteVersion.line1 || 'KeyClick · M Solution Group'}</span>
+        <span style={{ color: '#FFD700' }}>{siteVersion.line2 || ''}</span>
       </footer>
 
     </div>
