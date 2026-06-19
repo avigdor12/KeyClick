@@ -278,7 +278,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} />
+            <PageContent page={activePage} lang={lang} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={openDebugWin} />
           )}
         </main>
 
@@ -357,6 +357,101 @@ export default function Home() {
   )
 }
 
+function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
+  const [view, setView] = useState<'none' | 'db' | 'users'>('none')
+  const [dbRecords, setDbRecords] = useState<{ key: string; value: string }[]>([])
+  const [users, setUsers] = useState<Record<string, unknown>[]>([])
+  const [expandedUser, setExpandedUser] = useState<number | null>(null)
+
+  function handleDb() {
+    setView('db')
+    fetch('/api/system/db-records').then(r => r.json()).then(d => setDbRecords(d.records ?? []))
+  }
+
+  function handleUsers() {
+    setView('users')
+    fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? []))
+  }
+
+  const sysBtn: React.CSSProperties = {
+    background: '#003399', border: 'none', borderBottom: '1px solid #0044cc',
+    color: '#FFD700', padding: '13px 8px', cursor: 'pointer',
+    fontSize: '13px', fontWeight: 'bold', textAlign: 'center',
+  }
+
+  return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', fontFamily: 'Arial, sans-serif', overflow: 'hidden' }}>
+
+      {/* Main content */}
+      <div style={{ flex: 1, overflow: 'auto', padding: '16px 20px', background: '#f7f7f7' }}>
+        {view === 'none' && (
+          <div style={{ color: '#aaa', fontSize: 16, marginTop: 40, textAlign: 'center' }}>בחר פעולה מהסרגל הימני</div>
+        )}
+
+        {view === 'db' && (
+          <div>
+            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 12, color: '#003399' }}>system_DB_Records</div>
+            {dbRecords.map(r => (
+              <div key={r.key} style={{ display: 'flex', gap: 10, borderBottom: '1px solid #ddd', padding: '7px 0', alignItems: 'baseline' }}>
+                <span style={{ color: '#FFD700', fontWeight: 'bold', background: '#222', padding: '2px 8px', borderRadius: 3, fontSize: 12, whiteSpace: 'nowrap' }}>{r.key}</span>
+                <span style={{ color: '#333', fontSize: 13 }}>{r.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {view === 'users' && (
+          <div>
+            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 12, color: '#003399' }}>משתמשים</div>
+            {users.map(u => {
+              const uid = Number(u.id)
+              return (
+                <div key={uid} style={{ borderBottom: '1px solid #ddd', marginBottom: 2 }}>
+                  <div onClick={() => setExpandedUser(expandedUser === uid ? null : uid)}
+                    style={{ cursor: 'pointer', display: 'flex', gap: 10, alignItems: 'center', padding: '8px 4px', background: expandedUser === uid ? '#e8e8f8' : 'transparent' }}>
+                    <span style={{ color: '#FFD700', fontWeight: 'bold', background: '#003399', padding: '2px 8px', borderRadius: 3, fontSize: 12 }}>{String(u.id)}</span>
+                    <span style={{ fontWeight: 'bold', fontSize: 14 }}>{String(u.name ?? '')}</span>
+                    <span style={{ color: '#555', fontSize: 13 }}>{String(u.email ?? '')}</span>
+                    <span style={{ marginLeft: 'auto', color: '#aaa', fontSize: 12 }}>{expandedUser === uid ? '▲' : '▼'}</span>
+                  </div>
+                  {expandedUser === uid && (
+                    <div style={{ padding: '8px 16px 12px', background: '#f0f0f8', fontSize: 13 }}>
+                      {Object.entries(u).map(([k, v]) => (
+                        <div key={k} style={{ display: 'flex', gap: 8, padding: '3px 0', borderBottom: '1px solid #e0e0e0' }}>
+                          <span style={{ color: '#003399', fontWeight: 'bold', minWidth: 180 }}>{k}</span>
+                          <span style={{ color: '#222' }}>{String(v ?? '')}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Right sidebar */}
+      <aside style={{ width: '140px', background: '#c8c8c8', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0, borderLeft: '2px solid #aaa' }}>
+        <div style={{ background: '#b0b0b0', padding: '10px 4px 8px', textAlign: 'center', borderBottom: '2px solid #aaa' }}>
+          <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '22px', color: '#FFD700', fontWeight: 'bold', textShadow: '1px 1px 3px #444' }}>KeyClick</div>
+          <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', letterSpacing: 1, textShadow: '1px 1px 2px #444' }}>מערכת</div>
+        </div>
+        <button style={sysBtn} onClick={onOpenDebug}
+          onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>Debug</button>
+        <button style={sysBtn} onClick={handleDb}
+          onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>DB</button>
+        <button style={sysBtn} onClick={handleUsers}
+          onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>משתמשים</button>
+      </aside>
+
+    </div>
+  )
+}
+
 function GatePage({ lang }: { lang: typeof languages[0] }) {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -380,14 +475,10 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 }
 
 
-function PageContent({ page, lang, onClose, onLogin, onNavigate, onMsg, onDbg }: { page: string; lang: typeof languages[0]; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
+function PageContent({ page, lang, onClose, onLogin, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
   if (page === 'mf-login')    return <RegisterCard lang={lang} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'system') return (
-    <div style={{ width: '100%', height: '100%', background: '#fff', fontFamily: 'Arial, sans-serif' }}>
-      <div style={{ fontSize: 32, fontWeight: 'bold', color: '#003399', textAlign: 'center', paddingTop: 24 }}>KeyClick מערכת</div>
-    </div>
-  )
+  if (page === 'system') return <SystemPage onOpenDebug={onOpenDebug} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ textAlign: 'center', color: '#555' }}>
