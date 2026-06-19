@@ -60,8 +60,7 @@ export default function Home() {
     const idx = languages.findIndex(l => l.name === Current_User_Pointer_to_DB.language)
     dbg('userEffect', `findIndex language="${Current_User_Pointer_to_DB.language}" => idx=${idx}`)
     if (idx !== -1) setLangIdx(idx)
-    localStorage.setItem('kc_user', String(Current_User_Pointer_to_DB.id))
-    dbg('userEffect', `localStorage.setItem kc_user="${Current_User_Pointer_to_DB.id}"`)
+    dbg('userEffect', `user loaded id=${Current_User_Pointer_to_DB.id}`)
   }, [Current_User_Pointer_to_DB])
 
   useEffect(() => {
@@ -83,19 +82,15 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    const id = localStorage.getItem('kc_user')
-    dbg('initEffect', `localStorage kc_user="${id}"`)
-    if (!id) { dbg('initEffect', 'no saved user => skip'); return }
-    dbg('initEffect', `fetch POST /api/check-user id=${id}`)
-    fetch('/api/check-user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: Number(id) }),
-    }).then(r => r.json()).then(data => {
-      dbg('initEffect', `check-user data.user=${data.user ? `id=${data.user.id} email="${data.user.email}"` : 'null'}`)
-      if (!data.user) return
-      set_Current_User_Pointer_to_DB(data.user)
-    }).catch(err => dbg('initEffect', `check-user failed err="${String(err)}"`))
+    dbg('initEffect', 'fetch GET /api/current-user')
+    fetch('/api/current-user')
+      .then(r => r.json())
+      .then(data => {
+        dbg('initEffect', `current-user data.user=${data.user ? `id=${data.user.id} email="${data.user.email}"` : 'null'}`)
+        if (!data.user) return
+        set_Current_User_Pointer_to_DB(data.user)
+      })
+      .catch(err => dbg('initEffect', `current-user failed err="${String(err)}"`))
   }, [])
 
   function openDebugWin() {

@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     if (!valid) return NextResponse.json({ error: 'סיסמה שגויה' }, { status: 401 })
   }
 
+  await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(user.id)])
   const { password_hash, ...userWithoutPass } = user
   return NextResponse.json({ success: true, user: userWithoutPass })
 }
