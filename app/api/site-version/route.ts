@@ -12,7 +12,7 @@ export async function GET() {
     const [line1, line2] = raw.split('|')
     return NextResponse.json({ line1: line1 ?? '', line2: line2 ?? '' })
   } catch (e) {
-    console.error('site-version error:', e)
-    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 03.01  19.06.2026 22.54' })
+    const msg = e instanceof Error ? e.message : String(e)
+    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 03.01  19.06.2026 22.54', error: msg })
   }
 }
