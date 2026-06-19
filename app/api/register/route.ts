@@ -37,8 +37,9 @@ export async function POST(req: NextRequest) {
     if (updates.length > 0) {
       vals.push(user.id)
       await pool.query(`UPDATE users SET ${updates.join(',')} WHERE id=$${i}`, vals)
+      return NextResponse.json({ success: true, status: 'updated' })
     }
-    return NextResponse.json({ success: true, updated: true })
+    return NextResponse.json({ success: true, status: 'exists' })
   }
 
   const hash = password ? await bcrypt.hash(password, 10) : null
@@ -47,5 +48,5 @@ export async function POST(req: NextRequest) {
     [name || null, email || null, hash, language || 'English', 'תקופת הרצה', ip]
   )
 
-  return NextResponse.json({ success: true, updated: false })
+  return NextResponse.json({ success: true, status: 'created' })
 }

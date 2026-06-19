@@ -596,9 +596,11 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     setSavedPass('')
     setSavedConf('')
     setError('')
-    onDbg('handleUpdate', `success updated=${data.updated} => onMsg`)
-    const body = data.updated
-      ? `המשתמש עם הפרטים שהקשת כבר רשום\nהפרטים החדשים עודכנו`
+    onDbg('handleUpdate', `success status="${data.status}" => onMsg`)
+    const body = data.status === 'exists'
+      ? 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת'
+      : data.status === 'updated'
+      ? 'הפרטים עודכנו בהצלחה'
       : 'הרשמה הושלמה'
     onMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body })
   }
