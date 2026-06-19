@@ -13,6 +13,6 @@ export async function GET() {
     return NextResponse.json({ line1: line1 ?? '', line2: line2 ?? '' })
   } catch (e) {
     console.error('site-version error:', e)
-    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 03.01' })
+    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'TEST 99.99' })
   }
 }
