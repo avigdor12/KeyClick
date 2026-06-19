@@ -282,7 +282,10 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={openDebugWin} />
+            <PageContent page={activePage} lang={lang} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
+              if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
+              else openDebugWin()
+            }} />
           )}
         </main>
 
@@ -368,11 +371,13 @@ function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
 
   function handleDb() {
+    if (view === 'db') { setView('none'); return }
     setView('db')
     fetch('/api/system/db-records').then(r => r.json()).then(d => setDbRecords(d.records ?? []))
   }
 
   function handleUsers() {
+    if (view === 'users') { setView('none'); return }
     setView('users')
     fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? []))
   }
