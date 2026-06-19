@@ -9,18 +9,31 @@ export async function GET(req: NextRequest) {
                 ?? req.headers.get('x-real-ip')
                 ?? 'unknown'
 
-    const byIp = ip !== 'unknown'
-      ? await pool.query(
-          'SELECT id, name, email, language, license_type, is_active, is_m_finance_installed, last_ip FROM users WHERE last_ip=$1 LIMIT 1',
-          [ip]
-        )
-      : { rows: [] }
+    const cur = await pool.query("SELECT value FROM system_DB_Records WHERE key='Current_User'")
+    const userId = Number(cur.rows[0]?.value ?? 0)
 
-    if (byIp.rows.length > 0) {
-      return NextResponse.json({ user: byIp.rows[0], identified_by: 'ip' })
+    if (userId) {
+      const result = await pool.query(
+        'SELECT id, name, email, language, license_type, is_active, is_m_finance_installed, last_ip FROM users WHERE id=$1',
+        [userId]
+      )
+      if (result.rows.length > 0) {
+        return NextResponse.json({ user: result.rows[0], identified_by: 'current_user', current_ip: ip })
+      }
     }
 
-    return NextResponse.json({ user: null, identified_by: 'none' })
+    if (ip !== 'unknown') {
+      const byIp = await pool.query(
+        'SELECT id, name, email, language, license_type, is_active, is_m_finance_installed, last_ip FROM users WHERE last_ip=$1 LIMIT 1',
+        [ip]
+      )
+      if (byIp.rows.length > 0) {
+        await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(byIp.rows[0].id)])
+        return NextResponse.json({ user: byIp.rows[0], identified_by: 'ip', current_ip: ip })
+      }
+    }
+
+    return NextResponse.json({ user: null, identified_by: 'none', current_ip: ip })
   } catch (e) {
     return NextResponse.json({ user: null, identified_by: 'error' })
   }

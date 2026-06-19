@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
               ?? req.headers.get('x-real-ip')
               ?? 'unknown'
 
+  await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(user.id)])
+
   if (ip !== 'unknown') {
     await pool.query('UPDATE users SET last_ip=$1 WHERE id=$2', [ip, user.id])
   }
