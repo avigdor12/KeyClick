@@ -101,7 +101,7 @@ export default function Home() {
   }, [])
 
   function openDebugWin() {
-    if (debugWinRef.current && !debugWinRef.current.closed) debugWinRef.current.close()
+    if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.focus(); return }
     const w = 400, h = 300
     const left = window.screenX + Math.floor((window.outerWidth  - w) / 2)
     const top  = window.screenY + Math.floor((window.outerHeight - h) / 2)
@@ -579,26 +579,28 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
   }
 
   async function handleUpdate() {
-    onDbg('handleUpdate', `name="${savedName}" email="${savedEmail}" pass.len=${savedPass.length} conf.len=${savedConf.length}`)
+    onDbg('handleUpdate', `name="${savedName}" email="${savedEmail}" pass.len=${savedPass.length} clientIp="${clientIp}"`)
     setError('')
-    if (!savedName)                               { onDbg('handleUpdate', 'name empty => errName'); setError(c.errName); return }
-    if (!savedEmail || !savedEmail.includes('@')) { onDbg('handleUpdate', `email="${savedEmail}" invalid => errEmail`); setError(c.errEmail); return }
-    if (savedPass && savedPass.length < 6)        { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
-    if (savedPass !== savedConf)                  { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
-    onDbg('handleUpdate', `fetch POST /api/register name="${savedName}" email="${savedEmail}" language="${lang.name}"`)
+    if (savedEmail && !savedEmail.includes('@')) { onDbg('handleUpdate', `email="${savedEmail}" invalid => errEmail`); setError(c.errEmail); return }
+    if (savedPass && savedPass.length < 6)       { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
+    if (savedPass !== savedConf)                 { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
+    onDbg('handleUpdate', `fetch POST /api/register email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: savedName, email: savedEmail, password: savedPass || null, language: lang.name }),
+      body: JSON.stringify({ name: savedName || null, email: savedEmail || null, password: savedPass || null, language: lang.name, clientIp }),
     })
     const data = await res.json()
-    onDbg('handleUpdate', `res.status=${res.status} res.ok=${res.ok} data="${JSON.stringify(data).substring(0,80)}"`)
-    if (!res.ok) { onDbg('handleUpdate', 'res.ok=false => errEmailExists'); setError(c.errEmailExists); return }
+    onDbg('handleUpdate', `res.status=${res.status} res.ok=${res.ok} updated=${data.updated}`)
+    if (!res.ok) { onDbg('handleUpdate', `res.ok=false err="${data.error}"`); setError(data.error); return }
     setSavedPass('')
     setSavedConf('')
     setError('')
-    onDbg('handleUpdate', 'success => onMsg')
-    onMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body: 'הרשמה הושלמה' })
+    onDbg('handleUpdate', `success updated=${data.updated} => onMsg`)
+    const body = data.updated
+      ? `המשתמש עם הפרטים שהקשת כבר רשום\nהפרטים החדשים עודכנו`
+      : 'הרשמה הושלמה'
+    onMsg({ title: 'ניהול תקציב בית', subtitle: 'M Finance', body })
   }
 
   async function handleLogin() {
