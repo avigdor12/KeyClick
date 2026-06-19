@@ -383,9 +383,9 @@ function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
   }
 
   const sysBtn: React.CSSProperties = {
-    background: '#003399', border: 'none', borderTop: '1px solid #224488',
-    color: '#FFD700', padding: '13px 0', cursor: 'pointer',
-    fontSize: '13px', fontWeight: 'bold', textAlign: 'center', width: '100%',
+    background: '#003399', border: 'none', borderRadius: '6px',
+    color: '#FFD700', padding: '8px 12px', cursor: 'pointer',
+    fontSize: '13px', fontWeight: 'bold', textAlign: 'center',
   }
 
   return (
@@ -441,20 +441,22 @@ function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
       </div>
 
       {/* Right sidebar */}
-      <aside style={{ width: '140px', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0, margin: '10px 0', borderRadius: '10px 0 0 10px', overflow: 'hidden', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
-        <div style={{ background: '#444', padding: '8px 4px 6px', textAlign: 'center', borderBottom: '2px solid #333' }}>
+      <aside style={{ width: '140px', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: '10px 6px 10px 0', borderRadius: '10px 0 0 10px', overflow: 'hidden', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
+        <div style={{ background: '#444', padding: '8px 4px 6px', textAlign: 'center', borderBottom: '2px solid #333', width: '100%' }}>
           <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '22px', color: '#FFD700', fontWeight: 'bold', textShadow: '1px 1px 3px #000' }}>KeyClick</div>
           <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', letterSpacing: 1, textShadow: '1px 1px 2px #000' }}>מערכת</div>
         </div>
-        <button style={sysBtn} onClick={onOpenDebug}
-          onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>Debug</button>
-        <button style={sysBtn} onClick={handleDb}
-          onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>DB</button>
-        <button style={sysBtn} onClick={handleUsers}
-          onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>משתמשים</button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px 8px' }}>
+          <button style={sysBtn} onClick={onOpenDebug}
+            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>Debug</button>
+          <button style={sysBtn} onClick={handleDb}
+            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>DB</button>
+          <button style={sysBtn} onClick={handleUsers}
+            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>משתמשים</button>
+        </div>
       </aside>
 
     </div>
