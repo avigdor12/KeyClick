@@ -144,17 +144,21 @@ export default function Home() {
 
   useEffect(() => {
     if (activePage === 'system') {
-      openDebugWin()
-      setTimeout(() => {
-        dbg('system', 'page opened')
-        dbg('session', `Current_User=${Current_User_Pointer_to_DB?.id ?? 0}  email="${Current_User_Pointer_to_DB?.email ?? 'none'}"  IP="${Current_User_Pointer_to_DB?.last_ip ?? 'none'}"`)
-        dbg('session', `license="${Current_User_Pointer_to_DB?.license_type ?? 'none'}"  active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
-        dbg('lang', `idx=${langIdx} code=${languages[langIdx].code} name=${languages[langIdx].name}`)
-      }, 80)
+      debugPausedRef.current = false
+      dbg('system', 'page opened')
+      dbg('session', `Current_User=${Current_User_Pointer_to_DB?.id ?? 0}  email="${Current_User_Pointer_to_DB?.email ?? 'none'}"  IP="${Current_User_Pointer_to_DB?.last_ip ?? 'none'}"`)
+      dbg('session', `license="${Current_User_Pointer_to_DB?.license_type ?? 'none'}"  active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
+      dbg('lang', `idx=${langIdx} code=${languages[langIdx].code} name=${languages[langIdx].name}`)
+      debugPausedRef.current = true
+      setDebugPaused(true)
+    } else {
+      debugPausedRef.current = false
+      setDebugPaused(false)
     }
   }, [activePage])
 
   function dbg(func: string, msg: string) {
+    if (debugPausedRef.current) return
     const ts   = new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     const line = `${ts}  ${func}: ${msg}`
     setDebugLog(prev => [...prev, line])
@@ -374,9 +378,9 @@ function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
   }
 
   const sysBtn: React.CSSProperties = {
-    background: '#003399', border: 'none', borderBottom: '1px solid #0044cc',
-    color: '#FFD700', padding: '13px 8px', cursor: 'pointer',
-    fontSize: '13px', fontWeight: 'bold', textAlign: 'center',
+    background: '#003399', border: 'none', borderTop: '1px solid #224488',
+    color: '#FFD700', padding: '13px 0', cursor: 'pointer',
+    fontSize: '13px', fontWeight: 'bold', textAlign: 'center', width: '100%',
   }
 
   return (
@@ -432,10 +436,10 @@ function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
       </div>
 
       {/* Right sidebar */}
-      <aside style={{ width: '140px', background: '#c8c8c8', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0, borderLeft: '2px solid #aaa' }}>
-        <div style={{ background: '#b0b0b0', padding: '10px 4px 8px', textAlign: 'center', borderBottom: '2px solid #aaa' }}>
-          <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '22px', color: '#FFD700', fontWeight: 'bold', textShadow: '1px 1px 3px #444' }}>KeyClick</div>
-          <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', letterSpacing: 1, textShadow: '1px 1px 2px #444' }}>מערכת</div>
+      <aside style={{ width: '140px', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0, margin: '10px 0', borderRadius: '10px 0 0 10px', overflow: 'hidden', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
+        <div style={{ background: '#444', padding: '8px 4px 6px', textAlign: 'center', borderBottom: '2px solid #333' }}>
+          <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '22px', color: '#FFD700', fontWeight: 'bold', textShadow: '1px 1px 3px #000' }}>KeyClick</div>
+          <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', letterSpacing: 1, textShadow: '1px 1px 2px #000' }}>מערכת</div>
         </div>
         <button style={sysBtn} onClick={onOpenDebug}
           onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
