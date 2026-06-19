@@ -66,7 +66,11 @@ export default function Home() {
 
   useEffect(() => {
     fetch('/api/site-version').then(r => r.json()).then(data => setSiteVersion(data)).catch(() => {})
-    fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => { if (d.ip) setClientIp(d.ip) }).catch(() => {})
+    dbg('ipify', 'fetch GET https://api.ipify.org')
+    fetch('https://api.ipify.org?format=json')
+      .then(r => r.json())
+      .then(d => { dbg('ipify', `ip="${d.ip ?? 'none'}"`) ; if (d.ip) setClientIp(d.ip) })
+      .catch(err => dbg('ipify', `failed err="${String(err)}"`))
     const params = new URLSearchParams(window.location.search)
     if (params.get('installed') === '1') {
       localStorage.setItem('mf_installed', '1')
@@ -366,7 +370,7 @@ export default function Home() {
   )
 }
 
-function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
+function SystemPage({ onOpenDebug, onDbg }: { onOpenDebug: () => void; onDbg: (func: string, msg: string) => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users'>('none')
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
@@ -375,13 +379,23 @@ function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
   function handleDb() {
     if (view === 'db') { setView('none'); return }
     setView('db')
-    fetch('/api/system/db-records').then(r => r.json()).then(d => setDbTables(d.tables ?? []))
+    onDbg('handleDb', 'fetch GET /api/system/db-records')
+    fetch('/api/system/db-records').then(r => r.json()).then(d => {
+      const tables = d.tables ?? []
+      onDbg('handleDb', `tables=${tables.length} names="${tables.map((t: { name: string }) => t.name).join(',')}"`)
+      setDbTables(tables)
+    }).catch(err => onDbg('handleDb', `failed err="${String(err)}"`))
   }
 
   function handleUsers() {
     if (view === 'users') { setView('none'); return }
     setView('users')
-    fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? []))
+    onDbg('handleUsers', 'fetch GET /api/system/users')
+    fetch('/api/system/users').then(r => r.json()).then(d => {
+      const users = d.users ?? []
+      onDbg('handleUsers', `count=${users.length} ids="${users.map((u: Record<string,unknown>) => u.id).join(',')}"`)
+      setUsers(users)
+    }).catch(err => onDbg('handleUsers', `failed err="${String(err)}"`))
   }
 
   const sysBtn: React.CSSProperties = {
@@ -501,7 +515,7 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 function PageContent({ page, lang, clientIp, onClose, onLogin, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; clientIp: string; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'system') return <SystemPage onOpenDebug={onOpenDebug} />
+  if (page === 'system') return <SystemPage onOpenDebug={onOpenDebug} onDbg={onDbg} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ textAlign: 'center', color: '#555' }}>
@@ -591,7 +605,7 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     onDbg('handleLogin', `email="${savedEmail}" pass.len=${savedPass.length}`)
     setError('')
     if (!savedPass) { onDbg('handleLogin', 'pass empty => errPassLen'); setError(c.errPassLen); return }
-    onDbg('handleLogin', `fetch POST /api/login email="${savedEmail}"`)
+    onDbg('handleLogin', `fetch POST /api/login email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
