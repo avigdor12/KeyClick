@@ -52,6 +52,7 @@ export default function Home() {
   const debugPausedRef = useRef(false)
   const debugWinRef    = useRef<Window | null>(null)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
+  const [clientIp, setClientIp] = useState('')
   const lang = languages[langIdx]
 
   useEffect(() => {
@@ -65,6 +66,7 @@ export default function Home() {
 
   useEffect(() => {
     fetch('/api/site-version').then(r => r.json()).then(data => setSiteVersion(data)).catch(() => {})
+    fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => { if (d.ip) setClientIp(d.ip) }).catch(() => {})
     const params = new URLSearchParams(window.location.search)
     if (params.get('installed') === '1') {
       localStorage.setItem('mf_installed', '1')
@@ -282,7 +284,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
+            <PageContent page={activePage} lang={lang} clientIp={clientIp} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -496,9 +498,9 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 }
 
 
-function PageContent({ page, lang, onClose, onLogin, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
-  if (page === 'mf-login')    return <RegisterCard lang={lang} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'mf-register') return <RegisterCard lang={lang} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+function PageContent({ page, lang, clientIp, onClose, onLogin, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; clientIp: string; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
+  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'system') return <SystemPage onOpenDebug={onOpenDebug} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
@@ -516,7 +518,7 @@ function handFont(code: string) {
   return 'var(--font-dancing),"Dancing Script",Georgia,serif'
 }
 
-function RegisterCard({ lang, initialPhase = 'default', onClose, onLogin, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
+function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, onLogin, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
   const font = handFont(lang.code)
@@ -593,7 +595,7 @@ function RegisterCard({ lang, initialPhase = 'default', onClose, onLogin, onNavi
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: savedEmail, password: savedPass }),
+      body: JSON.stringify({ email: savedEmail, password: savedPass, clientIp }),
     })
     const data = await res.json()
     onDbg('handleLogin', `res.status=${res.status} res.ok=${res.ok}`)

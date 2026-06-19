@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 export async function POST(req: NextRequest) {
-  const { email, password } = await req.json()
+  const { email, password, clientIp } = await req.json()
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
 
   const result = await pool.query(
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
               ?? req.headers.get('x-real-ip')
               ?? (req as NextRequest & { ip?: string }).ip
+              ?? clientIp
               ?? 'localhost'
 
   await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(user.id)])
