@@ -366,14 +366,14 @@ export default function Home() {
 
 function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users'>('none')
-  const [dbRecords, setDbRecords] = useState<{ key: string; value: string }[]>([])
+  const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
 
   function handleDb() {
     if (view === 'db') { setView('none'); return }
     setView('db')
-    fetch('/api/system/db-records').then(r => r.json()).then(d => setDbRecords(d.records ?? []))
+    fetch('/api/system/db-records').then(r => r.json()).then(d => setDbTables(d.tables ?? []))
   }
 
   function handleUsers() {
@@ -399,11 +399,21 @@ function SystemPage({ onOpenDebug }: { onOpenDebug: () => void }) {
 
         {view === 'db' && (
           <div>
-            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 12, color: '#003399' }}>system_DB_Records</div>
-            {dbRecords.map(r => (
-              <div key={r.key} style={{ display: 'flex', gap: 10, borderBottom: '1px solid #ddd', padding: '7px 0', alignItems: 'baseline' }}>
-                <span style={{ color: '#FFD700', fontWeight: 'bold', background: '#222', padding: '2px 8px', borderRadius: 3, fontSize: 12, whiteSpace: 'nowrap' }}>{r.key}</span>
-                <span style={{ color: '#333', fontSize: 13 }}>{r.value}</span>
+            {dbTables.map(t => (
+              <div key={t.name} style={{ marginBottom: 20 }}>
+                <div style={{ fontWeight: 'bold', fontSize: 15, color: '#003399', background: '#e8eaf6', padding: '4px 10px', borderRadius: 4, marginBottom: 6 }}>
+                  {t.name} <span style={{ color: '#888', fontWeight: 'normal', fontSize: 12 }}>({t.rows.length} רשומות)</span>
+                </div>
+                {t.rows.map((row, ri) => (
+                  <div key={ri} style={{ borderBottom: '1px solid #eee', padding: '5px 8px', fontSize: 12 }}>
+                    {Object.entries(row).map(([k, v]) => (
+                      <span key={k} style={{ marginRight: 14 }}>
+                        <span style={{ color: '#003399', fontWeight: 'bold' }}>{k}:</span>{' '}
+                        <span style={{ color: '#222' }}>{String(v ?? '')}</span>
+                      </span>
+                    ))}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
