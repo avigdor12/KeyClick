@@ -467,8 +467,6 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
       function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
       function add(cls,text){var d=document.createElement('div');d.className='r '+cls;d.innerHTML=esc(text);log.appendChild(d);}
       function load(){
-        log.innerHTML='<div class="r loading">טוען נתוני בנייה...</div>';
-        upd('טוען...');
         fetch('/api/system/build-log')
           .then(r=>r.json())
           .then(data=>{
@@ -477,7 +475,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
             add('dep','═══════════════════════════════════════════');
             add('dep','  DB Version:  '+esc(data.dbVersion||'—'));
             add('dep','  Build Time:  '+esc(data.buildTime||'—'));
-            var match = data.buildTime && data.dbVersion && data.dbVersion.includes(data.buildTime.replace('.',':'));
+            var match = data.buildTime && data.dbVersion && data.dbVersion.includes(data.buildTime);
             add(match?'exit0':'exitX', match ? '  ✓ הבנייה הצליחה' : '  ✗ הבנייה נכשלה או עדיין רצה');
             add('dep','═══════════════════════════════════════════');
             if(data.buildLog){
@@ -502,6 +500,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
           .catch(e=>{log.innerHTML='';add('err','שגיאת רשת: '+e);upd('שגיאה');});
       }
       load();
+      setInterval(load, 10000);
       if(window.opener){window.opener.addEventListener('beforeunload',function(){window.close();});}
     </script></body></html>`)
     win.document.close()
