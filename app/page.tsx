@@ -62,7 +62,7 @@ const languages = [
       price: 'मूल्य', changePlan: 'योजना बदलें', planName: 'नाम', planFrom: 'से', planTo: 'तक', back: 'वापस', currencyLocal: '₹', free: 'मुफ्त',       planNames: { System_Free_Run: 'परीक्षण रन', User_Trial: 'परीक्षण', User_VIP_Free: 'VIP', System_Owner: 'सिस्टम', User_Monthly: 'मासिक', User_Annual: 'वार्षिक', User_One_Time: 'एकल', System_Suspended_NonPayment: 'निलंबित', User_Cancelled: 'रद्द' } } },
 ]
 
-type UserRecord = { id: number; name: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string }
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string }
 
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
@@ -410,6 +410,7 @@ export default function Home() {
 
 function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users'>('none')
+  const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
@@ -429,6 +430,86 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
       onDbg('handleDb', `tables=${tables.length} names="${tables.map((t: { name: string }) => t.name).join(',')}"`)
       setDbTables(tables)
     }).catch(err => onDbg('handleDb', `failed err="${String(err)}"`))
+  }
+
+  function handleBuild() {
+    if (buildWinRef.current && !buildWinRef.current.closed) { buildWinRef.current.focus(); return }
+    const w = 700, h = 500
+    const left = window.screenX + Math.floor((window.outerWidth  - w) / 2)
+    const top  = window.screenY + Math.floor((window.outerHeight - h) / 2)
+    const win  = window.open('', 'KeyClickBuild', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no`)
+    if (!win) return
+    buildWinRef.current = win
+    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    win.document.open()
+    win.document.write(`<!DOCTYPE html><html><head><title>Build Log</title><style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{background:#1e1e1e;color:#d4d4d4;font-family:Consolas,monospace;font-size:18px;font-weight:bold;display:flex;flex-direction:column;height:100vh}
+      #tb{background:#3c3c6e;padding:5px 10px;display:flex;gap:6px;align-items:center;flex-shrink:0}
+      #tb span{color:#fff;font-weight:bold;font-size:16px;margin-right:auto}
+      button{background:#003399;border:none;color:#FFD700;padding:3px 12px;border-radius:3px;cursor:pointer;font-size:16px;font-weight:bold;font-family:inherit}
+      button:hover{background:#0044cc}
+      #log{flex:1;overflow-y:auto;padding:8px 12px;line-height:1.8}
+      .r{border-bottom:1px solid #2a2a2a;padding:2px 0;white-space:pre-wrap;word-break:break-all}
+      .cmd{color:#FFD700} .out{color:#d4d4d4} .err{color:#f48771} .exit0{color:#4ec9b0} .exitX{color:#f48771}
+      .dep{color:#9cdcfe} .loading{color:#888;font-style:italic}
+      #sb{background:#252526;color:#888;font-size:14px;padding:3px 10px;display:flex;justify-content:space-between;flex-shrink:0}
+    </style></head><body>
+    <div id="tb"><span>הודעות בניית מערכת</span>
+      <button onclick="document.getElementById('log').innerHTML='';upd()">נקה</button>
+      <button onclick="load()">רענן</button>
+    </div>
+    <div id="log"><div class="r loading">טוען נתוני בנייה...</div></div>
+    <div id="sb"><span id="cnt">טוען...</span><span id="st"></span></div>
+    <script>
+      var log=document.getElementById('log');
+      function upd(msg){document.getElementById('cnt').textContent=msg||log.children.length+' שורות';}
+      function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function add(cls,text){var d=document.createElement('div');d.className='r '+cls;d.innerHTML=esc(text);log.appendChild(d);}
+      function load(){
+        log.innerHTML='<div class="r loading">טוען נתוני בנייה...</div>';
+        upd('טוען...');
+        fetch('/api/system/build-log')
+          .then(r=>r.json())
+          .then(data=>{
+            log.innerHTML='';
+            if(data.error){add('err','⚠ שגיאה: '+data.error);upd('שגיאה');return;}
+            var dep=data.deployment||{};
+            add('dep','═══════════════════════════════════════════');
+            add('dep','  DEPLOYMENT: '+esc(dep.id||'—'));
+            add('dep','  URL:        '+esc(dep.url||'—'));
+            add('dep','  STATE:      '+esc(dep.state||dep.readyState||'—'));
+            add('dep','  נוצר:       '+esc(dep.createdAt?new Date(dep.createdAt).toLocaleString('he-IL'):'—'));
+            add('dep','  מוכן:       '+esc(dep.ready?new Date(dep.ready).toLocaleString('he-IL'):'—'));
+            if(dep.meta){
+              var m=dep.meta;
+              if(m.githubCommitMessage) add('dep','  commit msg: '+esc(m.githubCommitMessage));
+              if(m.githubCommitAuthorName) add('dep','  author:     '+esc(m.githubCommitAuthorName));
+              if(m.githubCommitRef) add('dep','  branch:     '+esc(m.githubCommitRef));
+              if(m.githubCommitSha) add('dep','  SHA:        '+esc(m.githubCommitSha));
+            }
+            add('dep','═══════════════════════════════════════════');
+            var events=data.events||[];
+            events.forEach(function(ev){
+              var t=ev.type, p=ev.payload||{}, txt=p.text||'';
+              if(t==='command')      add('cmd','$ '+txt);
+              else if(t==='stdout')  add('out',txt);
+              else if(t==='stderr')  add('err',txt);
+              else if(t==='exit')    add(p.exitCode===0?'exit0':'exitX','[exit '+p.exitCode+'] '+(txt||''));
+              else if(t==='delimiter') add('dep','─────────────────────────────────────────');
+              else if(txt)           add('out','['+t+'] '+txt);
+            });
+            if(!events.length) add('dep','— אין אירועי בנייה זמינים —');
+            log.scrollTop=log.scrollHeight;
+            upd(events.length+' אירועים');
+            document.getElementById('st').textContent=esc(dep.state||'');
+          })
+          .catch(e=>{log.innerHTML='';add('err','שגיאת רשת: '+e);upd('שגיאה');});
+      }
+      load();
+      if(window.opener){window.opener.addEventListener('beforeunload',function(){window.close();});}
+    </script></body></html>`)
+    win.document.close()
   }
 
   function handleUsers() {
@@ -479,7 +560,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
           </div>
         )}
 
-        {view === 'users' && (
+{view === 'users' && (
           <div>
             <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 12, color: '#003399' }}>משתמשים</div>
             {users.map(u => {
@@ -526,6 +607,9 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
           <button style={sysBtn} onClick={handleUsers}
             onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
             onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>משתמשים</button>
+          <button style={sysBtn} onClick={handleBuild}
+            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>הודעות בניית מערכת</button>
         </div>
       </aside>
 
