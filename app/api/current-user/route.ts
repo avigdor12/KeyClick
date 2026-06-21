@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     if (userId) {
       const result = await pool.query(
-        'SELECT id, name, last_name, email, language, country, mf_license_type, mf_license_start, mf_license_until, is_active, is_m_finance_installed, last_ip FROM users WHERE id=$1',
+        'SELECT id, name, email, language, mf_license_type, is_active, is_m_finance_installed, last_ip FROM users WHERE id=$1',
         [userId]
       )
       if (result.rows.length > 0) {
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     if (ip !== 'unknown') {
       const byIp = await pool.query(
-        'SELECT id, name, last_name, email, language, country, mf_license_type, mf_license_start, mf_license_until, is_active, is_m_finance_installed, last_ip FROM users WHERE last_ip=$1 LIMIT 1',
+        'SELECT id, name, email, language, mf_license_type, is_active, is_m_finance_installed, last_ip FROM users WHERE last_ip=$1 LIMIT 1',
         [ip]
       )
       if (byIp.rows.length > 0) {

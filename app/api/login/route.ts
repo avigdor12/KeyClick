@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
 
   const result = await pool.query(
-    'SELECT id, name, last_name, email, language, country, mf_license_type, mf_license_start, mf_license_until, is_active, is_m_finance_installed, password_hash FROM users WHERE email = $1',
+    'SELECT id, name, last_name, email, language, country, mf_license_type, mf_license_start, is_active, is_m_finance_installed, password_hash FROM users WHERE email = $1',
     [email]
   )
   const user = result.rows[0]
