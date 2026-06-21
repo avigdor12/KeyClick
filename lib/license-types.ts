@@ -3,9 +3,9 @@ export const LICENSE_TYPES = {
   User_Trial:      'תקופת נסיון',          // חינם עם תפוגה
   User_VIP_Free:   'VIP',                  // חינם לצמיתות
   System_Owner:    'מערכת',                // חינם + debug מלא
-  User_Monthly:    'בתשלום חודשי',
-  User_Annual:     'בתשלום שנתי',
-  User_One_Time:              'בתשלום לכניסה בודדת',
+  User_Monthly:    'חודשי',
+  User_Annual:     'שנתי',
+  User_One_Time:   'כניסה בודדת',
   System_Suspended_NonPayment: 'מנותק עקב אי תשלום',
   User_Cancelled:              'המשתמש ביטל הרשמה',
 } as const
