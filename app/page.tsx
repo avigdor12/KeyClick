@@ -2,44 +2,56 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { LICENSE_TYPES } from '@/lib/license-types'
 
 const languages = [
   { code: 'en', flag: 'בריטניה', name: 'English',  welcome: 'Welcome',
     menu: ['Feedback','Updates','Messages','Reminders','Banking Services','Personal Page'],
-    card: { title: 'Home Budget Management', namePh: 'Name / Last Name', emailPh: 'Email / Email Address', passPh: 'Password', confirmPassPh: 'Confirm Password', register: 'Register', login: 'Login', update: 'Update', line1: 'During launch period', line2: 'Free', errName: 'Please enter your name', errEmail: 'Please enter a valid email', errPassLen: 'Password must be at least 6 characters', errPassMatch: 'Passwords do not match', errEmailExists: 'Email already registered', cancel: 'Cancel', install: 'Install', library: 'Guide Files' } },
+    card: { title: 'Home Budget Management', namePh: 'Name / Last Name', emailPh: 'Email / Email Address', passPh: 'Password', confirmPassPh: 'Confirm Password', register: 'Register', login: 'Login', update: 'Update', line1: 'During launch period', line2: 'Free', errName: 'Please enter your name', errEmail: 'Please enter a valid email', errPassLen: 'Password must be at least 6 characters', errPassMatch: 'Passwords do not match', errEmailExists: 'Email already registered', cancel: 'Cancel', install: 'Install', library: 'Guide Files' },
+    profile: { fullName: 'Full Name', email: 'Email', ip: 'IP', language: 'Language', country: 'Country', plan: 'Plan', planStart: 'Plan Start', planEnd: 'Plan End', unlimited: 'Unlimited', comingSoon: 'Coming Soon', choosePlan: 'Choose Plan', close: '✕ Close', loginRequired: 'Login required to view personal page', login: 'Login', products: 'Products' } },
   { code: 'ru', flag: 'רוסיה',   name: 'Русский',  welcome: 'Добро пожаловать',
     menu: ['Отзыв','Обновления','Сообщения','Напоминания','Банковские услуги','Личная страница'],
-    card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства' } },
+    card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства' },
+    profile: { fullName: 'Полное имя', email: 'Email', ip: 'IP', language: 'Язык', country: 'Страна', plan: 'Тариф', planStart: 'Начало тарифа', planEnd: 'Конец тарифа', unlimited: 'Без ограничений', comingSoon: 'Скоро', choosePlan: 'Выбрать тариф', close: '✕ Закрыть', loginRequired: 'Необходимо войти для просмотра', login: 'Войти', products: 'Продукты' } },
   { code: 'de', flag: 'גרמניה',  name: 'Deutsch',  welcome: 'Willkommen',
     menu: ['Feedback','Updates','Nachrichten','Erinnerungen','Bankdienstleistungen','Persönliche Seite'],
-    card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien' } },
+    card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien' },
+    profile: { fullName: 'Vollständiger Name', email: 'E-Mail', ip: 'IP', language: 'Sprache', country: 'Land', plan: 'Tarif', planStart: 'Tarif Beginn', planEnd: 'Tarif Ende', unlimited: 'Unbegrenzt', comingSoon: 'Demnächst', choosePlan: 'Tarif wählen', close: '✕ Schließen', loginRequired: 'Anmeldung erforderlich', login: 'Anmelden', products: 'Produkte' } },
   { code: 'fr', flag: 'צרפת',    name: 'Français', welcome: 'Bienvenue',
     menu: ['Retour','Mises à jour','Messages','Rappels','Services bancaires','Page personnelle'],
-    card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide' } },
+    card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide' },
+    profile: { fullName: 'Nom complet', email: 'E-mail', ip: 'IP', language: 'Langue', country: 'Pays', plan: 'Abonnement', planStart: 'Début', planEnd: 'Fin', unlimited: 'Illimité', comingSoon: 'Bientôt', choosePlan: 'Choisir un abonnement', close: '✕ Fermer', loginRequired: 'Connexion requise', login: 'Se connecter', products: 'Produits' } },
   { code: 'he', flag: 'ישראל',   name: 'עברית',    welcome: 'ברוכים הבאים',
     menu: ['משוב','עדכונים','הודעות','תזכורות','שרותים בנקאיים','דף אישי'],
-    card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכן', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה' } },
+    card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכן', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה' },
+    profile: { fullName: 'שם ומשפחה', email: 'דוא"ל', ip: 'IP', language: 'שפה', country: 'מדינה', plan: 'תכנית', planStart: 'תחילת תכנית', planEnd: 'סיום תכנית', unlimited: 'ללא הגבלה', comingSoon: 'בקרוב', choosePlan: 'בחר תכנית', close: '✕ סגור', loginRequired: 'נדרשת כניסה לצפייה בדף האישי', login: 'כניסה', products: 'מוצרים' } },
   { code: 'es', flag: 'ספרד',    name: 'Español',  welcome: 'Bienvenido',
     menu: ['Comentarios','Actualizaciones','Mensajes','Recordatorios','Servicios bancarios','Página personal'],
-    card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía' } },
+    card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía' },
+    profile: { fullName: 'Nombre completo', email: 'Correo', ip: 'IP', language: 'Idioma', country: 'País', plan: 'Plan', planStart: 'Inicio del plan', planEnd: 'Fin del plan', unlimited: 'Sin límite', comingSoon: 'Próximamente', choosePlan: 'Elegir plan', close: '✕ Cerrar', loginRequired: 'Se requiere inicio de sesión', login: 'Iniciar sesión', products: 'Productos' } },
   { code: 'ja', flag: 'יפן',     name: '日本語',    welcome: 'ようこそ',
     menu: ['フィードバック','更新','メッセージ','リマインダー','銀行サービス','個人ページ'],
-    card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル' } },
+    card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル' },
+    profile: { fullName: 'フルネーム', email: 'メール', ip: 'IP', language: '言語', country: '国', plan: 'プラン', planStart: 'プラン開始', planEnd: 'プラン終了', unlimited: '無制限', comingSoon: '近日公開', choosePlan: 'プランを選択', close: '✕ 閉じる', loginRequired: 'ログインが必要です', login: 'ログイン', products: '製品' } },
   { code: 'ar', flag: 'סעודיה',  name: 'العربية',  welcome: 'أهلاً وسهلاً',
     menu: ['ملاحظات','تحديثات','رسائل','تذكيرات','خدمات مصرفية','الصفحة الشخصية'],
-    card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل' } },
+    card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل' },
+    profile: { fullName: 'الاسم الكامل', email: 'البريد الإلكتروني', ip: 'IP', language: 'اللغة', country: 'الدولة', plan: 'الخطة', planStart: 'بداية الخطة', planEnd: 'نهاية الخطة', unlimited: 'بلا حدود', comingSoon: 'قريباً', choosePlan: 'اختر خطة', close: '✕ إغلاق', loginRequired: 'تسجيل الدخول مطلوب', login: 'دخول', products: 'المنتجات' } },
   { code: 'zh', flag: 'סין',     name: '中文',      welcome: '欢迎',
     menu: ['反馈','更新','消息','提醒','银行服务','个人页面'],
-    card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件' } },
+    card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件' },
+    profile: { fullName: '全名', email: '邮箱', ip: 'IP', language: '语言', country: '国家', plan: '套餐', planStart: '套餐开始', planEnd: '套餐结束', unlimited: '无限制', comingSoon: '即将推出', choosePlan: '选择套餐', close: '✕ 关闭', loginRequired: '需要登录', login: '登录', products: '产品' } },
   { code: 'it', flag: 'איטליה',  name: 'Italiano', welcome: 'Benvenuto',
     menu: ['Feedback','Aggiornamenti','Messaggi','Promemoria','Servizi bancari','Pagina personale'],
-    card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida' } },
+    card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida' },
+    profile: { fullName: 'Nome completo', email: 'Email', ip: 'IP', language: 'Lingua', country: 'Paese', plan: 'Piano', planStart: 'Inizio piano', planEnd: 'Fine piano', unlimited: 'Illimitato', comingSoon: 'Prossimamente', choosePlan: 'Scegli piano', close: '✕ Chiudi', loginRequired: 'Accesso richiesto', login: 'Accedi', products: 'Prodotti' } },
   { code: 'hi', flag: 'הודו',    name: 'हिंदी',     welcome: 'स्वागत है',
     menu: ['फीडबैक','अपडेट','संदेश','अनुस्मारक','बैंकिंग सेवाएं','व्यक्तिगत पृष्ठ'],
-    card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें' } },
+    card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें' },
+    profile: { fullName: 'पूरा नाम', email: 'ईमेल', ip: 'IP', language: 'भाषा', country: 'देश', plan: 'योजना', planStart: 'योजना शुरू', planEnd: 'योजना समाप्त', unlimited: 'असीमित', comingSoon: 'जल्द आ रहा है', choosePlan: 'योजना चुनें', close: '✕ बंद करें', loginRequired: 'लॉगिन आवश्यक है', login: 'लॉग इन', products: 'उत्पाद' } },
 ]
 
-type UserRecord = { id: number; name: string; email: string; language: string; license_type: string; is_active: boolean; is_m_finance_installed: boolean; last_ip?: string }
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; country?: string; mf_license_type: string; mf_license_start?: string | null; mf_license_until?: string | null; is_active: boolean; is_m_finance_installed: boolean; last_ip?: string }
 
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
@@ -57,7 +69,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!Current_User_Pointer_to_DB) return
-    dbg('userEffect', `id=${Current_User_Pointer_to_DB.id} email="${Current_User_Pointer_to_DB.email}" language="${Current_User_Pointer_to_DB.language}" license="${Current_User_Pointer_to_DB.license_type}" active=${Current_User_Pointer_to_DB.is_active}`)
+    dbg('userEffect', `id=${Current_User_Pointer_to_DB.id} email="${Current_User_Pointer_to_DB.email}" language="${Current_User_Pointer_to_DB.language}" license="${Current_User_Pointer_to_DB.mf_license_type}" active=${Current_User_Pointer_to_DB.is_active}`)
     const idx = languages.findIndex(l => l.name === Current_User_Pointer_to_DB.language)
     dbg('userEffect', `findIndex language="${Current_User_Pointer_to_DB.language}" => idx=${idx}`)
     if (idx !== -1) setLangIdx(idx)
@@ -153,7 +165,7 @@ export default function Home() {
       debugPausedRef.current = false
       dbg('system', 'page opened')
       dbg('session', `Current_User=${Current_User_Pointer_to_DB?.id ?? 0}  email="${Current_User_Pointer_to_DB?.email ?? 'none'}"  IP="${Current_User_Pointer_to_DB?.last_ip ?? 'none'}"`)
-      dbg('session', `license="${Current_User_Pointer_to_DB?.license_type ?? 'none'}"  active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
+      dbg('session', `license="${Current_User_Pointer_to_DB?.mf_license_type ?? 'none'}"  active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
       dbg('lang', `idx=${langIdx} code=${languages[langIdx].code} name=${languages[langIdx].name}`)
       debugPausedRef.current = true
       setDebugPaused(true)
@@ -297,7 +309,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} clientIp={clientIp} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
+            <PageContent page={activePage} lang={lang} clientIp={clientIp} user={Current_User_Pointer_to_DB} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -521,10 +533,11 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 }
 
 
-function PageContent({ page, lang, clientIp, onClose, onLogin, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; clientIp: string; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
+function PageContent({ page, lang, clientIp, user, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; clientIp: string; user: UserRecord | null; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'system') return <SystemPage onOpenDebug={onOpenDebug} onDbg={onDbg} />
+  if (page === 'system')      return <SystemPage onOpenDebug={onOpenDebug} onDbg={onDbg} />
+  if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ textAlign: 'center', color: '#555' }}>
@@ -705,4 +718,142 @@ const mfBtn: React.CSSProperties = {
   background: '#003399', borderRadius: '5px', padding: '7px 2px',
   color: '#FFD700', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer',
   border: '1px solid #0055cc', textAlign: 'center',
+}
+
+const FREE_PLANS  = [LICENSE_TYPES.System_Free_Run, LICENSE_TYPES.User_Trial, LICENSE_TYPES.User_VIP_Free, LICENSE_TYPES.System_Owner] as string[]
+const PAID_PLANS  = [LICENSE_TYPES.User_Monthly, LICENSE_TYPES.User_Annual, LICENSE_TYPES.User_One_Time] as string[]
+
+const PLAN_OPTIONS: { key: keyof typeof LICENSE_TYPES; paid: boolean }[] = [
+  { key: 'System_Free_Run', paid: false },
+  { key: 'User_Trial',      paid: false },
+  { key: 'User_VIP_Free',   paid: false },
+  { key: 'User_Monthly',    paid: true  },
+  { key: 'User_Annual',     paid: true  },
+  { key: 'User_One_Time',   paid: true  },
+]
+
+function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; onNavigate: (page: string) => void; onUserUpdate: (user: UserRecord) => void; onDbg: (func: string, msg: string) => void }) {
+  const [showPlans, setShowPlans] = useState(false)
+  const [updating,  setUpdating]  = useState(false)
+
+  const formatDate = (d?: string | null) => {
+    if (!d) return '—'
+    return new Date(d).toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  }
+
+  async function selectPlan(key: keyof typeof LICENSE_TYPES) {
+    if (!user) return
+    const value = LICENSE_TYPES[key]
+    onDbg('selectPlan', `key=${key} value="${value}" userId=${user.id}`)
+    setUpdating(true)
+    try {
+      const res  = await fetch('/api/update-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, licenseType: value }) })
+      const data = await res.json()
+      onDbg('selectPlan', `res.status=${res.status} res.ok=${res.ok}`)
+      if (res.ok && data.user) { onUserUpdate(data.user); setShowPlans(false) }
+    } catch (err) { onDbg('selectPlan', `failed err="${String(err)}"`) }
+    setUpdating(false)
+  }
+
+  const p = lang.profile
+
+  if (!user) return <div style={{ width: '100%', height: '100%', background: '#f2eef2' }} />
+
+  const isOwner    = user.mf_license_type === LICENSE_TYPES.System_Owner
+  const isFreeRun  = user.mf_license_type === LICENSE_TYPES.System_Free_Run
+  const isFreePlan = FREE_PLANS.includes(user.mf_license_type)
+
+  const personalFields = [
+    { label: p.fullName,  value: [user.name, user.last_name].filter(Boolean).join(' ') || '—' },
+    { label: p.email,     value: user.email    || '—' },
+    { label: p.ip,        value: user.last_ip  || '—' },
+    { label: p.language,  value: user.language || '—' },
+    { label: p.country,   value: user.country  || '—' },
+  ]
+
+  return (
+    <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflow: 'auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '28px 20px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }}>
+      <div style={{ width: '100%', maxWidth: '520px', background: '#fff', border: '2px solid #003399', borderRadius: '12px', padding: '32px 36px', boxShadow: '0 4px 16px rgba(0,0,60,0.08)' }}>
+
+        <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#003399', marginBottom: '24px', borderBottom: '2px solid #003399', paddingBottom: '10px' }}>
+          {lang.menu[5]}
+        </div>
+
+        {/* Personal info */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
+          {personalFields.map(({ label, value }) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+              <span style={{ color: '#888', fontSize: '15px', minWidth: '130px' }}>{label}:</span>
+              <span style={{ color: '#1a1a1a', fontSize: '18px' }}>{value}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Products section */}
+        <div style={{ borderTop: '2px solid #e0e0f0', paddingTop: '20px' }}>
+          <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#003399', marginBottom: '14px' }}>{p.products}</div>
+
+          {/* M Finance */}
+          <div style={{ background: '#f8f8ff', border: '1px solid #ccd', borderRadius: '10px', padding: '16px 20px' }}>
+            <div style={{ fontSize: '17px', fontWeight: 'bold', color: '#003399', marginBottom: '14px', borderBottom: '1px solid #dde', paddingBottom: '8px' }}>
+              {lang.card.title} <span style={{ color: '#888', fontSize: '13px', fontWeight: 'normal' }}>(M Finance)</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                <span style={{ color: '#888', fontSize: '15px', minWidth: '130px' }}>{p.plan}:</span>
+                <span style={{ color: '#003399', fontSize: '18px', fontWeight: 'bold' }}>{user.mf_license_type}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                <span style={{ color: '#888', fontSize: '15px', minWidth: '130px' }}>{p.planStart}:</span>
+                <span style={{ color: '#1a1a1a', fontSize: '18px' }}>{formatDate(user.mf_license_start)}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                <span style={{ color: '#888', fontSize: '15px', minWidth: '130px' }}>{p.planEnd}:</span>
+                <span style={{ color: '#1a1a1a', fontSize: '18px' }}>{isFreePlan ? p.unlimited : formatDate(user.mf_license_until)}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => !isFreeRun && setShowPlans(s => !s)}
+              style={{
+                background: isFreeRun ? '#8899bb' : '#003399',
+                border: 'none', borderRadius: '8px',
+                color: isFreeRun ? '#c8cfe0' : '#FFD700',
+                fontSize: '16px', fontWeight: 'bold', padding: '10px 28px',
+                cursor: isFreeRun ? 'not-allowed' : 'pointer',
+                width: '100%', opacity: isFreeRun ? 0.65 : 1,
+              }}>
+              {showPlans ? p.close : p.choosePlan}
+            </button>
+
+            {showPlans && (
+              <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {PLAN_OPTIONS.map(({ key, paid }) => {
+                  const val       = LICENSE_TYPES[key]
+                  const current   = user.mf_license_type === val
+                  const clickable = isOwner || !paid
+                  return (
+                    <div key={key}
+                      onClick={() => clickable && !updating && selectPlan(key)}
+                      style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        background: current ? '#003399' : '#fff', borderRadius: '8px', padding: '12px 16px',
+                        cursor: clickable ? 'pointer' : 'default', opacity: updating ? 0.6 : 1,
+                        border: current ? '2px solid #003399' : '1px solid #ccd',
+                      }}>
+                      <span style={{ color: current ? '#FFD700' : clickable ? '#1a1a1a' : '#aaa', fontSize: '16px', fontWeight: 'bold' }}>{val}</span>
+                      {!isOwner && paid && <span style={{ color: '#aaa', fontSize: '12px' }}>{p.comingSoon}</span>}
+                      {current && <span style={{ color: '#4af', fontSize: '18px' }}>✓</span>}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
 }
