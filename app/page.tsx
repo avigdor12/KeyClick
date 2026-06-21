@@ -474,35 +474,30 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
           .then(data=>{
             log.innerHTML='';
             if(data.error){add('err','⚠ שגיאה: '+data.error);upd('שגיאה');return;}
-            var dep=data.deployment||{};
             add('dep','═══════════════════════════════════════════');
-            add('dep','  DEPLOYMENT: '+esc(dep.id||'—'));
-            add('dep','  URL:        '+esc(dep.url||'—'));
-            add('dep','  STATE:      '+esc(dep.state||dep.readyState||'—'));
-            add('dep','  נוצר:       '+esc(dep.createdAt?new Date(dep.createdAt).toLocaleString('he-IL'):'—'));
-            add('dep','  מוכן:       '+esc(dep.ready?new Date(dep.ready).toLocaleString('he-IL'):'—'));
-            if(dep.meta){
-              var m=dep.meta;
-              if(m.githubCommitMessage) add('dep','  commit msg: '+esc(m.githubCommitMessage));
-              if(m.githubCommitAuthorName) add('dep','  author:     '+esc(m.githubCommitAuthorName));
-              if(m.githubCommitRef) add('dep','  branch:     '+esc(m.githubCommitRef));
-              if(m.githubCommitSha) add('dep','  SHA:        '+esc(m.githubCommitSha));
+            add('dep','  DB Version:  '+esc(data.dbVersion||'—'));
+            add('dep','  Build Time:  '+esc(data.buildTime||'—'));
+            var match = data.buildTime && data.dbVersion && data.dbVersion.includes(data.buildTime.replace('.',':'));
+            add(match?'exit0':'exitX', match ? '  ✓ הבנייה הצליחה' : '  ✗ הבנייה נכשלה או עדיין רצה');
+            add('dep','═══════════════════════════════════════════');
+            if(data.buildLog){
+              var lines=data.buildLog.split('\n');
+              lines.forEach(function(line){
+                var l=line.trim();
+                if(!l) return;
+                if(l.startsWith('==='))        add('dep', line);
+                else if(l.startsWith('['))     add('cmd', line);
+                else if(l.startsWith('    =>')) add('out', line);
+                else if(l.includes('Error') || l.includes('error')) add('err', line);
+                else if(l.includes('Done') || l.includes('✓'))      add('exit0', line);
+                else if(l.includes('Skipped'))                       add('dep',   line);
+                else                                                  add('out',   line);
+              });
+            } else {
+              add('dep','— אין נתוני בנייה. הרץ את Release_KeyClick.bat —');
             }
-            add('dep','═══════════════════════════════════════════');
-            var events=data.events||[];
-            events.forEach(function(ev){
-              var t=ev.type, p=ev.payload||{}, txt=p.text||'';
-              if(t==='command')      add('cmd','$ '+txt);
-              else if(t==='stdout')  add('out',txt);
-              else if(t==='stderr')  add('err',txt);
-              else if(t==='exit')    add(p.exitCode===0?'exit0':'exitX','[exit '+p.exitCode+'] '+(txt||''));
-              else if(t==='delimiter') add('dep','─────────────────────────────────────────');
-              else if(txt)           add('out','['+t+'] '+txt);
-            });
-            if(!events.length) add('dep','— אין אירועי בנייה זמינים —');
             log.scrollTop=log.scrollHeight;
-            upd(events.length+' אירועים');
-            document.getElementById('st').textContent=esc(dep.state||'');
+            upd(data.buildLog ? data.buildLog.split('\n').length+' שורות' : '0 שורות');
           })
           .catch(e=>{log.innerHTML='';add('err','שגיאת רשת: '+e);upd('שגיאה');});
       }
