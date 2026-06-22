@@ -410,7 +410,7 @@ export default function Home() {
 
 const SCHEDULE_SUBJECTS = ['יום ה-X ההפצה', 'תקופת הרצה', 'תקופת ניסיון', 'VIP', 'חודשי', 'שנתי', 'חד פעמי'] as const
 function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}` }
-type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
+type ScheduleRow = { price: string; priceLocal: string; months: string; fromDate: string; toDate: string; notes: string }
 
 function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule'>('none')
@@ -419,9 +419,9 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
   const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(
-    SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' }))
+    SCHEDULE_SUBJECTS.map(() => ({ price: '', priceLocal: '', months: '', fromDate: '', toDate: '', notes: '' }))
   )
-  const [colWidths, setColWidths] = useState<number[]>([140, 62, 62, 80, 80, 180])
+  const [colWidths, setColWidths] = useState<number[]>([140, 62, 70, 62, 80, 80, 180])
   const [rowHeights, setRowHeights] = useState<number[]>(Array(SCHEDULE_SUBJECTS.length).fill(26))
   const colResizeRef = useRef<{ col: number; startX: number; startWidth: number } | null>(null)
   const rowResizeRef = useRef<{ row: number; startY: number; startHeight: number } | null>(null)
@@ -690,7 +690,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                   </colgroup>
                   <thead>
                     <tr style={{ background: '#e8eaf6' }}>
-                      {(['נושא','מחיר\n[$]','תקופה\n[ח׳]','מ-','עד-','הערות'] as const).map((label, ci) => (
+                      {(['נושא','מחיר\n[$]','מחיר\n[מקומי]','תקופה\n[ח׳]','מ-','עד-','הערות'] as const).map((label, ci) => (
                         <th key={ci} style={{ position: 'relative', padding: '4px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', lineHeight: 1.2, whiteSpace: 'pre', overflow: 'hidden' }}>
                           {label}
                           <div onMouseDown={e => onColResizeDown(ci, e, false)} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 4, cursor: 'col-resize' }} />
@@ -709,6 +709,11 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                         <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
                           <input type="text" value={scheduleRows[i].price}
                             onChange={e => updateScheduleRow(i, 'price', e.target.value)}
+                            style={{ width: '100%', padding: '2px 3px', border: 'none', outline: 'none', fontSize: 14, textAlign: 'center', background: 'transparent', boxSizing: 'border-box' }} />
+                        </td>
+                        <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                          <input type="text" value={scheduleRows[i].priceLocal}
+                            onChange={e => updateScheduleRow(i, 'priceLocal', e.target.value)}
                             style={{ width: '100%', padding: '2px 3px', border: 'none', outline: 'none', fontSize: 14, textAlign: 'center', background: 'transparent', boxSizing: 'border-box' }} />
                         </td>
                         <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
@@ -740,7 +745,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                 </table>
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 8, justifyContent: 'flex-start', direction: 'rtl' }}>
-                <button onClick={() => setScheduleRows(SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' })))}
+                <button onClick={() => setScheduleRows(SCHEDULE_SUBJECTS.map(() => ({ price: '', priceLocal: '', months: '', fromDate: '', toDate: '', notes: '' })))}
                   style={{ background: '#888', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 16px', fontSize: 13, cursor: 'pointer', fontWeight: 'bold' }}>איפוס</button>
                 <button onClick={handleUpdate}
                   style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: 'pointer', fontWeight: 'bold' }}>עידכון</button>
@@ -1012,16 +1017,16 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   const [planView,    setPlanView]    = useState(false)
   const [selKey,      setSelKey]      = useState<keyof typeof LICENSE_TYPES | null>(null)
   const [updating,    setUpdating]    = useState(false)
-  const [scheduleData, setScheduleData] = useState<Record<string, { price: string; months: string }>>({})
+  const [scheduleData, setScheduleData] = useState<Record<string, { price: string; priceLocal: string; months: string }>>({})
 
   useEffect(() => {
     fetch('/api/system/schedule').then(r => r.json()).then(d => {
       if (!d.data?.rows) return
       const PLAN_IDX: Record<string, number> = { User_Trial: 2, User_Monthly: 4, User_Annual: 5, User_One_Time: 6 }
-      const map: Record<string, { price: string; months: string }> = {}
+      const map: Record<string, { price: string; priceLocal: string; months: string }> = {}
       Object.entries(PLAN_IDX).forEach(([planKey, idx]) => {
         const row = d.data.rows[idx]
-        if (row) map[planKey] = { price: row.price ?? '', months: row.months ?? '' }
+        if (row) map[planKey] = { price: row.price ?? '', priceLocal: row.priceLocal ?? '', months: row.months ?? '' }
       })
       setScheduleData(map)
     }).catch(() => {})
@@ -1102,29 +1107,30 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
               </tr>
             </thead>
             <tbody>
-              {CHANGE_PLAN_OPTIONS.map(({ key, paid, priceLocal }) => {
+              {CHANGE_PLAN_OPTIONS.map(({ key, paid }) => {
                 const sched = scheduleData[key]
                 const price = sched?.price || ''
+                const priceLocal = sched?.priceLocal || ''
                 const months = sched ? parseInt(sched.months) || 0 : 0
                 const toDate = months > 0 ? fmtDate(new Date(createdAt.getFullYear(), createdAt.getMonth() + months, createdAt.getDate())) : '—'
                 const displayName = lang.profile.planNames[key as keyof typeof lang.profile.planNames]
-                const enabled = isOwner || !paid
                 const sel     = selKey === key
                 const isTrial = key === 'User_Trial'
+                void paid
                 return (
-                  <tr key={key} style={{ background: sel ? '#eef2ff' : '#fff', opacity: enabled ? 1 : 0.38 }}>
+                  <tr key={key} style={{ background: sel ? '#eef2ff' : '#fff' }}>
                     <td style={tdStyle}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: enabled ? 'pointer' : 'default' }}>
-                        <input type="radio" name="plan" checked={sel} disabled={!enabled}
-                          onChange={() => enabled && setSelKey(key)}
-                          style={{ width: '16px', height: '16px', accentColor: '#003399', cursor: enabled ? 'pointer' : 'default' }} />
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                        <input type="radio" name="plan" checked={sel}
+                          onChange={() => setSelKey(key)}
+                          style={{ width: '16px', height: '16px', accentColor: '#003399', cursor: 'pointer' }} />
                         <span style={{ fontWeight: sel ? 'bold' : 'normal', color: sel ? '#003399' : '#1a1a1a' }}>{displayName}</span>
                       </label>
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : price}</td>
                     <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : priceLocal}</td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{fmtDate(createdAt)}</td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{toDate}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{sel ? fmtDate(createdAt) : ''}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{sel ? toDate : ''}</td>
                   </tr>
                 )
               })}
@@ -1209,8 +1215,8 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
                 <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#003399', fontWeight: 'bold' }}>
                   {(() => { const k = Object.entries(LICENSE_TYPES).find(([,v]) => v === user.M_Finance_license_type)?.[0]; return k ? (p.planNames as Record<string,string>)[k] ?? user.M_Finance_license_type : user.M_Finance_license_type })()}
                 </td>
-                <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#555' }}>—</td>
-                <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#555' }}>{isFreePlan ? p.unlimited : '—'}</td>
+                <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#555' }}>{user.plan_start ? fmtDate(new Date(String(user.plan_start))) : '—'}</td>
+                <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#555' }}>{user.plan_end ? fmtDate(new Date(String(user.plan_end))) : isFreePlan ? p.unlimited : '—'}</td>
               </tr>
             </tbody>
           </table>
