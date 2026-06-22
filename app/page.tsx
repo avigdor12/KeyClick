@@ -662,8 +662,8 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_active ? '✓' : ''}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_M_Finance_installed ? '✓' : ''}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
                       </tr>
