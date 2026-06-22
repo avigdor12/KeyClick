@@ -3,6 +3,12 @@ import { Pool } from 'pg'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
+const LICENSE_TYPE_MAP: Record<string, string> = {
+  System_Free_Run: 'תקופת הרצה',
+  User_VIP_Free:   'VIP',
+  System_Owner:    'מערכת',
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { userId, systemForce } = await req.json()
@@ -11,7 +17,16 @@ export async function POST(req: NextRequest) {
     await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS system_force TEXT`)
 
     const forceValue = systemForce && systemForce !== 'User' ? systemForce : null
-    await pool.query(`UPDATE users SET system_force=$1 WHERE id=$2`, [forceValue, userId])
+
+    if (forceValue) {
+      const licenseType = LICENSE_TYPE_MAP[forceValue]
+      await pool.query(
+        `UPDATE users SET system_force=$1, license_type=$2 WHERE id=$3`,
+        [forceValue, licenseType, userId]
+      )
+    } else {
+      await pool.query(`UPDATE users SET system_force=NULL WHERE id=$1`, [userId])
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {
