@@ -18,14 +18,23 @@ export async function POST(req: NextRequest) {
 
     const forceValue = systemForce && systemForce !== 'User' ? systemForce : null
 
+    await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS user_plan TEXT`)
+
     if (forceValue) {
       const licenseType = LICENSE_TYPE_MAP[forceValue]
       await pool.query(
-        `UPDATE users SET system_force=$1, license_type=$2 WHERE id=$3`,
+        `UPDATE users SET system_force=$1, license_type=$2,
+         user_plan = COALESCE(NULLIF(user_plan, ''), license_type)
+         WHERE id=$3`,
         [forceValue, licenseType, userId]
       )
     } else {
-      await pool.query(`UPDATE users SET system_force=NULL WHERE id=$1`, [userId])
+      await pool.query(
+        `UPDATE users SET system_force=NULL,
+         license_type = COALESCE(NULLIF(user_plan, ''), license_type)
+         WHERE id=$1`,
+        [userId]
+      )
     }
 
     return NextResponse.json({ ok: true })

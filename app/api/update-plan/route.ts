@@ -11,10 +11,11 @@ export async function POST(req: NextRequest) {
     await pool.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_start DATE;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_end DATE;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS user_plan TEXT;
     `)
 
     const result = await pool.query(
-      `UPDATE users SET license_type=$1, plan_start=$2, plan_end=$3
+      `UPDATE users SET license_type=$1, user_plan=$1, plan_start=$2, plan_end=$3
        WHERE id=$4
        RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, plan_start, plan_end`,
       [licenseType, planStart ?? null, planEnd ?? null, userId]
