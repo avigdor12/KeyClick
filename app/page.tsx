@@ -712,6 +712,8 @@ function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate }: { user: UserReco
                       if (d.user) { onUserUpdate(d.user); onDbg('עדכון', 'onUserUpdate נקרא — state מעודכן') }
                     })
                     .catch(e => onDbg('עדכון', `current-user שגיאה err=${String(e)}`))
+                  onDbg('עדכון', 'מרענן טבלת משתמשים')
+                  fetch('/api/system/users').then(r => r.json()).then(d => { setUsers(d.users ?? []); onDbg('עדכון', `טבלת משתמשים רועננה — ${d.users?.length ?? 0} שורות`) }).catch(e => onDbg('עדכון', `users שגיאה err=${String(e)}`))
                 }}
                 disabled={Object.keys(pendingForce).length === 0}
                 style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold', opacity: Object.keys(pendingForce).length > 0 ? 1 : 0.4 }}>
