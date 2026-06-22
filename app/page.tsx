@@ -637,13 +637,13 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
                     <th colSpan={7} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>General</th>
-                    <th colSpan={4} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
+                    <th colSpan={6} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
                     {['ID','Created','Name','Email','Language','IP','Last IP'].map(h => (
                       <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
                     ))}
-                    {['Is Active','App Installed','Licence Type','System Force'].map(h => (
+                    {['Is Active','App Installed','From-','To-','Licence Type','System Force'].map(h => (
                       <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
                     ))}
                   </tr>
@@ -662,6 +662,8 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_active ? '✓' : ''}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_M_Finance_installed ? '✓' : ''}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
                       </tr>
