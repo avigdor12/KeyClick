@@ -24,7 +24,8 @@ export async function POST(req: NextRequest) {
       const licenseType = LICENSE_TYPE_MAP[forceValue]
       await pool.query(
         `UPDATE users SET system_force=$1, license_type=$2,
-         user_plan = COALESCE(NULLIF(user_plan, ''), license_type)
+         user_plan = COALESCE(NULLIF(user_plan, ''), license_type),
+         plan_start = NULL, plan_end = NULL
          WHERE id=$3`,
         [forceValue, licenseType, userId]
       )
