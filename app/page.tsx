@@ -62,7 +62,7 @@ const languages = [
       price: 'मूल्य', changePlan: 'योजना बदलें', planName: 'नाम', planFrom: 'से', planTo: 'तक', back: 'वापस', currencyLocal: '₹', free: 'मुफ्त',       planNames: { System_Free_Run: 'परीक्षण रन', User_Trial: 'परीक्षण', User_VIP_Free: 'VIP', System_Owner: 'सिस्टम', User_Monthly: 'मासिक', User_Annual: 'वार्षिक', User_One_Time: 'एकल', System_Suspended_NonPayment: 'निलंबित', User_Cancelled: 'रद्द' } } },
 ]
 
-type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string }
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null }
 
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
@@ -665,7 +665,22 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <select
+                            value={String(u.system_force ?? 'User')}
+                            onChange={async e => {
+                              const systemForce = e.target.value
+                              await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: u.id, systemForce }) }).catch(() => {})
+                              setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, system_force: systemForce === 'User' ? null : systemForce } : usr))
+                            }}
+                            style={{ fontSize: 12, border: '1px solid #a0a8c0', borderRadius: 3, padding: '1px 2px', background: u.system_force && u.system_force !== 'User' ? '#fff3e0' : '#fff', cursor: 'pointer' }}
+                          >
+                            <option value="User">User</option>
+                            <option value="System_Free_Run">תקופת הרצה</option>
+                            <option value="User_VIP_Free">VIP</option>
+                            <option value="System_Owner">מערכת</option>
+                          </select>
+                        </td>
                       </tr>
                     )
                   })}
@@ -1071,9 +1086,10 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
   if (!user) return <div style={{ width: '100%', height: '100%', background: '#f2eef2' }} />
 
-  const isOwner    = user.M_Finance_license_type === LICENSE_TYPES.System_Owner
-  const isFreeRun  = user.M_Finance_license_type === LICENSE_TYPES.System_Free_Run
-  const isFreePlan = FREE_PLANS.includes(user.M_Finance_license_type)
+  const isOwner        = user.M_Finance_license_type === LICENSE_TYPES.System_Owner
+  const isFreeRun      = user.M_Finance_license_type === LICENSE_TYPES.System_Free_Run
+  const isFreePlan     = FREE_PLANS.includes(user.M_Finance_license_type)
+  const isSystemForced = !!user.system_force && user.system_force !== 'User'
 
   const personalFields = [
     { label: p.fullName,  value: [user.name, user.last_name].filter(Boolean).join(' ') || '—' },
@@ -1203,18 +1219,18 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
                 <td style={{ padding: '8px 10px', border: '1px solid #ccd', whiteSpace: 'nowrap' }}>
                   <button
                     onClick={() => {
-                      if (isFreeRun) return
+                      if (isFreeRun || isSystemForced) return
                       const cur = CHANGE_PLAN_OPTIONS.find(o => LICENSE_TYPES[o.key] === user.M_Finance_license_type)?.key ?? null
                       setSelKey(cur)
                       setPlanView(true)
                     }}
                     style={{
-                      background: isFreeRun ? '#aab' : '#003399',
+                      background: (isFreeRun || isSystemForced) ? '#aab' : '#003399',
                       border: 'none', borderRadius: '5px',
-                      color: isFreeRun ? '#dde' : '#FFD700',
+                      color: (isFreeRun || isSystemForced) ? '#dde' : '#FFD700',
                       fontSize: '12px', fontWeight: 'bold', padding: '4px 10px',
-                      cursor: isFreeRun ? 'not-allowed' : 'pointer',
-                      opacity: isFreeRun ? 0.65 : 1,
+                      cursor: (isFreeRun || isSystemForced) ? 'not-allowed' : 'pointer',
+                      opacity: (isFreeRun || isSystemForced) ? 0.65 : 1,
                     }}>
                     {p.change}
                   </button>
