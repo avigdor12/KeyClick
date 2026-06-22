@@ -1018,10 +1018,14 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   async function selectPlan(key: keyof typeof LICENSE_TYPES): Promise<boolean> {
     if (!user) return false
     const value = LICENSE_TYPES[key]
+    const option = CHANGE_PLAN_OPTIONS.find(o => o.key === key)
+    const today = new Date()
+    const planStart = today.toISOString().slice(0, 10)
+    const planEnd = option?.days != null ? new Date(today.getTime() + option.days * 86400000).toISOString().slice(0, 10) : null
     onDbg('selectPlan', `key=${key} value="${value}" userId=${user.id}`)
     setUpdating(true)
     try {
-      const res  = await fetch('/api/update-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, licenseType: value }) })
+      const res  = await fetch('/api/update-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, licenseType: value, planStart, planEnd }) })
       const data = await res.json()
       onDbg('selectPlan', `res.status=${res.status} res.ok=${res.ok}`)
       if (res.ok && data.user) { onUserUpdate(data.user); setUpdating(false); return true }

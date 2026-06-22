@@ -5,14 +5,19 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, licenseType } = await req.json()
+    const { userId, licenseType, planStart, planEnd } = await req.json()
     if (!userId || !licenseType) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
 
+    await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_start DATE;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_end DATE;
+    `)
+
     const result = await pool.query(
-      `UPDATE users SET license_type=$1
-       WHERE id=$2
-       RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip`,
-      [licenseType, userId]
+      `UPDATE users SET license_type=$1, plan_start=$2, plan_end=$3
+       WHERE id=$4
+       RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, plan_start, plan_end`,
+      [licenseType, planStart ?? null, planEnd ?? null, userId]
     )
     if (result.rowCount === 0) return NextResponse.json({ error: 'user not found' }, { status: 404 })
     return NextResponse.json({ user: result.rows[0] })
