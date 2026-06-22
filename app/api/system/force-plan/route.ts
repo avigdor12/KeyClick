@@ -46,7 +46,6 @@ export async function POST(req: NextRequest) {
         [forceValue, licenseType, userId]
       )
     } else {
-      // restore user's original plan + recalculate dates from created_at + schedule
       const userRow = await pool.query(
         `SELECT user_plan, created_at FROM users WHERE id=$1`, [userId]
       )

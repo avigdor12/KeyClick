@@ -13,6 +13,6 @@ export async function GET() {
     return NextResponse.json({ line1: line1 ?? '', line2: line2 ?? '' })
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e)
-    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 03.09  22.06.2026 14:40' })
+    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 04.00  22.06.2026 22:00' })
   }
 }
