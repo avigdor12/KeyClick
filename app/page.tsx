@@ -67,6 +67,9 @@ type UserRecord = { id: number; name: string; last_name?: string; email: string;
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
+  const [systemMessage, setSystemMessage] = useState('')
+  const [prText, setPrText] = useState('')
+  const [prDate, setPrDate] = useState('')
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
   const [siteVersion, setSiteVersion] = useState({ line1: '', line2: '' })
   const [debugLog, setDebugLog]       = useState<string[]>([])
@@ -324,7 +327,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} clientIp={clientIp} user={Current_User_Pointer_to_DB} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
+            <PageContent page={activePage} lang={lang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -410,8 +413,9 @@ const SCHEDULE_SUBJECTS = ['יום ה-X ההפצה', 'תקופת הרצה', 'ת�
 function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}` }
 type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
 
-function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate }: { user: UserRecord | null; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule'>('none')
+function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate }: { user: UserRecord | null; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void }) {
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr'>('none')
+  const [prSaved, setPrSaved] = useState(false)
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
@@ -603,6 +607,27 @@ function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate }: { user: UserReco
       <div style={{ flex: 1, overflow: 'auto', padding: '16px 20px', background: '#f7f7f7' }}>
         {view === 'none' && (
           <div style={{ color: '#aaa', fontSize: 16, marginTop: 40, textAlign: 'center' }}>בחר פעולה מהסרגל הימני</div>
+        )}
+
+        {view === 'pr' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <div style={{ position: 'relative', marginTop: '28px', direction: 'rtl', width: '730px' }}>
+              <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>הודעת המערכת</span>
+              <div style={{ border: '2px solid #003399', borderRadius: '6px', minHeight: '96px', padding: '12px', display: 'flex', flexDirection: 'column', background: '#fff', resize: 'vertical', overflow: 'auto' }}>
+                <textarea value={prText} onChange={e => setPrText(e.target.value)} autoFocus style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', minHeight: '50px', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
+                <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
+                  בכבוד רב, <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> קשרי לקוחות
+                </div>
+              </div>
+            </div>
+            <div style={{ fontSize: '13px', color: '#555', marginTop: '8px', width: '730px', textAlign: 'right', direction: 'rtl' }}>
+              פורסם בתאריך: <input type="date" value={prDate} onChange={e => setPrDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #999', fontSize: '13px', outline: 'none', background: 'transparent', color: '#333' }} />
+            </div>
+            <div style={{ marginTop: '6px', width: '730px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+              <button onClick={() => { onSetSystemMessage(prText); setPrSaved(true); setTimeout(() => setPrSaved(false), 2000) }} style={{ fontSize: '11px', padding: '2px 10px', background: prSaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{prSaved ? '✓ נשמר' : 'עדכון'}</button>
+              <button onClick={() => { setPrText(''); onSetSystemMessage('') }} style={{ fontSize: '11px', padding: '2px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>איפוס</button>
+            </div>
+          </div>
         )}
 
         {view === 'db' && (
@@ -820,6 +845,10 @@ function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate }: { user: UserReco
           <button style={sysBtn} onClick={handleSchedule}
             onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
             onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>לו"ז ומחירון</button>
+          <button style={{ ...sysBtn, background: view === 'pr' ? '#0044cc' : '#003399' }}
+            onClick={() => setView(view === 'pr' ? 'none' : 'pr')}
+            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+            onMouseLeave={e => { e.currentTarget.style.background = view === 'pr' ? '#0044cc' : '#003399' }}>יחסי ציבור</button>
         </div>
       </aside>
 
@@ -850,10 +879,95 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 }
 
 
-function PageContent({ page, lang, clientIp, user, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; clientIp: string; user: UserRecord | null; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
+function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; systemMessage: string; onDbg: (func: string, msg: string) => void }) {
+  const [ratingSite,   setRatingSite]   = useState<number | null>(null)
+  const [ratingBudget, setRatingBudget] = useState<number | null>(null)
+  return (
+    <div style={{ width: '100%', height: '100%', background: '#d0d0d0', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
+      <div style={{ width: '794px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column' }}>
+
+        {/* כרטיסיה */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{
+            background: '#003399',
+            borderRadius: '12px 12px 0 0',
+            padding: '4px 6px 6px',
+            display: 'inline-flex', alignItems: 'center', gap: '32px',
+            border: '2px solid #FFD700',
+            boxShadow: '0 4px 16px rgba(0,0,80,0.2)',
+          }}>
+            <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
+            <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>קשרי לקוחות</span>
+          </div>
+        </div>
+
+
+        {/* הודעת המערכת */}
+        <div style={{ position: 'relative', marginTop: '28px', direction: 'rtl' }}>
+          <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>הודעת המערכת</span>
+          <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '115px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{systemMessage}</div>
+            <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
+              בכבוד רב, <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> קשרי לקוחות
+            </div>
+          </div>
+        </div>
+
+        {/* דירוג */}
+        <div style={{ marginTop: '28px', direction: 'rtl', fontFamily: 'Arial, sans-serif' }}>
+          <div style={{ fontSize: '15px', fontWeight: 700, color: '#222', marginBottom: '12px' }}>דירוג</div>
+          {([['אתר', ratingSite, setRatingSite], ['ניהול תקציב בית', ratingBudget, setRatingBudget]] as [string, number|null, (n:number)=>void][]).map(([label, val, setVal]) => (
+            <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', marginBottom: '10px', border: '1.5px solid #003399', borderRadius: '6px', padding: '6px 12px' }}>
+              <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontWeight: 'bold' }}>{label}</span>
+              {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                <div key={n} onClick={() => setVal(n)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', margin: '0 2px' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2.5px solid #003399', background: val === n ? '#003399' : '#fff', boxShadow: val === n ? '0 0 0 2px #6699ff' : 'none', transition: 'all 0.1s' }} />
+                  <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#003399' }}>{n}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* דבר המשתמש + תשובת המערכת */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '28px', direction: 'rtl', flex: 1 }}>
+          <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+            <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>דבר המשתמש</span>
+            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', gap: '24px', fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px' }}>
+                <span>תאריך: <span style={{ borderBottom: '1px solid #333', minWidth: '80px', display: 'inline-block' }}>&nbsp;</span></span>
+                <span>כותרת: <span style={{ borderBottom: '1px solid #333', minWidth: '200px', display: 'inline-block' }}>&nbsp;</span></span>
+              </div>
+              <textarea style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: 'rtl' }} />
+              <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
+                מאת: <span style={{ borderBottom: '1px solid #333', minWidth: '160px', display: 'inline-block' }}>&nbsp;</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+            <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>תשובת המערכת</span>
+            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+              <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px' }}>
+                תאריך: <span style={{ borderBottom: '1px solid #333', minWidth: '80px', display: 'inline-block' }}>&nbsp;</span>
+              </div>
+              <textarea style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
+              <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px', direction: 'rtl' }}>
+                בכבוד רב, <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> קשרי לקוחות
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+function PageContent({ page, lang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
+  if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'system')      return <SystemPage user={user} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} />
+  if (page === 'system')      return <SystemPage user={user} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
