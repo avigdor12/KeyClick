@@ -433,30 +433,32 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
   }
 
   function handleBuild() {
-    if (buildWinRef.current && !buildWinRef.current.closed) { buildWinRef.current.focus(); return }
+    if (buildWinRef.current && !buildWinRef.current.closed) { buildWinRef.current.close(); buildWinRef.current = null; return }
     const w = 700, h = 500
     const left = window.screenX + Math.floor((window.outerWidth  - w) / 2)
     const top  = window.screenY + Math.floor((window.outerHeight - h) / 2)
     const win  = window.open('', 'KeyClickBuild', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no`)
     if (!win) return
     buildWinRef.current = win
-    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const apiUrl = `${window.location.origin}/api/system/build-log`
     win.document.open()
     win.document.write(`<!DOCTYPE html><html><head><title>Build Log</title><style>
       *{box-sizing:border-box;margin:0;padding:0}
-      body{background:#1e1e1e;color:#d4d4d4;font-family:Consolas,monospace;font-size:18px;font-weight:bold;display:flex;flex-direction:column;height:100vh}
+      body{background:#1e1e1e;font-family:Consolas,monospace;display:flex;flex-direction:column;height:100vh}
       #tb{background:#3c3c6e;padding:5px 10px;display:flex;gap:6px;align-items:center;flex-shrink:0}
       #tb span{color:#fff;font-weight:bold;font-size:16px;margin-right:auto}
       button{background:#003399;border:none;color:#FFD700;padding:3px 12px;border-radius:3px;cursor:pointer;font-size:16px;font-weight:bold;font-family:inherit}
       button:hover{background:#0044cc}
-      #log{flex:1;overflow-y:auto;padding:8px 12px;line-height:1.8}
-      .r{border-bottom:1px solid #2a2a2a;padding:2px 0;white-space:pre-wrap;word-break:break-all}
-      .cmd{color:#FFD700} .out{color:#d4d4d4} .err{color:#f48771} .exit0{color:#4ec9b0} .exitX{color:#f48771}
-      .dep{color:#9cdcfe} .loading{color:#888;font-style:italic}
+      #log{flex:1;overflow-y:auto;padding:8px 12px;line-height:1.3;direction:ltr;text-align:left}
+      .r{padding:0;white-space:pre-wrap;word-break:break-all;text-align:left}
+      .rel{color:#FFD700;font-size:18px;font-weight:bold}
+      .noise{color:#ffffff;font-size:16px;font-weight:normal}
+      .loading{color:#888;font-style:italic;font-size:16px}
       #sb{background:#252526;color:#888;font-size:14px;padding:3px 10px;display:flex;justify-content:space-between;flex-shrink:0}
     </style></head><body>
     <div id="tb"><span>הודעות בניית מערכת</span>
       <button onclick="document.getElementById('log').innerHTML='';upd()">נקה</button>
+      <button id="fbtn" onclick="toggleFilter()">סינון</button>
       <button onclick="load()">רענן</button>
     </div>
     <div id="log"><div class="r loading">טוען נתוני בנייה...</div></div>
@@ -466,41 +468,42 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
       function upd(msg){document.getElementById('cnt').textContent=msg||log.children.length+' שורות';}
       function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
       function add(cls,text){var d=document.createElement('div');d.className='r '+cls;d.innerHTML=esc(text);log.appendChild(d);}
+      function isNoise(line){
+        var l=line.trim();
+        return l.startsWith('+') || l.startsWith('At ') ||
+          l.includes('CategoryInfo') || l.includes('FullyQualifiedErrorId') || l.includes('NativeCommandError') ||
+          l.includes('libpq') || l.includes('sslmode') || l.includes('verify-full') || l.includes('verify-ca') ||
+          l.includes('LF will be replaced') || l.startsWith('In the next major') ||
+          l.startsWith('semantics,') || l.startsWith('To prepare') || l.startsWith('- If you want') ||
+          l.startsWith('See https://') || l.startsWith('(Use ') || l.startsWith('aliases for') ||
+          l.startsWith('char:');
+      }
       function load(){
-        fetch('/api/system/build-log')
+        fetch('${apiUrl}')
           .then(r=>r.json())
           .then(data=>{
             log.innerHTML='';
-            if(data.error){add('err','⚠ שגיאה: '+data.error);upd('שגיאה');return;}
-            add('dep','═══════════════════════════════════════════');
-            add('dep','  DB Version:  '+esc(data.dbVersion||'—'));
-            add('dep','  Build Time:  '+esc(data.buildTime||'—'));
-            var match = data.buildTime && data.dbVersion && data.dbVersion.includes(data.buildTime);
-            add(match?'exit0':'exitX', match ? '  ✓ הבנייה הצליחה' : '  ✗ הבנייה נכשלה או עדיין רצה');
-            add('dep','═══════════════════════════════════════════');
+            if(data.error){add('rel','⚠ שגיאה: '+data.error);upd('שגיאה');return;}
+            if(data.dbVersion) add('rel','dbVersion: '+esc(data.dbVersion));
+            if(data.buildTime) add('rel','buildTime: '+esc(data.buildTime));
             if(data.buildLog){
-              var lines=data.buildLog.split('\n');
+              var lines=data.buildLog.split(String.fromCharCode(10));
               lines.forEach(function(line){
-                var l=line.trim();
-                if(!l) return;
-                if(l.startsWith('==='))        add('dep', line);
-                else if(l.startsWith('['))     add('cmd', line);
-                else if(l.startsWith('    =>')) add('out', line);
-                else if(l.includes('Error') || l.includes('error')) add('err', line);
-                else if(l.includes('Done') || l.includes('✓'))      add('exit0', line);
-                else if(l.includes('Skipped'))                       add('dep',   line);
-                else                                                  add('out',   line);
+                var clean=line.replace(new RegExp(String.fromCharCode(13),'g'),'');
+                if(!clean.trim()) return;
+                add(isNoise(clean)?'noise':'rel', clean);
               });
             } else {
-              add('dep','— אין נתוני בנייה. הרץ את Release_KeyClick.bat —');
+              add('rel','— אין נתוני בנייה. הרץ את Release_KeyClick.bat —');
             }
             log.scrollTop=log.scrollHeight;
-            upd(data.buildLog ? data.buildLog.split('\n').length+' שורות' : '0 שורות');
+            upd(data.buildLog ? data.buildLog.split(String.fromCharCode(10)).filter(function(l){return l.replace(new RegExp(String.fromCharCode(13),'g'),'').trim();}).length+' שורות' : '0 שורות');
           })
-          .catch(e=>{log.innerHTML='';add('err','שגיאת רשת: '+e);upd('שגיאה');});
+          .catch(e=>{log.innerHTML='';add('rel','שגיאת רשת: '+e);upd('שגיאה');});
       }
+      var filtered=false;
+      function toggleFilter(){filtered=!filtered;var ns=document.querySelectorAll('.noise');for(var i=0;i<ns.length;i++)ns[i].style.display=filtered?'none':'';document.getElementById('fbtn').style.background=filtered?'#660000':'#003399';}
       load();
-      setInterval(load, 10000);
       if(window.opener){window.opener.addEventListener('beforeunload',function(){window.close();});}
     </script></body></html>`)
     win.document.close()
