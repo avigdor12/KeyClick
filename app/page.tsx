@@ -431,6 +431,9 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
     if (view === 'users') {
       fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
     }
+  }, [user?.language])
+
+  useEffect(() => {
     if (view === 'schedule') {
       fetch('/api/system/schedule').then(r => r.json()).then(d => {
         if (d.data?.rows) setScheduleRows(d.data.rows)
@@ -627,31 +630,45 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
 
 {view === 'users' && (
           <div>
-            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 12, color: '#003399' }}>משתמשים</div>
-            {users.map(u => {
-              const uid = Number(u.id)
-              return (
-                <div key={uid} style={{ borderBottom: '1px solid #ddd', marginBottom: 2 }}>
-                  <div onClick={() => setExpandedUser(expandedUser === uid ? null : uid)}
-                    style={{ cursor: 'pointer', display: 'flex', gap: 10, alignItems: 'center', padding: '8px 4px', background: expandedUser === uid ? '#e8e8f8' : 'transparent' }}>
-                    <span style={{ color: '#FFD700', fontWeight: 'bold', background: '#003399', padding: '2px 8px', borderRadius: 3, fontSize: 12 }}>{String(u.id)}</span>
-                    <span style={{ fontWeight: 'bold', fontSize: 14 }}>{String(u.name ?? '')}</span>
-                    <span style={{ color: '#555', fontSize: 13 }}>{String(u.email ?? '')}</span>
-                    <span style={{ marginLeft: 'auto', color: '#aaa', fontSize: 12 }}>{expandedUser === uid ? '▲' : '▼'}</span>
-                  </div>
-                  {expandedUser === uid && (
-                    <div style={{ padding: '8px 16px 12px', background: '#f0f0f8', fontSize: 13 }}>
-                      {Object.entries(u).map(([k, v]) => (
-                        <div key={k} style={{ display: 'flex', gap: 8, padding: '3px 0', borderBottom: '1px solid #e0e0e0' }}>
-                          <span style={{ color: '#003399', fontWeight: 'bold', minWidth: 180 }}>{k}</span>
-                          <span style={{ color: '#222' }}>{String(v ?? '')}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
+            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399' }}>משתמשים</div>
+            <div style={{ border: '2px solid #003399', borderRadius: 3, width: 'fit-content' }}>
+              <table style={{ borderCollapse: 'collapse', fontSize: 13, direction: 'ltr', whiteSpace: 'nowrap' }}>
+                <thead>
+                  <tr style={{ background: '#e8eaf6' }}>
+                    <th colSpan={7} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>כללי</th>
+                    <th colSpan={4} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
+                  </tr>
+                  <tr style={{ background: '#e8eaf6' }}>
+                    {['ID','Created','Name','Email','Language','IP','Last IP'].map(h => (
+                      <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
+                    ))}
+                    {['Is Active','App Installed','Licence Type','System Force'].map(h => (
+                      <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((u, idx) => {
+                    const created = u.created_at ? String(u.created_at).slice(0, 10) : ''
+                    return (
+                      <tr key={String(u.id)} style={{ background: idx % 2 === 0 ? '#fff' : '#f5f5fc' }}>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.id ?? '')}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{created}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.name ?? '')}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.email ?? '')}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_active ? '✓' : ''}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_M_Finance_installed ? '✓' : ''}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
+                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
