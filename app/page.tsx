@@ -62,7 +62,7 @@ const languages = [
       price: 'मूल्य', changePlan: 'योजना बदलें', planName: 'नाम', planFrom: 'से', planTo: 'तक', back: 'वापस', currencyLocal: '₹', free: 'मुफ्त',       planNames: { System_Free_Run: 'परीक्षण रन', User_Trial: 'परीक्षण', User_VIP_Free: 'VIP', System_Owner: 'सिस्टम', User_Monthly: 'मासिक', User_Annual: 'वार्षिक', User_One_Time: 'एकल', System_Suspended_NonPayment: 'निलंबित', User_Cancelled: 'रद्द' } } },
 ]
 
-type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string }
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string }
 
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
@@ -1009,20 +1009,40 @@ const PLAN_OPTIONS: { key: keyof typeof LICENSE_TYPES; paid: boolean }[] = [
 ]
 
 function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; onNavigate: (page: string) => void; onUserUpdate: (user: UserRecord) => void; onDbg: (func: string, msg: string) => void }) {
-  const [planView,  setPlanView]  = useState(false)
-  const [selKey,    setSelKey]    = useState<keyof typeof LICENSE_TYPES | null>(null)
-  const [updating,  setUpdating]  = useState(false)
+  const [planView,    setPlanView]    = useState(false)
+  const [selKey,      setSelKey]      = useState<keyof typeof LICENSE_TYPES | null>(null)
+  const [updating,    setUpdating]    = useState(false)
+  const [scheduleData, setScheduleData] = useState<Record<string, { price: string; months: string }>>({})
+
+  useEffect(() => {
+    fetch('/api/system/schedule').then(r => r.json()).then(d => {
+      if (!d.data?.rows) return
+      const PLAN_IDX: Record<string, number> = { User_Trial: 2, User_Monthly: 4, User_Annual: 5, User_One_Time: 6 }
+      const map: Record<string, { price: string; months: string }> = {}
+      Object.entries(PLAN_IDX).forEach(([planKey, idx]) => {
+        const row = d.data.rows[idx]
+        if (row) map[planKey] = { price: row.price ?? '', months: row.months ?? '' }
+      })
+      setScheduleData(map)
+    }).catch(() => {})
+  }, [])
 
   const fmtDate = (d: Date) => d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
   async function selectPlan(key: keyof typeof LICENSE_TYPES): Promise<boolean> {
     if (!user) return false
     const value = LICENSE_TYPES[key]
-    const option = CHANGE_PLAN_OPTIONS.find(o => o.key === key)
-    const today = new Date()
-    const planStart = today.toISOString().slice(0, 10)
-    const planEnd = option?.days != null ? new Date(today.getTime() + option.days * 86400000).toISOString().slice(0, 10) : null
-    onDbg('selectPlan', `key=${key} value="${value}" userId=${user.id}`)
+    const createdAt = user.created_at ? new Date(String(user.created_at)) : new Date()
+    const planStart = createdAt.toISOString().slice(0, 10)
+    const sched = scheduleData[key]
+    const months = sched ? parseInt(sched.months) || 0 : 0
+    let planEnd: string | null = null
+    if (months > 0) {
+      const endDate = new Date(createdAt)
+      endDate.setMonth(endDate.getMonth() + months)
+      planEnd = endDate.toISOString().slice(0, 10)
+    }
+    onDbg('selectPlan', `key=${key} value="${value}" userId=${user.id} planStart=${planStart} planEnd=${planEnd}`)
     setUpdating(true)
     try {
       const res  = await fetch('/api/update-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, licenseType: value, planStart, planEnd }) })
@@ -1056,8 +1076,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   const tdStyle:  React.CSSProperties  = { padding: '9px 12px', border: '1px solid #ccd' }
 
   if (planView) {
-    const today = new Date()
-    const endFor = (days: number | null) => days === null ? p.unlimited : fmtDate(new Date(today.getTime() + days * 86400000))
+    const createdAt = user.created_at ? new Date(String(user.created_at)) : new Date()
     return (
       <div style={outerWrap}>
         <div style={cardBox}>
@@ -1083,7 +1102,11 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
               </tr>
             </thead>
             <tbody>
-              {CHANGE_PLAN_OPTIONS.map(({ key, paid, priceUSD, priceLocal, days }) => {
+              {CHANGE_PLAN_OPTIONS.map(({ key, paid, priceLocal }) => {
+                const sched = scheduleData[key]
+                const price = sched?.price || ''
+                const months = sched ? parseInt(sched.months) || 0 : 0
+                const toDate = months > 0 ? fmtDate(new Date(createdAt.getFullYear(), createdAt.getMonth() + months, createdAt.getDate())) : '—'
                 const displayName = lang.profile.planNames[key as keyof typeof lang.profile.planNames]
                 const enabled = isOwner || !paid
                 const sel     = selKey === key
@@ -1098,10 +1121,10 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
                         <span style={{ fontWeight: sel ? 'bold' : 'normal', color: sel ? '#003399' : '#1a1a1a' }}>{displayName}</span>
                       </label>
                     </td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : priceUSD}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : price}</td>
                     <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : priceLocal}</td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? '—' : fmtDate(today)}</td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? '—' : endFor(days)}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{fmtDate(createdAt)}</td>
+                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{toDate}</td>
                   </tr>
                 )
               })}
