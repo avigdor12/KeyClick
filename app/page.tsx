@@ -630,12 +630,12 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
 
 {view === 'users' && (
           <div>
-            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399' }}>משתמשים</div>
+            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>Users</div>
             <div style={{ border: '2px solid #003399', borderRadius: 3, width: 'fit-content' }}>
               <table style={{ borderCollapse: 'collapse', fontSize: 13, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
-                    <th colSpan={7} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>כללי</th>
+                    <th colSpan={7} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>General</th>
                     <th colSpan={4} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
