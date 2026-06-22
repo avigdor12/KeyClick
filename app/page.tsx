@@ -1111,7 +1111,6 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     { label: p.email,     value: user.email    || '—' },
     { label: p.ip,        value: user.last_ip  || '—' },
     { label: p.language,  value: languages.find(l => l.code === user.language)?.name ?? user.language ?? '—' },
-    { label: p.country,   value: user.country  || '—' },
   ]
 
   const outerWrap: React.CSSProperties = { width: '100%', height: '100%', background: '#f2eef2', overflow: 'auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '28px 20px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }
