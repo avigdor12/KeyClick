@@ -671,8 +671,10 @@ function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate }: { user: UserReco
                             value={String(u.system_force ?? 'User')}
                             onChange={e => {
                               const systemForce = e.target.value
+                              onDbg('dropdown', `userId=${u.id} שינוי system_force → ${systemForce}`)
                               setPendingForce(prev => ({ ...prev, [String(u.id)]: systemForce }))
                               setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, system_force: systemForce === 'User' ? null : systemForce } : usr))
+                              onDbg('dropdown', `pendingForce עודכן userId=${u.id}`)
                             }}
                             style={{ fontSize: 12, border: '1px solid #a0a8c0', borderRadius: 3, padding: '1px 2px', background: u.system_force && u.system_force !== 'User' ? '#fff3e0' : '#fff', cursor: 'pointer' }}
                           >
@@ -1067,23 +1069,26 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   }
 
   useEffect(() => {
+    onDbg('scheduleEffect', 'טוען לוח זמנים מ-API')
     fetch('/api/system/schedule').then(r => r.json()).then(d => {
-      if (!d.data?.rows) return
+      if (!d.data?.rows) { onDbg('scheduleEffect', 'אין rows בתגובה'); return }
       const PLAN_IDX: Record<string, number> = { User_Trial: 2, User_Monthly: 4, User_Annual: 5, User_One_Time: 6 }
       const map: Record<string, { price: string; months: string }> = {}
       Object.entries(PLAN_IDX).forEach(([planKey, idx]) => {
         const row = d.data.rows[idx]
         if (row) map[planKey] = { price: row.price ?? '', months: row.months ?? '' }
       })
+      onDbg('scheduleEffect', `טעון — ${Object.keys(map).join(', ')}`)
       setScheduleData(map)
-    }).catch(() => {})
+    }).catch(e => onDbg('scheduleEffect', `שגיאה: ${String(e)}`))
   }, [])
 
   useEffect(() => {
     if (!planView) return
+    onDbg('exchangeEffect', 'טוען שערי חליפין')
     fetch('/api/exchange-rates').then(r => r.json()).then(d => {
-      if (d.rates) setExchangeRates(d.rates)
-    }).catch(() => {})
+      if (d.rates) { setExchangeRates(d.rates); onDbg('exchangeEffect', `טעון — ${Object.keys(d.rates).join(', ')}`) }
+    }).catch(e => onDbg('exchangeEffect', `שגיאה: ${String(e)}`))
   }, [planView])
 
   const fmtDate = (d: Date) => d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -1101,14 +1106,15 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
       endDate.setMonth(endDate.getMonth() + months)
       planEnd = endDate.toISOString().slice(0, 10)
     }
-    onDbg('selectPlan', `key=${key} value="${value}" userId=${user.id} planStart=${planStart} planEnd=${planEnd}`)
+    onDbg('selectPlan', `key=${key} value="${value}" userId=${user.id} months=${months} planStart=${planStart} planEnd=${planEnd ?? 'null'}`)
     setUpdating(true)
     try {
       const res  = await fetch('/api/update-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, licenseType: value, planStart, planEnd }) })
       const data = await res.json()
-      onDbg('selectPlan', `res.status=${res.status} res.ok=${res.ok}`)
-      if (res.ok && data.user) { onUserUpdate(data.user); setUpdating(false); return true }
-    } catch (err) { onDbg('selectPlan', `failed err="${String(err)}"`) }
+      onDbg('selectPlan', `תגובה status=${res.status} ok=${res.ok} license=${data.user?.license_type ?? 'none'}`)
+      if (res.ok && data.user) { onDbg('selectPlan', 'onUserUpdate נקרא'); onUserUpdate(data.user); setUpdating(false); return true }
+      onDbg('selectPlan', `כשל — data=${JSON.stringify(data)}`)
+    } catch (err) { onDbg('selectPlan', `שגיאה: ${String(err)}`) }
     setUpdating(false)
     return false
   }
@@ -1121,6 +1127,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   const isFreeRun      = user.M_Finance_license_type === LICENSE_TYPES.System_Free_Run
   const isFreePlan     = FREE_PLANS.includes(user.M_Finance_license_type)
   const isSystemForced = !!user.system_force && user.system_force !== 'User' && user.system_force !== 'System_Owner'
+  onDbg('PersonalPage', `render — license=${user.M_Finance_license_type} system_force=${user.system_force ?? 'null'} isOwner=${isOwner} isFreeRun=${isFreeRun} isSystemForced=${isSystemForced} → כפתור ${isFreeRun || isSystemForced ? 'חסום' : 'פתוח'}`)
 
   const personalFields = [
     { label: p.fullName,  value: [user.name, user.last_name].filter(Boolean).join(' ') || '—' },
@@ -1196,7 +1203,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
-              onClick={async () => { if (selKey && await selectPlan(selKey)) setPlanView(false) }}
+              onClick={async () => { onDbg('אישור תכנית', `selKey=${selKey ?? 'null'}`); if (selKey && await selectPlan(selKey)) { onDbg('אישור תכנית', 'הצליח — סוגר planView'); setPlanView(false) } }}
               disabled={!selKey || updating}
               style={{ background: '#003399', border: 'none', borderRadius: '7px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', padding: '7px 20px', cursor: selKey && !updating ? 'pointer' : 'default', opacity: selKey && !updating ? 1 : 0.5 }}>
               {updating ? '...' : lang.card.update}
@@ -1249,8 +1256,10 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
                 <td style={{ padding: '8px 10px', border: '1px solid #ccd', whiteSpace: 'nowrap' }}>
                   <button
                     onClick={() => {
-                      if (isFreeRun || isSystemForced) return
+                      onDbg('שינוי', `לחיצה — isFreeRun=${isFreeRun} isSystemForced=${isSystemForced}`)
+                      if (isFreeRun || isSystemForced) { onDbg('שינוי', 'חסום — יציאה'); return }
                       const cur = CHANGE_PLAN_OPTIONS.find(o => LICENSE_TYPES[o.key] === user.M_Finance_license_type)?.key ?? null
+                      onDbg('שינוי', `פותח planView selKey=${cur ?? 'null'}`)
                       setSelKey(cur)
                       setPlanView(true)
                     }}
