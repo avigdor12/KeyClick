@@ -1125,7 +1125,10 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   const isFreeRun      = user.M_Finance_license_type === LICENSE_TYPES.System_Free_Run
   const isFreePlan     = FREE_PLANS.includes(user.M_Finance_license_type)
   const isSystemForced = !!user.system_force && user.system_force !== 'User' && user.system_force !== 'System_Owner'
-  onDbg('PersonalPage', `render — license=${user.M_Finance_license_type} system_force=${user.system_force ?? 'null'} isOwner=${isOwner} isFreeRun=${isFreeRun} isSystemForced=${isSystemForced} → כפתור ${isFreeRun || isSystemForced ? 'חסום' : 'פתוח'}`)
+
+  useEffect(() => {
+    onDbg('PersonalPage', `user updated — license=${user.M_Finance_license_type} system_force=${user.system_force ?? 'null'} isOwner=${isOwner} isFreeRun=${isFreeRun} isSystemForced=${isSystemForced} → כפתור ${isFreeRun || isSystemForced ? 'חסום' : 'פתוח'}`)
+  }, [user.M_Finance_license_type, user.system_force])
 
   const personalFields = [
     { label: p.fullName,  value: [user.name, user.last_name].filter(Boolean).join(' ') || '—' },
