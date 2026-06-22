@@ -630,8 +630,9 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
 
 {view === 'users' && (
           <div>
+            <div style={{ width: 'fit-content' }}>
             <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>Users</div>
-            <div style={{ border: '2px solid #003399', borderRadius: 3, width: 'fit-content' }}>
+            <div style={{ border: '2px solid #003399', borderRadius: 3 }}>
               <table style={{ borderCollapse: 'collapse', fontSize: 13, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
@@ -668,6 +669,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                   })}
                 </tbody>
               </table>
+            </div>
             </div>
           </div>
         )}
