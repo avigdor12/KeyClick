@@ -688,7 +688,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                 </tbody>
               </table>
             </div>
-            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
               <button
                 onClick={async () => {
                   await Promise.all(Object.entries(pendingForce).map(([userId, systemForce]) =>
@@ -697,7 +697,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                   setPendingForce({})
                 }}
                 disabled={Object.keys(pendingForce).length === 0}
-                style={{ background: Object.keys(pendingForce).length > 0 ? '#003399' : '#aaa', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold' }}>
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold', opacity: Object.keys(pendingForce).length > 0 ? 1 : 0.4 }}>
                 עדכון
               </button>
             </div>
