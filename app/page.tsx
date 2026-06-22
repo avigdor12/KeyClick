@@ -408,18 +408,35 @@ export default function Home() {
   )
 }
 
+const SCHEDULE_SUBJECTS = ['יום ה-X ההפצה', 'תקופת הרצה', 'תקופת ניסיון', 'VIP', 'חודשי', 'שנתי', 'חד פעמי'] as const
+function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}` }
+type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
+
 function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule'>('none')
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
+  const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(
+    SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' }))
+  )
+  const [colWidths, setColWidths] = useState<number[]>([140, 62, 62, 80, 80, 180])
+  const [rowHeights, setRowHeights] = useState<number[]>(Array(SCHEDULE_SUBJECTS.length).fill(26))
+  const colResizeRef = useRef<{ col: number; startX: number; startWidth: number } | null>(null)
+  const rowResizeRef = useRef<{ row: number; startY: number; startHeight: number } | null>(null)
+  const dateRefs = useRef<(HTMLInputElement | null)[]>(Array(SCHEDULE_SUBJECTS.length * 2).fill(null))
 
   useEffect(() => {
     if (view === 'users') {
       fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
     }
-  }, [user?.language])
+    if (view === 'schedule') {
+      fetch('/api/system/schedule').then(r => r.json()).then(d => {
+        if (d.data?.rows) setScheduleRows(d.data.rows)
+      }).catch(() => {})
+    }
+  }, [view])
 
   function handleDb() {
     if (view === 'db') { setView('none'); return }
@@ -520,6 +537,57 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
     }).catch(err => onDbg('handleUsers', `failed err="${String(err)}"`))
   }
 
+  function updateScheduleRow(i: number, field: keyof ScheduleRow, value: string) {
+    setScheduleRows(prev => prev.map((r, idx) => idx === i ? { ...r, [field]: value } : r))
+  }
+
+  function handleSchedule() {
+    if (view === 'schedule') { setView('none'); return }
+    setView('schedule')
+  }
+
+  function handleUpdate() {
+    const updated = scheduleRows.map(row => {
+      if (row.months && row.fromDate) {
+        const from = new Date(row.fromDate)
+        from.setMonth(from.getMonth() + parseInt(row.months))
+        return { ...row, toDate: from.toISOString().slice(0, 10) }
+      }
+      return row
+    })
+    setScheduleRows(updated)
+    fetch('/api/system/schedule', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows: updated }) }).catch(() => {})
+  }
+
+  function onRowResizeDown(rowIdx: number, e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    rowResizeRef.current = { row: rowIdx, startY: e.clientY, startHeight: rowHeights[rowIdx] }
+    function onMove(ev: MouseEvent) {
+      if (!rowResizeRef.current) return
+      const newH = Math.max(20, rowResizeRef.current.startHeight + ev.clientY - rowResizeRef.current.startY)
+      setRowHeights(prev => prev.map((h, i) => i === rowResizeRef.current!.row ? newH : h))
+    }
+    function onUp() { rowResizeRef.current = null; window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }
+
+  function onColResizeDown(colIdx: number, e: React.MouseEvent, fromRight = false) {
+    e.preventDefault()
+    e.stopPropagation()
+    colResizeRef.current = { col: colIdx, startX: e.clientX, startWidth: colWidths[colIdx] }
+    function onMove(ev: MouseEvent) {
+      if (!colResizeRef.current) return
+      const delta = ev.clientX - colResizeRef.current.startX
+      const newW = Math.max(24, colResizeRef.current.startWidth + (fromRight ? delta : -delta))
+      setColWidths(prev => prev.map((w, i) => i === colResizeRef.current!.col ? newW : w))
+    }
+    function onUp() { colResizeRef.current = null; window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }
+
   const sysBtn: React.CSSProperties = {
     background: '#003399', border: 'none', borderRadius: '6px',
     color: '#FFD700', padding: '8px 12px', cursor: 'pointer',
@@ -586,6 +654,79 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
             })}
           </div>
         )}
+
+        {view === 'schedule' && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ width: 'fit-content', minWidth: 500 }}>
+                            <div style={{ marginBottom: 6, display: 'flex', gap: 8, justifyContent: 'flex-end', alignItems: 'baseline' }}>
+                <span style={{ fontSize: 16, color: '#003399' }}>M Finance</span>
+                <span style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 20, color: '#003399', fontWeight: 'bold' }}>ניהול תקציב בית</span>
+              </div>
+              <div style={{ border: '2px solid #003399', borderRadius: 3 }}>
+                <table style={{ borderCollapse: 'collapse', fontSize: 14, direction: 'rtl', tableLayout: 'fixed', width: colWidths.reduce((a, b) => a + b, 0) }}>
+                  <colgroup>
+                    {colWidths.map((w, i) => <col key={i} style={{ width: w }} />)}
+                  </colgroup>
+                  <thead>
+                    <tr style={{ background: '#e8eaf6' }}>
+                      {(['נושא','מחיר\n[$]','תקופה\n[ח׳]','מ-','עד-','הערות'] as const).map((label, ci) => (
+                        <th key={ci} style={{ position: 'relative', padding: '4px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', lineHeight: 1.2, whiteSpace: 'pre', overflow: 'hidden' }}>
+                          {label}
+                          <div onMouseDown={e => onColResizeDown(ci, e, false)} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 4, cursor: 'col-resize' }} />
+                          <div onMouseDown={e => onColResizeDown(ci, e, true)} style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 4, cursor: 'col-resize' }} />
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SCHEDULE_SUBJECTS.map((subject, i) => (
+                      <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#f5f5fc', height: rowHeights[i] }}>
+                        <td style={{ position: 'relative', padding: '3px 5px', border: '1px solid #c8cce0', fontWeight: 'bold', color: '#1a1a1a', whiteSpace: 'nowrap' }}>
+                          {subject}
+                          <div onMouseDown={e => onRowResizeDown(i, e)} style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, cursor: 'row-resize' }} />
+                        </td>
+                        <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                          <input type="text" value={scheduleRows[i].price}
+                            onChange={e => updateScheduleRow(i, 'price', e.target.value)}
+                            style={{ width: '100%', padding: '2px 3px', border: 'none', outline: 'none', fontSize: 14, textAlign: 'center', background: 'transparent', boxSizing: 'border-box' }} />
+                        </td>
+                        <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                          <input type="text" value={scheduleRows[i].months}
+                            onChange={e => updateScheduleRow(i, 'months', e.target.value)}
+                            style={{ width: '100%', padding: '2px 3px', border: 'none', outline: 'none', fontSize: 14, textAlign: 'center', background: 'transparent', boxSizing: 'border-box' }} />
+                        </td>
+                        {(['fromDate', 'toDate'] as const).map((field, fi) => (
+                          <td key={field} onClick={() => dateRefs.current[i * 2 + fi]?.showPicker()}
+                            style={{ padding: '1px 2px', border: '1px solid #c8cce0', textAlign: 'center', cursor: 'pointer' }}>
+                            <input type="date" ref={el => { dateRefs.current[i * 2 + fi] = el }}
+                              value={scheduleRows[i][field]}
+                              onChange={e => updateScheduleRow(i, field, e.target.value)}
+                              style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 1, height: 1 }} />
+                            <span style={{ fontSize: 12, pointerEvents: 'none' }}>
+                              {scheduleRows[i][field] ? fmtDate(scheduleRows[i][field]) : ''}
+                            </span>
+                          </td>
+                        ))}
+                        <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                          <textarea value={scheduleRows[i].notes}
+                            onChange={e => updateScheduleRow(i, 'notes', e.target.value)}
+                            rows={1}
+                            style={{ width: '100%', padding: '2px 3px', border: 'none', outline: 'none', fontSize: 14, resize: 'none', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box', background: 'transparent', overflow: 'hidden' }} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 8, justifyContent: 'flex-start', direction: 'rtl' }}>
+                <button onClick={() => setScheduleRows(SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' })))}
+                  style={{ background: '#888', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 16px', fontSize: 13, cursor: 'pointer', fontWeight: 'bold' }}>איפוס</button>
+                <button onClick={handleUpdate}
+                  style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: 'pointer', fontWeight: 'bold' }}>עידכון</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Right sidebar */}
@@ -607,6 +748,9 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
           <button style={sysBtn} onClick={handleBuild}
             onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
             onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>הודעות בניית מערכת</button>
+          <button style={sysBtn} onClick={handleSchedule}
+            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>לו"ז ומחירון</button>
         </div>
       </aside>
 
