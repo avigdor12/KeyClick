@@ -1109,7 +1109,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   const personalFields = [
     { label: p.fullName,  value: [user.name, user.last_name].filter(Boolean).join(' ') || '—' },
     { label: p.email,     value: user.email    || '—' },
-    { label: p.ip,        value: user.last_ip  || '—' },
+    { label: p.ip,        value: (() => { if (!user.last_ip) return '—'; const hex = user.last_ip.split('.').length === 4 ? '(' + user.last_ip.split('.').map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') + ')' : ''; return hex ? `${user.last_ip} ${hex}` : user.last_ip })() },
     { label: p.language,  value: languages.find(l => l.code === user.language)?.name ?? user.language ?? '—' },
   ]
 
