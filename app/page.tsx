@@ -691,11 +691,27 @@ function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate }: { user: UserReco
             <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
               <button
                 onClick={async () => {
-                  await Promise.all(Object.entries(pendingForce).map(([userId, systemForce]) =>
-                    fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) }).catch(() => {})
-                  ))
+                  const entries = Object.entries(pendingForce)
+                  onDbg('עדכון', `לחיצה — ${entries.length} שינויים: ${entries.map(([id, f]) => `user${id}→${f}`).join(', ')}`)
+                  await Promise.all(entries.map(async ([userId, systemForce]) => {
+                    onDbg('עדכון', `שולח force-plan userId=${userId} systemForce=${systemForce}`)
+                    try {
+                      const res = await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) })
+                      const data = await res.json()
+                      onDbg('עדכון', `force-plan תגובה userId=${userId} ok=${data.ok ?? false} error=${data.error ?? 'none'}`)
+                    } catch (e) {
+                      onDbg('עדכון', `force-plan שגיאה userId=${userId} err=${String(e)}`)
+                    }
+                  }))
                   setPendingForce({})
-                  fetch('/api/current-user').then(r => r.json()).then(d => { if (d.user) onUserUpdate(d.user) }).catch(() => {})
+                  onDbg('עדכון', 'שולח current-user לרענון state')
+                  fetch('/api/current-user')
+                    .then(r => r.json())
+                    .then(d => {
+                      onDbg('עדכון', `current-user תגובה id=${d.user?.id ?? 'none'} license=${d.user?.M_Finance_license_type ?? 'none'} system_force=${d.user?.system_force ?? 'none'}`)
+                      if (d.user) { onUserUpdate(d.user); onDbg('עדכון', 'onUserUpdate נקרא — state מעודכן') }
+                    })
+                    .catch(e => onDbg('עדכון', `current-user שגיאה err=${String(e)}`))
                 }}
                 disabled={Object.keys(pendingForce).length === 0}
                 style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold', opacity: Object.keys(pendingForce).length > 0 ? 1 : 0.4 }}>
