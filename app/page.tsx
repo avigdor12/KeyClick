@@ -418,6 +418,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
+  const [pendingForce, setPendingForce] = useState<Record<string, string>>({})
   const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(
     SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' }))
   )
@@ -668,9 +669,9 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                         <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                           <select
                             value={String(u.system_force ?? 'User')}
-                            onChange={async e => {
+                            onChange={e => {
                               const systemForce = e.target.value
-                              await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: u.id, systemForce }) }).catch(() => {})
+                              setPendingForce(prev => ({ ...prev, [String(u.id)]: systemForce }))
                               setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, system_force: systemForce === 'User' ? null : systemForce } : usr))
                             }}
                             style={{ fontSize: 12, border: '1px solid #a0a8c0', borderRadius: 3, padding: '1px 2px', background: u.system_force && u.system_force !== 'User' ? '#fff3e0' : '#fff', cursor: 'pointer' }}
@@ -686,6 +687,19 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                   })}
                 </tbody>
               </table>
+            </div>
+            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-start' }}>
+              <button
+                onClick={async () => {
+                  await Promise.all(Object.entries(pendingForce).map(([userId, systemForce]) =>
+                    fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) }).catch(() => {})
+                  ))
+                  setPendingForce({})
+                }}
+                disabled={Object.keys(pendingForce).length === 0}
+                style={{ background: Object.keys(pendingForce).length > 0 ? '#003399' : '#aaa', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold' }}>
+                עדכון
+              </button>
             </div>
             </div>
           </div>
