@@ -412,7 +412,7 @@ const SCHEDULE_SUBJECTS = ['יום ה-X ההפצה', 'תקופת הרצה', 'ת�
 function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}` }
 type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
 
-function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void }) {
+function SystemPage({ user, onOpenDebug, onDbg, onUserUpdate }: { user: UserRecord | null; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule'>('none')
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
@@ -695,6 +695,7 @@ function SystemPage({ user, onOpenDebug, onDbg }: { user: UserRecord | null; onO
                     fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) }).catch(() => {})
                   ))
                   setPendingForce({})
+                  fetch('/api/current-user').then(r => r.json()).then(d => { if (d.user) onUserUpdate(d.user) }).catch(() => {})
                 }}
                 disabled={Object.keys(pendingForce).length === 0}
                 style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold', opacity: Object.keys(pendingForce).length > 0 ? 1 : 0.4 }}>
@@ -834,7 +835,7 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 function PageContent({ page, lang, clientIp, user, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; clientIp: string; user: UserRecord | null; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'system')      return <SystemPage user={user} onOpenDebug={onOpenDebug} onDbg={onDbg} />
+  if (page === 'system')      return <SystemPage user={user} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
