@@ -939,6 +939,12 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; systemMessage: string; onDbg: (func: string, msg: string) => void }) {
   const [ratingSite,   setRatingSite]   = useState<number | null>(null)
   const [ratingBudget, setRatingBudget] = useState<number | null>(null)
+  const [userDate,  setUserDate]  = useState('')
+  const [userTitle, setUserTitle] = useState('')
+  const [userFrom,  setUserFrom]  = useState('')
+  const [userText,  setUserText]  = useState('')
+  const [replyDate, setReplyDate] = useState('')
+  const [replyText, setReplyText] = useState('')
   const isRTL = lang.code === 'he' || lang.code === 'ar'
   const dir = isRTL ? 'rtl' as const : 'ltr' as const
   const fb = lang.feedback
@@ -967,7 +973,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         {/* System Message */}
         <div style={{ position: 'relative', marginTop: '28px', direction: dir }}>
           <span style={{ position: 'absolute', top: '-10px', ...side16, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemMessage}</span>
-          <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '115px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '135px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{systemMessage}</div>
             <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
               {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
@@ -997,22 +1003,22 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
             <span style={{ position: 'absolute', top: '-10px', ...side12, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.userMessage}</span>
             <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
               <div style={{ display: 'flex', gap: '24px', fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px' }}>
-                <span>{fb.date} <span style={{ borderBottom: '1px solid #333', minWidth: '80px', display: 'inline-block' }}>&nbsp;</span></span>
-                <span>{fb.title} <span style={{ borderBottom: '1px solid #333', minWidth: '200px', display: 'inline-block' }}>&nbsp;</span></span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>{fb.date} <input value={userDate} onChange={e => setUserDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: dir }} /></span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>{fb.title} <input value={userTitle} onChange={e => setUserTitle(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '220px', direction: dir }} /></span>
               </div>
-              <textarea style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir }} />
-              <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
-                {fb.from} <span style={{ borderBottom: '1px solid #333', minWidth: '160px', display: 'inline-block' }}>&nbsp;</span>
+              <textarea value={userText} onChange={e => setUserText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir, minHeight: '80px' }} />
+              <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                {fb.from} <input value={userFrom} onChange={e => setUserFrom(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '180px', direction: dir }} />
               </div>
             </div>
           </div>
           <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <span style={{ position: 'absolute', top: '-10px', ...side12, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
             <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
-              <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px' }}>
-                {fb.date} <span style={{ borderBottom: '1px solid #333', minWidth: '80px', display: 'inline-block' }}>&nbsp;</span>
+              <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                {fb.date} <input value={replyDate} onChange={e => setReplyDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: dir }} />
               </div>
-              <textarea style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: 'transparent' }} />
+              <textarea value={replyText} onChange={e => setReplyText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: 'transparent', minHeight: '80px' }} />
               <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px', direction: dir }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
               </div>
