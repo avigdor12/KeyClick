@@ -453,14 +453,8 @@ type ScheduleRow = { price: string; months: string; fromDate: string; toDate: st
 type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr'>('none')
   const [prSaved, setPrSaved] = useState(false)
-  const [messages, setMessages] = useState<FeedbackMessage[]>([])
-  const [selectedMsg, setSelectedMsg] = useState<FeedbackMessage | null>(null)
-  const [adminReply, setAdminReply] = useState('')
-  const [adminReplyDate, setAdminReplyDate] = useState('')
-  const [replySaved, setReplySaved] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
@@ -578,36 +572,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     win.document.close()
   }
 
-  function handleMessages() {
-    if (view === 'messages') { setView('none'); setSelectedMsg(null); return }
-    setView('messages')
-    onDbg('handleMessages', 'fetch GET /api/feedback')
-    fetch('/api/feedback')
-      .then(r => r.json())
-      .then(d => {
-        const msgs: FeedbackMessage[] = d.messages ?? []
-        setMessages(msgs)
-        setUnreadCount(msgs.filter(m => !m.is_read).length)
-        onDbg('handleMessages', `count=${msgs.length}`)
-      })
-      .catch(err => onDbg('handleMessages', `error: ${String(err)}`))
-  }
-
-  async function handleSendReply() {
-    if (!selectedMsg) return
-    onDbg('handleSendReply', `id=${selectedMsg.id}`)
-    await fetch('/api/feedback', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: selectedMsg.id, replyText: adminReply, replyDate: adminReplyDate })
-    }).catch(err => onDbg('handleSendReply', `error: ${String(err)}`))
-    setMessages(prev => prev.map(m => m.id === selectedMsg.id ? { ...m, reply_text: adminReply, reply_date: adminReplyDate } : m))
-    setSelectedMsg(prev => prev ? { ...prev, reply_text: adminReply, reply_date: adminReplyDate } : prev)
-    setReplySaved(true)
-    setTimeout(() => setReplySaved(false), 2500)
-    onDbg('handleSendReply', 'done')
-  }
-
   function handleUsers() {
     if (view === 'users') { setView('none'); return }
     setView('users')
@@ -708,78 +672,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               }} style={{ fontSize: '11px', padding: '2px 10px', background: prSaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{prSaved ? '✓ ' + lang.system.saved : lang.card.update}</button>
               <button onClick={() => { setPrText(''); onSetSystemMessage('') }} style={{ fontSize: '11px', padding: '2px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.reset}</button>
             </div>
-          </div>
-        )}
-
-        {view === 'messages' && (
-          <div style={{ direction: 'rtl' }}>
-            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>{lang.system.messages}</div>
-            {messages.length === 0 ? (
-              <div style={{ color: '#888', textAlign: 'center', marginTop: 40, fontSize: 15 }}>{lang.system.noMessages}</div>
-            ) : (
-              <table style={{ borderCollapse: 'collapse', fontSize: 13, width: '100%' }}>
-                <thead>
-                  <tr style={{ background: '#e8eaf6' }}>
-                    {['ID', lang.feedback.date, lang.system.colName, lang.feedback.title, lang.feedback.ratingWebsite, lang.feedback.ratingBudget, '✓'].map(h => (
-                      <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', whiteSpace: 'nowrap' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {messages.map(msg => (
-                    <React.Fragment key={msg.id}>
-                      <tr
-                        onClick={() => {
-                          if (selectedMsg?.id === msg.id) { setSelectedMsg(null); setAdminReply(''); setAdminReplyDate(''); return }
-                          setSelectedMsg(msg)
-                          setAdminReply(msg.reply_text || '')
-                          setAdminReplyDate(msg.reply_date || '')
-                          if (!msg.is_read) {
-                            fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id, isRead: true }) }).catch(() => {})
-                            setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, is_read: true } : m))
-                            setUnreadCount(prev => Math.max(0, prev - 1))
-                          }
-                        }}
-                        style={{ cursor: 'pointer', fontWeight: msg.is_read ? 'normal' : 'bold', background: selectedMsg?.id === msg.id ? '#dde8ff' : 'inherit' }}
-                      >
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{msg.id}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center', whiteSpace: 'nowrap' }}>{msg.sent_date || msg.created_at?.slice(0, 10)}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{msg.user_name || '—'}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{msg.title || '—'}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{msg.rating_site ?? '—'}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{msg.rating_budget ?? '—'}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center', color: msg.reply_text ? '#006600' : '#999' }}>{msg.reply_text ? '✓' : '○'}</td>
-                      </tr>
-                      {selectedMsg?.id === msg.id && (
-                        <tr>
-                          <td colSpan={7} style={{ padding: 0, border: '1px solid #c8cce0' }}>
-                            <div style={{ padding: '14px 16px', background: '#f8f9ff', direction: 'rtl' }}>
-                              <div style={{ fontSize: 13, color: '#222', whiteSpace: 'pre-wrap', marginBottom: 10, padding: '8px 12px', background: '#fff', border: '1px solid #ccc', borderRadius: 6, minHeight: 40 }}>{msg.body || '—'}</div>
-                              <div style={{ borderTop: '1px solid #ddd', paddingTop: 10 }}>
-                                <div style={{ fontSize: 13, fontWeight: 'bold', color: '#003399', marginBottom: 6 }}>{lang.system.reply}:</div>
-                                <textarea
-                                  value={adminReply}
-                                  onChange={e => setAdminReply(e.target.value)}
-                                  style={{ width: '100%', minHeight: 60, border: '1px solid #999', borderRadius: 4, padding: '6px 8px', fontSize: 13, fontFamily: 'Arial, sans-serif', boxSizing: 'border-box', direction: 'rtl', resize: 'vertical' }}
-                                />
-                                <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6, justifyContent: 'flex-end' }}>
-                                  <input type="date" value={adminReplyDate} onChange={e => setAdminReplyDate(e.target.value)}
-                                    style={{ border: 'none', borderBottom: '1px solid #999', fontSize: 13, outline: 'none', background: 'transparent', color: '#333' }} />
-                                  <button onClick={handleSendReply}
-                                    style={{ fontSize: 12, padding: '3px 12px', background: replySaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold' }}>
-                                    {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' ' + lang.system.reply}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            )}
           </div>
         )}
 
@@ -985,23 +877,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         <div style={{ background: '#444', padding: '8px 4px 6px', textAlign: 'center', borderBottom: '2px solid #333', width: '100%' }}>
           <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '22px', color: '#FFD700', fontWeight: 'bold', textShadow: '1px 1px 3px #000' }}>KeyClick</div>
           <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', letterSpacing: 1, textShadow: '1px 1px 2px #000' }}>{lang.system.systemLabel}</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '3px', marginTop: '6px' }}>
-            {languages.map((l, i) => (
-              <button key={l.code} onClick={() => onChangeLang(i)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '1px' }}>
-                <Image src={`/flags/${l.code}${langIdx === i ? '1' : ''}.png`} alt={l.flag} width={22} height={22}
-                  style={{ borderRadius: '50%', border: langIdx === i ? '2px solid #FFD700' : '2px solid transparent', display: 'block' }} />
-              </button>
-            ))}
-          </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px 8px' }}>
-          <button style={{ ...sysBtn, position: 'relative' }} onClick={handleMessages}
-            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>
-            {lang.system.messages}
-            {unreadCount > 0 && <span style={{ position: 'absolute', top: -4, right: -4, background: '#cc0000', color: '#fff', borderRadius: '50%', fontSize: '10px', minWidth: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>{unreadCount}</span>}
-          </button>
           <button style={sysBtn} onClick={onOpenDebug}
             onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
             onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>Debug</button>
@@ -1189,8 +1066,110 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   )
 }
 
+function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
+  const isAdmin = user?.M_Finance_license_type === LICENSE_TYPES.System_Owner
+  const [msgs, setMsgs] = useState<FeedbackMessage[]>([])
+  const [selected, setSelected] = useState<FeedbackMessage | null>(null)
+  const [adminReply, setAdminReply] = useState('')
+  const [adminReplyDate, setAdminReplyDate] = useState('')
+  const [replySaved, setReplySaved] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const isRTL = lang.code === 'he' || lang.code === 'ar'
+  const dir = isRTL ? 'rtl' as const : 'ltr' as const
+
+  useEffect(() => {
+    if (!user) { setLoading(false); return }
+    const url = isAdmin ? '/api/feedback' : `/api/feedback?userId=${user.id}`
+    onDbg('MessagesPage', `fetch GET ${url}`)
+    fetch(url).then(r => r.json()).then(d => {
+      setMsgs(d.messages ?? [])
+      setLoading(false)
+      onDbg('MessagesPage', `loaded ${d.messages?.length ?? 0}`)
+    }).catch(e => { onDbg('MessagesPage', `error: ${String(e)}`); setLoading(false) })
+  }, [user?.id])
+
+  async function handleSendReply() {
+    if (!selected) return
+    await fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: selected.id, replyText: adminReply, replyDate: adminReplyDate }) }).catch(() => {})
+    setMsgs(prev => prev.map(m => m.id === selected.id ? { ...m, reply_text: adminReply, reply_date: adminReplyDate } : m))
+    setSelected(prev => prev ? { ...prev, reply_text: adminReply, reply_date: adminReplyDate } : prev)
+    setReplySaved(true)
+    setTimeout(() => setReplySaved(false), 2500)
+  }
+
+  if (!user) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      <div style={{ color: '#555', fontSize: 16 }}>{lang.profile.loginRequired}</div>
+    </div>
+  )
+
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      <div style={{ color: '#555' }}>{lang.system.loading}</div>
+    </div>
+  )
+
+  return (
+    <div style={{ width: '100%', height: '100%', background: '#f5f5f5', overflow: 'auto', padding: '20px', boxSizing: 'border-box', direction: dir }}>
+      <div style={{ maxWidth: '860px', margin: '0 auto' }}>
+        <div style={{ fontSize: 20, fontWeight: 'bold', color: '#003399', marginBottom: 16 }}>{lang.menu[2]}</div>
+        {msgs.length === 0 ? (
+          <div style={{ color: '#888', textAlign: 'center', marginTop: 60, fontSize: 15 }}>{lang.system.noMessages}</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {msgs.map(msg => (
+              <div key={msg.id}>
+                <div onClick={() => {
+                  if (selected?.id === msg.id) { setSelected(null); return }
+                  setSelected(msg)
+                  setAdminReply(msg.reply_text || '')
+                  setAdminReplyDate(msg.reply_date || '')
+                  if (!msg.is_read && isAdmin) {
+                    fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id, isRead: true }) }).catch(() => {})
+                    setMsgs(prev => prev.map(m => m.id === msg.id ? { ...m, is_read: true } : m))
+                  }
+                }} style={{ background: selected?.id === msg.id ? '#dde8ff' : '#fff', border: '1px solid ' + (selected?.id === msg.id ? '#003399' : '#ddd'), borderRadius: selected?.id === msg.id ? '8px 8px 0 0' : 8, padding: '10px 14px', cursor: 'pointer', fontWeight: !msg.is_read && isAdmin ? 'bold' : 'normal', display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <span style={{ color: '#003399', fontSize: 13, whiteSpace: 'nowrap' }}>{msg.sent_date || msg.created_at?.slice(0, 10)}</span>
+                  {isAdmin && <span style={{ color: '#666', fontSize: 13, whiteSpace: 'nowrap' }}>{msg.user_name || '—'}</span>}
+                  <span style={{ flex: 1, fontSize: 13 }}>{msg.title || '—'}</span>
+                  <span style={{ fontSize: 13, color: msg.reply_text ? '#006600' : '#bbb' }}>{msg.reply_text ? '✓' : '○'}</span>
+                </div>
+                {selected?.id === msg.id && (
+                  <div style={{ background: '#f8f9ff', border: '1px solid #003399', borderTop: 'none', borderRadius: '0 0 8px 8px', padding: '14px 16px' }}>
+                    <div style={{ fontSize: 13, color: '#222', whiteSpace: 'pre-wrap', padding: '8px 10px', background: '#fff', border: '1px solid #ddd', borderRadius: 6, marginBottom: 12, minHeight: 36 }}>{msg.body || '—'}</div>
+                    {isAdmin ? (
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 'bold', color: '#003399', marginBottom: 6 }}>{lang.system.reply}:</div>
+                        <textarea value={adminReply} onChange={e => setAdminReply(e.target.value)} style={{ width: '100%', minHeight: 60, border: '1px solid #999', borderRadius: 4, padding: '6px 8px', fontSize: 13, boxSizing: 'border-box', direction: dir, resize: 'vertical', fontFamily: 'Arial, sans-serif' }} />
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6, justifyContent: 'flex-end' }}>
+                          <input type="date" value={adminReplyDate} onChange={e => setAdminReplyDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #999', fontSize: 13, outline: 'none', background: 'transparent' }} />
+                          <button onClick={handleSendReply} style={{ fontSize: 12, padding: '3px 14px', background: replySaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold' }}>
+                            {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' ' + lang.system.reply}
+                          </button>
+                        </div>
+                      </div>
+                    ) : msg.reply_text ? (
+                      <div style={{ background: '#f0f4ff', border: '1px solid #b0c0e8', borderRadius: 6, padding: '8px 12px', fontSize: 13, color: '#222', whiteSpace: 'pre-wrap' }}>
+                        {msg.reply_date && <div style={{ fontSize: 11, color: '#666', marginBottom: 4 }}>{msg.reply_date}</div>}
+                        {msg.reply_text}
+                      </div>
+                    ) : (
+                      <div style={{ color: '#bbb', fontSize: 13, textAlign: 'center', padding: '6px 0' }}>—</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
+  if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} />
