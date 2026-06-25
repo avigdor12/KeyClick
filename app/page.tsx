@@ -1290,7 +1290,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
 
       <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '8px' }}>
-          <button onClick={() => { setExpandedMsgId(null); setUserDate(''); setUserTitle(''); setUserFrom(''); setUserText(''); setRatingSite(null); setRatingBudget(null); setValidationErrors({}); setRefNum('') }}
+          <button onClick={() => { setExpandedMsgId(null); setSelectedMsgId(null); setUserDate(''); setUserTitle(''); setUserFrom(''); setUserText(''); setReplyDate(''); setReplyText(''); setHasReply(false); setRatingSite(null); setRatingBudget(null); setValidationErrors({}); setRefNum('') }}
             style={{ fontSize: '13px', padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ הודעה חדשה</button>
         </div>
       <div style={{ width: '720px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column' }}>
