@@ -1005,6 +1005,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
           const defMsg = msgs[msgs.length - 1]
           if (defMsg) {
             setSelectedMsgId(defMsg.id)
+            setExpandedMsgId(defMsg.id)
             setReplyText(defMsg.reply_text ?? '')
             setReplyDate(defMsg.reply_date || new Date().toISOString().slice(0, 10))
             setHasReply(!!defMsg.reply_text)
@@ -1029,6 +1030,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
               const def = msgs[msgs.length - 1]
               if (def) {
                 setSelectedMsgId(def.id)
+                setExpandedMsgId(def.id)
                 setReplyText(def.reply_text ?? '')
                 setReplyDate(def.reply_date || new Date().toISOString().slice(0, 10))
                 setHasReply(!!def.reply_text)
@@ -1054,6 +1056,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
           const hasR = !!last?.reply_text
           onDbg('FeedbackPage.poll', `count=${msgs.length} lastId=${last?.id ?? 'null'} hasReply=${hasR}`)
           if (last?.reply_text) {
+            setExpandedMsgId(last.id)
             setReplyText(last.reply_text)
             setReplyDate(last.reply_date || new Date().toISOString().slice(0, 10))
             setHasReply(true)
@@ -1394,21 +1397,23 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
             )}
           </div>
           <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
-            <span style={{ position: 'absolute', top: '-10px', left: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
-            <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#222', display: 'flex', gap: '4px', alignItems: 'baseline' }}>
-              <span>{fb.date}</span>
-              <input type="date" value={replyDate} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyDate(e.target.value) : undefined} className="no-icon" style={{ border: 'none', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '110px', direction: 'ltr', cursor: isAdmin ? 'text' : 'default' }} />
-            </span>
+            <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
             <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflowY: 'auto' }}>
-              {isAdmin && loadedMessages.length > 0 && (
-                <div style={{ fontSize: '11px', color: '#888', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '4px', marginBottom: '4px', flexShrink: 0 }}>
-                  <span style={{ whiteSpace: 'nowrap' }}>מענה לסימוכין</span>
-                  <select value={selectedMsgId ?? ''} onChange={e => handleSelectMsg(Number(e.target.value))}
-                    style={{ border: 'none', outline: 'none', fontSize: '11px', color: '#003399', background: 'transparent', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
-                    {loadedMessages.map(m => <option key={m.id} value={m.id}>{buildMsgRef(m)}</option>)}
-                  </select>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: '13px', color: '#222', flexShrink: 0, marginBottom: '4px' }}>
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'baseline' }}>
+                  <span>{fb.date}</span>
+                  <input type="date" value={replyDate} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyDate(e.target.value) : undefined} className="no-icon" style={{ border: 'none', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '110px', direction: 'ltr', cursor: isAdmin ? 'text' : 'default' }} />
                 </div>
-              )}
+                {isAdmin && loadedMessages.length > 0 && (
+                  <div style={{ fontSize: '11px', color: '#888', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ whiteSpace: 'nowrap' }}>מענה לסימוכין</span>
+                    <select value={selectedMsgId ?? ''} onChange={e => handleSelectMsg(Number(e.target.value))}
+                      style={{ border: 'none', outline: 'none', fontSize: '11px', color: '#003399', background: 'transparent', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
+                      {loadedMessages.map(m => <option key={m.id} value={m.id}>{buildMsgRef(m)}</option>)}
+                    </select>
+                  </div>
+                )}
+              </div>
               <textarea value={replyText} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: !isAdmin ? '#f0f4ff' : 'transparent', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0' }} />
               <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px', direction: dir, flexShrink: 0 }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
