@@ -1335,11 +1335,11 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         {/* Rating */}
         <div style={{ marginTop: '28px', direction: dir, fontFamily: 'Arial, sans-serif' }}>
           <div style={{ fontSize: '15px', fontWeight: 700, color: '#222', marginBottom: '12px' }}>{fb.rating}</div>
-          {([[fb.ratingWebsite, ratingSite, setRatingSite], [fb.ratingBudget, ratingBudget, setRatingBudget]] as [string, number|null, (n:number)=>void][]).map(([label, val, setVal]) => (
+          {([[fb.ratingWebsite, selectedMsg ? selectedMsg.rating_site : ratingSite, setRatingSite], [fb.ratingBudget, selectedMsg ? selectedMsg.rating_budget : ratingBudget, setRatingBudget]] as [string, number|null, (n:number)=>void][]).map(([label, val, setVal]) => (
             <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', marginBottom: '10px', border: '1.5px solid #003399', borderRadius: '6px', padding: '6px 12px' }}>
               <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontWeight: 'bold' }}>{label}</span>
               {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                <div key={n} onClick={() => setVal(n)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', margin: '0 2px' }}>
+                <div key={n} onClick={selectedMsg ? undefined : () => setVal(n)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: selectedMsg ? 'default' : 'pointer', margin: '0 2px' }}>
                   <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2.5px solid #003399', background: val === n ? '#003399' : '#fff', boxShadow: val === n ? '0 0 0 2px #6699ff' : 'none', transition: 'all 0.1s' }} />
                   <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#003399' }}>{n}</span>
                 </div>
@@ -1431,8 +1431,8 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
 function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
   const isAdmin = user?.M_Finance_license_type === LICENSE_TYPES.System_Owner
   const [msgs, setMsgs] = useState<FeedbackMessage[]>([])
-  const [expandedUid, setExpandedUid] = useState<number | null>(null)
-  const [expandedMsgId, setExpandedMsgId] = useState<number | null>(null)
+  const [expandedUids, setExpandedUids] = useState<Set<number>>(new Set())
+  const [selectedMsg, setSelectedMsg] = useState<FeedbackMessage | null>(null)
   const [adminReply, setAdminReply] = useState('')
   const [adminReplyDate, setAdminReplyDate] = useState('')
   const [replySaved, setReplySaved] = useState(false)
@@ -1447,20 +1447,13 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
       if (!map.has(k)) map.set(k, [])
       map.get(k)!.push(m)
     })
-    return Array.from(map.entries()).map(([uid, ms]) => {
-      const sitRates = ms.map(m => m.rating_site).filter((r): r is number => r !== null)
-      const budRates = ms.map(m => m.rating_budget).filter((r): r is number => r !== null)
-      const avg = (arr: number[]) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length * 10) / 10 : null
-      return {
-        uid, msgs: ms,
-        name: ms[0]?.user_name ?? '—',
-        latestDate: ms[ms.length - 1].sent_date ?? ms[ms.length - 1].created_at?.slice(0, 10) ?? '—',
-        latestTitle: ms[ms.length - 1].title ?? '—',
-        avgSite: avg(sitRates), avgBudget: avg(budRates),
-        anyUnread: ms.some(m => !m.is_read),
-        unreadNums: ms.map((m, i) => !m.is_read ? i + 1 : null).filter((n): n is number => n !== null),
-      }
-    })
+    return Array.from(map.entries()).map(([uid, ms]) => ({
+      uid,
+      msgs: ms,
+      name: ms[0]?.user_name ?? '—',
+      lastMsg: ms[ms.length - 1],
+      hasUnread: ms.some(m => !m.is_read),
+    }))
   }, [msgs])
 
   useEffect(() => {
@@ -1476,11 +1469,10 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   }, [user?.id])
 
   function handleSelectMsg(msg: FeedbackMessage) {
-    if (expandedMsgId === msg.id) { setExpandedMsgId(null); onDbg('MessagesPage.selectMsg', `collapse id=${msg.id}`); return }
-    setExpandedMsgId(msg.id)
+    setSelectedMsg(msg)
     setAdminReply(msg.reply_text ?? '')
     setAdminReplyDate(msg.reply_date || new Date().toISOString().slice(0, 10))
-    onDbg('MessagesPage.selectMsg', `expand id=${msg.id} hasReply=${!!msg.reply_text} replyDate=${msg.reply_date ?? 'null'}`)
+    onDbg('MessagesPage.selectMsg', `id=${msg.id} hasReply=${!!msg.reply_text}`)
     if (!msg.is_read && isAdmin) {
       fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id, isRead: true }) }).catch(() => {})
       setMsgs(prev => prev.map(m => m.id === msg.id ? { ...m, is_read: true } : m))
@@ -1488,17 +1480,18 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   }
 
   async function handleSendReply() {
-    if (!expandedMsgId) return
-    onDbg('MessagesPage.sendReply', `PATCH id=${expandedMsgId} replyLen=${adminReply.length} replyDate=${adminReplyDate}`)
+    if (!selectedMsg) return
+    onDbg('MessagesPage.sendReply', `PATCH id=${selectedMsg.id} replyLen=${adminReply.length} replyDate=${adminReplyDate}`)
     let patchOk = false
     try {
-      const res = await fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: expandedMsgId, replyText: adminReply, replyDate: adminReplyDate, isRead: true }) })
+      const res = await fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: selectedMsg.id, replyText: adminReply, replyDate: adminReplyDate, isRead: true }) })
       const data = await res.json()
       patchOk = data.ok === true
       onDbg('MessagesPage.sendReply', `PATCH response ok=${patchOk} status=${res.status} error=${data.error ?? 'none'}`)
     } catch (e) { onDbg('MessagesPage.sendReply', `PATCH error: ${String(e)}`) }
-    setMsgs(prev => prev.map(m => m.id === expandedMsgId ? { ...m, reply_text: adminReply, reply_date: adminReplyDate } : m))
-    onDbg('MessagesPage.sendReply', `state מקומי עודכן id=${expandedMsgId}`)
+    setMsgs(prev => prev.map(m => m.id === selectedMsg.id ? { ...m, reply_text: adminReply, reply_date: adminReplyDate } : m))
+    setSelectedMsg(prev => prev ? { ...prev, reply_text: adminReply, reply_date: adminReplyDate } : null)
+    onDbg('MessagesPage.sendReply', `state מקומי עודכן id=${selectedMsg.id}`)
     setReplySaved(true)
     setTimeout(() => setReplySaved(false), 2500)
   }
@@ -1507,200 +1500,200 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><div style={{ color: '#555' }}>{lang.system.loading}</div></div>
   if (msgs.length === 0) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><div style={{ color: '#888', fontSize: 15 }}>{lang.system.noMessages}</div></div>
 
-  const thS: React.CSSProperties = { padding: '8px 10px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', borderInlineEnd: '1px solid #1144aa', textAlign: 'center' }
-  const tdS: React.CSSProperties = { padding: '7px 10px', fontSize: 13, borderBottom: '1px solid #e0e4f0', whiteSpace: 'nowrap', textAlign: 'center' }
-  const tdMsgS: React.CSSProperties = { ...tdS, background: '#f0f4ff', fontSize: 12 }
+  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 11, whiteSpace: 'nowrap', borderInlineEnd: '1px solid #1144aa', textAlign: 'center' }
+  const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, borderBottom: '1px solid #e0e4f0', whiteSpace: 'nowrap', textAlign: 'center' }
+  const fb = lang.feedback
+
+  const parseMsgBody = (msg: FeedbackMessage) => {
+    const body = msg.body ?? ''
+    const cut = (text: string, sep: string): [string, string] => {
+      const i = text.indexOf(sep)
+      return i === -1 ? [text, ''] : [text.slice(0, i), text.slice(i + sep.length)]
+    }
+    const [withoutHistory] = cut(body, '\n\n══════════')
+    const [withoutReply] = cut(withoutHistory, '\n\n── תשובת המערכת ──\n')
+    const [withoutSysMsg, afterSysMsg] = cut(withoutReply, '\n\n── הודעת המערכת ──\n')
+    const lines = withoutSysMsg.split('\n')
+    const refNum = (lines[0] ?? '').replace(/^סימוכין:\s*/, '')
+    const userText = lines.slice(4).join('\n').trim()
+    const sysMsgText = afterSysMsg ? afterSysMsg.split('\n\n')[0] : ''
+    return { refNum, userText, sysMsgText }
+  }
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '16px', boxSizing: 'border-box', direction: dir }}>
-      {expandedUid !== null && (
-        <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
-          <button onClick={() => { setExpandedUid(null); setExpandedMsgId(null) }} style={{ fontSize: 12, padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold' }}>סגירה</button>
-        </div>
-      )}
-      <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,80,0.08)' }}>
-        <thead>
-          <tr>
-            <th style={thS}>נקרא</th>
-            <th style={thS}>תאריך</th>
-            <th style={thS}>מס׳ משתמש</th>
-            <th style={thS}>מס׳ הודעה</th>
-            <th style={thS}>שם</th>
-            <th style={thS}>דרוג אתר</th>
-            <th style={thS}>דרוג תקציב</th>
-            <th style={{ ...thS, width: '100%', textAlign: 'start' }}>כותרת</th>
-            <th style={{ ...thS, borderInlineEnd: 'none' }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {userGroups.map((group, gi) => (
-            <React.Fragment key={group.uid}>
-              {expandedUid !== group.uid && (() => {
-                const last = group.msgs[group.msgs.length - 1]
-                const brdLast = '2px solid #003399'
-                const cellLast: React.CSSProperties = { ...tdMsgS, borderTop: brdLast, borderBottom: brdLast }
-                return (
-                  <tr onClick={() => setExpandedUid(group.uid)} style={{ cursor: 'pointer', background: '#e8eeff' }}>
-                    <td style={{ ...cellLast, borderInlineEnd: brdLast, color: group.unreadNums.length > 0 ? '#cc0000' : '#006600', fontSize: 15, fontWeight: 'bold' }}>{group.unreadNums.length > 0 ? group.unreadNums.join(',') : '✓'}</td>
-                    <td style={cellLast}>{last.sent_date || last.created_at?.slice(0, 10) || '—'}</td>
-                    <td style={cellLast}>{group.uid || '—'}</td>
-                    <td style={cellLast}>{group.msgs.length}</td>
-                    <td style={{ ...cellLast, textAlign: 'start' }}>{last.user_name || '—'}</td>
-                    <td style={{ ...cellLast, color: '#003399', fontWeight: 'bold' }}>{last.rating_site ?? '—'}</td>
-                    <td style={{ ...cellLast, color: '#003399', fontWeight: 'bold' }}>{last.rating_budget ?? '—'}</td>
-                    <td style={{ ...cellLast, textAlign: 'start', width: '100%' }}>{last.title || '—'}</td>
-                    <td style={{ ...cellLast, borderInlineStart: brdLast }}></td>
-                  </tr>
-                )
-              })()}
-              {expandedUid === group.uid && group.msgs.map((msg, mi) => {
-                const isOpen = expandedMsgId === msg.id
-                const brd = '2px solid #003399'
-                const cellS: React.CSSProperties = { ...tdMsgS, borderTop: brd, borderBottom: isOpen ? 'none' : brd }
-                return (
-                  <React.Fragment key={msg.id}>
-                    <tr onClick={() => handleSelectMsg(msg)} style={{ cursor: 'pointer', background: isOpen ? '#c8d8ff' : '#e8eeff' }}>
-                      <td style={{ ...cellS, borderInlineEnd: brd, color: msg.is_read ? '#006600' : '#cc0000', fontSize: 15 }}>{msg.is_read ? '✓' : '○'}</td>
-                      <td style={cellS}>{msg.sent_date || msg.created_at?.slice(0, 10) || '—'}</td>
-                      <td style={cellS}>{group.uid || '—'}</td>
-                      <td style={cellS}>{mi + 1}</td>
-                      <td style={{ ...cellS, textAlign: 'start' }}>{msg.user_name || '—'}</td>
-                      <td style={{ ...cellS, color: '#003399', fontWeight: 'bold' }}>{msg.rating_site ?? '—'}</td>
-                      <td style={{ ...cellS, color: '#003399', fontWeight: 'bold' }}>{msg.rating_budget ?? '—'}</td>
-                      <td style={{ ...cellS, textAlign: 'start', width: '100%' }}>{msg.title || '—'}</td>
-                      <td style={{ ...cellS, borderInlineStart: brd }} onClick={e => e.stopPropagation()}>
-                        <button onClick={() => {
-                          fetch('/api/feedback', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id }) })
-                            .then(() => { setMsgs(prev => prev.filter(m => m.id !== msg.id)); if (isOpen) setExpandedMsgId(null) })
-                            .catch(() => {})
-                        }} style={{ fontSize: 11, padding: '2px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold', whiteSpace: 'nowrap' }}>מחיקה</button>
-                      </td>
+      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+
+        {/* LEFT — טבלאות לפי משתמש */}
+        <div style={{ flex: '0 0 420px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {userGroups.map(group => {
+            const isExpanded = expandedUids.has(group.uid)
+            const toggleExpand = () => setExpandedUids(prev => { const s = new Set(prev); isExpanded ? s.delete(group.uid) : s.add(group.uid); return s })
+            return (
+              <div key={group.uid} style={{ background: '#fff', borderRadius: 8, overflow: 'hidden', border: '2px solid #003399', boxShadow: '0 1px 4px rgba(0,0,80,0.08)' }}>
+                <div onClick={toggleExpand} style={{ background: '#003399', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', userSelect: 'none' }}>
+                  <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 13 }}>{group.name}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {group.hasUnread && <span style={{ background: '#cc0000', color: '#fff', borderRadius: 10, fontSize: 10, padding: '1px 6px', fontWeight: 'bold' }}>חדש</span>}
+                    <span style={{ color: '#FFD700', fontSize: 11 }}>{isExpanded ? '▲' : '▼'}</span>
+                  </div>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>
+                      <th style={thS}>✓</th>
+                      <th style={thS}>תאריך</th>
+                      <th style={thS}>#</th>
+                      <th style={{ ...thS, width: '100%', textAlign: 'start' }}>כותרת</th>
+                      <th style={thS}>אתר</th>
+                      <th style={thS}>תקציב</th>
+                      <th style={{ ...thS, borderInlineEnd: 'none' }}>תשובה</th>
+                      {isAdmin && <th style={{ ...thS, borderInlineEnd: 'none' }}></th>}
                     </tr>
-                    {isOpen && (() => {
-                      const body = msg.body ?? ''
-                      const splitAt = (sep: string) => { const i = body.indexOf(sep); return i === -1 ? ['', ''] : [body.slice(0, i), body.slice(i + sep.length)] }
-                      const [beforeHistory] = splitAt('\n\n══════════')
-                      const [beforeSysMsg, afterSysMsg] = splitAt('\n\n── הודעת המערכת ──\n')
-                      const [beforeReply] = splitAt('\n\n── תשובת המערכת ──\n')
-                      const metaBlock = beforeReply || beforeSysMsg || beforeHistory || body
-                      const lines = metaBlock.split('\n')
-                      const refNum = (lines[0] ?? '').replace(/^סימוכין:\s*/, '')
-                      const userText = lines.slice(4).join('\n').trim()
-                      const sysMsgText = afterSysMsg ? afterSysMsg.split('\n\n')[0] : ''
-                      const fb = lang.feedback
+                  </thead>
+                  <tbody>
+                    {(isExpanded ? group.msgs : [group.lastMsg]).map((msg, mi) => {
+                      const isSelected = selectedMsg?.id === msg.id
+                      const rowBg = isSelected ? '#c8d8ff' : mi % 2 === 0 ? '#fff' : '#f4f6ff'
                       return (
-                        <tr>
-                          <td colSpan={9} style={{ padding: 0, borderBottom: brd, borderInlineEnd: brd, borderInlineStart: brd, background: '#2a2a3a' }}>
-                            <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-                              <div style={{ width: '794px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column', direction: 'rtl', fontFamily: 'Arial, sans-serif' }}>
-
-                                {/* Header */}
-                                <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                                  <div style={{ flex: 1, textAlign: 'right', paddingBottom: '6px', fontSize: '16px', fontWeight: 'normal', color: '#003399', lineHeight: '1.5' }}>
-                                    <div>{msg.user_name || '—'}</div>
-                                    <div style={{ fontSize: '10px' }}>{(() => { if (!msg.sender_ip) return ''; const parts = msg.sender_ip.split('.'); const hex = parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') : ''; return `IP: ${msg.sender_ip}${hex ? ` (${hex})` : ''}` })()}</div>
-                                  </div>
-                                  <div style={{ background: '#003399', borderRadius: '12px 12px 0 0', padding: '4px 6px 6px', display: 'inline-flex', alignItems: 'center', gap: '32px', border: '2px solid #FFD700', boxShadow: '0 4px 16px rgba(0,0,80,0.2)' }}>
-                                    <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
-                                    <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
-                                  </div>
-                                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
-                                    <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{mi + 1}</div>
-                                    <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{'הודעה מס.‏'}</div>
-                                  </div>
-                                </div>
-
-                                {sysMsgText && (
-                                  <div style={{ position: 'relative', marginTop: '28px' }}>
-                                    <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemMessage}</span>
-                                    <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '135px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                      <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{sysMsgText}</div>
-                                      <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
-                                        {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Ratings */}
-                                <div style={{ marginTop: '28px', fontFamily: 'Arial, sans-serif' }}>
-                                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#222', marginBottom: '12px' }}>{fb.rating}</div>
-                                  {([[fb.ratingWebsite, msg.rating_site], [fb.ratingBudget, msg.rating_budget]] as [string, number | null][]).map(([label, val]) => (
-                                    <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', marginBottom: '10px', border: '1.5px solid #003399', borderRadius: '6px', padding: '6px 12px' }}>
-                                      <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontWeight: 'bold' }}>{label}</span>
-                                      {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                                        <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', margin: '0 2px' }}>
-                                          <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2.5px solid #003399', background: val === n ? '#003399' : '#fff', boxShadow: val === n ? '0 0 0 2px #6699ff' : 'none' }} />
-                                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#003399' }}>{n}</span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ))}
-                                </div>
-
-                                {/* User message + System reply */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '28px', flex: 1 }}>
-
-                                  {/* User message */}
-                                  <div style={{ position: 'relative' }}>
-                                    <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.userMessage}</span>
-                                    <div style={{ border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff' }}>
-                                      <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222' }}>
-                                        <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{msg.sent_date || '______'}</span>
-                                        <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{mi + 1}</span>
-                                        <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{msg.title || '______'}</span>
-                                        <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum || '______'}</span>
-                                      </div>
-                                      <div style={{ minHeight: '80px', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0' }}>{userText}</div>
-                                      <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{msg.user_name || '______'}</div>
-                                    </div>
-                                  </div>
-
-                                  {/* System reply */}
-                                  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-                                    <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
-                                    <div style={{ border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                      <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                          {fb.date}
-                                          {isAdmin
-                                            ? <input type="date" value={adminReplyDate} onChange={e => setAdminReplyDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '130px', direction: 'ltr' }} />
-                                            : <span style={{ marginInlineStart: 6 }}>{msg.reply_date || '______'}</span>
-                                          }
-                                        </div>
-                                        <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{'מענה לסימוכין'}{' '}{refNum}</span>
-                                      </div>
-                                      {isAdmin
-                                        ? <textarea value={adminReply} onChange={e => setAdminReply(e.target.value)} style={{ minHeight: '80px', border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
-                                        : <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', minHeight: '80px' }}>{msg.reply_text || ''}</div>
-                                      }
-                                      <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
-                                        {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
-                                      </div>
-                                    </div>
-                                    {isAdmin && (
-                                      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 10 }}>
-                                        <button onClick={handleSendReply} disabled={!adminReply.trim() || !adminReplyDate.trim()} style={{ fontSize: 13, padding: '5px 18px', background: replySaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 5, cursor: 'pointer', fontWeight: 'bold', opacity: adminReply.trim() && adminReplyDate.trim() ? 1 : 0.5 }}>
-                                          {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' תשובה'}
-                                        </button>
-                                      </div>
-                                    )}
-                                  </div>
-
-                                </div>
-                              </div>
-                            </div>
-                          </td>
+                        <tr key={msg.id} onClick={() => handleSelectMsg(msg)} style={{ cursor: 'pointer', background: rowBg, outline: isSelected ? '2px solid #003399' : 'none' }}>
+                          <td style={{ ...tdS, color: msg.is_read ? '#006600' : '#cc0000', fontWeight: 'bold' }}>{msg.is_read ? '✓' : '○'}</td>
+                          <td style={tdS}>{msg.sent_date || msg.created_at?.slice(0, 10) || '—'}</td>
+                          <td style={tdS}>{isExpanded ? mi + 1 : group.msgs.length}</td>
+                          <td style={{ ...tdS, textAlign: 'start', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis' }}>{msg.title || '—'}</td>
+                          <td style={{ ...tdS, color: '#003399', fontWeight: 'bold' }}>{msg.rating_site ?? '—'}</td>
+                          <td style={{ ...tdS, color: '#003399', fontWeight: 'bold' }}>{msg.rating_budget ?? '—'}</td>
+                          <td style={{ ...tdS, color: msg.reply_text ? '#006600' : '#cc6600', fontWeight: 'bold' }}>{msg.reply_text ? '✓' : '○'}</td>
+                          {isAdmin && (
+                            <td style={tdS} onClick={e => e.stopPropagation()}>
+                              <button onClick={() => {
+                                fetch('/api/feedback', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id }) })
+                                  .then(() => { setMsgs(prev => prev.filter(m => m.id !== msg.id)); if (selectedMsg?.id === msg.id) setSelectedMsg(null) })
+                                  .catch(() => {})
+                              }} style={{ fontSize: 10, padding: '2px 8px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold' }}>מחיקה</button>
+                            </td>
+                          )}
                         </tr>
                       )
-                    })()}
-                  </React.Fragment>
-                )
-              })}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* RIGHT — טופס אחד */}
+        <div style={{ flex: 1, position: 'sticky', top: 0 }}>
+          {!selectedMsg ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '300px', color: '#888', fontSize: 15 }}>בחר הודעה לצפייה</div>
+          ) : (() => {
+            const msg = selectedMsg
+            const { refNum, userText, sysMsgText } = parseMsgBody(msg)
+            const msgIdx = userGroups.find(g => g.msgs.some(m => m.id === msg.id))?.msgs.findIndex(m => m.id === msg.id) ?? 0
+            return (
+              <div style={{ width: '720px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column', direction: 'rtl', fontFamily: 'Arial, sans-serif' }}>
+
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                  <div style={{ flex: 1, textAlign: 'right', paddingBottom: '6px', fontSize: '16px', fontWeight: 'normal', color: '#003399', lineHeight: '1.5' }}>
+                    <div>{msg.user_name || '—'}</div>
+                    <div style={{ fontSize: '10px' }}>{(() => { if (!msg.sender_ip) return ''; const parts = msg.sender_ip.split('.'); const hex = parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') : ''; return `IP: ${msg.sender_ip}${hex ? ` (${hex})` : ''}` })()}</div>
+                  </div>
+                  <div style={{ background: '#003399', borderRadius: '12px 12px 0 0', padding: '4px 6px 6px', display: 'inline-flex', alignItems: 'center', gap: '32px', border: '2px solid #FFD700', boxShadow: '0 4px 16px rgba(0,0,80,0.2)' }}>
+                    <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
+                    <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{msgIdx + 1}</div>
+                    <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{'הודעה מס.‏'}</div>
+                  </div>
+                </div>
+
+                {sysMsgText && (
+                  <div style={{ position: 'relative', marginTop: '28px' }}>
+                    <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemMessage}</span>
+                    <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '135px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{sysMsgText}</div>
+                      <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
+                        {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Ratings */}
+                <div style={{ marginTop: '28px', fontFamily: 'Arial, sans-serif' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#222', marginBottom: '12px' }}>{fb.rating}</div>
+                  {([[fb.ratingWebsite, msg.rating_site], [fb.ratingBudget, msg.rating_budget]] as [string, number | null][]).map(([label, val]) => (
+                    <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', marginBottom: '10px', border: '1.5px solid #003399', borderRadius: '6px', padding: '6px 12px' }}>
+                      <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontWeight: 'bold' }}>{label}</span>
+                      {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                        <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', margin: '0 2px' }}>
+                          <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2.5px solid #003399', background: val === n ? '#003399' : '#fff', boxShadow: val === n ? '0 0 0 2px #6699ff' : 'none' }} />
+                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#003399' }}>{n}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+
+                {/* User message + System reply */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '28px', flex: 1 }}>
+
+                  {/* User message */}
+                  <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.userMessage}</span>
+                    <div style={{ border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff' }}>
+                      <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222' }}>
+                        <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{msg.sent_date || '______'}</span>
+                        <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{msgIdx + 1}</span>
+                        <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{msg.title || '______'}</span>
+                        <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum || '______'}</span>
+                      </div>
+                      <div style={{ minHeight: '80px', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0' }}>{userText}</div>
+                      <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{msg.user_name || '______'}</div>
+                    </div>
+                  </div>
+
+                  {/* System reply */}
+                  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
+                    <div style={{ border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          {fb.date}
+                          {isAdmin
+                            ? <input type="date" value={adminReplyDate} onChange={e => setAdminReplyDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '130px', direction: 'ltr' }} />
+                            : <span style={{ marginInlineStart: 6 }}>{msg.reply_date || '______'}</span>
+                          }
+                        </div>
+                        <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{'מענה לסימוכין'}{' '}{refNum}</span>
+                      </div>
+                      {isAdmin
+                        ? <textarea value={adminReply} onChange={e => setAdminReply(e.target.value)} style={{ minHeight: '80px', border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
+                        : <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', minHeight: '80px' }}>{msg.reply_text || ''}</div>
+                      }
+                      <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
+                        {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
+                      </div>
+                    </div>
+                    {isAdmin && (
+                      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 10 }}>
+                        <button onClick={handleSendReply} disabled={!adminReply.trim() || !adminReplyDate.trim()} style={{ fontSize: 13, padding: '5px 18px', background: replySaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 5, cursor: 'pointer', fontWeight: 'bold', opacity: adminReply.trim() && adminReplyDate.trim() ? 1 : 0.5 }}>
+                          {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' תשובה'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+
+      </div>
     </div>
   )
 }
