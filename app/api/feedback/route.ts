@@ -27,6 +27,14 @@ export async function GET(req: NextRequest) {
     await ensureTable()
     const { searchParams } = new URL(req.url)
     const userId = searchParams.get('userId')
+    const sessionId = searchParams.get('sessionId')
+    if (userId && sessionId) {
+      const result = await pool.query(
+        'SELECT * FROM feedback_messages WHERE user_id=$1 AND session_id=$2 ORDER BY created_at ASC',
+        [Number(userId), Number(sessionId)]
+      )
+      return NextResponse.json({ messages: result.rows })
+    }
     if (userId) {
       const result = await pool.query(
         'SELECT * FROM feedback_messages WHERE user_id=$1 ORDER BY created_at DESC LIMIT 10',
@@ -34,7 +42,7 @@ export async function GET(req: NextRequest) {
       )
       return NextResponse.json({ messages: result.rows })
     }
-    const result = await pool.query('SELECT * FROM feedback_messages ORDER BY created_at DESC')
+    const result = await pool.query(`SELECT fm.*, u.last_ip as sender_ip FROM feedback_messages fm LEFT JOIN users u ON u.id = fm.user_id ORDER BY fm.created_at ASC`)
     return NextResponse.json({ messages: result.rows })
   } catch (e) {
     return NextResponse.json({ messages: [], error: String(e) })
@@ -44,13 +52,24 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     await ensureTable()
-    const { userId, userName, sentDate, title, body, ratingSite, ratingBudget } = await req.json()
+    const { userId, userName, sentDate, title, body, ratingSite, ratingBudget, sessionId } = await req.json()
     const result = await pool.query(
-      `INSERT INTO feedback_messages (user_id, user_name, sent_date, title, body, rating_site, rating_budget)
-       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
-      [userId ?? null, userName ?? null, sentDate ?? null, title ?? null, body ?? null, ratingSite ?? null, ratingBudget ?? null]
+      `INSERT INTO feedback_messages (user_id, user_name, sent_date, title, body, rating_site, rating_budget, session_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+      [userId ?? null, userName ?? null, sentDate ?? null, title ?? null, body ?? null, ratingSite ?? null, ratingBudget ?? null, sessionId ?? null]
     )
     return NextResponse.json({ ok: true, id: result.rows[0].id })
+  } catch (e) {
+    return NextResponse.json({ ok: false, error: String(e) })
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    await ensureTable()
+    const { id } = await req.json()
+    await pool.query('DELETE FROM feedback_messages WHERE id=$1', [id])
+    return NextResponse.json({ ok: true })
   } catch (e) {
     return NextResponse.json({ ok: false, error: String(e) })
   }

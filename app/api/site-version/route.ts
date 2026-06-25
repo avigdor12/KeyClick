@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
@@ -11,8 +11,21 @@ export async function GET() {
     const raw = result.rows[0]?.value ?? '|'
     const [line1, line2] = raw.split('|')
     return NextResponse.json({ line1: line1 ?? '', line2: line2 ?? '' })
+  } catch {
+    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 04.03  25.06.2026 14.17' })
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const { line1, line2 } = await req.json()
+    const value = `${line1}|${line2}`
+    await pool.query(
+      "UPDATE system_DB_Records SET value=$1 WHERE key='KeyClick_Site_Version_Id'",
+      [value]
+    )
+    return NextResponse.json({ ok: true })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
-    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 04.02  24.06.2026 01.33' })
+    return NextResponse.json({ ok: false, error: String(e) })
   }
 }

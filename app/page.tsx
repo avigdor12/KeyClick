@@ -43,7 +43,7 @@ const languages = [
     profile: { fullName: 'שם ומשפחה', email: 'דוא"ל', ip: 'IP', language: 'שפה', country: 'מדינה', plan: 'תכנית', planStart: 'תחילת תכנית', planEnd: 'סיום תכנית', unlimited: 'ללא הגבלה', comingSoon: 'בקרוב', choosePlan: 'בחר תכנית', close: '✕ סגור', loginRequired: 'נדרשת כניסה לצפייה בדף האישי', login: 'כניסה', products: 'מוצרים', change: 'שינוי',
       price: 'מחיר', changePlan: 'שינוי תכנית', planName: 'שם', planFrom: 'מ-', planTo: 'עד-', back: 'חזרה', currencyLocal: '₪', free: 'חינם',       planNames: { System_Free_Run: 'תקופת הרצה', User_Trial: 'תקופת נסיון', User_VIP_Free: 'VIP', System_Owner: 'מערכת', User_Monthly: 'חודשי', User_Annual: 'שנתי', User_One_Time: 'כניסה בודדת', System_Suspended_NonPayment: 'מנותק', User_Cancelled: 'בוטל' } },
     feedback: { customerRelations: 'קשרי לקוחות', systemMessage: 'הודעת המערכת', respectfully: 'בכבוד רב,', rating: 'דירוג', ratingWebsite: 'אתר', ratingBudget: 'ניהול תקציב בית', userMessage: 'דבר המשתמש', date: 'תאריך:', title: 'כותרת:', from: 'מאת:', systemReply: 'תשובת המערכת' },
-    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'לו"ז ומחירון', pr: 'יחסי ציבור', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש מערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!' },
+    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'לו"ז ומחירון', pr: 'יחסי ציבור', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!' },
     currencyNames: { ILS: 'ש"ח', USD: 'דולר', GBP: 'ליש"ט', EUR: 'יורו', RUB: 'רובל', JPY: 'ין', SAR: 'ריאל', CNY: 'יואן', INR: 'רופי' } },
   { code: 'es', flag: 'ספרד',    name: 'Español',  welcome: 'Bienvenido',
     menu: ['Comentarios','Actualizaciones','Mensajes','Recordatorios','Servicios bancarios','Página personal'],
@@ -112,6 +112,7 @@ export default function Home() {
   const debugWinRef    = useRef<Window | null>(null)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
   const [clientIp, setClientIp] = useState('')
+  const [activeMfBtn, setActiveMfBtn] = useState<string | null>(null)
   const lang = languages[langIdx]
 
   useEffect(() => {
@@ -380,7 +381,7 @@ export default function Home() {
               <Image src={`/flags/${lang.code}1.png`} alt={lang.flag} width={55} height={55} />
             </div>
           </div>
-          {lang.menu.map((item, idx) => (
+          {lang.menu.map((item, idx) => idx === 2 ? null : (
             <button key={idx} onClick={() => setActivePage(String(idx) === activePage ? null : String(idx))}
               style={{
                 background: activePage === String(idx) ? '#4a1a6e' : 'none', border: 'none',
@@ -399,18 +400,30 @@ export default function Home() {
               {lang.card.title}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
-              <button onClick={() => setActivePage('mf-login')}
+              <button onClick={() => { setActivePage('mf-login'); setActiveMfBtn(null) }}
                 style={{ ...mfBtn, ...(activePage === 'mf-login' ? { background: '#4a1a6e' } : {}) }}>
                 {lang.card.login}
               </button>
-              <button onClick={() => setActivePage('mf-register')}
+              <button onClick={() => { setActivePage('mf-register'); setActiveMfBtn(null) }}
                 style={{ ...mfBtn, ...(activePage === 'mf-register' ? { background: '#4a1a6e' } : {}) }}>
                 {lang.card.register}
               </button>
-              <button onClick={handleInstall} style={{ ...mfBtn }}>{lang.card.install}</button>
-              <button onClick={handleRun}     style={{ ...mfBtn }}>{lang.card.run}</button>
-              <button onClick={() => {}}      style={{ ...mfBtn }}>{lang.card.videos}</button>
-              <button onClick={() => {}}      style={{ ...mfBtn }}>{lang.card.guide}</button>
+              <button onClick={() => { setActiveMfBtn(activeMfBtn === 'install' ? null : 'install'); handleInstall() }}
+                style={{ ...mfBtn, ...(activeMfBtn === 'install' ? { background: '#4a1a6e' } : {}) }}>
+                {lang.card.install}
+              </button>
+              <button onClick={() => { setActiveMfBtn(activeMfBtn === 'run' ? null : 'run'); handleRun() }}
+                style={{ ...mfBtn, ...(activeMfBtn === 'run' ? { background: '#4a1a6e' } : {}) }}>
+                {lang.card.run}
+              </button>
+              <button onClick={() => setActiveMfBtn(activeMfBtn === 'videos' ? null : 'videos')}
+                style={{ ...mfBtn, ...(activeMfBtn === 'videos' ? { background: '#4a1a6e' } : {}) }}>
+                {lang.card.videos}
+              </button>
+              <button onClick={() => setActiveMfBtn(activeMfBtn === 'guide' ? null : 'guide')}
+                style={{ ...mfBtn, ...(activeMfBtn === 'guide' ? { background: '#4a1a6e' } : {}) }}>
+                {lang.card.guide}
+              </button>
             </div>
           </div>
 
@@ -450,10 +463,12 @@ export default function Home() {
 const SCHEDULE_SUBJECTS = ['יום ה-X ההפצה', 'תקופת הרצה', 'תקופת ניסיון', 'VIP', 'חודשי', 'שנתי', 'חד פעמי'] as const
 function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}` }
 type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
-type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string }
+type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages'>('none')
+  const [debugOpen, setDebugOpen] = useState(false)
+  const [buildOpen, setBuildOpen] = useState(false)
   const [prSaved, setPrSaved] = useState(false)
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
@@ -640,11 +655,17 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     fontSize: '13px', fontWeight: 'bold', textAlign: 'center',
   }
 
+  const sysBtnSm: React.CSSProperties = {
+    background: '#003399', border: 'none', borderRadius: '4px',
+    color: '#FFD700', padding: '5px 2px', cursor: 'pointer',
+    fontSize: '11px', fontWeight: 'bold', textAlign: 'center', lineHeight: '1.2',
+  }
+
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', fontFamily: 'Arial, sans-serif', overflow: 'hidden' }}>
 
       {/* Main content */}
-      <div style={{ flex: 1, overflow: 'auto', padding: '16px 20px', background: '#f7f7f7' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: view === 'messages' ? 0 : '16px 20px', background: '#f7f7f7' }}>
         {view === 'none' && (
           <div style={{ color: '#aaa', fontSize: 16, marginTop: 40, textAlign: 'center' }}>{lang.system.selectAction}</div>
         )}
@@ -870,6 +891,10 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             </div>
           </div>
         )}
+        {view === 'messages' && (
+          <MessagesPage user={user} lang={lang} onDbg={onDbg} />
+        )}
+
       </div>
 
       {/* Right sidebar */}
@@ -878,26 +903,36 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '22px', color: '#FFD700', fontWeight: 'bold', textShadow: '1px 1px 3px #000' }}>KeyClick</div>
           <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', letterSpacing: 1, textShadow: '1px 1px 2px #000' }}>{lang.system.systemLabel}</div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px 8px' }}>
-          <button style={sysBtn} onClick={onOpenDebug}
-            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>Debug</button>
-          <button style={sysBtn} onClick={handleDb}
-            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>DB</button>
-          <button style={sysBtn} onClick={handleUsers}
-            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>{lang.system.users}</button>
-          <button style={sysBtn} onClick={handleBuild}
-            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>{lang.system.buildMessages}</button>
-          <button style={sysBtn} onClick={handleSchedule}
-            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#003399' }}>{lang.system.schedule}</button>
-          <button style={{ ...sysBtn, background: view === 'pr' ? '#0044cc' : '#003399' }}
-            onClick={() => setView(view === 'pr' ? 'none' : 'pr')}
-            onMouseEnter={e => { e.currentTarget.style.background = '#0044cc' }}
-            onMouseLeave={e => { e.currentTarget.style.background = view === 'pr' ? '#0044cc' : '#003399' }}>{lang.system.pr}</button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '8px 6px', width: '100%', boxSizing: 'border-box' }}>
+
+          {/* מוניטור */}
+          <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
+            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>מוניטור</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+              <button style={{ ...sysBtnSm, ...(debugOpen ? { background: '#4a1a6e' } : {}) }} onClick={() => { onOpenDebug(); setDebugOpen(prev => !prev) }}>Debug</button>
+              <button style={{ ...sysBtnSm, ...(view === 'db' ? { background: '#4a1a6e' } : {}) }} onClick={handleDb}>DB</button>
+              <button style={{ ...sysBtnSm, gridColumn: 'span 2', ...(buildOpen ? { background: '#4a1a6e' } : {}) }} onClick={() => { handleBuild(); setBuildOpen(prev => !prev) }}>{lang.system.buildMessages}</button>
+            </div>
+          </div>
+
+          {/* נתוני מערכת */}
+          <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
+            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>נתוני מערכת</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+              <button style={{ ...sysBtnSm, ...(view === 'users' ? { background: '#4a1a6e' } : {}) }} onClick={handleUsers}>{lang.system.users}</button>
+              <button style={{ ...sysBtnSm, ...(view === 'schedule' ? { background: '#4a1a6e' } : {}) }} onClick={handleSchedule}>{lang.system.schedule}</button>
+            </div>
+          </div>
+
+          {/* קשרי לקוחות */}
+          <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
+            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>קשרי לקוחות</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+              <button style={{ ...sysBtnSm, ...(view === 'pr' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'pr' ? 'none' : 'pr')}>{lang.system.pr}</button>
+              <button style={{ ...sysBtnSm, ...(view === 'messages' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'messages' ? 'none' : 'messages')}>{lang.system.messages}</button>
+            </div>
+          </div>
+
         </div>
       </aside>
 
@@ -940,43 +975,264 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const [sending,   setSending]   = useState(false)
   const [sendDone,  setSendDone]  = useState(false)
   const [hasReply,  setHasReply]  = useState(false)
+  const [loadedMessages, setLoadedMessages] = useState<FeedbackMessage[]>([])
+  const [selectedMsgId,  setSelectedMsgId]  = useState<number | null>(null)
+  const [refNum, setRefNum] = useState('')
+  const [validationErrors, setValidationErrors] = useState<{date?: boolean, title?: boolean, from?: boolean}>({})
+  const [sessionId, setSessionId] = useState<number | null>(null)
+  const isAdmin = user?.M_Finance_license_type === LICENSE_TYPES.System_Owner
 
   useEffect(() => {
     if (!user?.id) return
-    fetch(`/api/feedback?userId=${user.id}`)
-      .then(r => r.json())
-      .then(d => {
-        const msgs: FeedbackMessage[] = d.messages ?? []
-        const withReply = msgs.find(m => m.reply_text)
-        if (withReply) {
-          setReplyText(withReply.reply_text ?? '')
-          setReplyDate(withReply.reply_date ?? '')
-          setHasReply(true)
-        }
-      })
-      .catch(() => {})
+    onDbg('FeedbackPage.init', `mount isAdmin=${isAdmin} sessionId=${sessionId}`)
+    if (isAdmin) {
+      onDbg('FeedbackPage.init', 'נתיב ADMIN — שולף session ו-messages')
+      fetch(`/api/feedback-session?userId=${user.id}`)
+        .then(r => r.json())
+        .then(d => {
+          const sid: number = d.session?.id
+          if (sid) { setSessionId(sid); onDbg('FeedbackPage.init', `admin sessionId=${sid}`) }
+          else onDbg('FeedbackPage.init', 'admin — sid=null!')
+        })
+        .catch(e => onDbg('FeedbackPage.init', `admin session error: ${String(e)}`))
+      fetch('/api/feedback')
+        .then(r => r.json())
+        .then(d => {
+          const msgs: FeedbackMessage[] = d.messages ?? []
+          setLoadedMessages(msgs)
+          onDbg('FeedbackPage.admin.load', `count=${msgs.length} ids=${msgs.map(m => m.id).join(',')}`)
+          const defMsg = msgs[msgs.length - 1]
+          if (defMsg) {
+            setSelectedMsgId(defMsg.id)
+            setReplyText(defMsg.reply_text ?? '')
+            setReplyDate(defMsg.reply_date || new Date().toISOString().slice(0, 10))
+            setHasReply(!!defMsg.reply_text)
+            onDbg('FeedbackPage.admin.load', `selected last.id=${defMsg.id} hasReply=${!!defMsg.reply_text}`)
+          }
+        })
+        .catch(e => onDbg('FeedbackPage.admin.load', `error: ${String(e)}`))
+    } else {
+      fetch(`/api/feedback-session?userId=${user.id}`)
+        .then(r => r.json())
+        .then(d => {
+          const sid: number = d.session?.id
+          if (!sid) { onDbg('FeedbackPage.session', 'sid=null — אין session!'); return }
+          setSessionId(sid)
+          onDbg('FeedbackPage.session', `sessionId=${sid}`)
+          return fetch(`/api/feedback?userId=${user.id}&sessionId=${sid}`)
+            .then(r => r.json())
+            .then(d2 => {
+              const msgs: FeedbackMessage[] = d2.messages ?? []
+              setLoadedMessages(msgs)
+              onDbg('FeedbackPage.loadMsgs', `count=${msgs.length} sessionId=${sid}`)
+              const def = msgs[msgs.length - 1]
+              if (def) {
+                setSelectedMsgId(def.id)
+                setReplyText(def.reply_text ?? '')
+                setReplyDate(def.reply_date || new Date().toISOString().slice(0, 10))
+                setHasReply(!!def.reply_text)
+              }
+            })
+        })
+        .catch(() => {})
+    }
   }, [user?.id])
 
-  async function handleSend() {
-    if (!userText.trim()) return
-    setSending(true)
-    onDbg('FeedbackPage.send', `userId=${user?.id} title="${userTitle}"`)
-    try {
-      await fetch('/api/feedback', {
+  useEffect(() => {
+    if (!user?.id) return
+    if (isAdmin) { onDbg('FeedbackPage.poll', `לא מתחיל — isAdmin=true`); return }
+    if (!sessionId) { onDbg('FeedbackPage.poll', `לא מתחיל — sessionId=null`); return }
+    onDbg('FeedbackPage.poll', `התחלת polling sessionId=${sessionId}`)
+    const interval = setInterval(() => {
+      fetch(`/api/feedback?userId=${user.id}&sessionId=${sessionId}`)
+        .then(r => r.json())
+        .then(d => {
+          const msgs: FeedbackMessage[] = d.messages ?? []
+          setLoadedMessages(msgs)
+          const last = msgs[msgs.length - 1]
+          const hasR = !!last?.reply_text
+          onDbg('FeedbackPage.poll', `count=${msgs.length} lastId=${last?.id ?? 'null'} hasReply=${hasR}`)
+          if (last?.reply_text) {
+            setReplyText(last.reply_text)
+            setReplyDate(last.reply_date || new Date().toISOString().slice(0, 10))
+            setHasReply(true)
+            onDbg('FeedbackPage.poll', `תשובה הגיעה! replyLen=${last.reply_text.length}`)
+          }
+        })
+        .catch(e => onDbg('FeedbackPage.poll', `error: ${String(e)}`))
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [user?.id, isAdmin, sessionId])
+
+  function handleSelectMsg(id: number) {
+    setSelectedMsgId(id)
+    const msg = loadedMessages.find(m => m.id === id)
+    if (msg) {
+      setReplyText(msg.reply_text ?? '')
+      setReplyDate(msg.reply_date || new Date().toISOString().slice(0, 10))
+      setHasReply(!!msg.reply_text)
+      onDbg('FeedbackPage.selectMsg', `id=${id} ref=${buildMsgRef(msg)} hasReply=${!!msg.reply_text}`)
+    }
+  }
+
+  function handleReset() {
+    setRefNum('')
+    setValidationErrors({})
+    setLoadedMessages([])
+    setRatingSite(null)
+    setRatingBudget(null)
+    setUserDate('')
+    setUserTitle('')
+    setUserFrom('')
+    setUserText('')
+    setReplyDate('')
+    setReplyText('')
+    setSendDone(false)
+    setHasReply(false)
+    setSelectedMsgId(null)
+    onDbg('FeedbackPage.reset', `closing sessionId=${sessionId}`)
+    if (user?.id) {
+      fetch('/api/feedback-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id ?? null, userName: user?.name || userFrom || null, sentDate: userDate || null, title: userTitle || null, body: userText, ratingSite: ratingSite, ratingBudget: ratingBudget })
+        body: JSON.stringify({ userId: user.id, action: 'close' })
       })
+        .then(r => r.json())
+        .then(d => {
+          const newSid: number = d.session?.id
+          if (newSid) {
+            setSessionId(newSid)
+            onDbg('FeedbackPage.reset', `newSessionId=${newSid}`)
+          }
+        })
+        .catch(() => {})
+    }
+  }
+
+  async function handleSend() {
+    const errors: {date?: boolean, title?: boolean, from?: boolean} = {}
+    if (!userDate.trim()) errors.date = true
+    if (!userTitle.trim()) errors.title = true
+    if (!userFrom.trim()) errors.from = true
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors)
+      onDbg('FeedbackPage.send', `validation failed: date=${errors.date} title=${errors.title} from=${errors.from}`)
+      return
+    }
+    setValidationErrors({})
+    let effectiveSid = sessionId
+    if (!effectiveSid && user?.id) {
+      try {
+        const sr = await fetch(`/api/feedback-session?userId=${user.id}`)
+        const sd = await sr.json()
+        effectiveSid = sd.session?.id ?? null
+        if (effectiveSid) { setSessionId(effectiveSid); onDbg('FeedbackPage.send', `sessionId fetched inline: ${effectiveSid}`) }
+        else onDbg('FeedbackPage.send', 'sessionId inline fetch — sid=null!')
+      } catch (e) { onDbg('FeedbackPage.send', `sessionId inline fetch error: ${String(e)}`) }
+    }
+    const now = new Date()
+    const uid = user?.id ?? 0
+    const dateStr = String(now.getFullYear()) + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0')
+    const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0') + String(now.getSeconds()).padStart(2,'0')
+    const newRef = `${uid}-${dateStr}-${timeStr}`
+    setRefNum(newRef)
+    setSending(true)
+    onDbg('FeedbackPage.send', `isAdmin=${isAdmin} sessionId=${sessionId} userId=${user?.id} title="${userTitle}" ref=${newRef}`)
+    try {
+      const historyText = loadedMessages.length > 0
+        ? '\n\n══════════ היסטוריה ══════════\n' + loadedMessages.map((m, i) => {
+            let s = `[${i+1}] תאריך: ${m.sent_date ?? ''} | כותרת: ${m.title ?? ''}\n${m.body ?? ''}`
+            if (m.reply_text) s += `\n\n── תשובת המערכת ──\nתאריך: ${m.reply_date ?? ''}\n${m.reply_text}`
+            return s
+          }).join('\n\n──────────\n')
+        : ''
+      const systemReplyPart = replyText
+        ? `\n\n── תשובת המערכת ──\nתאריך: ${replyDate}\n\n${replyText}\n${lang.feedback.respectfully} KeyClick ${lang.feedback.customerRelations}`
+        : ''
+      const systemMsgPart = systemMessage
+        ? `\n\n── הודעת המערכת ──\n${systemMessage}`
+        : ''
+      const fullBody = `סימוכין: ${newRef}\nתאריך: ${userDate} | כותרת: ${userTitle} | מאת: ${userFrom || user?.name || ''}\nדירוג אתר: ${ratingSite ?? '-'} | דירוג תקציב: ${ratingBudget ?? '-'}\n\n${userText}${systemReplyPart}${systemMsgPart}${historyText}`
+      onDbg('FeedbackPage.send', `POST userId=${user?.id ?? 'null'} sessionId=${effectiveSid} title="${userTitle}"`)
+      const postRes = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id ?? null, userName: user?.name || userFrom || null, sentDate: userDate || null, title: userTitle || null, body: fullBody, ratingSite: ratingSite, ratingBudget: ratingBudget, sessionId: effectiveSid })
+      })
+      const postData = await postRes.json()
+      onDbg('FeedbackPage.send', `POST response ok=${postData.ok} id=${postData.id ?? 'null'} error=${postData.error ?? 'none'}`)
       setSendDone(true)
       setTimeout(() => setSendDone(false), 3000)
+      setUserTitle(''); setUserText(''); setUserDate(''); setRatingSite(null); setRatingBudget(null); setRefNum('')
+      if (user?.id && effectiveSid) {
+        fetch(`/api/feedback?userId=${user.id}&sessionId=${effectiveSid}`).then(r => r.json()).then(d => {
+          const msgs: FeedbackMessage[] = d.messages ?? []
+          setLoadedMessages(msgs)
+          onDbg('FeedbackPage.send', `refetched sessionId=${effectiveSid} count=${msgs.length}`)
+          if (msgs[msgs.length - 1]) { setSelectedMsgId(msgs[msgs.length - 1].id) }
+        }).catch(() => {})
+      } else if (isAdmin) {
+        fetch('/api/feedback').then(r => r.json()).then(d => {
+          const msgs: FeedbackMessage[] = d.messages ?? []
+          setLoadedMessages(msgs)
+          onDbg('FeedbackPage.send', `refetched admin count=${msgs.length}`)
+          if (msgs[0]) { setSelectedMsgId(msgs[0].id) }
+        }).catch(() => {})
+      }
       onDbg('FeedbackPage.send', 'ok')
     } catch (e) { onDbg('FeedbackPage.send', `error: ${String(e)}`) }
     setSending(false)
   }
 
+  async function handleSendReply() {
+    if (!selectedMsgId || !replyText.trim() || !replyDate.trim()) return
+    const selectedMsg = loadedMessages.find(m => m.id === selectedMsgId)
+    if (!selectedMsg) return
+    onDbg('FeedbackPage.sendReply', `msgId=${selectedMsgId} ref=${buildMsgRef(selectedMsg)}`)
+    try {
+      const replyBody = `── תשובת המערכת ──\nסימוכין: ${buildMsgRef(selectedMsg)}\nתאריך: ${replyDate}\n\n${replyText}\n${lang.feedback.respectfully} KeyClick ${lang.feedback.customerRelations}\n\n── ההודעה המקורית ──\n${selectedMsg.body ?? ''}`
+      await fetch('/api/feedback', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selectedMsgId, replyText, replyDate, isRead: true, replyBody })
+      })
+      fetch('/api/feedback').then(r => r.json()).then(d => {
+        const msgs: FeedbackMessage[] = d.messages ?? []
+        setLoadedMessages(msgs)
+        const updated = msgs.find(m => m.id === selectedMsgId)
+        if (updated) { setHasReply(!!updated.reply_text) }
+        onDbg('FeedbackPage.sendReply', 'ok')
+      }).catch(() => {})
+    } catch (e) { onDbg('FeedbackPage.sendReply', `error: ${String(e)}`) }
+  }
+
   const isRTL = lang.code === 'he' || lang.code === 'ar'
   const dir = isRTL ? 'rtl' as const : 'ltr' as const
   const fb = lang.feedback
+  const getBodyText = (m: FeedbackMessage) => {
+    const body = m.body ?? ''
+    if (!body.startsWith('סימוכין:')) return body
+    const firstBreak = body.indexOf('\n\n')
+    if (firstBreak === -1) return body
+    const afterMeta = body.slice(firstBreak + 2)
+    const stops = ['\n\n══════════', '\n\n── תשובת', '\n\n── הודעת']
+    let endIdx = afterMeta.length
+    for (const sep of stops) {
+      const idx = afterMeta.indexOf(sep)
+      if (idx !== -1 && idx < endIdx) endIdx = idx
+    }
+    return afterMeta.slice(0, endIdx).trim()
+  }
+
+  const buildMsgRef = (m: FeedbackMessage | undefined) => {
+    if (!m) return ''
+    const match = (m.body ?? '').match(/^סימוכין:\s*(\S+)/)
+    if (match) return match[1]
+    const d2 = m.created_at ? new Date(m.created_at) : null
+    return d2
+      ? `${m.user_id}-${d2.getFullYear()}${String(d2.getMonth()+1).padStart(2,'0')}${String(d2.getDate()).padStart(2,'0')}-${String(d2.getHours()).padStart(2,'0')}${String(d2.getMinutes()).padStart(2,'0')}${String(d2.getSeconds()).padStart(2,'0')}`
+      : String(m.id)
+  }
   const side16 = isRTL ? { right: '16px' } : { left: '16px' }
   const side12 = isRTL ? { right: '12px' } : { left: '12px' }
   return (
@@ -984,7 +1240,11 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       <div style={{ width: '794px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column' }}>
 
         {/* כרטיסיה */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
+            <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{loadedMessages.length}</div>
+            <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{'הודעה מס.‏'}</div>
+          </div>
           <div style={{
             background: '#003399',
             borderRadius: '12px 12px 0 0',
@@ -996,6 +1256,15 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
             <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
             <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
           </div>
+          {user ? (
+            <div style={{ flex: 1, textAlign: 'right', paddingBottom: '6px', fontSize: '16px', fontWeight: 'normal', color: '#003399', lineHeight: '1.5' }}>
+              <div>{[user.name, user.last_name].filter(Boolean).join(' ')}</div>
+              <div style={{ fontSize: '10px' }}>{(() => { if (!user.last_ip) return ''; const parts = user.last_ip.split('.'); const hex = parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') : ''; return `IP: ${user.last_ip}${hex ? ` (${hex})` : ''}` })()}</div>
+            </div>
+          ) : <div style={{ flex: 1 }} />}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '6px' }}>
+          <button onClick={handleReset} style={{ fontSize: '13px', padding: '3px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>אפס טופס</button>
         </div>
 
 
@@ -1030,30 +1299,66 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '28px', direction: dir, flex: 1 }}>
           <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <span style={{ position: 'absolute', top: '-10px', ...side12, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.userMessage}</span>
-            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
-              <div style={{ display: 'flex', gap: '24px', fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>{fb.date} <input value={userDate} onChange={e => setUserDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: dir }} /></span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>{fb.title} <input value={userTitle} onChange={e => setUserTitle(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '220px', direction: dir }} /></span>
+            <div style={{ height: '320px', border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflowY: 'auto' }}>
+              {loadedMessages.map((m, i) => (
+                <div key={m.id} style={{ flexShrink: 0 }}>
+                  <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222' }}>
+                    <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{m.sent_date || '______'}</span>
+                    <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{i + 1}</span>
+                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{m.title || '______'}</span>
+                    <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{buildMsgRef(m) || '______'}</span>
+                  </div>
+                  <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '4px 0' }}>{getBodyText(m) || '______'}</div>
+                  <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{m.user_name || '______'}</div>
+                  <div style={{ height: '26px' }} />
+                  <hr style={{ border: 'none', borderTop: '1px solid #bbb', margin: '0' }} />
+                  <div style={{ height: '26px' }} />
+                </div>
+              ))}
+              <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
+                <span style={{ position: 'absolute', right: 0, display: 'flex', gap: '4px', alignItems: 'baseline' }}>
+                  <span style={{ whiteSpace: 'nowrap' }}>{fb.date}</span>
+                  <input type="date" value={userDate} onChange={e => { setUserDate(e.target.value); if (validationErrors.date) setValidationErrors(prev => ({...prev, date: false})) }} style={{ border: 'none', borderBottom: validationErrors.date ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: 'ltr' }} />
+                </span>
+                {refNum && <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{loadedMessages.length}</span>}
+                <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', alignItems: 'baseline', whiteSpace: 'nowrap' }}>
+                  <span>{fb.title}</span>
+                  <input value={userTitle} onChange={e => { setUserTitle(e.target.value); if (validationErrors.title) setValidationErrors(prev => ({...prev, title: false})) }} style={{ border: 'none', borderBottom: validationErrors.title ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '150px', direction: dir }} />
+                </span>
+                {refNum && <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum}</span>}
               </div>
-              <textarea value={userText} onChange={e => setUserText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir, minHeight: '80px' }} />
-              <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                {fb.from} <input value={userFrom} onChange={e => setUserFrom(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '180px', direction: dir }} />
+              <textarea value={userText} onChange={e => setUserText(e.target.value)} style={{ height: '80px', flexShrink: 0, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir, margin: '4px 0' }} />
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
+                <span style={{ whiteSpace: 'nowrap' }}>{fb.from}</span>
+                <input value={userFrom} onChange={e => { setUserFrom(e.target.value); if (validationErrors.from) setValidationErrors(prev => ({...prev, from: false})) }} style={{ border: 'none', borderBottom: validationErrors.from ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '180px', direction: dir }} />
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-              <button onClick={handleSend} disabled={sending || !userText.trim()}
-                style={{ fontSize: '13px', padding: '5px 18px', background: sendDone ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '5px', cursor: userText.trim() ? 'pointer' : 'default', fontWeight: 'bold', opacity: userText.trim() ? 1 : 0.5, transition: 'background 0.3s' }}>
-                {sendDone ? '✓ ' + lang.system.sent : lang.system.send}
-              </button>
+              {(() => { const canSend = !sending && !!userDate.trim() && !!userTitle.trim() && !!userFrom.trim() && !!userText.trim(); return (
+                <button onClick={handleSend} disabled={!canSend}
+                  style={{ fontSize: '13px', padding: '5px 18px', background: sendDone ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '5px', cursor: canSend ? 'pointer' : 'default', fontWeight: 'bold', transition: 'background 0.3s', opacity: canSend ? 1 : 0.5 }}>
+                  {sendDone ? '✓ ' + lang.system.sent : lang.system.send}
+                </button>
+              )})()}
             </div>
           </div>
           <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <span style={{ position: 'absolute', top: '-10px', ...side12, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
-            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', overflowY: 'auto' }}>
+              {isAdmin && loadedMessages.length > 0 && (
+                <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ whiteSpace: 'nowrap', color: '#888', fontSize: '11px' }}>מענה לסימוכין</span>
+                  <select value={selectedMsgId ?? ''} onChange={e => handleSelectMsg(Number(e.target.value))}
+                    style={{ border: 'none', outline: 'none', fontSize: '11px', color: '#003399', background: 'transparent', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
+                    {loadedMessages.map(m => <option key={m.id} value={m.id}>{buildMsgRef(m)}</option>)}
+                  </select>
+                </div>
+              )}
+
               <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                {fb.date} <input value={replyDate} onChange={e => setReplyDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: dir }} />
+                {fb.date} <input type="date" value={replyDate} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyDate(e.target.value) : undefined} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '130px', direction: 'ltr', cursor: isAdmin ? 'text' : 'default' }} />
               </div>
-              <textarea value={replyText} onChange={hasReply ? undefined : e => setReplyText(e.target.value)} readOnly={hasReply} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: hasReply ? '#f0f4ff' : 'transparent', minHeight: '80px', cursor: hasReply ? 'default' : 'text' }} />
+              <textarea value={replyText} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ height: '80px', flexShrink: 0, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: !isAdmin ? '#f0f4ff' : 'transparent', cursor: !isAdmin ? 'default' : 'text' }} />
               <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px', direction: dir }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
               </div>
@@ -1069,7 +1374,8 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
 function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
   const isAdmin = user?.M_Finance_license_type === LICENSE_TYPES.System_Owner
   const [msgs, setMsgs] = useState<FeedbackMessage[]>([])
-  const [selected, setSelected] = useState<FeedbackMessage | null>(null)
+  const [expandedUid, setExpandedUid] = useState<number | null>(null)
+  const [expandedMsgId, setExpandedMsgId] = useState<number | null>(null)
   const [adminReply, setAdminReply] = useState('')
   const [adminReplyDate, setAdminReplyDate] = useState('')
   const [replySaved, setReplySaved] = useState(false)
@@ -1077,92 +1383,267 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   const isRTL = lang.code === 'he' || lang.code === 'ar'
   const dir = isRTL ? 'rtl' as const : 'ltr' as const
 
+  const userGroups = React.useMemo(() => {
+    const map = new Map<number, FeedbackMessage[]>()
+    msgs.forEach(m => {
+      const k = m.user_id ?? 0
+      if (!map.has(k)) map.set(k, [])
+      map.get(k)!.push(m)
+    })
+    return Array.from(map.entries()).map(([uid, ms]) => {
+      const sitRates = ms.map(m => m.rating_site).filter((r): r is number => r !== null)
+      const budRates = ms.map(m => m.rating_budget).filter((r): r is number => r !== null)
+      const avg = (arr: number[]) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length * 10) / 10 : null
+      return {
+        uid, msgs: ms,
+        name: ms[0]?.user_name ?? '—',
+        latestDate: ms[ms.length - 1].sent_date ?? ms[ms.length - 1].created_at?.slice(0, 10) ?? '—',
+        latestTitle: ms[ms.length - 1].title ?? '—',
+        avgSite: avg(sitRates), avgBudget: avg(budRates),
+        anyUnread: ms.some(m => !m.is_read),
+        unreadNums: ms.map((m, i) => !m.is_read ? i + 1 : null).filter((n): n is number => n !== null),
+      }
+    })
+  }, [msgs])
+
   useEffect(() => {
     if (!user) { setLoading(false); return }
     const url = isAdmin ? '/api/feedback' : `/api/feedback?userId=${user.id}`
-    onDbg('MessagesPage', `fetch GET ${url}`)
+    onDbg('MessagesPage.load', `fetch ${url}`)
     fetch(url).then(r => r.json()).then(d => {
-      setMsgs(d.messages ?? [])
+      const loaded = d.messages ?? []
+      setMsgs(loaded)
       setLoading(false)
-      onDbg('MessagesPage', `loaded ${d.messages?.length ?? 0}`)
-    }).catch(e => { onDbg('MessagesPage', `error: ${String(e)}`); setLoading(false) })
+      onDbg('MessagesPage.load', `count=${loaded.length} ids=${loaded.map((m: FeedbackMessage) => m.id).join(',')}`)
+    }).catch(e => { setLoading(false); onDbg('MessagesPage.load', `error: ${String(e)}`) })
   }, [user?.id])
 
+  function handleSelectMsg(msg: FeedbackMessage) {
+    if (expandedMsgId === msg.id) { setExpandedMsgId(null); onDbg('MessagesPage.selectMsg', `collapse id=${msg.id}`); return }
+    setExpandedMsgId(msg.id)
+    setAdminReply(msg.reply_text ?? '')
+    setAdminReplyDate(msg.reply_date || new Date().toISOString().slice(0, 10))
+    onDbg('MessagesPage.selectMsg', `expand id=${msg.id} hasReply=${!!msg.reply_text} replyDate=${msg.reply_date ?? 'null'}`)
+    if (!msg.is_read && isAdmin) {
+      fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id, isRead: true }) }).catch(() => {})
+      setMsgs(prev => prev.map(m => m.id === msg.id ? { ...m, is_read: true } : m))
+    }
+  }
+
   async function handleSendReply() {
-    if (!selected) return
-    await fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: selected.id, replyText: adminReply, replyDate: adminReplyDate }) }).catch(() => {})
-    setMsgs(prev => prev.map(m => m.id === selected.id ? { ...m, reply_text: adminReply, reply_date: adminReplyDate } : m))
-    setSelected(prev => prev ? { ...prev, reply_text: adminReply, reply_date: adminReplyDate } : prev)
+    if (!expandedMsgId) return
+    onDbg('MessagesPage.sendReply', `PATCH id=${expandedMsgId} replyLen=${adminReply.length} replyDate=${adminReplyDate}`)
+    let patchOk = false
+    try {
+      const res = await fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: expandedMsgId, replyText: adminReply, replyDate: adminReplyDate, isRead: true }) })
+      const data = await res.json()
+      patchOk = data.ok === true
+      onDbg('MessagesPage.sendReply', `PATCH response ok=${patchOk} status=${res.status} error=${data.error ?? 'none'}`)
+    } catch (e) { onDbg('MessagesPage.sendReply', `PATCH error: ${String(e)}`) }
+    setMsgs(prev => prev.map(m => m.id === expandedMsgId ? { ...m, reply_text: adminReply, reply_date: adminReplyDate } : m))
+    onDbg('MessagesPage.sendReply', `state מקומי עודכן id=${expandedMsgId}`)
     setReplySaved(true)
     setTimeout(() => setReplySaved(false), 2500)
   }
 
-  if (!user) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-      <div style={{ color: '#555', fontSize: 16 }}>{lang.profile.loginRequired}</div>
-    </div>
-  )
+  if (!user) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><div style={{ color: '#555', fontSize: 16 }}>{lang.profile.loginRequired}</div></div>
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><div style={{ color: '#555' }}>{lang.system.loading}</div></div>
+  if (msgs.length === 0) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><div style={{ color: '#888', fontSize: 15 }}>{lang.system.noMessages}</div></div>
 
-  if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-      <div style={{ color: '#555' }}>{lang.system.loading}</div>
-    </div>
-  )
+  const thS: React.CSSProperties = { padding: '8px 10px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', borderInlineEnd: '1px solid #1144aa', textAlign: 'center' }
+  const tdS: React.CSSProperties = { padding: '7px 10px', fontSize: 13, borderBottom: '1px solid #e0e4f0', whiteSpace: 'nowrap', textAlign: 'center' }
+  const tdMsgS: React.CSSProperties = { ...tdS, background: '#f0f4ff', fontSize: 12 }
 
   return (
-    <div style={{ width: '100%', height: '100%', background: '#f5f5f5', overflow: 'auto', padding: '20px', boxSizing: 'border-box', direction: dir }}>
-      <div style={{ maxWidth: '860px', margin: '0 auto' }}>
-        <div style={{ fontSize: 20, fontWeight: 'bold', color: '#003399', marginBottom: 16 }}>{lang.menu[2]}</div>
-        {msgs.length === 0 ? (
-          <div style={{ color: '#888', textAlign: 'center', marginTop: 60, fontSize: 15 }}>{lang.system.noMessages}</div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {msgs.map(msg => (
-              <div key={msg.id}>
-                <div onClick={() => {
-                  if (selected?.id === msg.id) { setSelected(null); return }
-                  setSelected(msg)
-                  setAdminReply(msg.reply_text || '')
-                  setAdminReplyDate(msg.reply_date || '')
-                  if (!msg.is_read && isAdmin) {
-                    fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id, isRead: true }) }).catch(() => {})
-                    setMsgs(prev => prev.map(m => m.id === msg.id ? { ...m, is_read: true } : m))
-                  }
-                }} style={{ background: selected?.id === msg.id ? '#dde8ff' : '#fff', border: '1px solid ' + (selected?.id === msg.id ? '#003399' : '#ddd'), borderRadius: selected?.id === msg.id ? '8px 8px 0 0' : 8, padding: '10px 14px', cursor: 'pointer', fontWeight: !msg.is_read && isAdmin ? 'bold' : 'normal', display: 'flex', gap: 12, alignItems: 'center' }}>
-                  <span style={{ color: '#003399', fontSize: 13, whiteSpace: 'nowrap' }}>{msg.sent_date || msg.created_at?.slice(0, 10)}</span>
-                  {isAdmin && <span style={{ color: '#666', fontSize: 13, whiteSpace: 'nowrap' }}>{msg.user_name || '—'}</span>}
-                  <span style={{ flex: 1, fontSize: 13 }}>{msg.title || '—'}</span>
-                  <span style={{ fontSize: 13, color: msg.reply_text ? '#006600' : '#bbb' }}>{msg.reply_text ? '✓' : '○'}</span>
-                </div>
-                {selected?.id === msg.id && (
-                  <div style={{ background: '#f8f9ff', border: '1px solid #003399', borderTop: 'none', borderRadius: '0 0 8px 8px', padding: '14px 16px' }}>
-                    <div style={{ fontSize: 13, color: '#222', whiteSpace: 'pre-wrap', padding: '8px 10px', background: '#fff', border: '1px solid #ddd', borderRadius: 6, marginBottom: 12, minHeight: 36 }}>{msg.body || '—'}</div>
-                    {isAdmin ? (
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 'bold', color: '#003399', marginBottom: 6 }}>{lang.system.reply}:</div>
-                        <textarea value={adminReply} onChange={e => setAdminReply(e.target.value)} style={{ width: '100%', minHeight: 60, border: '1px solid #999', borderRadius: 4, padding: '6px 8px', fontSize: 13, boxSizing: 'border-box', direction: dir, resize: 'vertical', fontFamily: 'Arial, sans-serif' }} />
-                        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6, justifyContent: 'flex-end' }}>
-                          <input type="date" value={adminReplyDate} onChange={e => setAdminReplyDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #999', fontSize: 13, outline: 'none', background: 'transparent' }} />
-                          <button onClick={handleSendReply} style={{ fontSize: 12, padding: '3px 14px', background: replySaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold' }}>
-                            {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' ' + lang.system.reply}
-                          </button>
-                        </div>
-                      </div>
-                    ) : msg.reply_text ? (
-                      <div style={{ background: '#f0f4ff', border: '1px solid #b0c0e8', borderRadius: 6, padding: '8px 12px', fontSize: 13, color: '#222', whiteSpace: 'pre-wrap' }}>
-                        {msg.reply_date && <div style={{ fontSize: 11, color: '#666', marginBottom: 4 }}>{msg.reply_date}</div>}
-                        {msg.reply_text}
-                      </div>
-                    ) : (
-                      <div style={{ color: '#bbb', fontSize: 13, textAlign: 'center', padding: '6px 0' }}>—</div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '16px', boxSizing: 'border-box', direction: dir }}>
+      {expandedUid !== null && (
+        <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
+          <button onClick={() => { setExpandedUid(null); setExpandedMsgId(null) }} style={{ fontSize: 12, padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold' }}>סגירה</button>
+        </div>
+      )}
+      <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 8, overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,80,0.08)' }}>
+        <thead>
+          <tr>
+            <th style={thS}>נקרא</th>
+            <th style={thS}>תאריך</th>
+            <th style={thS}>מס׳ משתמש</th>
+            <th style={thS}>מס׳ הודעה</th>
+            <th style={thS}>שם</th>
+            <th style={thS}>דרוג אתר</th>
+            <th style={thS}>דרוג תקציב</th>
+            <th style={{ ...thS, width: '100%', textAlign: 'start' }}>כותרת</th>
+            <th style={{ ...thS, borderInlineEnd: 'none' }}></th>
+          </tr>
+        </thead>
+        <tbody>
+          {userGroups.map((group, gi) => (
+            <React.Fragment key={group.uid}>
+              {expandedUid !== group.uid && (() => {
+                const last = group.msgs[group.msgs.length - 1]
+                const brdLast = '2px solid #003399'
+                const cellLast: React.CSSProperties = { ...tdMsgS, borderTop: brdLast, borderBottom: brdLast }
+                return (
+                  <tr onClick={() => setExpandedUid(group.uid)} style={{ cursor: 'pointer', background: '#e8eeff' }}>
+                    <td style={{ ...cellLast, borderInlineEnd: brdLast, color: group.unreadNums.length > 0 ? '#cc0000' : '#006600', fontSize: 15, fontWeight: 'bold' }}>{group.unreadNums.length > 0 ? group.unreadNums.join(',') : '✓'}</td>
+                    <td style={cellLast}>{last.sent_date || last.created_at?.slice(0, 10) || '—'}</td>
+                    <td style={cellLast}>{group.uid || '—'}</td>
+                    <td style={cellLast}>{group.msgs.length}</td>
+                    <td style={{ ...cellLast, textAlign: 'start' }}>{last.user_name || '—'}</td>
+                    <td style={{ ...cellLast, color: '#003399', fontWeight: 'bold' }}>{last.rating_site ?? '—'}</td>
+                    <td style={{ ...cellLast, color: '#003399', fontWeight: 'bold' }}>{last.rating_budget ?? '—'}</td>
+                    <td style={{ ...cellLast, textAlign: 'start', width: '100%' }}>{last.title || '—'}</td>
+                    <td style={{ ...cellLast, borderInlineStart: brdLast }}></td>
+                  </tr>
+                )
+              })()}
+              {expandedUid === group.uid && group.msgs.map((msg, mi) => {
+                const isOpen = expandedMsgId === msg.id
+                const brd = '2px solid #003399'
+                const cellS: React.CSSProperties = { ...tdMsgS, borderTop: brd, borderBottom: isOpen ? 'none' : brd }
+                return (
+                  <React.Fragment key={msg.id}>
+                    <tr onClick={() => handleSelectMsg(msg)} style={{ cursor: 'pointer', background: isOpen ? '#c8d8ff' : '#e8eeff' }}>
+                      <td style={{ ...cellS, borderInlineEnd: brd, color: msg.is_read ? '#006600' : '#cc0000', fontSize: 15 }}>{msg.is_read ? '✓' : '○'}</td>
+                      <td style={cellS}>{msg.sent_date || msg.created_at?.slice(0, 10) || '—'}</td>
+                      <td style={cellS}>{group.uid || '—'}</td>
+                      <td style={cellS}>{mi + 1}</td>
+                      <td style={{ ...cellS, textAlign: 'start' }}>{msg.user_name || '—'}</td>
+                      <td style={{ ...cellS, color: '#003399', fontWeight: 'bold' }}>{msg.rating_site ?? '—'}</td>
+                      <td style={{ ...cellS, color: '#003399', fontWeight: 'bold' }}>{msg.rating_budget ?? '—'}</td>
+                      <td style={{ ...cellS, textAlign: 'start', width: '100%' }}>{msg.title || '—'}</td>
+                      <td style={{ ...cellS, borderInlineStart: brd }} onClick={e => e.stopPropagation()}>
+                        <button onClick={() => {
+                          fetch('/api/feedback', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id }) })
+                            .then(() => { setMsgs(prev => prev.filter(m => m.id !== msg.id)); if (isOpen) setExpandedMsgId(null) })
+                            .catch(() => {})
+                        }} style={{ fontSize: 11, padding: '2px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold', whiteSpace: 'nowrap' }}>מחיקה</button>
+                      </td>
+                    </tr>
+                    {isOpen && (() => {
+                      const body = msg.body ?? ''
+                      const splitAt = (sep: string) => { const i = body.indexOf(sep); return i === -1 ? ['', ''] : [body.slice(0, i), body.slice(i + sep.length)] }
+                      const [beforeHistory] = splitAt('\n\n══════════')
+                      const [beforeSysMsg, afterSysMsg] = splitAt('\n\n── הודעת המערכת ──\n')
+                      const [beforeReply] = splitAt('\n\n── תשובת המערכת ──\n')
+                      const metaBlock = beforeReply || beforeSysMsg || beforeHistory || body
+                      const lines = metaBlock.split('\n')
+                      const refNum = (lines[0] ?? '').replace(/^סימוכין:\s*/, '')
+                      const userText = lines.slice(4).join('\n').trim()
+                      const sysMsgText = afterSysMsg ? afterSysMsg.split('\n\n')[0] : ''
+                      const fb = lang.feedback
+                      return (
+                        <tr>
+                          <td colSpan={9} style={{ padding: 0, borderBottom: brd, borderInlineEnd: brd, borderInlineStart: brd, background: '#2a2a3a' }}>
+                            <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
+                              <div style={{ width: '794px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column', direction: 'rtl', fontFamily: 'Arial, sans-serif' }}>
+
+                                {/* Header */}
+                                <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                                  <div style={{ flex: 1, textAlign: 'right', paddingBottom: '6px', fontSize: '16px', fontWeight: 'normal', color: '#003399', lineHeight: '1.5' }}>
+                                    <div>{msg.user_name || '—'}</div>
+                                    <div style={{ fontSize: '10px' }}>{(() => { if (!msg.sender_ip) return ''; const parts = msg.sender_ip.split('.'); const hex = parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') : ''; return `IP: ${msg.sender_ip}${hex ? ` (${hex})` : ''}` })()}</div>
+                                  </div>
+                                  <div style={{ background: '#003399', borderRadius: '12px 12px 0 0', padding: '4px 6px 6px', display: 'inline-flex', alignItems: 'center', gap: '32px', border: '2px solid #FFD700', boxShadow: '0 4px 16px rgba(0,0,80,0.2)' }}>
+                                    <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
+                                    <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
+                                  </div>
+                                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{mi + 1}</div>
+                                    <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{'הודעה מס.‏'}</div>
+                                  </div>
+                                </div>
+
+                                {sysMsgText && (
+                                  <div style={{ position: 'relative', marginTop: '28px' }}>
+                                    <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemMessage}</span>
+                                    <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '135px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                      <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{sysMsgText}</div>
+                                      <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
+                                        {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Ratings */}
+                                <div style={{ marginTop: '28px', fontFamily: 'Arial, sans-serif' }}>
+                                  <div style={{ fontSize: '15px', fontWeight: 700, color: '#222', marginBottom: '12px' }}>{fb.rating}</div>
+                                  {([[fb.ratingWebsite, msg.rating_site], [fb.ratingBudget, msg.rating_budget]] as [string, number | null][]).map(([label, val]) => (
+                                    <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', marginBottom: '10px', border: '1.5px solid #003399', borderRadius: '6px', padding: '6px 12px' }}>
+                                      <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontWeight: 'bold' }}>{label}</span>
+                                      {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                                        <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', margin: '0 2px' }}>
+                                          <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2.5px solid #003399', background: val === n ? '#003399' : '#fff', boxShadow: val === n ? '0 0 0 2px #6699ff' : 'none' }} />
+                                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#003399' }}>{n}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* User message + System reply */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '28px', flex: 1 }}>
+
+                                  {/* User message */}
+                                  <div style={{ position: 'relative' }}>
+                                    <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.userMessage}</span>
+                                    <div style={{ border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff' }}>
+                                      <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222' }}>
+                                        <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{msg.sent_date || '______'}</span>
+                                        <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{mi + 1}</span>
+                                        <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{msg.title || '______'}</span>
+                                        <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum || '______'}</span>
+                                      </div>
+                                      <div style={{ minHeight: '80px', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0' }}>{userText}</div>
+                                      <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{msg.user_name || '______'}</div>
+                                    </div>
+                                  </div>
+
+                                  {/* System reply */}
+                                  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                                    <span style={{ position: 'absolute', top: '-10px', right: '12px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
+                                    <div style={{ border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                      <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                          {fb.date}
+                                          {isAdmin
+                                            ? <input type="date" value={adminReplyDate} onChange={e => setAdminReplyDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '130px', direction: 'ltr' }} />
+                                            : <span style={{ marginInlineStart: 6 }}>{msg.reply_date || '______'}</span>
+                                          }
+                                        </div>
+                                        <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{'מענה לסימוכין'}{' '}{refNum}</span>
+                                      </div>
+                                      {isAdmin
+                                        ? <textarea value={adminReply} onChange={e => setAdminReply(e.target.value)} style={{ minHeight: '80px', border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
+                                        : <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', minHeight: '80px' }}>{msg.reply_text || ''}</div>
+                                      }
+                                      <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
+                                        {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
+                                      </div>
+                                    </div>
+                                    {isAdmin && (
+                                      <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 10 }}>
+                                        <button onClick={handleSendReply} disabled={!adminReply.trim() || !adminReplyDate.trim()} style={{ fontSize: 13, padding: '5px 18px', background: replySaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 5, cursor: 'pointer', fontWeight: 'bold', opacity: adminReply.trim() && adminReplyDate.trim() ? 1 : 0.5 }}>
+                                          {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' תשובה'}
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })()}
+                  </React.Fragment>
+                )
+              })}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
