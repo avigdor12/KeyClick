@@ -122,6 +122,25 @@ export default function Home() {
     dbg('userEffect', `findIndex language="${Current_User_Pointer_to_DB.language}" => idx=${idx}`)
     if (idx !== -1) setLangIdx(idx)
     dbg('userEffect', `user loaded id=${Current_User_Pointer_to_DB.id}`)
+    // Check upcoming reminders (today + next 2 days)
+    fetch(`/api/reminders?user_id=${Current_User_Pointer_to_DB.id}`)
+      .then(r => r.json())
+      .then(d => {
+        const today = new Date(); today.setHours(0,0,0,0)
+        const limit = new Date(today); limit.setDate(limit.getDate() + 3)
+        const upcoming = (d.reminders ?? []).filter((r: ReminderRecord) => {
+          const dt = new Date(r.date); dt.setHours(0,0,0,0)
+          return dt >= today && dt < limit
+        })
+        if (upcoming.length === 0) return
+        const lines = upcoming.map((r: ReminderRecord) => {
+          const [y,m,day] = r.date.split('-')
+          const dateStr = `${day}/${m}/${y}`
+          return r.time ? `${dateStr} ${r.time}  ${r.title}` : `${dateStr}  ${r.title}`
+        }).join('\n')
+        setPopupMsg({ title: 'תזכורות', body: lines })
+      })
+      .catch(() => {})
   }, [Current_User_Pointer_to_DB])
 
   useEffect(() => {
@@ -470,6 +489,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [debugOpen, setDebugOpen] = useState(false)
   const [buildOpen, setBuildOpen] = useState(false)
   const [prSaved, setPrSaved] = useState(false)
+  const [updatesResetDone, setUpdatesResetDone] = useState(false)
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
@@ -931,6 +951,16 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <button style={{ ...sysBtnSm, ...(view === 'pr' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'pr' ? 'none' : 'pr')}>{lang.system.pr}</button>
               <button style={{ ...sysBtnSm, ...(view === 'messages' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'messages' ? 'none' : 'messages')}>{lang.system.messages}</button>
             </div>
+          </div>
+
+          {/* עדכונים */}
+          <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
+            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>עדכונים</div>
+            <button style={{ ...sysBtnSm, width: '100%', background: updatesResetDone ? '#006600' : undefined }} onClick={() => {
+              fetch('/api/updates', { method: 'DELETE' })
+                .then(() => { setUpdatesResetDone(true); setTimeout(() => setUpdatesResetDone(false), 2000) })
+                .catch(() => {})
+            }}>{updatesResetDone ? '✓ אופס' : 'איפוס טבלה'}</button>
           </div>
 
         </div>
@@ -1698,9 +1728,175 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   )
 }
 
+type UpdateRecord = { id: number; product: string; version: string; release_date: string; release_time: string | null; description: string }
+
+const PRODUCT_DISPLAY: Record<string, string> = {
+  'KeyClick Site': 'אתר KeyClick',
+  'M Finance':     'ניהול תקציב בית M Finance',
+}
+
+function formatUpdateDate(date: string, time: string | null) {
+  if (!date) return '—'
+  const [y, m, d] = date.split('-')
+  const dateStr = `${d}/${m}/${y}`
+  return time ? `${time}  ${dateStr}` : dateStr
+}
+
+function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
+  const [updates, setUpdates] = useState<UpdateRecord[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/updates').then(r => r.json()).then(d => { setUpdates(d.updates ?? []); setLoading(false) }).catch(() => setLoading(false))
+  }, [])
+
+  const thS: React.CSSProperties = {
+    padding: '12px 20px', fontWeight: 700, fontSize: 17, color: '#FFD700', fontStyle: 'italic',
+    whiteSpace: 'nowrap', textAlign: 'center',
+    background: '#003399', border: '2px solid #003399',
+  }
+  const tdS: React.CSSProperties = {
+    padding: '11px 20px', fontSize: 14, color: '#003399', fontWeight: 700,
+    border: '2px solid #003399', verticalAlign: 'middle', textAlign: 'center',
+  }
+
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
+      <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
+        <div style={{ fontSize: 22, fontWeight: 700, color: '#003399', marginBottom: 18 }}>{lang.menu[1]}</div>
+        {loading ? (
+          <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>{lang.system.loading}</div>
+        ) : updates.length === 0 ? (
+          <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>{lang.system.noMessages}</div>
+        ) : (
+          <div style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 12px rgba(0,0,80,0.10)', display: 'inline-block', border: '2px solid #003399', background: '#fff' }}>
+          <table style={{ borderCollapse: 'collapse', background: '#fff' }}>
+            <thead>
+              <tr>
+                <th style={thS}>תאריך ושעה</th>
+                <th style={thS}>מוצר</th>
+                <th style={thS}>גרסה</th>
+                <th style={thS}>כותרת</th>
+              </tr>
+            </thead>
+            <tbody>
+              {updates.map((u) => (
+                <tr key={u.id}>
+                  <td style={{ ...tdS, whiteSpace: 'nowrap', fontSize: 13 }}>{formatUpdateDate(u.release_date, u.release_time)}</td>
+                  <td style={{ ...tdS, whiteSpace: 'nowrap', fontFamily: handFont(lang.code), fontSize: 16 }}>{PRODUCT_DISPLAY[u.product] ?? u.product}</td>
+                  <td style={{ ...tdS, whiteSpace: 'nowrap', fontSize: 13 }}>{(u.version ?? '').replace(/^ver\s*/i, '')}</td>
+                  <td style={{ ...tdS, minWidth: 220 }}>{u.description || '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+type ReminderRecord = { id: number; user_id: number; title: string; date: string; time: string | null; type: string }
+
+function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof languages[0] }) {
+  const [reminders, setReminders] = useState<ReminderRecord[]>([])
+  const [loading, setLoading]     = useState(true)
+  const [title, setTitle]         = useState('')
+  const [date, setDate]           = useState('')
+  const [time, setTime]           = useState('')
+  const [saving, setSaving]       = useState(false)
+
+  const fetchReminders = () => {
+    if (!user) return
+    fetch(`/api/reminders?user_id=${user.id}`).then(r => r.json()).then(d => { setReminders(d.reminders ?? []); setLoading(false) }).catch(() => setLoading(false))
+  }
+
+  useEffect(() => { fetchReminders() }, [user])
+
+  const handleAdd = async () => {
+    if (!user || !title.trim() || !date) return
+    setSaving(true)
+    await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: title.trim(), date, time: time || null, type: 'manual' }) })
+    setTitle(''); setDate(''); setTime('')
+    setSaving(false)
+    fetchReminders()
+  }
+
+  const handleDelete = async (id: number) => {
+    await fetch(`/api/reminders?id=${id}`, { method: 'DELETE' })
+    setReminders(prev => prev.filter(r => r.id !== id))
+  }
+
+  const formatDate = (d: string) => { const [y,m,day] = d.split('-'); return `${day}/${m}/${y}` }
+
+  const inputS: React.CSSProperties = { border: '1px solid #99aadd', borderRadius: 5, padding: '7px 12px', fontSize: 14, fontFamily: 'inherit', outline: 'none', color: '#003399', background: '#f7f9ff' }
+  const thS: React.CSSProperties = { padding: '10px 16px', fontWeight: 700, fontSize: 15, color: '#FFD700', fontStyle: 'italic', background: '#003399', border: '2px solid #003399', textAlign: 'center', whiteSpace: 'nowrap' }
+  const tdS: React.CSSProperties = { padding: '10px 16px', fontSize: 14, color: '#003399', fontWeight: 700, border: '2px solid #003399', textAlign: 'center', verticalAlign: 'middle' }
+
+  if (!user) return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: 15 }}>
+      נדרשת כניסה לצפייה בתזכורות
+    </div>
+  )
+
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
+      <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
+        <div style={{ fontSize: 22, fontWeight: 700, color: '#003399', marginBottom: 20 }}>{lang.menu[3]}</div>
+
+        {/* Add form */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 24, alignItems: 'center', flexWrap: 'wrap' }}>
+          <input style={{ ...inputS, minWidth: 220 }} placeholder="כותרת תזכורת" value={title} onChange={e => setTitle(e.target.value)} />
+          <input style={{ ...inputS, direction: 'ltr' }} type="date" value={date} onChange={e => setDate(e.target.value)} />
+          <input style={{ ...inputS, width: 90, direction: 'ltr' }} type="time" value={time} onChange={e => setTime(e.target.value)} placeholder="שעה" />
+          <button onClick={handleAdd} disabled={!title.trim() || !date || saving}
+            style={{ padding: '7px 22px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, fontWeight: 700, fontSize: 14, cursor: 'pointer', fontStyle: 'italic', opacity: (!title.trim() || !date) ? 0.5 : 1 }}>
+            + הוסף
+          </button>
+        </div>
+
+        {/* Table */}
+        {loading ? (
+          <div style={{ color: '#888', padding: 20 }}>{lang.system.loading}</div>
+        ) : reminders.length === 0 ? (
+          <div style={{ color: '#888', padding: 20 }}>אין תזכורות</div>
+        ) : (
+          <div style={{ borderRadius: 12, overflow: 'hidden', border: '2px solid #003399', display: 'inline-block', background: '#fff' }}>
+            <table style={{ borderCollapse: 'collapse', background: '#fff' }}>
+              <thead>
+                <tr>
+                  <th style={thS}>תאריך</th>
+                  <th style={thS}>שעה</th>
+                  <th style={{ ...thS, textAlign: 'right' }}>כותרת</th>
+                  <th style={thS}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {reminders.map((r, i) => (
+                  <tr key={r.id} style={{ background: i % 2 === 0 ? '#fff' : '#f5f7fd' }}>
+                    <td style={{ ...tdS, whiteSpace: 'nowrap' }}>{formatDate(r.date)}</td>
+                    <td style={{ ...tdS, whiteSpace: 'nowrap', direction: 'ltr' }}>{r.time || '—'}</td>
+                    <td style={{ ...tdS, textAlign: 'right', minWidth: 200 }}>{r.title}</td>
+                    <td style={{ ...tdS, padding: '6px 10px' }}>
+                      <button onClick={() => handleDelete(r.id)} style={{ background: 'none', border: 'none', color: '#cc0000', cursor: 'pointer', fontSize: 16, fontWeight: 700 }}>✕</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
+  if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
+  if (page === '3')           return <RemindersPage user={user} lang={lang} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} />
