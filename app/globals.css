@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+input[type="date"].no-icon::-webkit-calendar-picker-indicator { display: none; }
+input[type="date"].no-icon::-webkit-inner-spin-button { display: none; }
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
