@@ -980,6 +980,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const [refNum, setRefNum] = useState('')
   const [validationErrors, setValidationErrors] = useState<{date?: boolean, title?: boolean, from?: boolean}>({})
   const [sessionId, setSessionId] = useState<number | null>(null)
+  const [expandedMsgId, setExpandedMsgId] = useState<number | null>(null)
   const isAdmin = user?.M_Finance_license_type === LICENSE_TYPES.System_Owner
 
   useEffect(() => {
@@ -1209,6 +1210,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const isRTL = lang.code === 'he' || lang.code === 'ar'
   const dir = isRTL ? 'rtl' as const : 'ltr' as const
   const fb = lang.feedback
+  const selectedMsg = expandedMsgId !== null ? (loadedMessages.find(m => m.id === expandedMsgId) ?? null) : null
   const getBodyText = (m: FeedbackMessage) => {
     const body = m.body ?? ''
     if (!body.startsWith('סימוכין:')) return body
@@ -1236,9 +1238,59 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const side16 = isRTL ? { right: '16px' } : { left: '16px' }
   const side12 = isRTL ? { right: '12px' } : { left: '12px' }
   return (
-    <div style={{ width: '100%', height: '100%', background: '#d0d0d0', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
-      <div style={{ width: '794px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ width: '100%', height: '100%', background: '#d0d0d0', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
 
+      {/* LEFT - Messages Library */}
+      <div style={{ flex: 1, minWidth: '320px', flexShrink: 0, position: 'sticky', top: 0, background: '#f5f5f5', borderRadius: '12px', border: '2px solid #003399', overflow: 'auto' }}>
+        <div style={{ background: '#003399', padding: '8px 12px', textAlign: 'center' }}>
+          <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 13 }}>{lang.system.messages}</span>
+        </div>
+        <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 4px', fontSize: 12, direction: 'rtl', padding: '0 4px' }}>
+          <thead>
+            <tr>
+              {(['#', fb.date.replace(':','').trim(), fb.title.replace(':','').trim(), fb.ratingWebsite, fb.ratingBudget, fb.systemReply] as string[]).map(h => (
+                <th key={h} title={h} style={{ padding: '5px 4px', background: '#e8eeff', color: '#003399', fontWeight: 'bold', borderBottom: '1px solid #b0b8d8', whiteSpace: 'nowrap', textAlign: 'center', fontSize: 11 }}>{h}</th>
+              ))}
+              <th style={{ padding: '5px 4px', background: '#e8eeff', borderBottom: '1px solid #b0b8d8', width: 28 }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {loadedMessages.map((m, i) => {
+              const isExp = expandedMsgId === m.id
+              return (
+                <React.Fragment key={m.id}>
+                  <tr onClick={() => { setExpandedMsgId(prev => prev === m.id ? null : m.id); handleSelectMsg(m.id) }}
+                    style={{ cursor: 'pointer', background: isExp ? '#c8d8ff' : i % 2 === 0 ? '#fff' : '#f4f6ff', outline: isExp ? '2px solid #003399' : '1px solid #c0c8e0' }}>
+                    <td style={{ padding: '5px 4px', textAlign: 'center', color: '#555' }}>{i + 1}</td>
+                    <td style={{ padding: '5px 4px', textAlign: 'center', whiteSpace: 'nowrap' }}>{m.sent_date || '—'}</td>
+                    <td style={{ padding: '5px 6px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.title || '—'}</td>
+                    <td style={{ padding: '5px 4px', textAlign: 'center', color: '#003399', fontWeight: 'bold' }}>{m.rating_site ?? '—'}</td>
+                    <td style={{ padding: '5px 4px', textAlign: 'center', color: '#003399', fontWeight: 'bold' }}>{m.rating_budget ?? '—'}</td>
+                    <td style={{ padding: '5px 4px', textAlign: 'center', color: m.reply_text ? '#006600' : '#cc6600', fontWeight: 'bold' }}>{m.reply_text ? '✓' : '○'}</td>
+                    <td style={{ padding: '3px 4px', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
+                      <button onClick={async () => {
+                        await fetch('/api/feedback', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: m.id }) }).catch(() => {})
+                        setLoadedMessages(prev => prev.filter(msg => msg.id !== m.id))
+                        if (expandedMsgId === m.id) setExpandedMsgId(null)
+                      }} style={{ fontSize: 10, padding: '2px 8px', background: '#cc0000', color: '#fff', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold' }}>מחיקה</button>
+                    </td>
+                  </tr>
+                </React.Fragment>
+              )
+            })}
+            {loadedMessages.length === 0 && (
+              <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center', color: '#888', fontSize: 12 }}>{lang.system.noMessages}</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div style={{ width: '720px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column' }}>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '8px' }}>
+          <button onClick={() => { setExpandedMsgId(null); setUserDate(''); setUserTitle(''); setUserFrom(''); setUserText(''); setRatingSite(null); setRatingBudget(null); setValidationErrors({}); setRefNum('') }}
+            style={{ fontSize: '13px', padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ הודעה חדשה</button>
+        </div>
         {/* כרטיסיה */}
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
@@ -1262,9 +1314,6 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
               <div style={{ fontSize: '10px' }}>{(() => { if (!user.last_ip) return ''; const parts = user.last_ip.split('.'); const hex = parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') : ''; return `IP: ${user.last_ip}${hex ? ` (${hex})` : ''}` })()}</div>
             </div>
           ) : <div style={{ flex: 1 }} />}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '6px' }}>
-          <button onClick={handleReset} style={{ fontSize: '13px', padding: '3px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>אפס טופס</button>
         </div>
 
 
@@ -1299,40 +1348,40 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '28px', direction: dir, flex: 1 }}>
           <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <span style={{ position: 'absolute', top: '-10px', ...side12, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.userMessage}</span>
-            <div style={{ height: '320px', border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflowY: 'auto' }}>
-              {loadedMessages.map((m, i) => (
-                <div key={m.id} style={{ flexShrink: 0 }}>
-                  <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222' }}>
-                    <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{m.sent_date || '______'}</span>
-                    <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{i + 1}</span>
-                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{m.title || '______'}</span>
-                    <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{buildMsgRef(m) || '______'}</span>
+            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflowY: 'auto' }}>
+              {selectedMsg ? (
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
+                    <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{selectedMsg.sent_date || '______'}</span>
+                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{selectedMsg.title || '______'}</span>
+                    <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{buildMsgRef(selectedMsg) || '______'}</span>
                   </div>
-                  <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '4px 0' }}>{getBodyText(m) || '______'}</div>
-                  <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{m.user_name || '______'}</div>
-                  <div style={{ height: '26px' }} />
-                  <hr style={{ border: 'none', borderTop: '1px solid #bbb', margin: '0' }} />
-                  <div style={{ height: '26px' }} />
+                  <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', flex: 1 }}>{getBodyText(selectedMsg) || '______'}</div>
+                  <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px' }}>{fb.from}{' '}{selectedMsg.user_name || '______'}</div>
                 </div>
-              ))}
-              <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
-                <span style={{ position: 'absolute', right: 0, display: 'flex', gap: '4px', alignItems: 'baseline' }}>
-                  <span style={{ whiteSpace: 'nowrap' }}>{fb.date}</span>
-                  <input type="date" value={userDate} onChange={e => { setUserDate(e.target.value); if (validationErrors.date) setValidationErrors(prev => ({...prev, date: false})) }} style={{ border: 'none', borderBottom: validationErrors.date ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: 'ltr' }} />
-                </span>
-                {refNum && <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{loadedMessages.length}</span>}
-                <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', alignItems: 'baseline', whiteSpace: 'nowrap' }}>
-                  <span>{fb.title}</span>
-                  <input value={userTitle} onChange={e => { setUserTitle(e.target.value); if (validationErrors.title) setValidationErrors(prev => ({...prev, title: false})) }} style={{ border: 'none', borderBottom: validationErrors.title ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '150px', direction: dir }} />
-                </span>
-                {refNum && <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum}</span>}
-              </div>
-              <textarea value={userText} onChange={e => setUserText(e.target.value)} style={{ height: '80px', flexShrink: 0, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir, margin: '4px 0' }} />
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
-                <span style={{ whiteSpace: 'nowrap' }}>{fb.from}</span>
-                <input value={userFrom} onChange={e => { setUserFrom(e.target.value); if (validationErrors.from) setValidationErrors(prev => ({...prev, from: false})) }} style={{ border: 'none', borderBottom: validationErrors.from ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '180px', direction: dir }} />
-              </div>
+              ) : (
+                <>
+                  <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
+                    <span style={{ position: 'absolute', right: 0, display: 'flex', gap: '4px', alignItems: 'baseline' }}>
+                      <span style={{ whiteSpace: 'nowrap' }}>{fb.date}</span>
+                      <input type="date" value={userDate} onChange={e => { setUserDate(e.target.value); if (validationErrors.date) setValidationErrors(prev => ({...prev, date: false})) }} style={{ border: 'none', borderBottom: validationErrors.date ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: 'ltr' }} />
+                    </span>
+                    {refNum && <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{loadedMessages.length}</span>}
+                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', alignItems: 'baseline', whiteSpace: 'nowrap' }}>
+                      <span>{fb.title}</span>
+                      <input value={userTitle} onChange={e => { setUserTitle(e.target.value); if (validationErrors.title) setValidationErrors(prev => ({...prev, title: false})) }} style={{ border: 'none', borderBottom: validationErrors.title ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '150px', direction: dir }} />
+                    </span>
+                    {refNum && <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum}</span>}
+                  </div>
+                  <textarea value={userText} onChange={e => setUserText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir, margin: '4px 0' }} />
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', fontSize: '13px', color: '#222', flexShrink: 0, borderTop: '1px solid #eee', paddingTop: '6px' }}>
+                    <span style={{ whiteSpace: 'nowrap' }}>{fb.from}</span>
+                    <input value={userFrom} onChange={e => { setUserFrom(e.target.value); if (validationErrors.from) setValidationErrors(prev => ({...prev, from: false})) }} style={{ border: 'none', borderBottom: validationErrors.from ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '180px', direction: dir }} />
+                  </div>
+                </>
+              )}
             </div>
+            {!selectedMsg && (
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
               {(() => { const canSend = !sending && !!userDate.trim() && !!userTitle.trim() && !!userFrom.trim() && !!userText.trim(); return (
                 <button onClick={handleSend} disabled={!canSend}
@@ -1341,25 +1390,29 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                 </button>
               )})()}
             </div>
+            )}
           </div>
           <div style={{ flex: 1, position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <span style={{ position: 'absolute', top: '-10px', ...side12, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemReply}</span>
-            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box', overflowY: 'auto' }}>
+            <div style={{ flex: 1, border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflowY: 'auto' }}>
               {isAdmin && loadedMessages.length > 0 && (
-                <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ whiteSpace: 'nowrap', color: '#888', fontSize: '11px' }}>מענה לסימוכין</span>
+                <div style={{ fontSize: '11px', color: '#888', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '4px', marginBottom: '4px', flexShrink: 0 }}>
+                  <span style={{ whiteSpace: 'nowrap' }}>מענה לסימוכין</span>
                   <select value={selectedMsgId ?? ''} onChange={e => handleSelectMsg(Number(e.target.value))}
                     style={{ border: 'none', outline: 'none', fontSize: '11px', color: '#003399', background: 'transparent', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
                     {loadedMessages.map(m => <option key={m.id} value={m.id}>{buildMsgRef(m)}</option>)}
                   </select>
                 </div>
               )}
-
-              <div style={{ fontSize: '13px', color: '#222', borderBottom: '1px solid #ddd', paddingBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                {fb.date} <input type="date" value={replyDate} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyDate(e.target.value) : undefined} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '130px', direction: 'ltr', cursor: isAdmin ? 'text' : 'default' }} />
+              <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
+                <span style={{ position: 'absolute', right: 0, display: 'flex', gap: '4px', alignItems: 'baseline' }}>
+                  <span>{fb.date}</span>
+                  <input type="date" value={replyDate} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyDate(e.target.value) : undefined} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '110px', direction: 'ltr', cursor: isAdmin ? 'text' : 'default' }} />
+                </span>
+                {selectedMsg && <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{buildMsgRef(selectedMsg) || '______'}</span>}
               </div>
-              <textarea value={replyText} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ height: '80px', flexShrink: 0, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: !isAdmin ? '#f0f4ff' : 'transparent', cursor: !isAdmin ? 'default' : 'text' }} />
-              <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px', direction: dir }}>
+              <textarea value={replyText} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: !isAdmin ? '#f0f4ff' : 'transparent', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0' }} />
+              <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px', direction: dir, flexShrink: 0 }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
               </div>
             </div>
