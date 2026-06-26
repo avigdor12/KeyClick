@@ -160,6 +160,7 @@ export default function Home() {
   const [prText, setPrText] = useState('')
   const [prDate, setPrDate] = useState('')
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
+  const [reminderNotif, setReminderNotif] = useState<ReminderRecord[] | null>(null)
   const [siteVersion, setSiteVersion] = useState({ line1: '', line2: '' })
   const [debugLog, setDebugLog]       = useState<string[]>([])
   const [debugPaused, setDebugPaused] = useState(false)
@@ -189,13 +190,7 @@ export default function Home() {
           return dt >= today && dt < limit
         })
         if (upcoming.length === 0) return
-        const lines = upcoming.map((r: ReminderRecord) => {
-          const [y,m,day] = r.date.split('-')
-          const dateStr = `${day}/${m}/${y}`
-          return r.time ? `${dateStr} ${r.time}  ${r.title}` : `${dateStr}  ${r.title}`
-        }).join('\n')
-        const popupLang = idx !== -1 ? languages[idx] : languages[langIdx]
-        setPopupMsg({ title: popupLang.menu[3], body: lines })
+        setReminderNotif(upcoming)
       })
       .catch(() => {})
   }, [Current_User_Pointer_to_DB])
@@ -217,6 +212,10 @@ export default function Home() {
       setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgInstallComplete })
       window.history.replaceState({}, '', window.location.pathname)
       dbg('installCallback', 'installed=1 detected => mf_installed saved')
+      fetch('/api/current-user', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field: 'is_m_finance_installed', value: true }) })
+        .then(r => r.json())
+        .then(d => { if (d.ok && d.user) set_Current_User_Pointer_to_DB(d.user); dbg('installCallback', `DB updated ok=${d.ok}`) })
+        .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
     }
     const last = Number(localStorage.getItem('kc_last_version_check') || '0')
     const elapsedH = Math.round((Date.now() - last) / 3600000)
@@ -411,6 +410,32 @@ export default function Home() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif', overflow: 'hidden', position: 'relative' }}>
 
+      {reminderNotif && reminderNotif.length > 0 && (
+        <div style={{ position: 'fixed', top: '70px', insetInlineEnd: '20px', zIndex: 9000, minWidth: '280px', maxWidth: '360px', direction: 'rtl', fontFamily: 'Arial, sans-serif', animation: 'slideIn 0.3s ease' }}>
+          <div style={{ background: '#fff', border: '2px solid #003399', borderRadius: '12px', boxShadow: '0 8px 32px rgba(0,0,60,0.22)', overflow: 'hidden' }}>
+            <div style={{ background: '#003399', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '15px' }}>🔔 {lang.menu[3]}</span>
+              <button onClick={() => setReminderNotif(null)} style={{ background: 'none', border: 'none', color: '#FFD700', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold', lineHeight: 1 }}>✕</button>
+            </div>
+            <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {reminderNotif.map((r, i) => {
+                const [y,m,day] = r.date.split('-')
+                const isToday = r.date === new Date().toISOString().slice(0,10)
+                return (
+                  <div key={r.id} style={{ borderBottom: i < reminderNotif.length - 1 ? '1px solid #e0e4f0' : 'none', paddingBottom: i < reminderNotif.length - 1 ? '10px' : 0 }}>
+                    <div style={{ fontWeight: 'bold', color: '#003399', fontSize: '14px' }}>{r.title}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '3px' }}>
+                      {isToday && <span style={{ background: '#cc0000', color: '#fff', fontSize: '10px', fontWeight: 'bold', padding: '1px 6px', borderRadius: '8px' }}>{lang.system.new}</span>}
+                      <span style={{ color: '#888', fontSize: '12px', direction: 'ltr' }}>{`${day}/${m}/${y}`}{r.time ? ' ' + r.time : ''}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {popupMsg && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1a1a1a', border: '2px solid #FFD700', borderRadius: '16px', padding: '36px 48px 44px', textAlign: 'center', boxShadow: '0 12px 48px rgba(0,0,0,0.7)', minWidth: '300px', position: 'relative' }}>
@@ -442,7 +467,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
+            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -470,38 +495,41 @@ export default function Home() {
             >{item}</button>
           ))}
 
-          {/* M Finance container */}
-          <div style={{ margin: '8px 6px', border: '1px solid #666', borderRadius: '8px', padding: '6px 4px 8px' }}>
-            <div style={{ color: '#FFD700', fontSize: '15px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #444', paddingBottom: '5px', marginBottom: '6px', fontFamily: handFont(lang.code) }}>
-              {lang.card.title}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
-              <button onClick={() => { setActivePage('mf-login'); setActiveMfBtn(null) }}
-                style={{ ...mfBtn, ...(activePage === 'mf-login' ? { background: '#4a1a6e' } : {}) }}>
-                {lang.card.login}
-              </button>
-              <button onClick={() => { setActivePage('mf-register'); setActiveMfBtn(null) }}
-                style={{ ...mfBtn, ...(activePage === 'mf-register' ? { background: '#4a1a6e' } : {}) }}>
-                {lang.card.register}
-              </button>
-              <button onClick={() => { setActiveMfBtn(activeMfBtn === 'install' ? null : 'install'); handleInstall() }}
-                style={{ ...mfBtn, ...(activeMfBtn === 'install' ? { background: '#4a1a6e' } : {}) }}>
-                {lang.card.install}
-              </button>
-              <button onClick={() => { setActiveMfBtn(activeMfBtn === 'run' ? null : 'run'); handleRun() }}
-                style={{ ...mfBtn, ...(activeMfBtn === 'run' ? { background: '#4a1a6e' } : {}) }}>
-                {lang.card.run}
-              </button>
-              <button onClick={() => setActiveMfBtn(activeMfBtn === 'videos' ? null : 'videos')}
-                style={{ ...mfBtn, ...(activeMfBtn === 'videos' ? { background: '#4a1a6e' } : {}) }}>
-                {lang.card.videos}
-              </button>
-              <button onClick={() => setActiveMfBtn(activeMfBtn === 'guide' ? null : 'guide')}
-                style={{ ...mfBtn, ...(activeMfBtn === 'guide' ? { background: '#4a1a6e' } : {}) }}>
-                {lang.card.guide}
-              </button>
-            </div>
-          </div>
+
+
+          <button onClick={() => {
+              if (!Current_User_Pointer_to_DB) {
+                setActivePage('mf-register'); setActiveMfBtn(null)
+              } else if (!Current_User_Pointer_to_DB.is_M_Finance_installed) {
+                setActiveMfBtn('install'); handleInstall()
+              } else {
+                setActiveMfBtn('run'); handleRun()
+              }
+            }}
+            style={{ display: 'block', margin: '6px auto', width: '70px', height: '60px', background: '#003399', border: '1px solid #FFD700', borderRadius: '6px', boxShadow: '0 0 8px rgba(255,215,0,0.4)', color: '#fff', cursor: 'pointer', textAlign: 'center', fontSize: '16px', lineHeight: '1.3' }}>
+            {lang.card.title}
+          </button>
+
+          <button onClick={() => setActiveMfBtn(activeMfBtn === 'videos' ? null : 'videos')}
+            style={{
+              background: activeMfBtn === 'videos' ? '#4a1a6e' : 'none', border: 'none',
+              borderTop: '1px solid #333', color: activeMfBtn === 'videos' ? '#fff' : '#ccc',
+              padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
+              fontSize: '13px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
+            }}
+            onMouseEnter={e => { if (activeMfBtn !== 'videos') e.currentTarget.style.color = '#fff' }}
+            onMouseLeave={e => { if (activeMfBtn !== 'videos') e.currentTarget.style.color = '#ccc' }}
+          >{lang.card.videos}</button>
+          <button onClick={() => setActiveMfBtn(activeMfBtn === 'guide' ? null : 'guide')}
+            style={{
+              background: activeMfBtn === 'guide' ? '#4a1a6e' : 'none', border: 'none',
+              borderTop: '1px solid #333', borderBottom: '1px solid #333', color: activeMfBtn === 'guide' ? '#fff' : '#ccc',
+              padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
+              fontSize: '13px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
+            }}
+            onMouseEnter={e => { if (activeMfBtn !== 'guide') e.currentTarget.style.color = '#fff' }}
+            onMouseLeave={e => { if (activeMfBtn !== 'guide') e.currentTarget.style.color = '#ccc' }}
+          >{lang.card.guide}</button>
 
           <div style={{ flex: 1 }} />
           <button onClick={() => {
@@ -541,8 +569,9 @@ function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/$
 type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
 type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null }
 
-function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive'>('none')
+function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests'>('none')
+  const [activeMfBtnTest, setActiveMfBtnTest] = useState<string | null>(null)
   const [debugOpen, setDebugOpen] = useState(false)
   const [buildOpen, setBuildOpen] = useState(false)
   const [prSaved, setPrSaved] = useState(false)
@@ -815,6 +844,58 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           </div>
         )}
 
+        {view === 'tests' && (
+          <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ margin: '8px 6px', border: '1px solid #666', borderRadius: '8px', padding: '6px 4px 8px', width: '140px', background: '#1a1a1a' }}>
+              <div style={{ color: '#FFD700', fontSize: '15px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #444', paddingBottom: '5px', marginBottom: '6px', fontFamily: handFont(lang.code) }}>
+                {lang.card.title}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+                <button onClick={() => { onNavigate('mf-register'); setActiveMfBtnTest(null) }}
+                  style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                  {lang.card.register}
+                </button>
+                <button onClick={async () => {
+                    const res = await fetch('/api/current-user', { method: 'DELETE' })
+                    const d = await res.json()
+                    if (d.ok) { onUserUpdate(null as unknown as UserRecord); onNavigate('mf-register'); onDbg('tests.unregister', 'user deleted') }
+                  }}
+                  style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                  בטל הרשמה
+                </button>
+                <button onClick={() => { setActiveMfBtnTest(activeMfBtnTest === 'install' ? null : 'install'); onInstall() }}
+                  style={{ background: activeMfBtnTest === 'install' ? '#4a1a6e' : '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                  {lang.card.install}
+                </button>
+                <button onClick={async () => {
+                    const res = await fetch('/api/current-user', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field: 'is_m_finance_installed', value: false }) })
+                    const d = await res.json()
+                    if (d.ok && d.user) {
+                      onUserUpdate(d.user)
+                      onDbg('tests.uninstall', 'is_M_Finance_installed=false => launching mfinance://uninstall')
+                      const iframe = document.createElement('iframe')
+                      iframe.style.display = 'none'
+                      iframe.src = 'mfinance://uninstall'
+                      document.body.appendChild(iframe)
+                      setTimeout(() => { try { document.body.removeChild(iframe) } catch { /* */ } }, 3000)
+                    }
+                  }}
+                  style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                  בטל התקנה
+                </button>
+                <button onClick={() => { onNavigate('mf-login'); setActiveMfBtnTest(null) }}
+                  style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                  {lang.card.login}
+                </button>
+                <button onClick={() => { setActiveMfBtnTest(activeMfBtnTest === 'run' ? null : 'run'); onRun() }}
+                  style={{ background: activeMfBtnTest === 'run' ? '#4a1a6e' : '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                  {lang.card.run}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {view === 'db' && (
           <div>
             {dbTables.map(t => (
@@ -1052,6 +1133,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <button style={{ ...sysBtnSm, ...(view === 'messages' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'messages' ? 'none' : 'messages')}>{lang.system.messages}</button>
             </div>
           </div>
+
+          <button style={{ ...sysBtnSm, background: view === 'tests' ? '#4a1a6e' : 'none', color: '#fff', fontSize: '14px' }} onClick={() => setView(view === 'tests' ? 'none' : 'tests')}>בדיקות</button>
 
         </div>
       </aside>
@@ -1899,10 +1982,19 @@ function formatUpdateDate(date: string, time: string | null) {
 function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
   const [updates, setUpdates] = useState<UpdateRecord[]>([])
   const [loading, setLoading] = useState(true)
+  const [txDescriptions, setTxDescriptions] = useState<Record<number, string>>({})
 
   useEffect(() => {
     fetch('/api/updates').then(r => r.json()).then(d => { setUpdates(d.updates ?? []); setLoading(false) }).catch(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    if (lang.code === 'he' || updates.length === 0) { setTxDescriptions({}); return }
+    const map: Record<number, string> = {}
+    Promise.all(updates.map(u =>
+      u.description ? translateFromHe(u.description, lang.code).then(t => { map[u.id] = t }) : Promise.resolve()
+    )).then(() => setTxDescriptions({ ...map }))
+  }, [updates, lang.code])
 
   const thS: React.CSSProperties = {
     padding: '12px 20px', fontWeight: 700, fontSize: 17, color: '#FFD700', fontStyle: 'italic',
@@ -1941,7 +2033,7 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
                     {u.product === 'KeyClick Site' ? lang.updates.productKeyClick : u.product === 'M Finance' ? lang.updates.productMFinance : u.product}
                   </td>
                   <td style={{ ...tdS, whiteSpace: 'nowrap', fontSize: 13 }}>{(u.version ?? '').replace(/^ver\s*/i, '')}</td>
-                  <td style={{ ...tdS, minWidth: 220 }}>{u.description || '—'}</td>
+                  <td style={{ ...tdS, minWidth: 220 }}>{(lang.code !== 'he' && txDescriptions[u.id]) || u.description || '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -2048,14 +2140,14 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} />
+  if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
@@ -2331,7 +2423,15 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
       const res  = await fetch('/api/update-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, licenseType: value, planStart, planEnd }) })
       const data = await res.json()
       onDbg('selectPlan', `response status=${res.status} ok=${res.ok} license=${data.user?.license_type ?? 'none'}`)
-      if (res.ok && data.user) { onDbg('selectPlan', 'onUserUpdate called'); onUserUpdate(data.user); setUpdating(false); return true }
+      if (res.ok && data.user) {
+        onDbg('selectPlan', 'onUserUpdate called'); onUserUpdate(data.user)
+        const displayName = lang.profile.planNames[key as keyof typeof lang.profile.planNames]
+        await fetch(`/api/reminders?user_id=${user.id}&type=plan`, { method: 'DELETE' })
+        await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: `${displayName} - תחילת תכנית`, date: planStart, time: null, type: 'plan' }) })
+        if (planEnd) await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: `${displayName} - סיום תכנית`, date: planEnd, time: null, type: 'plan' }) })
+        onDbg('selectPlan', `plan reminders synced — start=${planStart} end=${planEnd ?? 'none'}`)
+        setUpdating(false); return true
+      }
       onDbg('selectPlan', `failed — data=${JSON.stringify(data)}`)
     } catch (err) { onDbg('selectPlan', `error: ${String(err)}`) }
     setUpdating(false)

@@ -49,9 +49,16 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     await ensureTable()
-    const id = req.nextUrl.searchParams.get('id')
-    if (!id) return NextResponse.json({ ok: false, error: 'missing id' })
-    await pool.query('DELETE FROM keyclick_reminders WHERE id=$1', [id])
+    const id     = req.nextUrl.searchParams.get('id')
+    const userId = req.nextUrl.searchParams.get('user_id')
+    const type   = req.nextUrl.searchParams.get('type')
+    if (id) {
+      await pool.query('DELETE FROM keyclick_reminders WHERE id=$1', [id])
+    } else if (userId && type) {
+      await pool.query('DELETE FROM keyclick_reminders WHERE user_id=$1 AND type=$2', [userId, type])
+    } else {
+      return NextResponse.json({ ok: false, error: 'missing id or user_id+type' })
+    }
     return NextResponse.json({ ok: true })
   } catch (e) {
     return NextResponse.json({ ok: false, error: String(e) })

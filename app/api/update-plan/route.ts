@@ -15,10 +15,10 @@ export async function POST(req: NextRequest) {
     `)
 
     const result = await pool.query(
-      `UPDATE users SET license_type=$1, user_plan=$1, plan_start=$2, plan_end=$3
-       WHERE id=$4
+      `UPDATE users SET license_type=$1, user_plan=$2, plan_start=$3, plan_end=$4
+       WHERE id=$5
        RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, plan_start, plan_end`,
-      [licenseType, planStart ?? null, planEnd ?? null, userId]
+      [licenseType, licenseType, planStart ?? null, planEnd ?? null, userId]
     )
     if (result.rowCount === 0) return NextResponse.json({ error: 'user not found' }, { status: 404 })
     return NextResponse.json({ user: result.rows[0] })
