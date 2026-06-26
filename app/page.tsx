@@ -11,91 +11,147 @@ const languages = [
     profile: { fullName: 'Full Name', email: 'Email', ip: 'IP', language: 'Language', country: 'Country', plan: 'Plan', planStart: 'Plan Start', planEnd: 'Plan End', unlimited: 'Unlimited', comingSoon: 'Coming Soon', choosePlan: 'Choose Plan', close: '✕ Close', loginRequired: 'Login required to view personal page', login: 'Login', products: 'Products', change: 'Change',
       price: 'Price', changePlan: 'Change Plan', planName: 'Name', planFrom: 'From', planTo: 'To', back: 'Back', currencyLocal: '$', free: 'Free',       planNames: { System_Free_Run: 'Free Run', User_Trial: 'Trial', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monthly', User_Annual: 'Annual', User_One_Time: 'Single Entry', System_Suspended_NonPayment: 'Suspended', User_Cancelled: 'Cancelled' } },
     feedback: { customerRelations: 'Customer Relations', systemMessage: 'System Message', respectfully: 'Respectfully,', rating: 'Rating', ratingWebsite: 'Website', ratingBudget: 'Home Budget Management', userMessage: 'User Message', date: 'Date:', title: 'Title:', from: 'From:', systemReply: 'System Reply' },
-    system: { systemLabel: 'System', selectAction: 'Select action from right sidebar', users: 'Users', buildMessages: 'Build Messages', schedule: 'Schedule & Pricing', pr: 'Public Relations', publishedDate: 'Published date:', reset: 'Reset', saved: 'Saved', records: 'records', scheduleSubject: 'Subject', schedulePriceUSD: 'Price\n[$]', schedulePeriod: 'Period\n[mo]', scheduleNotes: 'Notes', clear: 'Clear', pause: 'Pause', resume: 'Resume', active: '● Active', paused: 'Paused', lines: 'lines', filter: 'Filter', refresh: 'Refresh', loading: 'Loading...', loadingBuild: 'Loading build data...', error: 'Error', noBuildData: 'No build data. Run Release_KeyClick.bat', networkError: 'Network error', adminButton: 'System Use', generalGroup: 'General', colName: 'Name', colCurrency: 'Currency', colCreated: 'Created', colActive: 'Is Active', colAppInstalled: 'App Installed', colLicenceType: 'Licence Type', colSystemForce: 'System Force', distributionDay: 'Distribution Day X', messages: 'Messages', send: 'Send', sent: 'Sent!', reply: 'Reply', noMessages: 'No messages', replySent: 'Reply sent!' },
-    currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Pound', EUR: 'Euro', RUB: 'Ruble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupee' } },
+    system: { systemLabel: 'System', selectAction: 'Select action from right sidebar', users: 'Users', buildMessages: 'Build Messages', schedule: 'Schedule & Pricing', pr: 'Public Relations', publishedDate: 'Published date:', reset: 'Reset', saved: 'Saved', records: 'records', scheduleSubject: 'Subject', schedulePriceUSD: 'Price\n[$]', schedulePeriod: 'Period\n[mo]', scheduleNotes: 'Notes', clear: 'Clear', pause: 'Pause', resume: 'Resume', active: '● Active', paused: 'Paused', lines: 'lines', filter: 'Filter', refresh: 'Refresh', loading: 'Loading...', loadingBuild: 'Loading build data...', error: 'Error', noBuildData: 'No build data. Run Release_KeyClick.bat', networkError: 'Network error', adminButton: 'System Use', generalGroup: 'General', colName: 'Name', colCurrency: 'Currency', colCreated: 'Created', colActive: 'Is Active', colAppInstalled: 'App Installed', colLicenceType: 'Licence Type', colSystemForce: 'System Force', distributionDay: 'Distribution Day X', messages: 'Messages', send: 'Send', sent: 'Sent!', reply: 'Reply', noMessages: 'No messages', replySent: 'Reply sent!', ref: 'Ref.', msgNo: 'No.', replyToRef: 'Reply to ref.', msgNumber: 'Message No.', new: 'New', delete: 'Delete', newMessage: '+ New Message', selectToView: 'Select a message to view', monitor: 'Monitor', systemData: 'System Data', resetTable: 'Reset Table', debug: 'Debug', db: 'DB', sensitivePoints: 'Sensitive Points', productVersionTable: 'Product Version Table in Updates Tab' },
+    currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Pound', EUR: 'Euro', RUB: 'Ruble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupee' },
+    updates: { colDate: 'Date & Time', colProduct: 'Product', colVersion: 'Version', colTitle: 'Title', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Home Budget' },
+    reminders: { loginRequired: 'Login required to view reminders', titlePh: 'Reminder title', timePh: 'Time', add: '+ Add', noReminders: 'No reminders' } },
   { code: 'ru', flag: 'רוסיה',   name: 'Русский',  welcome: 'Добро пожаловать',
     menu: ['Отзыв','Обновления','Сообщения','Напоминания','Банковские услуги','Личная страница'],
     card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства', run: 'Запуск', videos: 'Видео', guide: 'Руководство', ok: 'ОК', msgAlreadyInstalled: 'Уже установлено\nПереустановка не нужна', msgDownloading: 'Загрузка установщика', msgInstallComplete: 'Сохраните и запустите файл\nдля завершения установки', msgDownloadError: 'Ошибка загрузки\nПопробуйте снова', msgNotInstalled: 'Не установлено\nНажмите Установить', mFinance: 'M Finance', msgExists: 'Пользователь уже зарегистрирован\nс этими данными', msgUpdated: 'Данные обновлены успешно', msgRegistered: 'Регистрация завершена' },
     profile: { fullName: 'Полное имя', email: 'Email', ip: 'IP', language: 'Язык', country: 'Страна', plan: 'Тариф', planStart: 'Начало тарифа', planEnd: 'Конец тарифа', unlimited: 'Без ограничений', comingSoon: 'Скоро', choosePlan: 'Выбрать тариф', close: '✕ Закрыть', loginRequired: 'Необходимо войти для просмотра', login: 'Войти', products: 'Продукты', change: 'Изменить',
       price: 'Цена', changePlan: 'Изменить тариф', planName: 'Название', planFrom: 'С', planTo: 'По', back: 'Назад', currencyLocal: '₽', free: 'Бесплатно',       planNames: { System_Free_Run: 'Тест', User_Trial: 'Пробный', User_VIP_Free: 'VIP', System_Owner: 'Система', User_Monthly: 'Ежемесячно', User_Annual: 'Ежегодно', User_One_Time: 'Разовый', System_Suspended_NonPayment: 'Отключён', User_Cancelled: 'Отменён' } },
     feedback: { customerRelations: 'Связи с клиентами', systemMessage: 'Системное сообщение', respectfully: 'С уважением,', rating: 'Оценка', ratingWebsite: 'Сайт', ratingBudget: 'Управление бюджетом', userMessage: 'Сообщение пользователя', date: 'Дата:', title: 'Тема:', from: 'От:', systemReply: 'Ответ системы' },
-    system: { systemLabel: 'Система', selectAction: 'Выберите действие на правой панели', users: 'Пользователи', buildMessages: 'Журнал сборки', schedule: 'Расписание и цены', pr: 'PR', publishedDate: 'Опубликовано:', reset: 'Сбросить', saved: 'Сохранено', records: 'записей', scheduleSubject: 'Тема', schedulePriceUSD: 'Цена\n[$]', schedulePeriod: 'Период\n[мес]', scheduleNotes: 'Заметки', clear: 'Очистить', pause: 'Пауза', resume: 'Продолжить', active: '● Активно', paused: 'На паузе', lines: 'строк', filter: 'Фильтр', refresh: 'Обновить', loading: 'Загрузка...', loadingBuild: 'Загрузка данных сборки...', error: 'Ошибка', noBuildData: 'Нет данных. Запустите Release_KeyClick.bat', networkError: 'Ошибка сети', adminButton: 'Системный вход', generalGroup: 'Общие', colName: 'Имя', colCurrency: 'Валюта', colCreated: 'Создан', colActive: 'Активен', colAppInstalled: 'Приложение', colLicenceType: 'Тип лицензии', colSystemForce: 'Системный режим', distributionDay: 'День X распространения', messages: 'Сообщения', send: 'Отправить', sent: 'Отправлено!', reply: 'Ответить', noMessages: 'Нет сообщений', replySent: 'Ответ отправлен!' },
-    currencyNames: { ILS: 'Шекель', USD: 'Доллар', GBP: 'Фунт', EUR: 'Евро', RUB: 'Рубль', JPY: 'Иена', SAR: 'Риял', CNY: 'Юань', INR: 'Рупия' } },
+    system: { systemLabel: 'Система', selectAction: 'Выберите действие на правой панели', users: 'Пользователи', buildMessages: 'Журнал сборки', schedule: 'Расписание и цены', pr: 'PR', publishedDate: 'Опубликовано:', reset: 'Сбросить', saved: 'Сохранено', records: 'записей', scheduleSubject: 'Тема', schedulePriceUSD: 'Цена\n[$]', schedulePeriod: 'Период\n[мес]', scheduleNotes: 'Заметки', clear: 'Очистить', pause: 'Пауза', resume: 'Продолжить', active: '● Активно', paused: 'На паузе', lines: 'строк', filter: 'Фильтр', refresh: 'Обновить', loading: 'Загрузка...', loadingBuild: 'Загрузка данных сборки...', error: 'Ошибка', noBuildData: 'Нет данных. Запустите Release_KeyClick.bat', networkError: 'Ошибка сети', adminButton: 'Системный вход', generalGroup: 'Общие', colName: 'Имя', colCurrency: 'Валюта', colCreated: 'Создан', colActive: 'Активен', colAppInstalled: 'Приложение', colLicenceType: 'Тип лицензии', colSystemForce: 'Системный режим', distributionDay: 'День X распространения', messages: 'Сообщения', send: 'Отправить', sent: 'Отправлено!', reply: 'Ответить', noMessages: 'Нет сообщений', replySent: 'Ответ отправлен!', ref: 'Реф.', msgNo: '№', replyToRef: 'Ответ на реф.', msgNumber: 'Сообщение №', new: 'Новое', delete: 'Удалить', newMessage: '+ Новое сообщение', selectToView: 'Выберите сообщение', monitor: 'Монитор', systemData: 'Данные системы', resetTable: 'Сброс таблицы', debug: 'Отладка', db: 'БД', sensitivePoints: 'Уязвимые точки', productVersionTable: 'Таблица версий продукта (вкладка обновлений)' },
+    currencyNames: { ILS: 'Шекель', USD: 'Доллар', GBP: 'Фунт', EUR: 'Евро', RUB: 'Рубль', JPY: 'Иена', SAR: 'Риял', CNY: 'Юань', INR: 'Рупия' },
+    updates: { colDate: 'Дата и время', colProduct: 'Продукт', colVersion: 'Версия', colTitle: 'Заголовок', productKeyClick: 'KeyClick Сайт', productMFinance: 'M Finance Бюджет' },
+    reminders: { loginRequired: 'Войдите для просмотра напоминаний', titlePh: 'Название напоминания', timePh: 'Время', add: '+ Добавить', noReminders: 'Нет напоминаний' } },
   { code: 'de', flag: 'גרמניה',  name: 'Deutsch',  welcome: 'Willkommen',
     menu: ['Feedback','Updates','Nachrichten','Erinnerungen','Bankdienstleistungen','Persönliche Seite'],
     card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien', run: 'Starten', videos: 'Videos', guide: 'Anleitung', ok: 'OK', msgAlreadyInstalled: 'Bereits installiert\nKeine Neuinstallation nötig', msgDownloading: 'Installationsdatei wird heruntergeladen', msgInstallComplete: 'Datei speichern und ausführen\num die Installation abzuschließen', msgDownloadError: 'Fehler beim Herunterladen\nNochmal versuchen', msgNotInstalled: 'Nicht installiert\nBitte auf Installieren klicken', mFinance: 'M Finance', msgExists: 'Benutzer bereits registriert\nmit diesen Daten', msgUpdated: 'Daten erfolgreich aktualisiert', msgRegistered: 'Registrierung abgeschlossen' },
     profile: { fullName: 'Vollständiger Name', email: 'E-Mail', ip: 'IP', language: 'Sprache', country: 'Land', plan: 'Tarif', planStart: 'Tarif Beginn', planEnd: 'Tarif Ende', unlimited: 'Unbegrenzt', comingSoon: 'Demnächst', choosePlan: 'Tarif wählen', close: '✕ Schließen', loginRequired: 'Anmeldung erforderlich', login: 'Anmelden', products: 'Produkte', change: 'Ändern',
       price: 'Preis', changePlan: 'Tarif ändern', planName: 'Name', planFrom: 'Von', planTo: 'Bis', back: 'Zurück', currencyLocal: '€', free: 'Kostenlos',       planNames: { System_Free_Run: 'Testlauf', User_Trial: 'Testphase', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monatlich', User_Annual: 'Jährlich', User_One_Time: 'Einmalig', System_Suspended_NonPayment: 'Gesperrt', User_Cancelled: 'Storniert' } },
     feedback: { customerRelations: 'Kundenpflege', systemMessage: 'Systemnachricht', respectfully: 'Mit freundlichen Grüßen,', rating: 'Bewertung', ratingWebsite: 'Website', ratingBudget: 'Haushaltsverwaltung', userMessage: 'Nutzernachricht', date: 'Datum:', title: 'Betreff:', from: 'Von:', systemReply: 'Systemantwort' },
-    system: { systemLabel: 'System', selectAction: 'Aktion in der rechten Leiste wählen', users: 'Benutzer', buildMessages: 'Build-Protokoll', schedule: 'Zeitplan & Preise', pr: 'PR', publishedDate: 'Veröffentlicht:', reset: 'Zurücksetzen', saved: 'Gespeichert', records: 'Einträge', scheduleSubject: 'Thema', schedulePriceUSD: 'Preis\n[$]', schedulePeriod: 'Zeitraum\n[Mo]', scheduleNotes: 'Notizen', clear: 'Löschen', pause: 'Pause', resume: 'Fortsetzen', active: '● Aktiv', paused: 'Pausiert', lines: 'Zeilen', filter: 'Filter', refresh: 'Aktualisieren', loading: 'Laden...', loadingBuild: 'Build-Daten laden...', error: 'Fehler', noBuildData: 'Keine Daten. Starten Sie Release_KeyClick.bat', networkError: 'Netzwerkfehler', adminButton: 'Systembereich', generalGroup: 'Allgemein', colName: 'Name', colCurrency: 'Währung', colCreated: 'Erstellt', colActive: 'Aktiv', colAppInstalled: 'App', colLicenceType: 'Lizenztyp', colSystemForce: 'Systemmodus', distributionDay: 'Verbreitungstag X', messages: 'Nachrichten', send: 'Senden', sent: 'Gesendet!', reply: 'Antworten', noMessages: 'Keine Nachrichten', replySent: 'Antwort gesendet!' },
-    currencyNames: { ILS: 'Schekel', USD: 'Dollar', GBP: 'Pfund', EUR: 'Euro', RUB: 'Rubel', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupie' } },
+    system: { systemLabel: 'System', selectAction: 'Aktion in der rechten Leiste wählen', users: 'Benutzer', buildMessages: 'Build-Protokoll', schedule: 'Zeitplan & Preise', pr: 'PR', publishedDate: 'Veröffentlicht:', reset: 'Zurücksetzen', saved: 'Gespeichert', records: 'Einträge', scheduleSubject: 'Thema', schedulePriceUSD: 'Preis\n[$]', schedulePeriod: 'Zeitraum\n[Mo]', scheduleNotes: 'Notizen', clear: 'Löschen', pause: 'Pause', resume: 'Fortsetzen', active: '● Aktiv', paused: 'Pausiert', lines: 'Zeilen', filter: 'Filter', refresh: 'Aktualisieren', loading: 'Laden...', loadingBuild: 'Build-Daten laden...', error: 'Fehler', noBuildData: 'Keine Daten. Starten Sie Release_KeyClick.bat', networkError: 'Netzwerkfehler', adminButton: 'Systembereich', generalGroup: 'Allgemein', colName: 'Name', colCurrency: 'Währung', colCreated: 'Erstellt', colActive: 'Aktiv', colAppInstalled: 'App', colLicenceType: 'Lizenztyp', colSystemForce: 'Systemmodus', distributionDay: 'Verbreitungstag X', messages: 'Nachrichten', send: 'Senden', sent: 'Gesendet!', reply: 'Antworten', noMessages: 'Keine Nachrichten', replySent: 'Antwort gesendet!', ref: 'Ref.', msgNo: 'Nr.', replyToRef: 'Antwort auf Ref.', msgNumber: 'Nachricht Nr.', new: 'Neu', delete: 'Löschen', newMessage: '+ Neue Nachricht', selectToView: 'Nachricht auswählen', monitor: 'Monitor', systemData: 'Systemdaten', resetTable: 'Tabelle zurücksetzen', debug: 'Debug', db: 'DB', sensitivePoints: 'Schwachstellen', productVersionTable: 'Produktversionstabelle (Updates)' },
+    currencyNames: { ILS: 'Schekel', USD: 'Dollar', GBP: 'Pfund', EUR: 'Euro', RUB: 'Rubel', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupie' },
+    updates: { colDate: 'Datum & Uhrzeit', colProduct: 'Produkt', colVersion: 'Version', colTitle: 'Titel', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Haushalt' },
+    reminders: { loginRequired: 'Anmeldung für Erinnerungen erforderlich', titlePh: 'Erinnerungstitel', timePh: 'Uhrzeit', add: '+ Hinzufügen', noReminders: 'Keine Erinnerungen' } },
   { code: 'fr', flag: 'צרפת',    name: 'Français', welcome: 'Bienvenue',
     menu: ['Retour','Mises à jour','Messages','Rappels','Services bancaires','Page personnelle'],
     card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide', run: 'Lancer', videos: 'Vidéos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Déjà installé\nPas besoin de réinstaller', msgDownloading: 'Téléchargement du fichier', msgInstallComplete: 'Enregistrez et exécutez le fichier\npour terminer l\'installation', msgDownloadError: 'Erreur de téléchargement\nRéessayer', msgNotInstalled: 'Non installé\nVeuillez cliquer sur Installer', mFinance: 'M Finance', msgExists: 'Utilisateur déjà enregistré\navec ces informations', msgUpdated: 'Informations mises à jour avec succès', msgRegistered: 'Inscription terminée' },
     profile: { fullName: 'Nom complet', email: 'E-mail', ip: 'IP', language: 'Langue', country: 'Pays', plan: 'Abonnement', planStart: 'Début', planEnd: 'Fin', unlimited: 'Illimité', comingSoon: 'Bientôt', choosePlan: 'Choisir un abonnement', close: '✕ Fermer', loginRequired: 'Connexion requise', login: 'Se connecter', products: 'Produits', change: 'Modifier',
       price: 'Prix', changePlan: "Changer d'abonnement", planName: 'Nom', planFrom: 'De', planTo: 'Au', back: 'Retour', currencyLocal: '€', free: 'Gratuit',       planNames: { System_Free_Run: 'Lancement', User_Trial: 'Essai', User_VIP_Free: 'VIP', System_Owner: 'Système', User_Monthly: 'Mensuel', User_Annual: 'Annuel', User_One_Time: 'Unique', System_Suspended_NonPayment: 'Suspendu', User_Cancelled: 'Annulé' } },
     feedback: { customerRelations: 'Relations clients', systemMessage: 'Message du système', respectfully: 'Cordialement,', rating: 'Évaluation', ratingWebsite: 'Site web', ratingBudget: 'Gestion du budget familial', userMessage: "Message de l'utilisateur", date: 'Date :', title: 'Titre :', from: 'De :', systemReply: 'Réponse du système' },
-    system: { systemLabel: 'Système', selectAction: 'Sélectionner une action dans la barre droite', users: 'Utilisateurs', buildMessages: 'Journal de build', schedule: 'Planning & Tarifs', pr: 'RP', publishedDate: 'Publié le :', reset: 'Réinitialiser', saved: 'Enregistré', records: 'enregistrements', scheduleSubject: 'Sujet', schedulePriceUSD: 'Prix\n[$]', schedulePeriod: 'Période\n[mois]', scheduleNotes: 'Notes', clear: 'Effacer', pause: 'Pause', resume: 'Reprendre', active: '● Actif', paused: 'En pause', lines: 'lignes', filter: 'Filtre', refresh: 'Actualiser', loading: 'Chargement...', loadingBuild: 'Chargement du build...', error: 'Erreur', noBuildData: 'Aucune donnée. Lancez Release_KeyClick.bat', networkError: 'Erreur réseau', adminButton: 'Espace système', generalGroup: 'Général', colName: 'Nom', colCurrency: 'Devise', colCreated: 'Créé', colActive: 'Actif', colAppInstalled: 'Application', colLicenceType: 'Type de licence', colSystemForce: 'Mode système', distributionDay: 'Jour de distribution X', messages: 'Messages', send: 'Envoyer', sent: 'Envoyé !', reply: 'Répondre', noMessages: 'Aucun message', replySent: 'Réponse envoyée !' },
-    currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Livre', EUR: 'Euro', RUB: 'Rouble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Roupie' } },
+    system: { systemLabel: 'Système', selectAction: 'Sélectionner une action dans la barre droite', users: 'Utilisateurs', buildMessages: 'Journal de build', schedule: 'Planning & Tarifs', pr: 'RP', publishedDate: 'Publié le :', reset: 'Réinitialiser', saved: 'Enregistré', records: 'enregistrements', scheduleSubject: 'Sujet', schedulePriceUSD: 'Prix\n[$]', schedulePeriod: 'Période\n[mois]', scheduleNotes: 'Notes', clear: 'Effacer', pause: 'Pause', resume: 'Reprendre', active: '● Actif', paused: 'En pause', lines: 'lignes', filter: 'Filtre', refresh: 'Actualiser', loading: 'Chargement...', loadingBuild: 'Chargement du build...', error: 'Erreur', noBuildData: 'Aucune donnée. Lancez Release_KeyClick.bat', networkError: 'Erreur réseau', adminButton: 'Espace système', generalGroup: 'Général', colName: 'Nom', colCurrency: 'Devise', colCreated: 'Créé', colActive: 'Actif', colAppInstalled: 'Application', colLicenceType: 'Type de licence', colSystemForce: 'Mode système', distributionDay: 'Jour de distribution X', messages: 'Messages', send: 'Envoyer', sent: 'Envoyé !', reply: 'Répondre', noMessages: 'Aucun message', replySent: 'Réponse envoyée !', ref: 'Réf.', msgNo: 'N°', replyToRef: 'Réponse à réf.', msgNumber: 'Message N°', new: 'Nouveau', delete: 'Supprimer', newMessage: '+ Nouveau message', selectToView: 'Sélectionner un message', monitor: 'Moniteur', systemData: 'Données système', resetTable: 'Réinitialiser la table', debug: 'Débogage', db: 'BD', sensitivePoints: 'Points sensibles', productVersionTable: 'Tableau des versions (onglet mises à jour)' },
+    currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Livre', EUR: 'Euro', RUB: 'Rouble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Roupie' },
+    updates: { colDate: 'Date et heure', colProduct: 'Produit', colVersion: 'Version', colTitle: 'Titre', productKeyClick: 'KeyClick Site web', productMFinance: 'M Finance Budget familial' },
+    reminders: { loginRequired: 'Connexion requise pour les rappels', titlePh: 'Titre du rappel', timePh: 'Heure', add: '+ Ajouter', noReminders: 'Aucun rappel' } },
   { code: 'he', flag: 'ישראל',   name: 'עברית',    welcome: 'ברוכים הבאים',
     menu: ['משוב','עדכונים','הודעות','תזכורות','שרותים בנקאיים','דף אישי'],
     card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכן', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה', run: 'הפעלה', videos: 'סרטונים', guide: 'הדרכה', ok: 'לחץ', msgAlreadyInstalled: 'כבר מותקן\nאין צורך בהתקנה', msgDownloading: 'הורד קובץ התקנה', msgInstallComplete: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה', msgDownloadError: 'שגיאה בהורדה\nנסה שוב', msgNotInstalled: 'לא מותקן\nאנא לחץ על כפתור ההתקנה', mFinance: 'M Finance', msgExists: 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת', msgUpdated: 'הפרטים עודכנו בהצלחה', msgRegistered: 'הרשמה הושלמה' },
     profile: { fullName: 'שם ומשפחה', email: 'דוא"ל', ip: 'IP', language: 'שפה', country: 'מדינה', plan: 'תכנית', planStart: 'תחילת תכנית', planEnd: 'סיום תכנית', unlimited: 'ללא הגבלה', comingSoon: 'בקרוב', choosePlan: 'בחר תכנית', close: '✕ סגור', loginRequired: 'נדרשת כניסה לצפייה בדף האישי', login: 'כניסה', products: 'מוצרים', change: 'שינוי',
       price: 'מחיר', changePlan: 'שינוי תכנית', planName: 'שם', planFrom: 'מ-', planTo: 'עד-', back: 'חזרה', currencyLocal: '₪', free: 'חינם',       planNames: { System_Free_Run: 'תקופת הרצה', User_Trial: 'תקופת נסיון', User_VIP_Free: 'VIP', System_Owner: 'מערכת', User_Monthly: 'חודשי', User_Annual: 'שנתי', User_One_Time: 'כניסה בודדת', System_Suspended_NonPayment: 'מנותק', User_Cancelled: 'בוטל' } },
     feedback: { customerRelations: 'קשרי לקוחות', systemMessage: 'הודעת המערכת', respectfully: 'בכבוד רב,', rating: 'דירוג', ratingWebsite: 'אתר', ratingBudget: 'ניהול תקציב בית', userMessage: 'דבר המשתמש', date: 'תאריך:', title: 'כותרת:', from: 'מאת:', systemReply: 'תשובת המערכת' },
-    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'לו"ז ומחירון', pr: 'יחסי ציבור', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!' },
-    currencyNames: { ILS: 'ש"ח', USD: 'דולר', GBP: 'ליש"ט', EUR: 'יורו', RUB: 'רובל', JPY: 'ין', SAR: 'ריאל', CNY: 'יואן', INR: 'רופי' } },
+    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'לו"ז ומחירון', pr: 'יחסי ציבור', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים' },
+    currencyNames: { ILS: 'ש"ח', USD: 'דולר', GBP: 'ליש"ט', EUR: 'יורו', RUB: 'רובל', JPY: 'ין', SAR: 'ריאל', CNY: 'יואן', INR: 'רופי' },
+    updates: { colDate: 'תאריך ושעה', colProduct: 'מוצר', colVersion: 'גרסה', colTitle: 'כותרת', productKeyClick: 'אתר KeyClick', productMFinance: 'ניהול תקציב בית M Finance' },
+    reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' } },
   { code: 'es', flag: 'ספרד',    name: 'Español',  welcome: 'Bienvenido',
     menu: ['Comentarios','Actualizaciones','Mensajes','Recordatorios','Servicios bancarios','Página personal'],
     card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía', run: 'Ejecutar', videos: 'Videos', guide: 'Guía', ok: 'OK', msgAlreadyInstalled: 'Ya instalado\nNo es necesario reinstalar', msgDownloading: 'Descargando archivo de instalación', msgInstallComplete: 'Guarda y ejecuta el archivo\npara completar la instalación', msgDownloadError: 'Error de descarga\nInténtalo de nuevo', msgNotInstalled: 'No instalado\nHaz clic en Instalar', mFinance: 'M Finance', msgExists: 'El usuario ya está registrado\ncon estos datos', msgUpdated: 'Datos actualizados correctamente', msgRegistered: 'Registro completado' },
     profile: { fullName: 'Nombre completo', email: 'Correo', ip: 'IP', language: 'Idioma', country: 'País', plan: 'Plan', planStart: 'Inicio del plan', planEnd: 'Fin del plan', unlimited: 'Sin límite', comingSoon: 'Próximamente', choosePlan: 'Elegir plan', close: '✕ Cerrar', loginRequired: 'Se requiere inicio de sesión', login: 'Iniciar sesión', products: 'Productos', change: 'Cambiar',
       price: 'Precio', changePlan: 'Cambiar plan', planName: 'Nombre', planFrom: 'Desde', planTo: 'Hasta', back: 'Volver', currencyLocal: '€', free: 'Gratis',       planNames: { System_Free_Run: 'Ejecución', User_Trial: 'Prueba', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensual', User_Annual: 'Anual', User_One_Time: 'Único', System_Suspended_NonPayment: 'Suspendido', User_Cancelled: 'Cancelado' } },
     feedback: { customerRelations: 'Relaciones con clientes', systemMessage: 'Mensaje del sistema', respectfully: 'Atentamente,', rating: 'Calificación', ratingWebsite: 'Sitio web', ratingBudget: 'Gestión del presupuesto familiar', userMessage: 'Mensaje del usuario', date: 'Fecha:', title: 'Título:', from: 'De:', systemReply: 'Respuesta del sistema' },
-    system: { systemLabel: 'Sistema', selectAction: 'Seleccionar acción de la barra derecha', users: 'Usuarios', buildMessages: 'Registro de build', schedule: 'Horario y precios', pr: 'RRPP', publishedDate: 'Publicado:', reset: 'Restablecer', saved: 'Guardado', records: 'registros', scheduleSubject: 'Asunto', schedulePriceUSD: 'Precio\n[$]', schedulePeriod: 'Período\n[mes]', scheduleNotes: 'Notas', clear: 'Limpiar', pause: 'Pausar', resume: 'Reanudar', active: '● Activo', paused: 'En pausa', lines: 'líneas', filter: 'Filtro', refresh: 'Actualizar', loading: 'Cargando...', loadingBuild: 'Cargando datos de build...', error: 'Error', noBuildData: 'Sin datos. Ejecute Release_KeyClick.bat', networkError: 'Error de red', adminButton: 'Área del sistema', generalGroup: 'General', colName: 'Nombre', colCurrency: 'Moneda', colCreated: 'Creado', colActive: 'Activo', colAppInstalled: 'Aplicación', colLicenceType: 'Tipo de licencia', colSystemForce: 'Modo sistema', distributionDay: 'Día de distribución X', messages: 'Mensajes', send: 'Enviar', sent: '¡Enviado!', reply: 'Responder', noMessages: 'Sin mensajes', replySent: '¡Respuesta enviada!' },
-    currencyNames: { ILS: 'Séquel', USD: 'Dólar', GBP: 'Libra', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' } },
+    system: { systemLabel: 'Sistema', selectAction: 'Seleccionar acción de la barra derecha', users: 'Usuarios', buildMessages: 'Registro de build', schedule: 'Horario y precios', pr: 'RRPP', publishedDate: 'Publicado:', reset: 'Restablecer', saved: 'Guardado', records: 'registros', scheduleSubject: 'Asunto', schedulePriceUSD: 'Precio\n[$]', schedulePeriod: 'Período\n[mes]', scheduleNotes: 'Notas', clear: 'Limpiar', pause: 'Pausar', resume: 'Reanudar', active: '● Activo', paused: 'En pausa', lines: 'líneas', filter: 'Filtro', refresh: 'Actualizar', loading: 'Cargando...', loadingBuild: 'Cargando datos de build...', error: 'Error', noBuildData: 'Sin datos. Ejecute Release_KeyClick.bat', networkError: 'Error de red', adminButton: 'Área del sistema', generalGroup: 'General', colName: 'Nombre', colCurrency: 'Moneda', colCreated: 'Creado', colActive: 'Activo', colAppInstalled: 'Aplicación', colLicenceType: 'Tipo de licencia', colSystemForce: 'Modo sistema', distributionDay: 'Día de distribución X', messages: 'Mensajes', send: 'Enviar', sent: '¡Enviado!', reply: 'Responder', noMessages: 'Sin mensajes', replySent: '¡Respuesta enviada!', ref: 'Ref.', msgNo: 'N°', replyToRef: 'Respuesta a ref.', msgNumber: 'Mensaje N°', new: 'Nuevo', delete: 'Eliminar', newMessage: '+ Nuevo mensaje', selectToView: 'Seleccionar un mensaje', monitor: 'Monitor', systemData: 'Datos del sistema', resetTable: 'Restablecer tabla', debug: 'Depurar', db: 'BD', sensitivePoints: 'Puntos sensibles', productVersionTable: 'Tabla de versiones (pestaña actualizaciones)' },
+    currencyNames: { ILS: 'Séquel', USD: 'Dólar', GBP: 'Libra', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
+    updates: { colDate: 'Fecha y hora', colProduct: 'Producto', colVersion: 'Versión', colTitle: 'Título', productKeyClick: 'KeyClick Sitio web', productMFinance: 'M Finance Presupuesto familiar' },
+    reminders: { loginRequired: 'Inicio de sesión requerido', titlePh: 'Título del recordatorio', timePh: 'Hora', add: '+ Agregar', noReminders: 'Sin recordatorios' } },
   { code: 'ja', flag: 'יפן',     name: '日本語',    welcome: 'ようこそ',
     menu: ['フィードバック','更新','メッセージ','リマインダー','銀行サービス','個人ページ'],
     card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル', run: '起動', videos: 'ビデオ', guide: 'ガイド', ok: 'OK', msgAlreadyInstalled: 'インストール済み\n再インストール不要', msgDownloading: 'インストールファイルをダウンロード中', msgInstallComplete: 'ファイルを保存して実行\nインストールを完了', msgDownloadError: 'ダウンロードエラー\n再試行', msgNotInstalled: '未インストール\nインストールをクリック', mFinance: 'M Finance', msgExists: 'このメールは\nすでに登録されています', msgUpdated: '情報が正常に更新されました', msgRegistered: '登録が完了しました' },
     profile: { fullName: 'フルネーム', email: 'メール', ip: 'IP', language: '言語', country: '国', plan: 'プラン', planStart: 'プラン開始', planEnd: 'プラン終了', unlimited: '無制限', comingSoon: '近日公開', choosePlan: 'プランを選択', close: '✕ 閉じる', loginRequired: 'ログインが必要です', login: 'ログイン', products: '製品', change: '変更',
       price: '価格', changePlan: 'プラン変更', planName: '名前', planFrom: 'から', planTo: 'まで', back: '戻る', currencyLocal: '¥', free: '無料',       planNames: { System_Free_Run: '試運転', User_Trial: '試用', User_VIP_Free: 'VIP', System_Owner: 'システム', User_Monthly: '月次', User_Annual: '年次', User_One_Time: '単回', System_Suspended_NonPayment: '停止', User_Cancelled: 'キャンセル' } },
     feedback: { customerRelations: 'カスタマーサービス', systemMessage: 'システムメッセージ', respectfully: '敬具,', rating: '評価', ratingWebsite: 'ウェブサイト', ratingBudget: '家計管理', userMessage: 'ユーザーメッセージ', date: '日付:', title: 'タイトル:', from: '差出人:', systemReply: 'システム返信' },
-    system: { systemLabel: 'システム', selectAction: '右サイドバーからアクションを選択', users: 'ユーザー', buildMessages: 'ビルドログ', schedule: 'スケジュールと価格', pr: 'PR', publishedDate: '公開日:', reset: 'リセット', saved: '保存済み', records: '件', scheduleSubject: '件名', schedulePriceUSD: '価格\n[$]', schedulePeriod: '期間\n[月]', scheduleNotes: 'メモ', clear: 'クリア', pause: '一時停止', resume: '再開', active: '● アクティブ', paused: '一時停止中', lines: '行', filter: 'フィルター', refresh: '更新', loading: '読み込み中...', loadingBuild: 'ビルドデータ読み込み中...', error: 'エラー', noBuildData: 'データなし。Release_KeyClick.bat を実行', networkError: 'ネットワークエラー', adminButton: 'システム管理', generalGroup: '全般', colName: '名前', colCurrency: '通貨', colCreated: '作成日', colActive: '有効', colAppInstalled: 'アプリ', colLicenceType: 'ライセンス種別', colSystemForce: 'システムモード', distributionDay: '配布日X', messages: 'メッセージ', send: '送信', sent: '送信済み!', reply: '返信', noMessages: 'メッセージなし', replySent: '返信済み!' },
-    currencyNames: { ILS: 'シェケル', USD: 'ドル', GBP: 'ポンド', EUR: 'ユーロ', RUB: 'ルーブル', JPY: '円', SAR: 'リヤル', CNY: '元', INR: 'ルピー' } },
+    system: { systemLabel: 'システム', selectAction: '右サイドバーからアクションを選択', users: 'ユーザー', buildMessages: 'ビルドログ', schedule: 'スケジュールと価格', pr: 'PR', publishedDate: '公開日:', reset: 'リセット', saved: '保存済み', records: '件', scheduleSubject: '件名', schedulePriceUSD: '価格\n[$]', schedulePeriod: '期間\n[月]', scheduleNotes: 'メモ', clear: 'クリア', pause: '一時停止', resume: '再開', active: '● アクティブ', paused: '一時停止中', lines: '行', filter: 'フィルター', refresh: '更新', loading: '読み込み中...', loadingBuild: 'ビルドデータ読み込み中...', error: 'エラー', noBuildData: 'データなし。Release_KeyClick.bat を実行', networkError: 'ネットワークエラー', adminButton: 'システム管理', generalGroup: '全般', colName: '名前', colCurrency: '通貨', colCreated: '作成日', colActive: '有効', colAppInstalled: 'アプリ', colLicenceType: 'ライセンス種別', colSystemForce: 'システムモード', distributionDay: '配布日X', messages: 'メッセージ', send: '送信', sent: '送信済み!', reply: '返信', noMessages: 'メッセージなし', replySent: '返信済み!', ref: '参照', msgNo: 'No.', replyToRef: '参照への返信', msgNumber: 'メッセージNo.', new: '新着', delete: '削除', newMessage: '+ 新メッセージ', selectToView: 'メッセージを選択', monitor: 'モニター', systemData: 'システムデータ', resetTable: 'テーブルリセット', debug: 'デバッグ', db: 'DB', sensitivePoints: '重要ポイント', productVersionTable: '更新タブの製品バージョン一覧' },
+    currencyNames: { ILS: 'シェケル', USD: 'ドル', GBP: 'ポンド', EUR: 'ユーロ', RUB: 'ルーブル', JPY: '円', SAR: 'リヤル', CNY: '元', INR: 'ルピー' },
+    updates: { colDate: '日時', colProduct: '製品', colVersion: 'バージョン', colTitle: 'タイトル', productKeyClick: 'KeyClick サイト', productMFinance: 'M Finance 家計管理' },
+    reminders: { loginRequired: 'リマインダーを表示するにはログインが必要です', titlePh: 'リマインダーのタイトル', timePh: '時刻', add: '+ 追加', noReminders: 'リマインダーなし' } },
   { code: 'ar', flag: 'סעודיה',  name: 'العربية',  welcome: 'أهلاً وسهلاً',
     menu: ['ملاحظات','تحديثات','رسائل','تذكيرات','خدمات مصرفية','الصفحة الشخصية'],
     card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل', run: 'تشغيل', videos: 'مقاطع', guide: 'دليل', ok: 'حسناً', msgAlreadyInstalled: 'مثبت بالفعل\nلا حاجة لإعادة التثبيت', msgDownloading: 'جارٍ تنزيل ملف التثبيت', msgInstallComplete: 'احفظ الملف وشغّله\nلإكمال التثبيت', msgDownloadError: 'خطأ في التنزيل\nحاول مرة أخرى', msgNotInstalled: 'غير مثبت\nانقر على تثبيت', mFinance: 'M Finance', msgExists: 'المستخدم مسجل بالفعل\nبهذه البيانات', msgUpdated: 'تم تحديث البيانات بنجاح', msgRegistered: 'اكتمل التسجيل' },
     profile: { fullName: 'الاسم الكامل', email: 'البريد الإلكتروني', ip: 'IP', language: 'اللغة', country: 'الدولة', plan: 'الخطة', planStart: 'بداية الخطة', planEnd: 'نهاية الخطة', unlimited: 'بلا حدود', comingSoon: 'قريباً', choosePlan: 'اختر خطة', close: '✕ إغلاق', loginRequired: 'تسجيل الدخول مطلوب', login: 'دخول', products: 'المنتجات', change: 'تغيير',
       price: 'السعر', changePlan: 'تغيير الخطة', planName: 'الاسم', planFrom: 'من', planTo: 'إلى', back: 'رجوع', currencyLocal: '﷼', free: 'مجاناً',       planNames: { System_Free_Run: 'تشغيل', User_Trial: 'تجريبي', User_VIP_Free: 'VIP', System_Owner: 'النظام', User_Monthly: 'شهري', User_Annual: 'سنوي', User_One_Time: 'مرة واحدة', System_Suspended_NonPayment: 'موقوف', User_Cancelled: 'ملغى' } },
     feedback: { customerRelations: 'خدمة العملاء', systemMessage: 'رسالة النظام', respectfully: 'مع التحية،', rating: 'تقييم', ratingWebsite: 'الموقع', ratingBudget: 'إدارة الميزانية المنزلية', userMessage: 'رسالة المستخدم', date: 'التاريخ:', title: 'الموضوع:', from: 'من:', systemReply: 'رد النظام' },
-    system: { systemLabel: 'النظام', selectAction: 'اختر إجراء من الشريط الأيمن', users: 'المستخدمون', buildMessages: 'سجل البناء', schedule: 'الجدول والأسعار', pr: 'العلاقات العامة', publishedDate: 'تاريخ النشر:', reset: 'إعادة تعيين', saved: 'تم الحفظ', records: 'سجلات', scheduleSubject: 'الموضوع', schedulePriceUSD: 'السعر\n[$]', schedulePeriod: 'الفترة\n[شهر]', scheduleNotes: 'ملاحظات', clear: 'مسح', pause: 'إيقاف مؤقت', resume: 'استئناف', active: '● نشط', paused: 'متوقف مؤقتاً', lines: 'سطور', filter: 'تصفية', refresh: 'تحديث', loading: 'جارٍ التحميل...', loadingBuild: 'تحميل بيانات البناء...', error: 'خطأ', noBuildData: 'لا بيانات. شغّل Release_KeyClick.bat', networkError: 'خطأ في الشبكة', adminButton: 'النظام', generalGroup: 'عام', colName: 'الاسم', colCurrency: 'العملة', colCreated: 'تاريخ الإنشاء', colActive: 'نشط', colAppInstalled: 'التطبيق', colLicenceType: 'نوع الترخيص', colSystemForce: 'وضع النظام', distributionDay: 'يوم التوزيع X', messages: 'الرسائل', send: 'إرسال', sent: 'تم!', reply: 'رد', noMessages: 'لا رسائل', replySent: 'تم إرسال الرد!' },
-    currencyNames: { ILS: 'شيكل', USD: 'دولار', GBP: 'جنيه', EUR: 'يورو', RUB: 'روبل', JPY: 'ين', SAR: 'ريال', CNY: 'يوان', INR: 'روبية' } },
+    system: { systemLabel: 'النظام', selectAction: 'اختر إجراء من الشريط الأيمن', users: 'المستخدمون', buildMessages: 'سجل البناء', schedule: 'الجدول والأسعار', pr: 'العلاقات العامة', publishedDate: 'تاريخ النشر:', reset: 'إعادة تعيين', saved: 'تم الحفظ', records: 'سجلات', scheduleSubject: 'الموضوع', schedulePriceUSD: 'السعر\n[$]', schedulePeriod: 'الفترة\n[شهر]', scheduleNotes: 'ملاحظات', clear: 'مسح', pause: 'إيقاف مؤقت', resume: 'استئناف', active: '● نشط', paused: 'متوقف مؤقتاً', lines: 'سطور', filter: 'تصفية', refresh: 'تحديث', loading: 'جارٍ التحميل...', loadingBuild: 'تحميل بيانات البناء...', error: 'خطأ', noBuildData: 'لا بيانات. شغّل Release_KeyClick.bat', networkError: 'خطأ في الشبكة', adminButton: 'النظام', generalGroup: 'عام', colName: 'الاسم', colCurrency: 'العملة', colCreated: 'تاريخ الإنشاء', colActive: 'نشط', colAppInstalled: 'التطبيق', colLicenceType: 'نوع الترخيص', colSystemForce: 'وضع النظام', distributionDay: 'يوم التوزيع X', messages: 'الرسائل', send: 'إرسال', sent: 'تم!', reply: 'رد', noMessages: 'لا رسائل', replySent: 'تم إرسال الرد!', ref: 'مرجع', msgNo: 'رقم', replyToRef: 'رد على المرجع', msgNumber: 'رسالة رقم', new: 'جديد', delete: 'حذف', newMessage: '+ رسالة جديدة', selectToView: 'اختر رسالة للعرض', monitor: 'مراقب', systemData: 'بيانات النظام', resetTable: 'إعادة تعيين الجدول', debug: 'تصحيح', db: 'قاعدة', sensitivePoints: 'نقاط حساسة', productVersionTable: 'جدول الإصدارات في تبويب التحديثات' },
+    currencyNames: { ILS: 'شيكل', USD: 'دولار', GBP: 'جنيه', EUR: 'يورو', RUB: 'روبل', JPY: 'ين', SAR: 'ريال', CNY: 'يوان', INR: 'روبية' },
+    updates: { colDate: 'التاريخ والوقت', colProduct: 'المنتج', colVersion: 'الإصدار', colTitle: 'العنوان', productKeyClick: 'KeyClick موقع', productMFinance: 'M Finance ميزانية المنزل' },
+    reminders: { loginRequired: 'تسجيل الدخول مطلوب لعرض التذكيرات', titlePh: 'عنوان التذكير', timePh: 'الوقت', add: '+ إضافة', noReminders: 'لا توجد تذكيرات' } },
   { code: 'zh', flag: 'סין',     name: '中文',      welcome: '欢迎',
     menu: ['反馈','更新','消息','提醒','银行服务','个人页面'],
     card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件', run: '运行', videos: '视频', guide: '指南', ok: '确定', msgAlreadyInstalled: '已安装\n无需重新安装', msgDownloading: '正在下载安装文件', msgInstallComplete: '保存并运行文件\n以完成安装', msgDownloadError: '下载错误\n请重试', msgNotInstalled: '未安装\n请点击安装', mFinance: 'M Finance', msgExists: '该用户已注册\n使用这些信息', msgUpdated: '信息更新成功', msgRegistered: '注册完成' },
     profile: { fullName: '全名', email: '邮箱', ip: 'IP', language: '语言', country: '国家', plan: '套餐', planStart: '套餐开始', planEnd: '套餐结束', unlimited: '无限制', comingSoon: '即将推出', choosePlan: '选择套餐', close: '✕ 关闭', loginRequired: '需要登录', login: '登录', products: '产品', change: '更改',
       price: '价格', changePlan: '更改套餐', planName: '名称', planFrom: '从', planTo: '至', back: '返回', currencyLocal: '¥', free: '免费',       planNames: { System_Free_Run: '试运行', User_Trial: '试用', User_VIP_Free: 'VIP', System_Owner: '系统', User_Monthly: '每月', User_Annual: '每年', User_One_Time: '单次', System_Suspended_NonPayment: '停用', User_Cancelled: '已取消' } },
     feedback: { customerRelations: '客户关系', systemMessage: '系统消息', respectfully: '此致敬礼,', rating: '评分', ratingWebsite: '网站', ratingBudget: '家庭预算管理', userMessage: '用户消息', date: '日期:', title: '标题:', from: '发件人:', systemReply: '系统回复' },
-    system: { systemLabel: '系统', selectAction: '从右侧栏选择操作', users: '用户', buildMessages: '构建日志', schedule: '计划与定价', pr: '公关', publishedDate: '发布日期:', reset: '重置', saved: '已保存', records: '条记录', scheduleSubject: '主题', schedulePriceUSD: '价格\n[$]', schedulePeriod: '周期\n[月]', scheduleNotes: '备注', clear: '清除', pause: '暂停', resume: '继续', active: '● 活跃', paused: '已暂停', lines: '行', filter: '筛选', refresh: '刷新', loading: '加载中...', loadingBuild: '正在加载构建数据...', error: '错误', noBuildData: '无构建数据。请运行 Release_KeyClick.bat', networkError: '网络错误', adminButton: '系统管理', generalGroup: '常规', colName: '姓名', colCurrency: '货币', colCreated: '创建时间', colActive: '已激活', colAppInstalled: '应用程序', colLicenceType: '许可证类型', colSystemForce: '系统模式', distributionDay: '分发日X', messages: '消息', send: '发送', sent: '已发送!', reply: '回复', noMessages: '无消息', replySent: '回复已发送!' },
-    currencyNames: { ILS: '谢克尔', USD: '美元', GBP: '英镑', EUR: '欧元', RUB: '卢布', JPY: '日元', SAR: '里亚尔', CNY: '人民币', INR: '卢比' } },
+    system: { systemLabel: '系统', selectAction: '从右侧栏选择操作', users: '用户', buildMessages: '构建日志', schedule: '计划与定价', pr: '公关', publishedDate: '发布日期:', reset: '重置', saved: '已保存', records: '条记录', scheduleSubject: '主题', schedulePriceUSD: '价格\n[$]', schedulePeriod: '周期\n[月]', scheduleNotes: '备注', clear: '清除', pause: '暂停', resume: '继续', active: '● 活跃', paused: '已暂停', lines: '行', filter: '筛选', refresh: '刷新', loading: '加载中...', loadingBuild: '正在加载构建数据...', error: '错误', noBuildData: '无构建数据。请运行 Release_KeyClick.bat', networkError: '网络错误', adminButton: '系统管理', generalGroup: '常规', colName: '姓名', colCurrency: '货币', colCreated: '创建时间', colActive: '已激活', colAppInstalled: '应用程序', colLicenceType: '许可证类型', colSystemForce: '系统模式', distributionDay: '分发日X', messages: '消息', send: '发送', sent: '已发送!', reply: '回复', noMessages: '无消息', replySent: '回复已发送!', ref: '参考', msgNo: '编号', replyToRef: '回复参考', msgNumber: '消息编号', new: '新', delete: '删除', newMessage: '+ 新消息', selectToView: '选择消息以查看', monitor: '监控', systemData: '系统数据', resetTable: '重置表格', debug: '调试', db: 'DB', sensitivePoints: '敏感点', productVersionTable: '更新标签中的产品版本表' },
+    currencyNames: { ILS: '谢克尔', USD: '美元', GBP: '英镑', EUR: '欧元', RUB: '卢布', JPY: '日元', SAR: '里亚尔', CNY: '人民币', INR: '卢比' },
+    updates: { colDate: '日期与时间', colProduct: '产品', colVersion: '版本', colTitle: '标题', productKeyClick: 'KeyClick 网站', productMFinance: 'M Finance 家庭预算' },
+    reminders: { loginRequired: '需要登录才能查看提醒', titlePh: '提醒标题', timePh: '时间', add: '+ 添加', noReminders: '暂无提醒' } },
   { code: 'it', flag: 'איטליה',  name: 'Italiano', welcome: 'Benvenuto',
     menu: ['Feedback','Aggiornamenti','Messaggi','Promemoria','Servizi bancari','Pagina personale'],
     card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida', run: 'Avvia', videos: 'Video', guide: 'Guida', ok: 'OK', msgAlreadyInstalled: 'Già installato\nNessuna reinstallazione necessaria', msgDownloading: 'Download del file di installazione', msgInstallComplete: 'Salva ed esegui il file\nper completare l\'installazione', msgDownloadError: 'Errore di download\nRiprova', msgNotInstalled: 'Non installato\nFai clic su Installa', mFinance: 'M Finance', msgExists: 'Utente già registrato\ncon questi dati', msgUpdated: 'Dati aggiornati con successo', msgRegistered: 'Registrazione completata' },
     profile: { fullName: 'Nome completo', email: 'Email', ip: 'IP', language: 'Lingua', country: 'Paese', plan: 'Piano', planStart: 'Inizio piano', planEnd: 'Fine piano', unlimited: 'Illimitato', comingSoon: 'Prossimamente', choosePlan: 'Scegli piano', close: '✕ Chiudi', loginRequired: 'Accesso richiesto', login: 'Accedi', products: 'Prodotti', change: 'Modifica',
       price: 'Prezzo', changePlan: 'Cambia piano', planName: 'Nome', planFrom: 'Da', planTo: 'A', back: 'Indietro', currencyLocal: '€', free: 'Gratuito',       planNames: { System_Free_Run: 'Lancio', User_Trial: 'Prova', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensile', User_Annual: 'Annuale', User_One_Time: 'Singolo', System_Suspended_NonPayment: 'Sospeso', User_Cancelled: 'Annullato' } },
     feedback: { customerRelations: 'Relazioni clienti', systemMessage: 'Messaggio di sistema', respectfully: 'Cordiali saluti,', rating: 'Valutazione', ratingWebsite: 'Sito web', ratingBudget: 'Gestione del budget familiare', userMessage: 'Messaggio utente', date: 'Data:', title: 'Titolo:', from: 'Da:', systemReply: 'Risposta di sistema' },
-    system: { systemLabel: 'Sistema', selectAction: 'Seleziona azione dalla barra destra', users: 'Utenti', buildMessages: 'Registro di build', schedule: 'Pianificazione e prezzi', pr: 'RP', publishedDate: 'Pubblicato il:', reset: 'Reimposta', saved: 'Salvato', records: 'record', scheduleSubject: 'Oggetto', schedulePriceUSD: 'Prezzo\n[$]', schedulePeriod: 'Periodo\n[mesi]', scheduleNotes: 'Note', clear: 'Cancella', pause: 'Pausa', resume: 'Riprendi', active: '● Attivo', paused: 'In pausa', lines: 'righe', filter: 'Filtra', refresh: 'Aggiorna', loading: 'Caricamento...', loadingBuild: 'Caricamento dati di build...', error: 'Errore', noBuildData: 'Nessun dato. Eseguire Release_KeyClick.bat', networkError: 'Errore di rete', adminButton: 'Area di sistema', generalGroup: 'Generale', colName: 'Nome', colCurrency: 'Valuta', colCreated: 'Creato', colActive: 'Attivo', colAppInstalled: 'App', colLicenceType: 'Tipo di licenza', colSystemForce: 'Modalità sistema', distributionDay: 'Giorno di distribuzione X', messages: 'Messaggi', send: 'Invia', sent: 'Inviato!', reply: 'Rispondi', noMessages: 'Nessun messaggio', replySent: 'Risposta inviata!' },
-    currencyNames: { ILS: 'Shekel', USD: 'Dollaro', GBP: 'Sterlina', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' } },
+    system: { systemLabel: 'Sistema', selectAction: 'Seleziona azione dalla barra destra', users: 'Utenti', buildMessages: 'Registro di build', schedule: 'Pianificazione e prezzi', pr: 'RP', publishedDate: 'Pubblicato il:', reset: 'Reimposta', saved: 'Salvato', records: 'record', scheduleSubject: 'Oggetto', schedulePriceUSD: 'Prezzo\n[$]', schedulePeriod: 'Periodo\n[mesi]', scheduleNotes: 'Note', clear: 'Cancella', pause: 'Pausa', resume: 'Riprendi', active: '● Attivo', paused: 'In pausa', lines: 'righe', filter: 'Filtra', refresh: 'Aggiorna', loading: 'Caricamento...', loadingBuild: 'Caricamento dati di build...', error: 'Errore', noBuildData: 'Nessun dato. Eseguire Release_KeyClick.bat', networkError: 'Errore di rete', adminButton: 'Area di sistema', generalGroup: 'Generale', colName: 'Nome', colCurrency: 'Valuta', colCreated: 'Creato', colActive: 'Attivo', colAppInstalled: 'App', colLicenceType: 'Tipo di licenza', colSystemForce: 'Modalità sistema', distributionDay: 'Giorno di distribuzione X', messages: 'Messaggi', send: 'Invia', sent: 'Inviato!', reply: 'Rispondi', noMessages: 'Nessun messaggio', replySent: 'Risposta inviata!', ref: 'Rif.', msgNo: 'N°', replyToRef: 'Risposta a rif.', msgNumber: 'Messaggio N°', new: 'Nuovo', delete: 'Elimina', newMessage: '+ Nuovo messaggio', selectToView: 'Seleziona un messaggio', monitor: 'Monitor', systemData: 'Dati di sistema', resetTable: 'Reimposta tabella', debug: 'Debug', db: 'DB', sensitivePoints: 'Punti sensibili', productVersionTable: 'Tabella versioni (scheda aggiornamenti)' },
+    currencyNames: { ILS: 'Shekel', USD: 'Dollaro', GBP: 'Sterlina', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
+    updates: { colDate: 'Data e ora', colProduct: 'Prodotto', colVersion: 'Versione', colTitle: 'Titolo', productKeyClick: 'KeyClick Sito web', productMFinance: 'M Finance Gestione budget' },
+    reminders: { loginRequired: 'Accesso richiesto per i promemoria', titlePh: 'Titolo promemoria', timePh: 'Ora', add: '+ Aggiungi', noReminders: 'Nessun promemoria' } },
   { code: 'hi', flag: 'הודו',    name: 'हिंदी',     welcome: 'स्वागत है',
     menu: ['फीडबैक','अपडेट','संदेश','अनुस्मारक','बैंकिंग सेवाएं','व्यक्तिगत पृष्ठ'],
     card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें', run: 'चलाएं', videos: 'वीडियो', guide: 'मार्गदर्शिका', ok: 'ठीक है', msgAlreadyInstalled: 'पहले से इंस्टॉल है\nपुनः इंस्टॉल की आवश्यकता नहीं', msgDownloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है', msgInstallComplete: 'फ़ाइल सहेजें और चलाएं\nइंस्टॉलेशन पूरा करने के लिए', msgDownloadError: 'डाउनलोड त्रुटि\nपुनः प्रयास करें', msgNotInstalled: 'इंस्टॉल नहीं है\nकृपया इंस्टॉल पर क्लिक करें', mFinance: 'M Finance', msgExists: 'यह उपयोगकर्ता पहले से पंजीकृत है\nइन विवरणों के साथ', msgUpdated: 'विवरण सफलतापूर्वक अपडेट किए गए', msgRegistered: 'पंजीकरण पूरा हो गया' },
     profile: { fullName: 'पूरा नाम', email: 'ईमेल', ip: 'IP', language: 'भाषा', country: 'देश', plan: 'योजना', planStart: 'योजना शुरू', planEnd: 'योजना समाप्त', unlimited: 'असीमित', comingSoon: 'जल्द आ रहा है', choosePlan: 'योजना चुनें', close: '✕ बंद करें', loginRequired: 'लॉगिन आवश्यक है', login: 'लॉग इन', products: 'उत्पाद', change: 'बदलें',
       price: 'मूल्य', changePlan: 'योजना बदलें', planName: 'नाम', planFrom: 'से', planTo: 'तक', back: 'वापस', currencyLocal: '₹', free: 'मुफ्त',       planNames: { System_Free_Run: 'परीक्षण रन', User_Trial: 'परीक्षण', User_VIP_Free: 'VIP', System_Owner: 'सिस्टम', User_Monthly: 'मासिक', User_Annual: 'वार्षिक', User_One_Time: 'एकल', System_Suspended_NonPayment: 'निलंबित', User_Cancelled: 'रद्द' } },
     feedback: { customerRelations: 'ग्राहक सेवा', systemMessage: 'सिस्टम संदेश', respectfully: 'सादर,', rating: 'रेटिंग', ratingWebsite: 'वेबसाइट', ratingBudget: 'गृह बजट प्रबंधन', userMessage: 'उपयोगकर्ता संदेश', date: 'तारीख:', title: 'शीर्षक:', from: 'से:', systemReply: 'सिस्टम उत्तर' },
-    system: { systemLabel: 'सिस्टम', selectAction: 'दाहिनी बार से क्रिया चुनें', users: 'उपयोगकर्ता', buildMessages: 'बिल्ड लॉग', schedule: 'शेड्यूल और मूल्य', pr: 'जनसंपर्क', publishedDate: 'प्रकाशन तिथि:', reset: 'रीसेट', saved: 'सहेजा', records: 'रिकॉर्ड', scheduleSubject: 'विषय', schedulePriceUSD: 'मूल्य\n[$]', schedulePeriod: 'अवधि\n[माह]', scheduleNotes: 'नोट्स', clear: 'साफ़ करें', pause: 'रोकें', resume: 'जारी रखें', active: '● सक्रिय', paused: 'रुका हुआ', lines: 'पंक्तियाँ', filter: 'फ़िल्टर', refresh: 'ताज़ा करें', loading: 'लोड हो रहा है...', loadingBuild: 'बिल्ड डेटा लोड हो रहा है...', error: 'त्रुटि', noBuildData: 'कोई डेटा नहीं। Release_KeyClick.bat चलाएं', networkError: 'नेटवर्क त्रुटि', adminButton: 'सिस्टम उपयोग', generalGroup: 'सामान्य', colName: 'नाम', colCurrency: 'मुद्रा', colCreated: 'निर्माण तिथि', colActive: 'सक्रिय', colAppInstalled: 'ऐप', colLicenceType: 'लाइसेंस प्रकार', colSystemForce: 'सिस्टम मोड', distributionDay: 'वितरण दिवस X', messages: 'संदेश', send: 'भेजें', sent: 'भेजा!', reply: 'उत्तर', noMessages: 'कोई संदेश नहीं', replySent: 'उत्तर भेजा!' },
-    currencyNames: { ILS: 'शेकेल', USD: 'डॉलर', GBP: 'पाउंड', EUR: 'यूरो', RUB: 'रूबल', JPY: 'येन', SAR: 'रियाल', CNY: 'युआन', INR: 'रुपया' } },
+    system: { systemLabel: 'सिस्टम', selectAction: 'दाहिनी बार से क्रिया चुनें', users: 'उपयोगकर्ता', buildMessages: 'बिल्ड लॉग', schedule: 'शेड्यूल और मूल्य', pr: 'जनसंपर्क', publishedDate: 'प्रकाशन तिथि:', reset: 'रीसेट', saved: 'सहेजा', records: 'रिकॉर्ड', scheduleSubject: 'विषय', schedulePriceUSD: 'मूल्य\n[$]', schedulePeriod: 'अवधि\n[माह]', scheduleNotes: 'नोट्स', clear: 'साफ़ करें', pause: 'रोकें', resume: 'जारी रखें', active: '● सक्रिय', paused: 'रुका हुआ', lines: 'पंक्तियाँ', filter: 'फ़िल्टर', refresh: 'ताज़ा करें', loading: 'लोड हो रहा है...', loadingBuild: 'बिल्ड डेटा लोड हो रहा है...', error: 'त्रुटि', noBuildData: 'कोई डेटा नहीं। Release_KeyClick.bat चलाएं', networkError: 'नेटवर्क त्रुटि', adminButton: 'सिस्टम उपयोग', generalGroup: 'सामान्य', colName: 'नाम', colCurrency: 'मुद्रा', colCreated: 'निर्माण तिथि', colActive: 'सक्रिय', colAppInstalled: 'ऐप', colLicenceType: 'लाइसेंस प्रकार', colSystemForce: 'सिस्टम मोड', distributionDay: 'वितरण दिवस X', messages: 'संदेश', send: 'भेजें', sent: 'भेजा!', reply: 'उत्तर', noMessages: 'कोई संदेश नहीं', replySent: 'उत्तर भेजा!', ref: 'संदर्भ', msgNo: 'क्र.', replyToRef: 'संदर्भ का उत्तर', msgNumber: 'संदेश क्र.', new: 'नया', delete: 'हटाएं', newMessage: '+ नया संदेश', selectToView: 'देखने के लिए संदेश चुनें', monitor: 'मॉनिटर', systemData: 'सिस्टम डेटा', resetTable: 'टेबल रीसेट', debug: 'डीबग', db: 'DB', sensitivePoints: 'संवेदनशील बिंदु', productVersionTable: 'अपडेट टैब में संस्करण तालिका' },
+    currencyNames: { ILS: 'शेकेल', USD: 'डॉलर', GBP: 'पाउंड', EUR: 'यूरो', RUB: 'रूबल', JPY: 'येन', SAR: 'रियाल', CNY: 'युआन', INR: 'रुपया' },
+    updates: { colDate: 'दिनांक और समय', colProduct: 'उत्पाद', colVersion: 'संस्करण', colTitle: 'शीर्षक', productKeyClick: 'KeyClick वेबसाइट', productMFinance: 'M Finance घरेलू बजट' },
+    reminders: { loginRequired: 'अनुस्मारक देखने के लिए लॉगिन आवश्यक है', titlePh: 'अनुस्मारक शीर्षक', timePh: 'समय', add: '+ जोड़ें', noReminders: 'कोई अनुस्मारक नहीं' } },
 ]
 
 type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null }
+
+const _txCache = new Map<string, string>()
+async function _txChunk(chunk: string, lc: string): Promise<string> {
+  try {
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=he|${lc}`)
+    const d = await res.json()
+    return d.responseData?.translatedText ?? chunk
+  } catch { return chunk }
+}
+async function translateFromHe(text: string, toLang: string): Promise<string> {
+  if (!text.trim() || toLang === 'he') return text
+  const lc = toLang === 'zh' ? 'zh-CN' : toLang
+  const key = `${lc}:${text}`
+  if (_txCache.has(key)) return _txCache.get(key)!
+  // MyMemory free tier: max ~500 chars per request — split on paragraph breaks
+  const MAX = 480
+  let result: string
+  if (text.length <= MAX) {
+    result = await _txChunk(text, lc)
+  } else {
+    const paragraphs = text.split('\n')
+    const chunks: string[] = []
+    let cur = ''
+    for (const line of paragraphs) {
+      if ((cur + '\n' + line).length > MAX && cur) { chunks.push(cur); cur = line }
+      else { cur = cur ? cur + '\n' + line : line }
+    }
+    if (cur) chunks.push(cur)
+    const translated = await Promise.all(chunks.map(c => _txChunk(c, lc)))
+    result = translated.join('\n')
+  }
+  _txCache.set(key, result)
+  return result
+}
 
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
@@ -138,7 +194,8 @@ export default function Home() {
           const dateStr = `${day}/${m}/${y}`
           return r.time ? `${dateStr} ${r.time}  ${r.title}` : `${dateStr}  ${r.title}`
         }).join('\n')
-        setPopupMsg({ title: 'תזכורות', body: lines })
+        const popupLang = idx !== -1 ? languages[idx] : languages[langIdx]
+        setPopupMsg({ title: popupLang.menu[3], body: lines })
       })
       .catch(() => {})
   }, [Current_User_Pointer_to_DB])
@@ -485,15 +542,18 @@ type ScheduleRow = { price: string; months: string; fromDate: string; toDate: st
 type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive'>('none')
   const [debugOpen, setDebugOpen] = useState(false)
   const [buildOpen, setBuildOpen] = useState(false)
   const [prSaved, setPrSaved] = useState(false)
   const [updatesResetDone, setUpdatesResetDone] = useState(false)
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<Record<string, unknown>[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
+  const [prTxText, setPrTxText] = useState('')
+  const [prEditing, setPrEditing] = useState(false)
   const [pendingForce, setPendingForce] = useState<Record<string, string>>({})
   const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(
     SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' }))
@@ -503,6 +563,12 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const colResizeRef = useRef<{ col: number; startX: number; startWidth: number } | null>(null)
   const rowResizeRef = useRef<{ row: number; startY: number; startHeight: number } | null>(null)
   const dateRefs = useRef<(HTMLInputElement | null)[]>(Array(SCHEDULE_SUBJECTS.length * 2).fill(null))
+
+  useEffect(() => {
+    if (lang.code === 'he' || !prText) { setPrTxText(''); return }
+    if (prEditing) return
+    translateFromHe(prText, lang.code).then(t => setPrTxText(t))
+  }, [prText, lang.code, prEditing])
 
   useEffect(() => {
     if (view === 'users') {
@@ -695,7 +761,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             <div style={{ position: 'relative', marginTop: '28px', direction: 'rtl', width: '730px' }}>
               <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{lang.feedback.systemMessage}</span>
               <div style={{ border: '2px solid #003399', borderRadius: '6px', minHeight: '96px', padding: '12px', display: 'flex', flexDirection: 'column', background: '#fff', resize: 'vertical', overflow: 'auto' }}>
-                <textarea value={prText} onChange={e => setPrText(e.target.value)} autoFocus style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', minHeight: '50px', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
+                <textarea value={prEditing ? prText : (lang.code !== 'he' && prTxText) || prText} onChange={e => setPrText(e.target.value)} onFocus={() => setPrEditing(true)} onBlur={() => setPrEditing(false)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', minHeight: '50px', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: prEditing || lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr', background: 'transparent' }} />
                 <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
                   {lang.feedback.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {lang.feedback.customerRelations}
                 </div>
@@ -712,6 +778,39 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                 fetch('/api/system/pr-message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prText, date: prDate }) }).catch(() => {})
               }} style={{ fontSize: '11px', padding: '2px 10px', background: prSaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{prSaved ? '✓ ' + lang.system.saved : lang.card.update}</button>
               <button onClick={() => { setPrText(''); onSetSystemMessage('') }} style={{ fontSize: '11px', padding: '2px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.reset}</button>
+            </div>
+          </div>
+        )}
+
+        {view === 'sensitive' && (
+          <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ background: '#555', borderRadius: '8px', padding: '10px 8px' }}>
+              <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px', width: '130px' }}>
+                <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>{lang.system.productVersionTable}</div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button style={{ ...sysBtnSm, background: updatesResetDone ? '#006600' : '#003399' }} onClick={() => setShowResetConfirm(true)}>
+                    {updatesResetDone ? '✓ ' + lang.system.reset : lang.system.resetTable}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showResetConfirm && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#1e1e2e', border: '2px solid #cc9900', borderRadius: '12px', padding: '28px 32px', minWidth: '300px', boxShadow: '0 8px 32px rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', direction: 'rtl' }}>
+              <div style={{ color: '#FFD700', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px solid #cc9900', paddingBottom: '10px', width: '100%', textAlign: 'center' }}>{lang.system.productVersionTable}</div>
+              <div style={{ color: '#ccc', fontSize: '14px', textAlign: 'center' }}>{lang.system.resetTable}?</div>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                <button onClick={() => {
+                  setShowResetConfirm(false)
+                  fetch('/api/updates', { method: 'DELETE' })
+                    .then(() => { setUpdatesResetDone(true); setTimeout(() => setUpdatesResetDone(false), 2000) })
+                    .catch(() => {})
+                }} style={{ fontSize: '13px', padding: '6px 20px', background: '#003399', color: '#FFD700', border: '1px solid #cc9900', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.reset}</button>
+                <button onClick={() => setShowResetConfirm(false)} style={{ fontSize: '13px', padding: '6px 20px', background: '#444', color: '#ccc', border: '1px solid #666', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.card.cancel}</button>
+              </div>
             </div>
           </div>
         )}
@@ -781,10 +880,10 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                             value={String(u.system_force ?? 'User')}
                             onChange={e => {
                               const systemForce = e.target.value
-                              onDbg('dropdown', `userId=${u.id} שינוי system_force → ${systemForce}`)
+                              onDbg('dropdown', `userId=${u.id} system_force changed → ${systemForce}`)
                               setPendingForce(prev => ({ ...prev, [String(u.id)]: systemForce }))
                               setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, system_force: systemForce === 'User' ? null : systemForce } : usr))
-                              onDbg('dropdown', `pendingForce עודכן userId=${u.id}`)
+                              onDbg('dropdown', `pendingForce updated userId=${u.id}`)
                             }}
                             style={{ fontSize: 12, border: '1px solid #a0a8c0', borderRadius: 3, padding: '1px 2px', background: u.system_force && u.system_force !== 'User' ? '#fff3e0' : '#fff', cursor: 'pointer' }}
                           >
@@ -804,28 +903,28 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <button
                 onClick={async () => {
                   const entries = Object.entries(pendingForce)
-                  onDbg('עדכון', `לחיצה — ${entries.length} שינויים: ${entries.map(([id, f]) => `user${id}→${f}`).join(', ')}`)
+                  onDbg('update', `click — ${entries.length} changes: ${entries.map(([id, f]) => `user${id}→${f}`).join(', ')}`)
                   await Promise.all(entries.map(async ([userId, systemForce]) => {
-                    onDbg('עדכון', `שולח force-plan userId=${userId} systemForce=${systemForce}`)
+                    onDbg('update', `sending force-plan userId=${userId} systemForce=${systemForce}`)
                     try {
                       const res = await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) })
                       const data = await res.json()
-                      onDbg('עדכון', `force-plan תגובה userId=${userId} ok=${data.ok ?? false} error=${data.error ?? 'none'}`)
+                      onDbg('update', `force-plan response userId=${userId} ok=${data.ok ?? false} error=${data.error ?? 'none'}`)
                     } catch (e) {
-                      onDbg('עדכון', `force-plan שגיאה userId=${userId} err=${String(e)}`)
+                      onDbg('update', `force-plan error userId=${userId} err=${String(e)}`)
                     }
                   }))
                   setPendingForce({})
-                  onDbg('עדכון', 'שולח current-user לרענון state')
+                  onDbg('update', 'fetching current-user to refresh state')
                   fetch('/api/current-user')
                     .then(r => r.json())
                     .then(d => {
-                      onDbg('עדכון', `current-user תגובה id=${d.user?.id ?? 'none'} license=${d.user?.M_Finance_license_type ?? 'none'} system_force=${d.user?.system_force ?? 'none'}`)
-                      if (d.user) { onUserUpdate(d.user); onDbg('עדכון', 'onUserUpdate נקרא — state מעודכן') }
+                      onDbg('update', `current-user response id=${d.user?.id ?? 'none'} license=${d.user?.M_Finance_license_type ?? 'none'} system_force=${d.user?.system_force ?? 'none'}`)
+                      if (d.user) { onUserUpdate(d.user); onDbg('update', 'onUserUpdate called — state updated') }
                     })
-                    .catch(e => onDbg('עדכון', `current-user שגיאה err=${String(e)}`))
-                  onDbg('עדכון', 'מרענן טבלת משתמשים')
-                  fetch('/api/system/users').then(r => r.json()).then(d => { setUsers(d.users ?? []); onDbg('עדכון', `טבלת משתמשים רועננה — ${d.users?.length ?? 0} שורות`) }).catch(e => onDbg('עדכון', `users שגיאה err=${String(e)}`))
+                    .catch(e => onDbg('update', `current-user error err=${String(e)}`))
+                  onDbg('update', 'refreshing users table')
+                  fetch('/api/system/users').then(r => r.json()).then(d => { setUsers(d.users ?? []); onDbg('update', `users table refreshed — ${d.users?.length ?? 0} rows`) }).catch(e => onDbg('update', `users error err=${String(e)}`))
                 }}
                 disabled={Object.keys(pendingForce).length === 0}
                 style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold', opacity: Object.keys(pendingForce).length > 0 ? 1 : 0.4 }}>
@@ -925,42 +1024,33 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '8px 6px', width: '100%', boxSizing: 'border-box' }}>
 
-          {/* מוניטור */}
+          {/* monitor */}
           <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
-            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>מוניטור</div>
+            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>{lang.system.monitor}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
-              <button style={{ ...sysBtnSm, ...(debugOpen ? { background: '#4a1a6e' } : {}) }} onClick={() => { onOpenDebug(); setDebugOpen(prev => !prev) }}>Debug</button>
-              <button style={{ ...sysBtnSm, ...(view === 'db' ? { background: '#4a1a6e' } : {}) }} onClick={handleDb}>DB</button>
+              <button style={{ ...sysBtnSm, fontSize: '13px', ...(debugOpen ? { background: '#4a1a6e' } : {}) }} onClick={() => { onOpenDebug(); setDebugOpen(prev => !prev) }}>{lang.system.debug}</button>
+              <button style={{ ...sysBtnSm, ...(view === 'db' ? { background: '#4a1a6e' } : {}) }} onClick={handleDb}>{lang.system.db}</button>
               <button style={{ ...sysBtnSm, gridColumn: 'span 2', ...(buildOpen ? { background: '#4a1a6e' } : {}) }} onClick={() => { handleBuild(); setBuildOpen(prev => !prev) }}>{lang.system.buildMessages}</button>
             </div>
           </div>
 
-          {/* נתוני מערכת */}
+          {/* systemData */}
           <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
-            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>נתוני מערכת</div>
+            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>{lang.system.systemData}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm, ...(view === 'users' ? { background: '#4a1a6e' } : {}) }} onClick={handleUsers}>{lang.system.users}</button>
               <button style={{ ...sysBtnSm, ...(view === 'schedule' ? { background: '#4a1a6e' } : {}) }} onClick={handleSchedule}>{lang.system.schedule}</button>
+              <button style={{ ...sysBtnSm, gridColumn: 'span 2', ...(view === 'sensitive' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'sensitive' ? 'none' : 'sensitive')}>{lang.system.sensitivePoints}</button>
             </div>
           </div>
 
-          {/* קשרי לקוחות */}
+          {/* pr */}
           <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
-            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>קשרי לקוחות</div>
+            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>{lang.system.pr}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm, ...(view === 'pr' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'pr' ? 'none' : 'pr')}>{lang.system.pr}</button>
               <button style={{ ...sysBtnSm, ...(view === 'messages' ? { background: '#4a1a6e' } : {}) }} onClick={() => setView(view === 'messages' ? 'none' : 'messages')}>{lang.system.messages}</button>
             </div>
-          </div>
-
-          {/* עדכונים */}
-          <div style={{ border: '1px solid #cc9900', borderRadius: '8px', padding: '5px 4px 6px' }}>
-            <div style={{ color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #666', paddingBottom: '3px', marginBottom: '5px' }}>עדכונים</div>
-            <button style={{ ...sysBtnSm, width: '100%', background: updatesResetDone ? '#006600' : undefined }} onClick={() => {
-              fetch('/api/updates', { method: 'DELETE' })
-                .then(() => { setUpdatesResetDone(true); setTimeout(() => setUpdatesResetDone(false), 2000) })
-                .catch(() => {})
-            }}>{updatesResetDone ? '✓ אופס' : 'איפוס טבלה'}</button>
           </div>
 
         </div>
@@ -1011,13 +1101,60 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const [validationErrors, setValidationErrors] = useState<{date?: boolean, title?: boolean, from?: boolean}>({})
   const [sessionId, setSessionId] = useState<number | null>(null)
   const [expandedMsgId, setExpandedMsgId] = useState<number | null>(null)
+  const [txBody, setTxBody] = useState('')
+  const [txReply, setTxReply] = useState('')
+  const [txTitle, setTxTitle] = useState('')
+  const [txSysMsg, setTxSysMsg] = useState('')
+  const [txTitlesList, setTxTitlesList] = useState<Record<number, string>>({})
+  const [adminReplyEditing, setAdminReplyEditing] = useState(false)
   const isAdmin = user?.M_Finance_license_type === LICENSE_TYPES.System_Owner
+
+  useEffect(() => {
+    if (lang.code === 'he' || expandedMsgId === null) { setTxBody(''); setTxReply(''); setTxTitle(''); return }
+    const msg = loadedMessages.find(m => m.id === expandedMsgId)
+    if (!msg) return
+    const body = (() => {
+      const b = msg.body ?? ''
+      if (!b.startsWith('סימוכין:')) return b
+      const firstBreak = b.indexOf('\n\n')
+      if (firstBreak === -1) return b
+      const afterMeta = b.slice(firstBreak + 2)
+      const stops = ['\n\n══════════', '\n\n── תשובת', '\n\n── הודעת']
+      let endIdx = afterMeta.length
+      for (const sep of stops) { const idx = afterMeta.indexOf(sep); if (idx !== -1 && idx < endIdx) endIdx = idx }
+      return afterMeta.slice(0, endIdx).trim()
+    })()
+    Promise.all([
+      body ? translateFromHe(body, lang.code) : Promise.resolve(''),
+      msg.reply_text ? translateFromHe(msg.reply_text, lang.code) : Promise.resolve(''),
+      msg.title ? translateFromHe(msg.title, lang.code) : Promise.resolve('')
+    ]).then(([b, r, t]) => { setTxBody(b); setTxReply(r); setTxTitle(t) })
+  }, [expandedMsgId, lang.code])
+
+  useEffect(() => {
+    if (lang.code === 'he' || !systemMessage) { setTxSysMsg(''); return }
+    translateFromHe(systemMessage, lang.code).then(t => setTxSysMsg(t))
+  }, [systemMessage, lang.code])
+
+  useEffect(() => {
+    if (lang.code === 'he' || loadedMessages.length === 0) { setTxTitlesList({}); return }
+    Promise.all(
+      loadedMessages.map(m => m.title
+        ? translateFromHe(m.title, lang.code).then(t => ({ id: m.id, t }))
+        : Promise.resolve({ id: m.id, t: '' })
+      )
+    ).then(results => {
+      const map: Record<number, string> = {}
+      results.forEach(({ id, t }) => { if (t) map[id] = t })
+      setTxTitlesList(map)
+    })
+  }, [loadedMessages, lang.code])
 
   useEffect(() => {
     if (!user?.id) return
     onDbg('FeedbackPage.init', `mount isAdmin=${isAdmin} sessionId=${sessionId}`)
     if (isAdmin) {
-      onDbg('FeedbackPage.init', 'נתיב ADMIN — שולף session ו-messages')
+      onDbg('FeedbackPage.init', 'admin path — fetching session and messages')
       fetch(`/api/feedback-session?userId=${user.id}`)
         .then(r => r.json())
         .then(d => {
@@ -1048,7 +1185,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         .then(r => r.json())
         .then(d => {
           const sid: number = d.session?.id
-          if (!sid) { onDbg('FeedbackPage.session', 'sid=null — אין session!'); return }
+          if (!sid) { onDbg('FeedbackPage.session', 'sid=null — no session!'); return }
           setSessionId(sid)
           onDbg('FeedbackPage.session', `sessionId=${sid}`)
           return fetch(`/api/feedback?userId=${user.id}&sessionId=${sid}`)
@@ -1073,9 +1210,9 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
 
   useEffect(() => {
     if (!user?.id) return
-    if (isAdmin) { onDbg('FeedbackPage.poll', `לא מתחיל — isAdmin=true`); return }
-    if (!sessionId) { onDbg('FeedbackPage.poll', `לא מתחיל — sessionId=null`); return }
-    onDbg('FeedbackPage.poll', `התחלת polling sessionId=${sessionId}`)
+    if (isAdmin) { onDbg('FeedbackPage.poll', 'skip — isAdmin=true'); return }
+    if (!sessionId) { onDbg('FeedbackPage.poll', 'skip — sessionId=null'); return }
+    onDbg('FeedbackPage.poll', `polling started sessionId=${sessionId}`)
     const interval = setInterval(() => {
       fetch(`/api/feedback?userId=${user.id}&sessionId=${sessionId}`)
         .then(r => r.json())
@@ -1090,7 +1227,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
             setReplyText(last.reply_text)
             setReplyDate(last.reply_date || new Date().toISOString().slice(0, 10))
             setHasReply(true)
-            onDbg('FeedbackPage.poll', `תשובה הגיעה! replyLen=${last.reply_text.length}`)
+            onDbg('FeedbackPage.poll', `reply received! replyLen=${last.reply_text.length}`)
           }
         })
         .catch(e => onDbg('FeedbackPage.poll', `error: ${String(e)}`))
@@ -1296,7 +1433,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                     style={{ cursor: 'pointer', background: isExp ? '#c8d8ff' : i % 2 === 0 ? '#fff' : '#f4f6ff', outline: isExp ? '2px solid #003399' : '1px solid #c0c8e0' }}>
                     <td style={{ padding: '5px 4px', textAlign: 'center', color: '#555' }}>{i + 1}</td>
                     <td style={{ padding: '5px 4px', textAlign: 'center', whiteSpace: 'nowrap' }}>{m.sent_date || '—'}</td>
-                    <td style={{ padding: '5px 6px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.title || '—'}</td>
+                    <td style={{ padding: '5px 6px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{(lang.code !== 'he' && txTitlesList[m.id]) || m.title || '—'}</td>
                     <td style={{ padding: '5px 4px', textAlign: 'center', color: '#003399', fontWeight: 'bold' }}>{m.rating_site ?? '—'}</td>
                     <td style={{ padding: '5px 4px', textAlign: 'center', color: '#003399', fontWeight: 'bold' }}>{m.rating_budget ?? '—'}</td>
                     <td style={{ padding: '5px 4px', textAlign: 'center', color: m.reply_text ? '#006600' : '#cc6600', fontWeight: 'bold' }}>{m.reply_text ? '✓' : '○'}</td>
@@ -1305,7 +1442,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                         await fetch('/api/feedback', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: m.id }) }).catch(() => {})
                         setLoadedMessages(prev => prev.filter(msg => msg.id !== m.id))
                         if (expandedMsgId === m.id) setExpandedMsgId(null)
-                      }} style={{ fontSize: 10, padding: '2px 8px', background: '#003399', color: '#fff', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold' }}>מחיקה</button>
+                      }} style={{ fontSize: 10, padding: '2px 8px', background: '#003399', color: '#fff', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.delete}</button>
                     </td>
                   </tr>
                 </React.Fragment>
@@ -1321,7 +1458,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '8px' }}>
           <button onClick={() => { setExpandedMsgId(null); setSelectedMsgId(null); setUserDate(''); setUserTitle(''); setUserFrom(''); setUserText(''); setReplyDate(''); setReplyText(''); setHasReply(false); setRatingSite(null); setRatingBudget(null); setValidationErrors({}); setRefNum('') }}
-            style={{ fontSize: '13px', padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ הודעה חדשה</button>
+            style={{ fontSize: '13px', padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.newMessage}</button>
         </div>
       <div style={{ width: '720px', minHeight: '1123px', background: '#f5f5f5', borderRadius: '12px', border: '3px solid #003399', boxSizing: 'border-box', flexShrink: 0, padding: '32px', display: 'flex', flexDirection: 'column' }}>
 
@@ -1329,7 +1466,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
             <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{expandedMsgId !== null ? loadedMessages.findIndex(m => m.id === expandedMsgId) + 1 : ''}</div>
-            <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{expandedMsgId !== null ? 'הודעה מס.‏' : ''}</div>
+            <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{expandedMsgId !== null ? lang.system.msgNumber : ''}</div>
           </div>
           <div style={{
             background: '#003399',
@@ -1355,7 +1492,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         <div style={{ position: 'relative', marginTop: '28px', direction: dir }}>
           <span style={{ position: 'absolute', top: '-10px', ...side16, background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemMessage}</span>
           <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '135px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{systemMessage}</div>
+            <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{(lang.code !== 'he' && txSysMsg) || systemMessage}</div>
             <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
               {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
             </div>
@@ -1387,10 +1524,10 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
                     <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{selectedMsg.sent_date || '______'}</span>
-                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{selectedMsg.title || '______'}</span>
-                    <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{buildMsgRef(selectedMsg) || '______'}</span>
+                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{(lang.code !== 'he' && txTitle) || selectedMsg.title || '______'}</span>
+                    <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{buildMsgRef(selectedMsg) || '______'}</span>
                   </div>
-                  <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', flex: 1 }}>{getBodyText(selectedMsg) || '______'}</div>
+                  <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', flex: 1 }}>{(lang.code !== 'he' && txBody) || getBodyText(selectedMsg) || '______'}</div>
                   <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px' }}>{fb.from}{' '}{selectedMsg.user_name || '______'}</div>
                 </div>
               ) : (
@@ -1400,12 +1537,12 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                       <span style={{ whiteSpace: 'nowrap' }}>{fb.date}</span>
                       <input type="date" value={userDate} onChange={e => { setUserDate(e.target.value); if (validationErrors.date) setValidationErrors(prev => ({...prev, date: false})) }} style={{ border: 'none', borderBottom: validationErrors.date ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '100px', direction: 'ltr' }} />
                     </span>
-                    {refNum && <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{loadedMessages.length}</span>}
+                    {refNum && <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{lang.system.msgNo}{loadedMessages.length}</span>}
                     <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', alignItems: 'baseline', whiteSpace: 'nowrap' }}>
                       <span>{fb.title}</span>
                       <input value={userTitle} onChange={e => { setUserTitle(e.target.value); if (validationErrors.title) setValidationErrors(prev => ({...prev, title: false})) }} style={{ border: 'none', borderBottom: validationErrors.title ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '150px', direction: dir }} />
                     </span>
-                    {refNum && <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum}</span>}
+                    {refNum && <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{refNum}</span>}
                   </div>
                   <textarea value={userText} onChange={e => setUserText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir, margin: '4px 0' }} />
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', fontSize: '13px', color: '#222', flexShrink: 0, borderTop: '1px solid #eee', paddingTop: '6px' }}>
@@ -1436,7 +1573,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                 </div>
                 {isAdmin && loadedMessages.length > 0 && (
                   <div style={{ fontSize: '11px', color: '#888', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ whiteSpace: 'nowrap' }}>מענה לסימוכין</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>{lang.system.replyToRef}</span>
                     <select value={selectedMsgId ?? ''} onChange={e => handleSelectMsg(Number(e.target.value))}
                       style={{ border: 'none', outline: 'none', fontSize: '11px', color: '#003399', background: 'transparent', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}>
                       {loadedMessages.map(m => <option key={m.id} value={m.id}>{buildMsgRef(m)}</option>)}
@@ -1444,7 +1581,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                   </div>
                 )}
               </div>
-              <textarea value={replyText} readOnly={!isAdmin} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: !isAdmin ? '#f0f4ff' : 'transparent', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0' }} />
+              <textarea value={isAdmin && adminReplyEditing ? replyText : (lang.code !== 'he' && txReply) || replyText} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: !isAdmin ? '#f0f4ff' : 'transparent', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0' }} />
               <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px', direction: dir, flexShrink: 0 }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
               </div>
@@ -1467,8 +1604,31 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   const [adminReplyDate, setAdminReplyDate] = useState('')
   const [replySaved, setReplySaved] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [txMsgBody, setTxMsgBody] = useState('')
+  const [txMsgReply, setTxMsgReply] = useState('')
+  const [txMsgTitle, setTxMsgTitle] = useState('')
+  const [txSysMsg, setTxSysMsg] = useState('')
+  const [adminReplyEditing, setAdminReplyEditing] = useState(false)
   const isRTL = lang.code === 'he' || lang.code === 'ar'
   const dir = isRTL ? 'rtl' as const : 'ltr' as const
+
+  useEffect(() => {
+    if (!selectedMsg || lang.code === 'he') { setTxMsgBody(''); setTxMsgReply(''); setTxMsgTitle(''); setTxSysMsg(''); return }
+    const body = selectedMsg.body ?? ''
+    const cut = (text: string, sep: string): [string, string] => { const i = text.indexOf(sep); return i === -1 ? [text, ''] : [text.slice(0, i), text.slice(i + sep.length)] }
+    const [withoutHistory] = cut(body, '\n\n══════════')
+    const [withoutReply] = cut(withoutHistory, '\n\n── תשובת המערכת ──\n')
+    const [withoutSysMsg, afterSysMsg] = cut(withoutReply, '\n\n── הודעת המערכת ──\n')
+    const lines = withoutSysMsg.split('\n')
+    const userText = lines.slice(4).join('\n').trim()
+    const sysMsgText = afterSysMsg ? afterSysMsg.split('\n\n')[0] : ''
+    Promise.all([
+      userText ? translateFromHe(userText, lang.code) : Promise.resolve(''),
+      selectedMsg.reply_text ? translateFromHe(selectedMsg.reply_text, lang.code) : Promise.resolve(''),
+      selectedMsg.title ? translateFromHe(selectedMsg.title, lang.code) : Promise.resolve(''),
+      sysMsgText ? translateFromHe(sysMsgText, lang.code) : Promise.resolve('')
+    ]).then(([b, r, t, s]) => { setTxMsgBody(b); setTxMsgReply(r); setTxMsgTitle(t); setTxSysMsg(s) })
+  }, [selectedMsg?.id, lang.code])
 
   const userGroups = React.useMemo(() => {
     const map = new Map<number, FeedbackMessage[]>()
@@ -1502,6 +1662,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
     setSelectedMsg(msg)
     setAdminReply(msg.reply_text ?? '')
     setAdminReplyDate(msg.reply_date || new Date().toISOString().slice(0, 10))
+    setAdminReplyEditing(false)
     onDbg('MessagesPage.selectMsg', `id=${msg.id} hasReply=${!!msg.reply_text}`)
     if (!msg.is_read && isAdmin) {
       fetch('/api/feedback', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id, isRead: true }) }).catch(() => {})
@@ -1521,7 +1682,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
     } catch (e) { onDbg('MessagesPage.sendReply', `PATCH error: ${String(e)}`) }
     setMsgs(prev => prev.map(m => m.id === selectedMsg.id ? { ...m, reply_text: adminReply, reply_date: adminReplyDate } : m))
     setSelectedMsg(prev => prev ? { ...prev, reply_text: adminReply, reply_date: adminReplyDate } : null)
-    onDbg('MessagesPage.sendReply', `state מקומי עודכן id=${selectedMsg.id}`)
+    onDbg('MessagesPage.sendReply', `local state updated id=${selectedMsg.id}`)
     setReplySaved(true)
     setTimeout(() => setReplySaved(false), 2500)
   }
@@ -1551,11 +1712,11 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   }
 
   return (
-    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '16px', boxSizing: 'border-box', direction: dir }}>
-      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '16px', boxSizing: 'border-box' }}>
+      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', direction: 'rtl' }}>
 
-        {/* LEFT — טבלאות לפי משתמש */}
-        <div style={{ flex: '0 0 420px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {/* RIGHT — טבלאות לפי משתמש */}
+        <div style={{ flex: '0 0 420px', display: 'flex', flexDirection: 'column', gap: '10px', direction: 'ltr' }}>
           {userGroups.map(group => {
             const isExpanded = expandedUids.has(group.uid)
             const toggleExpand = () => setExpandedUids(prev => { const s = new Set(prev); isExpanded ? s.delete(group.uid) : s.add(group.uid); return s })
@@ -1564,7 +1725,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                 <div onClick={toggleExpand} style={{ background: '#003399', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', userSelect: 'none' }}>
                   <span style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 13 }}>{group.name}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {group.hasUnread && <span style={{ background: '#cc0000', color: '#fff', borderRadius: 10, fontSize: 10, padding: '1px 6px', fontWeight: 'bold' }}>חדש</span>}
+                    {group.hasUnread && <span style={{ background: '#cc0000', color: '#fff', borderRadius: 10, fontSize: 10, padding: '1px 6px', fontWeight: 'bold' }}>{lang.system.new}</span>}
                     <span style={{ color: '#FFD700', fontSize: 11 }}>{isExpanded ? '▲' : '▼'}</span>
                   </div>
                 </div>
@@ -1572,12 +1733,12 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                   <thead>
                     <tr>
                       <th style={thS}>✓</th>
-                      <th style={thS}>תאריך</th>
+                      <th style={thS}>{fb.date.replace(':','').trim()}</th>
                       <th style={thS}>#</th>
-                      <th style={{ ...thS, width: '100%', textAlign: 'start' }}>כותרת</th>
-                      <th style={thS}>אתר</th>
-                      <th style={thS}>תקציב</th>
-                      <th style={{ ...thS, borderInlineEnd: 'none' }}>תשובה</th>
+                      <th style={{ ...thS, width: '100%', textAlign: 'start' }}>{fb.title.replace(':','').trim()}</th>
+                      <th style={thS}>{fb.ratingWebsite}</th>
+                      <th style={thS}>{fb.ratingBudget.split(' ')[0]}</th>
+                      <th style={{ ...thS, borderInlineEnd: 'none' }}>{fb.systemReply}</th>
                       {isAdmin && <th style={{ ...thS, borderInlineEnd: 'none' }}></th>}
                     </tr>
                   </thead>
@@ -1600,7 +1761,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                                 fetch('/api/feedback', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: msg.id }) })
                                   .then(() => { setMsgs(prev => prev.filter(m => m.id !== msg.id)); if (selectedMsg?.id === msg.id) setSelectedMsg(null) })
                                   .catch(() => {})
-                              }} style={{ fontSize: 10, padding: '2px 8px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold' }}>מחיקה</button>
+                              }} style={{ fontSize: 10, padding: '2px 8px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.delete}</button>
                             </td>
                           )}
                         </tr>
@@ -1611,13 +1772,14 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
               </div>
             )
           })}
+          {!selectedMsg && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', color: '#888', fontSize: 15 }}>{lang.system.selectToView}</div>
+          )}
         </div>
 
         {/* RIGHT — טופס אחד */}
-        <div style={{ flex: 1, position: 'sticky', top: 0 }}>
-          {!selectedMsg ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '300px', color: '#888', fontSize: 15 }}>בחר הודעה לצפייה</div>
-          ) : (() => {
+        {selectedMsg && <div style={{ flex: 1, position: 'sticky', top: 0 }}>
+          {(() => {
             const msg = selectedMsg
             const { refNum, userText, sysMsgText } = parseMsgBody(msg)
             const msgIdx = userGroups.find(g => g.msgs.some(m => m.id === msg.id))?.msgs.findIndex(m => m.id === msg.id) ?? 0
@@ -1636,7 +1798,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                   </div>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
                     <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{msgIdx + 1}</div>
-                    <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{'הודעה מס.‏'}</div>
+                    <div style={{ fontSize: '13px', color: '#888', direction: 'rtl' }}>{lang.system.msgNumber}</div>
                   </div>
                 </div>
 
@@ -1644,7 +1806,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                   <div style={{ position: 'relative', marginTop: '28px' }}>
                     <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemMessage}</span>
                     <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '135px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                      <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap' }}>{sysMsgText}</div>
+                      <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap', direction: dir }}>{(lang.code !== 'he' && txSysMsg) || sysMsgText}</div>
                       <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
                         {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                       </div>
@@ -1677,11 +1839,11 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                     <div style={{ border: '2px solid #003399', borderRadius: '6px', padding: '12px', background: '#fff' }}>
                       <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222' }}>
                         <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{msg.sent_date || '______'}</span>
-                        <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{'מס.'}{msgIdx + 1}</span>
-                        <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{msg.title || '______'}</span>
-                        <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{'סימוכין '}{refNum || '______'}</span>
+                        <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{lang.system.msgNo}{msgIdx + 1}</span>
+                        <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{(lang.code !== 'he' && txMsgTitle) || msg.title || '______'}</span>
+                        <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{refNum || '______'}</span>
                       </div>
-                      <div style={{ minHeight: '80px', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0' }}>{userText}</div>
+                      <div style={{ minHeight: '80px', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', direction: dir }}>{(lang.code !== 'he' && txMsgBody) || userText}</div>
                       <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{msg.user_name || '______'}</div>
                     </div>
                   </div>
@@ -1698,12 +1860,9 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                             : <span style={{ marginInlineStart: 6 }}>{msg.reply_date || '______'}</span>
                           }
                         </div>
-                        <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{'מענה לסימוכין'}{' '}{refNum}</span>
+                        <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.replyToRef}{' '}{refNum}</span>
                       </div>
-                      {isAdmin
-                        ? <textarea value={adminReply} onChange={e => setAdminReply(e.target.value)} style={{ minHeight: '80px', border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
-                        : <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', minHeight: '80px' }}>{msg.reply_text || ''}</div>
-                      }
+                      <textarea value={isAdmin && adminReplyEditing ? adminReply : (lang.code !== 'he' && txMsgReply) || (isAdmin ? adminReply : msg.reply_text || '')} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setAdminReply(e.target.value) : undefined} style={{ minHeight: '80px', border: isAdmin ? '1px dashed #a0a8d0' : 'none', outline: 'none', resize: isAdmin ? 'vertical' : 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: isAdmin && adminReplyEditing ? 'rtl' : dir, background: isAdmin ? '#f0f4ff' : 'transparent', cursor: isAdmin ? 'text' : 'default', width: '100%', boxSizing: 'border-box' as const, borderRadius: isAdmin ? 4 : 0, padding: isAdmin ? '4px 8px' : '0' }} />
                       <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
                         {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                       </div>
@@ -1711,7 +1870,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                     {isAdmin && (
                       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 10 }}>
                         <button onClick={handleSendReply} disabled={!adminReply.trim() || !adminReplyDate.trim()} style={{ fontSize: 13, padding: '5px 18px', background: replySaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 5, cursor: 'pointer', fontWeight: 'bold', opacity: adminReply.trim() && adminReplyDate.trim() ? 1 : 0.5 }}>
-                          {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' תשובה'}
+                          {replySaved ? '✓ ' + lang.system.replySent : lang.system.send + ' ' + lang.system.reply}
                         </button>
                       </div>
                     )}
@@ -1721,7 +1880,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
               </div>
             )
           })()}
-        </div>
+        </div>}
 
       </div>
     </div>
@@ -1729,11 +1888,6 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
 }
 
 type UpdateRecord = { id: number; product: string; version: string; release_date: string; release_time: string | null; description: string }
-
-const PRODUCT_DISPLAY: Record<string, string> = {
-  'KeyClick Site': 'אתר KeyClick',
-  'M Finance':     'ניהול תקציב בית M Finance',
-}
 
 function formatUpdateDate(date: string, time: string | null) {
   if (!date) return '—'
@@ -1773,17 +1927,19 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
           <table style={{ borderCollapse: 'collapse', background: '#fff' }}>
             <thead>
               <tr>
-                <th style={thS}>תאריך ושעה</th>
-                <th style={thS}>מוצר</th>
-                <th style={thS}>גרסה</th>
-                <th style={thS}>כותרת</th>
+                <th style={thS}>{lang.updates.colDate}</th>
+                <th style={thS}>{lang.updates.colProduct}</th>
+                <th style={thS}>{lang.updates.colVersion}</th>
+                <th style={thS}>{lang.updates.colTitle}</th>
               </tr>
             </thead>
             <tbody>
               {updates.map((u) => (
                 <tr key={u.id}>
                   <td style={{ ...tdS, whiteSpace: 'nowrap', fontSize: 13 }}>{formatUpdateDate(u.release_date, u.release_time)}</td>
-                  <td style={{ ...tdS, whiteSpace: 'nowrap', fontFamily: handFont(lang.code), fontSize: 16 }}>{PRODUCT_DISPLAY[u.product] ?? u.product}</td>
+                  <td style={{ ...tdS, whiteSpace: 'nowrap', fontFamily: handFont(lang.code), fontSize: 16 }}>
+                    {u.product === 'KeyClick Site' ? lang.updates.productKeyClick : u.product === 'M Finance' ? lang.updates.productMFinance : u.product}
+                  </td>
                   <td style={{ ...tdS, whiteSpace: 'nowrap', fontSize: 13 }}>{(u.version ?? '').replace(/^ver\s*/i, '')}</td>
                   <td style={{ ...tdS, minWidth: 220 }}>{u.description || '—'}</td>
                 </tr>
@@ -1836,7 +1992,7 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
 
   if (!user) return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: 15 }}>
-      נדרשת כניסה לצפייה בתזכורות
+      {lang.reminders.loginRequired}
     </div>
   )
 
@@ -1847,12 +2003,12 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
 
         {/* Add form */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 24, alignItems: 'center', flexWrap: 'wrap' }}>
-          <input style={{ ...inputS, minWidth: 220 }} placeholder="כותרת תזכורת" value={title} onChange={e => setTitle(e.target.value)} />
+          <input style={{ ...inputS, minWidth: 220 }} placeholder={lang.reminders.titlePh} value={title} onChange={e => setTitle(e.target.value)} />
           <input style={{ ...inputS, direction: 'ltr' }} type="date" value={date} onChange={e => setDate(e.target.value)} />
-          <input style={{ ...inputS, width: 90, direction: 'ltr' }} type="time" value={time} onChange={e => setTime(e.target.value)} placeholder="שעה" />
+          <input style={{ ...inputS, width: 90, direction: 'ltr' }} type="time" value={time} onChange={e => setTime(e.target.value)} placeholder={lang.reminders.timePh} />
           <button onClick={handleAdd} disabled={!title.trim() || !date || saving}
             style={{ padding: '7px 22px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, fontWeight: 700, fontSize: 14, cursor: 'pointer', fontStyle: 'italic', opacity: (!title.trim() || !date) ? 0.5 : 1 }}>
-            + הוסף
+            {lang.reminders.add}
           </button>
         </div>
 
@@ -1860,15 +2016,15 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
         {loading ? (
           <div style={{ color: '#888', padding: 20 }}>{lang.system.loading}</div>
         ) : reminders.length === 0 ? (
-          <div style={{ color: '#888', padding: 20 }}>אין תזכורות</div>
+          <div style={{ color: '#888', padding: 20 }}>{lang.reminders.noReminders}</div>
         ) : (
           <div style={{ borderRadius: 12, overflow: 'hidden', border: '2px solid #003399', display: 'inline-block', background: '#fff' }}>
             <table style={{ borderCollapse: 'collapse', background: '#fff' }}>
               <thead>
                 <tr>
-                  <th style={thS}>תאריך</th>
-                  <th style={thS}>שעה</th>
-                  <th style={{ ...thS, textAlign: 'right' }}>כותרת</th>
+                  <th style={thS}>{lang.updates.colDate.split(' ')[0]}</th>
+                  <th style={thS}>{lang.reminders.timePh}</th>
+                  <th style={{ ...thS, textAlign: 'right' }}>{lang.updates.colTitle}</th>
                   <th style={thS}></th>
                 </tr>
               </thead>
@@ -2132,26 +2288,26 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   }, [user?.currency, lang.code])
 
   useEffect(() => {
-    onDbg('scheduleEffect', 'טוען לוח זמנים מ-API')
+    onDbg('scheduleEffect', 'loading schedule from API')
     fetch('/api/system/schedule').then(r => r.json()).then(d => {
-      if (!d.data?.rows) { onDbg('scheduleEffect', 'אין rows בתגובה'); return }
+      if (!d.data?.rows) { onDbg('scheduleEffect', 'no rows in response'); return }
       const PLAN_IDX: Record<string, number> = { User_Trial: 2, User_Monthly: 4, User_Annual: 5, User_One_Time: 6 }
       const map: Record<string, { price: string; months: string }> = {}
       Object.entries(PLAN_IDX).forEach(([planKey, idx]) => {
         const row = d.data.rows[idx]
         if (row) map[planKey] = { price: row.price ?? '', months: row.months ?? '' }
       })
-      onDbg('scheduleEffect', `טעון — ${Object.keys(map).join(', ')}`)
+      onDbg('scheduleEffect', `loaded — ${Object.keys(map).join(', ')}`)
       setScheduleData(map)
-    }).catch(e => onDbg('scheduleEffect', `שגיאה: ${String(e)}`))
+    }).catch(e => onDbg('scheduleEffect', `error: ${String(e)}`))
   }, [])
 
   useEffect(() => {
     if (!planView) return
-    onDbg('exchangeEffect', 'טוען שערי חליפין')
+    onDbg('exchangeEffect', 'loading exchange rates')
     fetch('/api/exchange-rates').then(r => r.json()).then(d => {
-      if (d.rates) { setExchangeRates(d.rates); onDbg('exchangeEffect', `טעון — ${Object.keys(d.rates).join(', ')}`) }
-    }).catch(e => onDbg('exchangeEffect', `שגיאה: ${String(e)}`))
+      if (d.rates) { setExchangeRates(d.rates); onDbg('exchangeEffect', `loaded — ${Object.keys(d.rates).join(', ')}`) }
+    }).catch(e => onDbg('exchangeEffect', `error: ${String(e)}`))
   }, [planView])
 
   const fmtDate = (d: Date) => d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -2174,10 +2330,10 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     try {
       const res  = await fetch('/api/update-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id, licenseType: value, planStart, planEnd }) })
       const data = await res.json()
-      onDbg('selectPlan', `תגובה status=${res.status} ok=${res.ok} license=${data.user?.license_type ?? 'none'}`)
-      if (res.ok && data.user) { onDbg('selectPlan', 'onUserUpdate נקרא'); onUserUpdate(data.user); setUpdating(false); return true }
-      onDbg('selectPlan', `כשל — data=${JSON.stringify(data)}`)
-    } catch (err) { onDbg('selectPlan', `שגיאה: ${String(err)}`) }
+      onDbg('selectPlan', `response status=${res.status} ok=${res.ok} license=${data.user?.license_type ?? 'none'}`)
+      if (res.ok && data.user) { onDbg('selectPlan', 'onUserUpdate called'); onUserUpdate(data.user); setUpdating(false); return true }
+      onDbg('selectPlan', `failed — data=${JSON.stringify(data)}`)
+    } catch (err) { onDbg('selectPlan', `error: ${String(err)}`) }
     setUpdating(false)
     return false
   }
@@ -2202,7 +2358,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
   useEffect(() => {
     if (!user) return
-    onDbg('PersonalPage', `user updated — license=${user.M_Finance_license_type} system_force=${user.system_force ?? 'null'} isOwner=${isOwner} isFreeRun=${isFreeRun} isSystemForced=${isSystemForced} → כפתור ${isFreeRun || isSystemForced ? 'חסום' : 'פתוח'}`)
+    onDbg('PersonalPage', `user updated — license=${user.M_Finance_license_type} system_force=${user.system_force ?? 'null'} isOwner=${isOwner} isFreeRun=${isFreeRun} isSystemForced=${isSystemForced} → button ${isFreeRun || isSystemForced ? 'locked' : 'open'}`)
   }, [user?.M_Finance_license_type, user?.system_force])
 
   const p = lang.profile
@@ -2283,7 +2439,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
-              onClick={async () => { onDbg('אישור תכנית', `selKey=${selKey ?? 'null'}`); if (selKey && await selectPlan(selKey)) { onDbg('אישור תכנית', 'הצליח — סוגר planView'); setPlanView(false) } }}
+              onClick={async () => { onDbg('confirmPlan', `selKey=${selKey ?? 'null'}`); if (selKey && await selectPlan(selKey)) { onDbg('confirmPlan', 'success — closing planView'); setPlanView(false) } }}
               disabled={!selKey || updating}
               style={{ background: '#003399', border: 'none', borderRadius: '7px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', padding: '7px 20px', cursor: selKey && !updating ? 'pointer' : 'default', opacity: selKey && !updating ? 1 : 0.5 }}>
               {updating ? '...' : lang.card.update}
@@ -2336,10 +2492,10 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
                 <td style={{ padding: '8px 10px', border: '1px solid #ccd', whiteSpace: 'nowrap' }}>
                   <button
                     onClick={() => {
-                      onDbg('שינוי', `לחיצה — isFreeRun=${isFreeRun} isSystemForced=${isSystemForced}`)
-                      if (isFreeRun || isSystemForced) { onDbg('שינוי', 'חסום — יציאה'); return }
+                      onDbg('changePlan', `click — isFreeRun=${isFreeRun} isSystemForced=${isSystemForced}`)
+                      if (isFreeRun || isSystemForced) { onDbg('changePlan', 'locked — exit'); return }
                       const cur = CHANGE_PLAN_OPTIONS.find(o => LICENSE_TYPES[o.key] === user.M_Finance_license_type)?.key ?? null
-                      onDbg('שינוי', `פותח planView selKey=${cur ?? 'null'}`)
+                      onDbg('changePlan', `opening planView selKey=${cur ?? 'null'}`)
                       setSelKey(cur)
                       setPlanView(true)
                     }}
