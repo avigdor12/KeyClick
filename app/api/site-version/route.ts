@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest) {
     const { line1, line2 } = await req.json()
     const value = `${line1}|${line2}`
     await pool.query(
-      "UPDATE system_DB_Records SET value=$1 WHERE key='KeyClick_Site_Version_Id'",
+      "INSERT INTO system_DB_Records (key, value) VALUES ('KeyClick_Site_Version_Id', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value",
       [value]
     )
     return NextResponse.json({ ok: true })
