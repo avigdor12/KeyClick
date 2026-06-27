@@ -219,6 +219,14 @@ export default function Home() {
         .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
       handleRun()
     }
+    const bankingParam = params.get('banking')
+    if (bankingParam === 'success') {
+      window.history.replaceState({}, '', window.location.pathname)
+      setActivePage('4')
+    } else if (bankingParam === 'error') {
+      window.history.replaceState({}, '', window.location.pathname)
+      setActivePage('4')
+    }
     const last = Number(localStorage.getItem('kc_last_version_check') || '0')
     const elapsedH = Math.round((Date.now() - last) / 3600000)
     dbg('periodicCheck', `last=${last ? new Date(last).toLocaleString() : 'never'} elapsed=${elapsedH}h threshold=24h run=${elapsedH >= 24}`)
@@ -594,7 +602,7 @@ type ScheduleRow = { price: string; months: string; fromDate: string; toDate: st
 type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking'>('none')
   const [isScanning, setIsScanning] = useState(false)
   const [weightedRows, setWeightedRows] = useState<{ weight: string; metric: string; explanation: string }[]>([
     { weight: '20', metric: 'לקוח רשום',        explanation: 'נרשם למערכת' },
@@ -617,6 +625,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [users, setUsers] = useState<UserRecord[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
   const [prTxText, setPrTxText] = useState('')
+  const [bankingData, setBankingData] = useState<{ connections: Record<string,unknown>[]; accounts: Record<string,unknown>[]; transactions: Record<string,unknown>[] } | null>(null)
+  const [bankingStatus, setBankingStatus] = useState<{ nordigen: boolean; plaid: boolean; il: boolean; groq: boolean } | null>(null)
   const [prEditing, setPrEditing] = useState(false)
   const [pendingForce, setPendingForce] = useState<Record<string, string>>({})
   const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(
@@ -876,6 +886,156 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                 <button onClick={() => setShowResetConfirm(false)} style={{ fontSize: '13px', padding: '6px 20px', background: '#444', color: '#ccc', border: '1px solid #666', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.card.cancel}</button>
               </div>
             </div>
+          </div>
+        )}
+
+        {view === 'banking' && (
+          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
+
+            {/* ספקים */}
+            <div style={{ background: '#000', border: '1px solid #cc9900', borderRadius: 8, padding: '12px 16px' }}>
+              <div style={{ color: '#FFD700', fontSize: 13, fontWeight: 'bold', borderBottom: '1px solid #555', paddingBottom: 5, marginBottom: 10, direction: 'rtl' }}>ספקים</div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                {[
+                  { key: 'nordigen', name: 'GoCardless Nordigen', desc: 'אירופה — 2300+ בנקים' },
+                  { key: 'plaid',    name: 'Plaid',               desc: 'ארה"ב — אלפי בנקים' },
+                  { key: 'il',       name: 'ישראל (Salt Edge)',   desc: 'ישראל — בנקים וכרטיסי אשראי' },
+                  { key: 'groq',     name: 'Groq AI',             desc: 'זיהוי מדינה אוטומטי' },
+                ].map(p => {
+                  const active = bankingStatus?.[p.key as keyof typeof bankingStatus]
+                  return (
+                    <div key={p.key} style={{ border: `1px solid ${active ? '#4CAF50' : '#555'}`, borderRadius: 6, padding: '8px 14px', background: '#111' }}>
+                      <div style={{ color: '#FFD700', fontWeight: 'bold', marginBottom: 4, fontSize: 12 }}>{p.name}</div>
+                      <div style={{ color: '#aaa', fontSize: 11 }}>{p.desc}</div>
+                      <div style={{ color: active ? '#4CAF50' : '#ff6b6b', fontSize: 11, marginTop: 4 }}>
+                        {bankingStatus === null ? '...' : active ? '✓ מוגדר' : '✗ ממתין לרישום'}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* API Routes */}
+            <div style={{ background: '#000', border: '1px solid #cc9900', borderRadius: 8, padding: '12px 16px' }}>
+              <div style={{ color: '#FFD700', fontSize: 13, fontWeight: 'bold', borderBottom: '1px solid #555', paddingBottom: 5, marginBottom: 8 }}>API Routes</div>
+              <table style={{ borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead>
+                  <tr style={{ background: '#111' }}>
+                    <th style={{ border: '1px solid #333', padding: '4px 8px', color: '#FFD700', textAlign: 'left' }}>Route</th>
+                    <th style={{ border: '1px solid #333', padding: '4px 8px', color: '#FFD700', textAlign: 'left' }}>ספק</th>
+                    <th style={{ border: '1px solid #333', padding: '4px 8px', color: '#FFD700', textAlign: 'right' }}>תפקיד</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { route: '/api/banking/nordigen/token',        provider: 'Nordigen',       desc: 'access token מ-Nordigen' },
+                    { route: '/api/banking/nordigen/institutions', provider: 'Nordigen',       desc: 'רשימת בנקים לפי מדינה' },
+                    { route: '/api/banking/nordigen/connect',      provider: 'Nordigen',       desc: 'יצירת requisition + קישור לבנק' },
+                    { route: '/api/banking/nordigen/callback',     provider: 'Nordigen',       desc: 'קבלת אישור + שמירה ב-DB' },
+                    { route: '/api/banking/plaid/link-token',      provider: 'Plaid',          desc: 'יצירת Link Token' },
+                    { route: '/api/banking/plaid/exchange',        provider: 'Plaid',          desc: 'המרת public_token לאחר חיבור' },
+                    { route: '/api/banking/plaid/sync',            provider: 'Plaid',          desc: 'sync עסקאות + יתרות' },
+                    { route: '/api/banking/il/connect',            provider: 'ישראל',          desc: 'התחברות לספק ישראלי' },
+                    { route: '/api/banking/il/callback',           provider: 'ישראל',          desc: 'callback + שמירה ב-DB' },
+                    { route: '/api/banking/accounts',              provider: 'משותף',          desc: 'חשבונות המשתמש' },
+                    { route: '/api/banking/transactions',          provider: 'משותף',          desc: 'עסקאות + sync מהספק' },
+                    { route: '/api/banking/detect-provider',        provider: 'Groq AI',         desc: 'זיהוי אוטומטי: מדינה → ספק' },
+                    { route: '/api/banking/status',                provider: 'מערכת',          desc: 'סטטוס credentials' },
+                    { route: '/api/banking/data',                  provider: 'מערכת',          desc: 'נתוני DB' },
+                  ].map((r, i) => (
+                    <tr key={i} style={{ background: i % 2 === 0 ? '#0a0a0a' : '#111' }}>
+                      <td style={{ border: '1px solid #222', padding: '3px 8px', fontFamily: 'monospace' }}>
+                        <a href={r.route} target="_blank" rel="noreferrer" style={{ color: '#7eb8f7', textDecoration: 'underline', cursor: 'pointer' }}>{r.route}</a>
+                      </td>
+                      <td style={{ border: '1px solid #222', padding: '3px 8px', color: '#aaa' }}>{r.provider}</td>
+                      <td style={{ border: '1px solid #222', padding: '3px 8px', color: '#ccc', textAlign: 'right', direction: 'rtl' }}>{r.desc}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* טבלת חשבונות ויתרות */}
+            {(() => {
+              const accs = bankingData?.accounts ?? []
+              const conns = bankingData?.connections ?? []
+              const PLACEHOLDER = [
+                { id: 'ph1', name: 'Bank of America', iban: '****4521', balance: '', currency: 'USD', provider: 'Plaid' },
+                { id: 'ph2', name: 'Deutsche Bank',   iban: '****8832', balance: '', currency: 'EUR', provider: 'Nordigen' },
+                { id: 'ph3', name: 'בנק לאומי',        iban: '****1190', balance: '', currency: 'ILS', provider: 'IL' },
+              ]
+              const rows = accs.length > 0 ? accs : PLACEHOLDER
+              const isEmpty = accs.length === 0
+              return (
+                <div style={{ background: '#000', border: '1px solid #cc9900', borderRadius: 8, padding: '12px 16px', direction: 'rtl' as const }}>
+                  <div style={{ color: '#FFD700', fontSize: 13, fontWeight: 'bold', borderBottom: '1px solid #555', paddingBottom: 5, marginBottom: 10 }}>חשבונות ויתרות</div>
+                  <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 12 }}>
+                    <thead>
+                      <tr style={{ background: '#111' }}>
+                        {['מוסד פיננסי','חשבון','יתרה','מטבע','ספק'].map(h => (
+                          <th key={h} style={{ border: '1px solid #333', padding: '5px 10px', color: '#FFD700', textAlign: 'right' as const }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row: Record<string,unknown>, i: number) => {
+                        const conn = conns.find((c: Record<string,unknown>) => c.id === row.connection_id)
+                        const provider = (conn as Record<string,unknown>)?.provider ?? row.provider ?? ''
+                        return (
+                          <tr key={String(row.id ?? i)} style={{ opacity: isEmpty ? 0.25 : 1, background: i % 2 === 0 ? '#0a0a0a' : '#111' }}>
+                            <td style={{ border: '1px solid #222', padding: '5px 10px', color: '#ccc' }}>{String(row.name ?? '')}</td>
+                            <td style={{ border: '1px solid #222', padding: '5px 10px', color: '#aaa', fontFamily: 'monospace' }}>{String(row.iban ?? '')}</td>
+                            <td style={{ border: '1px solid #222', padding: '5px 10px', color: '#fff', textAlign: 'left' as const }}>{String(row.balance ?? '')}</td>
+                            <td style={{ border: '1px solid #222', padding: '5px 10px', color: '#aaa' }}>{String(row.currency ?? '')}</td>
+                            <td style={{ border: '1px solid #222', padding: '5px 10px', color: '#888' }}>{String(provider)}</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                  {isEmpty && <div style={{ color: '#555', fontSize: 11, marginTop: 6, textAlign: 'center' as const }}>אין חשבונות מחוברים — מוצגת דוגמה</div>}
+                </div>
+              )
+            })()}
+
+            {/* ניהול חיבורים */}
+            <BankingConnectPanel userId={user?.id} />
+
+            {/* טבלאות חיות */}
+            {(['connections', 'accounts', 'transactions'] as const).map(tbl => {
+              const rows = bankingData?.[tbl] ?? []
+              const cols = rows.length > 0 ? Object.keys(rows[0]) : []
+              const labels: Record<string, string> = { connections: 'חיבורים', accounts: 'חשבונות', transactions: 'עסקאות' }
+              return (
+                <div key={tbl} style={{ background: '#000', border: '1px solid #cc9900', borderRadius: 8, padding: '12px 16px' }}>
+                  <div style={{ color: '#FFD700', fontSize: 13, fontWeight: 'bold', borderBottom: '1px solid #555', paddingBottom: 5, marginBottom: 8, direction: 'rtl' }}>
+                    {labels[tbl]} ({rows.length})
+                  </div>
+                  {!bankingData ? (
+                    <div style={{ color: '#aaa', fontSize: 12 }}>טוען...</div>
+                  ) : rows.length === 0 ? (
+                    <div style={{ color: '#666', fontSize: 12 }}>אין רשומות</div>
+                  ) : (
+                    <table style={{ borderCollapse: 'collapse', fontSize: 11 }}>
+                      <thead>
+                        <tr style={{ background: '#111' }}>
+                          {cols.map(c => <th key={c} style={{ border: '1px solid #333', padding: '4px 8px', color: '#FFD700', textAlign: 'left' }}>{c}</th>)}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rows.map((row, i) => (
+                          <tr key={i} style={{ background: i % 2 === 0 ? '#0a0a0a' : '#111' }}>
+                            {cols.map(c => <td key={c} style={{ border: '1px solid #222', padding: '3px 8px', color: '#ccc' }}>{String(row[c] ?? '')}</td>)}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              )
+            })}
+
           </div>
         )}
 
@@ -1296,6 +1456,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           </div>
 
           <button style={{ ...sysBtnSm, background: view === 'tests' ? '#4a1a6e' : 'none', color: '#fff', fontSize: '14px' }} onClick={() => setView(view === 'tests' ? 'none' : 'tests')}>בדיקות</button>
+          <button style={{ ...sysBtnSm, background: view === 'banking' ? '#4a1a6e' : 'none', color: '#fff', fontSize: '14px' }} onClick={() => { if (view === 'banking') { setView('none') } else { setView('banking'); fetch('/api/banking/data').then(r => r.json()).then(d => setBankingData(d)).catch(() => {}); fetch('/api/banking/status').then(r => r.json()).then(d => setBankingStatus(d)).catch(() => {}) } }}>מוסדות פיננסיים</button>
 
         </div>
       </aside>
@@ -2310,6 +2471,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
+  if (page === '4')           return <BankingPage user={user} lang={lang} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
@@ -2319,6 +2481,515 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
       </div>
     </div>
   )
+}
+
+type BankConnection = { id: number; provider: string; institution_name: string; status: string; created_at: string }
+type BankAccount    = { id: number; connection_id: number; iban: string; name: string; currency: string; account_type: string; balance: number }
+type BankTx         = { id: number; date: string; description: string; amount: number; currency: string; category: string }
+
+function BankingConnectPanel({ userId }: { userId: number | undefined }) {
+  const [connections, setConnections] = useState<BankConnection[]>([])
+  const [accounts, setAccounts]       = useState<BankAccount[]>([])
+  const [txs, setTxs]                 = useState<BankTx[]>([])
+  const [selAccount, setSelAccount]   = useState<BankAccount | null>(null)
+  const [institutions, setInstitutions] = useState<{ id: string; name: string }[]>([])
+  const [step, setStep]               = useState<'main' | 'institutions' | 'txs'>('main')
+  const [loading, setLoading]         = useState(false)
+  const [msg, setMsg]                 = useState('')
+
+  useEffect(() => { if (userId) load() }, [userId])
+
+  async function load() {
+    if (!userId) return
+    setLoading(true)
+    try {
+      const r = await fetch(`/api/banking/accounts?userId=${userId}`)
+      const d = await r.json()
+      setConnections(d.connections ?? [])
+      setAccounts(d.accounts ?? [])
+    } catch { /* ignore */ } finally { setLoading(false) }
+  }
+
+  async function handleConnect() {
+    setLoading(true); setMsg('')
+    try {
+      const dp = await fetch('/api/banking/detect-provider', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: 'he' }),
+      }).then(r => r.json())
+      if (dp.provider === 'nordigen') {
+        const country = dp.country ?? 'DE'
+        const inst = await fetch(`/api/banking/nordigen/institutions?country=${country}`).then(r => r.json())
+        setInstitutions(Array.isArray(inst) ? inst : [])
+        setStep('institutions')
+      } else if (dp.provider === 'plaid') {
+        setMsg('Plaid — יתמך בשלב הבא')
+      } else if (dp.provider === 'il') {
+        setMsg('ספק ישראלי — עדיין לא מוגדר')
+      } else {
+        setMsg('לא זוהה ספק')
+      }
+    } catch { setMsg('שגיאה') } finally { setLoading(false) }
+  }
+
+  async function handleSelectInst(instId: string, instName: string) {
+    if (!userId) return
+    setLoading(true)
+    try {
+      const r = await fetch('/api/banking/nordigen/connect', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ institutionId: instId, userId }),
+      })
+      const d = await r.json()
+      if (d.link) { window.open(d.link, '_blank', 'width=600,height=700'); setMsg(`נפתח חלון חיבור ל-${instName}`); setStep('main') }
+      else { setMsg('שגיאה ביצירת קישור') }
+    } catch { setMsg('שגיאה') } finally { setLoading(false) }
+  }
+
+  async function handleDisconnect(connectionId: number) {
+    setLoading(true)
+    try {
+      await fetch('/api/banking/accounts', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ connectionId }) })
+      await load()
+    } catch { /* ignore */ } finally { setLoading(false) }
+  }
+
+  async function handleViewTxs(account: BankAccount) {
+    setSelAccount(account); setStep('txs'); setLoading(true); setTxs([])
+    try {
+      const d = await fetch(`/api/banking/transactions?accountId=${account.id}`).then(r => r.json())
+      setTxs(d.transactions ?? [])
+    } catch { /* ignore */ } finally { setLoading(false) }
+  }
+
+  const S = {
+    panel:  { background: '#000', border: '1px solid #cc9900', borderRadius: 8, padding: '12px 16px', direction: 'rtl' as const },
+    hdr:    { color: '#FFD700', fontSize: 13, fontWeight: 'bold' as const, borderBottom: '1px solid #555', paddingBottom: 5, marginBottom: 10 },
+    btn:    { background: '#1a1a3a', border: '1px solid #FFD700', color: '#FFD700', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 'bold' as const },
+    btnSm:  { background: '#111', border: '1px solid #555', color: '#aaa', borderRadius: 5, padding: '4px 10px', cursor: 'pointer', fontSize: 11 },
+    btnRed: { background: '#2a0000', border: '1px solid #ff4444', color: '#ff4444', borderRadius: 5, padding: '4px 10px', cursor: 'pointer', fontSize: 11 },
+    row:    { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #1a1a1a' },
+  }
+
+  return (
+    <div style={S.panel}>
+      <div style={S.hdr}>ניהול חיבורים</div>
+
+      {step === 'main' && (
+        <>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+            <button style={S.btn} onClick={handleConnect} disabled={loading}>+ חבר בנק</button>
+            <button style={S.btnSm} onClick={load} disabled={loading}>↻ רענן</button>
+          </div>
+          {connections.length === 0 && !loading && <div style={{ color: '#555', fontSize: 12 }}>אין חיבורים</div>}
+          {connections.map(conn => (
+            <div key={conn.id} style={{ marginBottom: 12 }}>
+              <div style={{ color: '#FFD700', fontSize: 12, fontWeight: 'bold', marginBottom: 4 }}>
+                {conn.institution_name} <span style={{ color: conn.status === 'active' ? '#4CAF50' : '#ff6b6b', fontSize: 10 }}>({conn.status})</span>
+              </div>
+              {accounts.filter(a => a.connection_id === conn.id).map(acc => (
+                <div key={acc.id} style={S.row}>
+                  <div>
+                    <span style={{ color: '#ccc', fontSize: 12 }}>{acc.name}</span>
+                    <span style={{ color: '#666', fontSize: 11, marginRight: 8 }}>{acc.iban}</span>
+                    <span style={{ color: '#aaa', fontSize: 11 }}>{acc.balance} {acc.currency}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button style={S.btnSm} onClick={() => handleViewTxs(acc)}>עסקאות</button>
+                    <button style={S.btnRed} onClick={() => handleDisconnect(conn.id)}>נתק</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </>
+      )}
+
+      {step === 'institutions' && (
+        <>
+          <button style={S.btnSm} onClick={() => setStep('main')} disabled={loading}>← חזור</button>
+          <div style={{ marginTop: 10 }}>
+            {institutions.slice(0, 30).map(inst => (
+              <div key={inst.id} style={{ ...S.row, cursor: 'pointer' }} onClick={() => handleSelectInst(inst.id, inst.name)}>
+                <span style={{ color: '#ccc', fontSize: 12 }}>{inst.name}</span>
+              </div>
+            ))}
+            {institutions.length === 0 && !loading && <div style={{ color: '#555', fontSize: 12 }}>אין מוסדות</div>}
+          </div>
+        </>
+      )}
+
+      {step === 'txs' && selAccount && (
+        <>
+          <button style={S.btnSm} onClick={() => { setStep('main'); setSelAccount(null) }}>← חזור</button>
+          <div style={{ color: '#FFD700', fontSize: 12, marginTop: 8, marginBottom: 6 }}>{selAccount.name} — {selAccount.iban}</div>
+          {txs.length === 0 && !loading && <div style={{ color: '#555', fontSize: 12 }}>אין עסקאות</div>}
+          {txs.map((tx, i) => (
+            <div key={i} style={S.row}>
+              <span style={{ color: '#aaa', fontSize: 11 }}>{tx.date}</span>
+              <span style={{ color: '#ccc', fontSize: 12, flex: 1, margin: '0 12px' }}>{tx.description}</span>
+              <span style={{ color: tx.amount < 0 ? '#ff6b6b' : '#4CAF50', fontSize: 12 }}>{tx.amount} {tx.currency}</span>
+            </div>
+          ))}
+        </>
+      )}
+
+      {msg && <div style={{ color: '#FFD700', fontSize: 12, marginTop: 8 }}>{msg}</div>}
+      {loading && <div style={{ color: '#aaa', fontSize: 11, marginTop: 4 }}>טוען...</div>}
+    </div>
+  )
+}
+
+function generateYahavCSV(institutionName: string, accountNumber: string, accountType: string, transactions: BankTx[], balance: number): string {
+  const reportDate = new Date().toLocaleDateString('he-IL') + ' ' + new Date().toLocaleTimeString('he-IL')
+  const accTypeLabel = accountType === 'credit' ? 'כרטיס אשראי' : 'תנועות בחשבון עו"ש'
+  const rows: string[] = [
+    institutionName,
+    accTypeLabel,
+    '',
+    `,"${accountNumber}"`,
+    `,"${reportDate}"`,
+    '',
+  ]
+  for (const tx of transactions) {
+    const debit  = tx.amount < 0 ? Math.abs(tx.amount).toFixed(2) : '0'
+    const credit = tx.amount > 0 ? tx.amount.toFixed(2) : '0'
+    rows.push(`"${tx.date}","${tx.date}","","${tx.description}",${debit},${credit},${balance.toFixed(2)}`)
+  }
+  return rows.join('\r\n')
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function downloadCSV(content: string, filename: string) {
+  const blob = new Blob(['﻿' + content], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = filename; a.click()
+  URL.revokeObjectURL(url)
+}
+
+function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof languages[0] }) {
+  const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
+  const [connections, setConnections] = useState<BankConnection[]>([])
+  const [accounts, setAccounts]       = useState<BankAccount[]>([])
+  const [txs, setTxs]                 = useState<BankTx[]>([])
+  const [selAccount, setSelAccount]   = useState<BankAccount | null>(null)
+  const [institutions, setInstitutions] = useState<{ id: string; name: string; logo?: string }[]>([])
+  const [step, setStep]               = useState<'main' | 'region' | 'institutions' | 'txs'>('main')
+  const [selectedCountry, setSelectedCountry] = useState('DE')
+  const [loading, setLoading]         = useState(false)
+  const [msg, setMsg]                 = useState('')
+
+  useEffect(() => { if (user) loadConnections() }, [user])
+
+  async function loadConnections() {
+    if (!user) return
+    setLoading(true)
+    try {
+      const r = await fetch(`/api/banking/accounts?userId=${user.id}`)
+      const d = await r.json()
+      setConnections(d.connections ?? [])
+      setAccounts(d.accounts ?? [])
+    } catch { /* ignore */ } finally { setLoading(false) }
+  }
+
+  function handleConnectBank() {
+    setMsg('')
+    setStep('region')
+  }
+
+  async function handleAutoDetect() {
+    setLoading(true); setMsg('')
+    try {
+      const dp = await fetch('/api/banking/detect-provider', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: lang.code }),
+      }).then(r => r.json())
+      if (dp.provider === 'nordigen') {
+        const country = dp.country ?? 'DE'
+        setSelectedCountry(country)
+        const inst = await fetch(`/api/banking/nordigen/institutions?country=${country}`).then(r => r.json())
+        setInstitutions(Array.isArray(inst) ? inst : [])
+        setStep('institutions')
+      } else if (dp.provider === 'plaid') {
+        await handleSelectRegion('plaid')
+      } else {
+        setMsg(lang.code === 'he' ? 'לא זוהה אוטומטית — בחר ידנית' : 'Auto-detect failed — choose manually')
+      }
+    } catch { setMsg(lang.code === 'he' ? 'שגיאה בזיהוי' : 'Detection error') }
+    finally { setLoading(false) }
+  }
+
+  async function handleSelectRegion(region: 'nordigen' | 'plaid') {
+    if (region === 'nordigen') {
+      setLoading(true); setMsg('')
+      try {
+        const inst = await fetch(`/api/banking/nordigen/institutions?country=${selectedCountry}`).then(r => r.json())
+        setInstitutions(Array.isArray(inst) ? inst : [])
+        setStep('institutions')
+      } catch { setMsg(lang.code === 'he' ? 'שגיאה בטעינת בנקים' : 'Error loading banks') }
+      finally { setLoading(false) }
+    } else {
+      if (!user) return
+      setLoading(true); setMsg('')
+      try {
+        const lt = await fetch('/api/banking/plaid/link-token', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id }),
+        }).then(r => r.json())
+        if (!lt.link_token) { setMsg(lang.code === 'he' ? 'שגיאה ביצירת Plaid Token' : 'Plaid token error'); return }
+        const openPlaid = (token: string) => {
+          const handler = (window as any).Plaid.create({
+            token,
+            onSuccess: async (publicToken: string, metadata: { institution?: { name?: string } }) => {
+              setLoading(true)
+              try {
+                const res = await fetch('/api/banking/plaid/exchange', {
+                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ publicToken, userId: user.id, institutionName: metadata?.institution?.name ?? 'Bank' }),
+                }).then(r => r.json())
+                if (res.ok) { setMsg(lang.code === 'he' ? 'הבנק חובר בהצלחה' : 'Bank connected'); await loadConnections() }
+                else { setMsg(lang.code === 'he' ? 'שגיאה בחיבור' : 'Connection error') }
+              } catch { setMsg(lang.code === 'he' ? 'שגיאה בחיבור' : 'Connection error') }
+              finally { setLoading(false) }
+            },
+            onExit: () => { setLoading(false) },
+          })
+          handler.open()
+        }
+        if ((window as any).Plaid) { openPlaid(lt.link_token) }
+        else {
+          const script = document.createElement('script')
+          script.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js'
+          script.onload = () => openPlaid(lt.link_token)
+          document.head.appendChild(script)
+        }
+        setStep('main')
+      } catch { setMsg(lang.code === 'he' ? 'שגיאה בחיבור' : 'Connection error') }
+      finally { setLoading(false) }
+    }
+  }
+
+  async function handleSelectInstitution(instId: string, instName: string) {
+    if (!user) return
+    setLoading(true); setMsg('')
+    try {
+      const r = await fetch('/api/banking/nordigen/connect', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ institutionId: instId, userId: user.id }),
+      })
+      const d = await r.json()
+      if (d.link) {
+        window.open(d.link, '_blank', 'width=600,height=700')
+        setMsg(`נפתח חלון חיבור ל-${instName}. לאחר האישור חזור ולחץ רענן.`)
+        setStep('main')
+      } else { setMsg('שגיאה ביצירת קישור לבנק') }
+    } catch { setMsg('שגיאה בחיבור') } finally { setLoading(false) }
+  }
+
+  async function handleRefresh() {
+    setLoading(true); setMsg('מרענן...')
+    await loadConnections()
+    setMsg('עודכן')
+    setTimeout(() => setMsg(''), 2000)
+  }
+
+  async function handleDisconnect(connectionId: number) {
+    setLoading(true)
+    try {
+      await fetch('/api/banking/accounts', {
+        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ connectionId }),
+      })
+      await loadConnections()
+    } catch { /* ignore */ } finally { setLoading(false) }
+  }
+
+  async function handleViewTxs(account: BankAccount) {
+    setSelAccount(account); setStep('txs'); setLoading(true); setTxs([])
+    try {
+      const r = await fetch(`/api/banking/transactions?accountId=${account.id}`)
+      const d = await r.json()
+      setTxs(d.transactions ?? [])
+    } catch { /* ignore */ } finally { setLoading(false) }
+  }
+
+  const S = {
+    wrap:    { width: '100%', height: '100%', background: '#0d0d0d', overflowY: 'auto' as const, direction: dir as 'rtl' | 'ltr', fontFamily: 'Arial, sans-serif', padding: '24px', boxSizing: 'border-box' as const },
+    inner:   { display: 'inline-block' as const, minWidth: 420, maxWidth: 640, width: '100%' },
+    title:   { color: '#FFD700', fontSize: 22, fontWeight: 'bold', marginBottom: 20, borderBottom: '2px solid #FFD700', paddingBottom: 10 },
+    btn:     { background: '#1a1a3a', border: '1px solid #FFD700', color: '#FFD700', borderRadius: 8, padding: '10px 20px', cursor: 'pointer', fontSize: 14, fontWeight: 'bold' as const },
+    btnSm:   { background: '#111', border: '1px solid #555', color: '#aaa', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontSize: 12 },
+    btnRed:  { background: '#2a0000', border: '1px solid #ff4444', color: '#ff4444', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontSize: 12 },
+    card:    { background: '#111', border: '1px solid #333', borderRadius: 10, padding: '16px', marginBottom: 16 },
+    cardHdr: { color: '#FFD700', fontWeight: 'bold', fontSize: 15, marginBottom: 10 },
+    accRow:  { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #222', cursor: 'pointer' },
+    txRow:   { display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid #1a1a1a', fontSize: 13 },
+    instRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', borderBottom: '1px solid #222', cursor: 'pointer', borderRadius: 6 },
+  }
+
+  if (!user) return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f2eef2' }}>
+      <div style={{ color: '#555', fontSize: 16 }}>{lang.profile.loginRequired}</div>
+    </div>
+  )
+
+  async function handleDownloadAll() {
+    if (!user) return
+    const isHe = lang.code === 'he'
+    setLoading(true); setMsg(isHe ? 'שולף נתונים...' : 'Fetching data...')
+    try {
+      const r = await fetch(`/api/banking/accounts?userId=${user.id}`)
+      const d = await r.json()
+      const conns: BankConnection[] = d.connections ?? []
+      const accs: BankAccount[]     = d.accounts ?? []
+      if (accs.length === 0) { setMsg(isHe ? 'אין חשבונות מחוברים' : 'No accounts connected'); return }
+      let count = 0
+      for (const acc of accs) {
+        const conn = conns.find(c => c.id === acc.connection_id)
+        const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}`).then(r2 => r2.json())
+        const txList: BankTx[] = tr.transactions ?? []
+        const csv = generateYahavCSV(conn?.institution_name ?? acc.name, acc.iban || acc.name, acc.account_type, txList, acc.balance)
+        const date = new Date().toISOString().slice(0, 10)
+        const safeName = (conn?.institution_name ?? acc.name).replace(/[^a-zA-Z0-9א-ת]/g, '_')
+        downloadCSV(csv, `banking_${safeName}_${acc.iban || acc.id}_${date}.csv`)
+        count++
+        await new Promise(res => setTimeout(res, 300))
+      }
+      setMsg(isHe ? `הורדו ${count} קבצים` : `Downloaded ${count} files`)
+    } catch { setMsg(lang.code === 'he' ? 'שגיאה בהורדה' : 'Download error') }
+    finally { setLoading(false) }
+  }
+
+  const isHe = lang.code === 'he'
+  const hasConnections = connections.length > 0
+
+  const EU_COUNTRIES = [
+    { code: 'DE', name: isHe ? 'גרמניה' : 'Germany' },
+    { code: 'FR', name: isHe ? 'צרפת' : 'France' },
+    { code: 'GB', name: isHe ? 'בריטניה' : 'United Kingdom' },
+    { code: 'IT', name: isHe ? 'איטליה' : 'Italy' },
+    { code: 'ES', name: isHe ? 'ספרד' : 'Spain' },
+    { code: 'NL', name: isHe ? 'הולנד' : 'Netherlands' },
+    { code: 'BE', name: isHe ? 'בלגיה' : 'Belgium' },
+    { code: 'AT', name: isHe ? 'אוסטריה' : 'Austria' },
+    { code: 'CH', name: isHe ? 'שווייץ' : 'Switzerland' },
+    { code: 'SE', name: isHe ? 'שוודיה' : 'Sweden' },
+    { code: 'NO', name: isHe ? 'נורווגיה' : 'Norway' },
+    { code: 'DK', name: isHe ? 'דנמרק' : 'Denmark' },
+    { code: 'FI', name: isHe ? 'פינלנד' : 'Finland' },
+    { code: 'PL', name: isHe ? 'פולין' : 'Poland' },
+    { code: 'PT', name: isHe ? 'פורטוגל' : 'Portugal' },
+    { code: 'IE', name: isHe ? 'אירלנד' : 'Ireland' },
+  ]
+
+  if (step === 'region') return (
+    <div style={{ width: '100%', height: '100%', background: '#f2eef2', padding: '12px 14px', direction: 'rtl' }}>
+      <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 7, alignItems: 'flex-end' }}>
+        <button onClick={() => setStep('main')} style={{ background: 'none', border: 'none', color: '#003399', cursor: 'pointer', fontSize: 18, padding: 0, alignSelf: 'flex-end' }}>חזור ←</button>
+        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{isHe ? 'חיבור לבנק' : 'Connect Bank'}</div>
+
+        <button onClick={handleAutoDetect} disabled={loading}
+          style={{ background: '#eef2ff', border: '1px solid #99aadd', borderRadius: 6, padding: '6px 14px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, color: '#003399', fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
+          🔍 {isHe ? 'זיהוי אוטומטי' : 'Auto Detect'}
+        </button>
+
+        <span style={{ color: '#aaa', fontSize: 18 }}>— {isHe ? 'או בחר ידנית' : 'or manually'} —</span>
+
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+          <button onClick={() => handleSelectRegion('nordigen')} disabled={loading}
+            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
+          <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}
+            style={{ padding: '5px 8px', borderRadius: 5, border: '1px solid #ccc', fontSize: 18, direction: 'ltr' }}>
+            {EU_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+          </select>
+          <span style={{ fontSize: 18, color: '#333' }}>🇪🇺</span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+          <button onClick={() => handleSelectRegion('plaid')} disabled={loading}
+            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
+          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {isHe ? 'ארצות הברית' : 'United States'}</span>
+        </div>
+
+        {msg && <div style={{ color: '#cc0000', fontSize: 18 }}>{msg}</div>}
+        {loading && <div style={{ color: '#aaa', fontSize: 18 }}>...</div>}
+      </div>
+    </div>
+  )
+
+  if (step === 'institutions') return (
+    <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflowY: 'auto', padding: 24, direction: dir as 'rtl' | 'ltr' }}>
+      <button onClick={() => setStep('main')} style={{ marginBottom: 16, background: '#eee', border: '1px solid #ccc', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← {isHe ? 'חזור' : 'Back'}</button>
+      <div style={{ fontWeight: 'bold', fontSize: 16, color: '#003399', marginBottom: 12 }}>{isHe ? 'בחר מוסד פיננסי' : 'Select institution'}</div>
+      {institutions.map(inst => (
+        <div key={inst.id} onClick={() => handleSelectInstitution(inst.id, inst.name)}
+          style={{ padding: '10px 14px', borderBottom: '1px solid #ddd', cursor: 'pointer', fontSize: 14, color: '#222' }}>
+          {inst.name}
+        </div>
+      ))}
+      {institutions.length === 0 && !loading && <div style={{ color: '#aaa', fontSize: 13 }}>{isHe ? 'אין מוסדות' : 'No institutions'}</div>}
+    </div>
+  )
+
+  return (
+    <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflowY: 'auto', padding: '12px 14px', direction: 'rtl' }}>
+      <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
+        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{lang.menu[4]}</div>
+
+        {/* חשבונות מחוברים */}
+        {hasConnections && (
+          <div style={{ fontSize: 14, color: '#333' }}>
+            {connections.map(conn => (
+              <div key={conn.id} style={{ marginBottom: 4 }}>
+                <span style={{ fontWeight: 'bold', color: '#003399' }}>{conn.institution_name}</span>
+                {accounts.filter(a => a.connection_id === conn.id).map(acc => (
+                  <span key={acc.id} style={{ marginRight: 8, color: '#555' }}> {acc.name} {acc.balance} {acc.currency}</span>
+                ))}
+              </div>
+            ))}
+            <button onClick={handleRefresh} disabled={loading} style={{ background: 'none', border: '1px solid #999', borderRadius: 5, padding: '3px 10px', cursor: 'pointer', fontSize: 14, color: '#555' }}>
+              ↻ {isHe ? 'רענן' : 'Refresh'}
+            </button>
+          </div>
+        )}
+
+        {/* חיבור לבנק */}
+        <button onClick={handleAutoDetect} disabled={loading}
+          style={{ background: '#eef2ff', border: '1px solid #99aadd', borderRadius: 6, padding: '6px 14px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, color: '#003399', fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
+          🔍 {isHe ? 'זיהוי אוטומטי' : 'Auto Detect'}
+        </button>
+
+        <span style={{ color: '#aaa', fontSize: 16 }}>— {isHe ? 'או בחר ידנית' : 'or manually'} —</span>
+
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+          <button onClick={() => handleSelectRegion('nordigen')} disabled={loading}
+            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
+          <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}
+            style={{ padding: '5px 8px', borderRadius: 5, border: '1px solid #ccc', fontSize: 18, direction: 'ltr' }}>
+            {EU_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+          </select>
+          <span style={{ fontSize: 18, color: '#333' }}>🇪🇺</span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+          <button onClick={() => handleSelectRegion('plaid')} disabled={loading}
+            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
+          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {isHe ? 'ארצות הברית' : 'United States'}</span>
+        </div>
+
+        {/* הורד קבצים */}
+        <button onClick={handleDownloadAll} disabled={loading}
+          style={{ background: '#006600', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
+          ⬇ {isHe ? 'הורד קבצים' : 'Download Files'}
+        </button>
+
+        {msg && <div style={{ color: msg.includes('שגיאה') || msg.includes('error') ? '#cc0000' : '#006600', fontSize: 16, fontWeight: 'bold' }}>{msg}</div>}
+        {loading && <div style={{ color: '#aaa', fontSize: 16 }}>...</div>}
+      </div>
+    </div>
+  )
+
 }
 
 function InstallCard({ lang, onInstall, onRun, onDbg }: { lang: typeof languages[0]; onInstall: () => void; onRun: () => void; onDbg: (func: string, msg: string) => void }) {
