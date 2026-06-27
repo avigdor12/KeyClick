@@ -960,7 +960,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                             {usersEditMode
                               ? <input type="number" min={0} max={10} value={Number(u.weighted_score ?? 10)} onChange={e => { const v = Math.min(10, Math.max(0, Number(e.target.value))); setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, weighted_score: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], weighted_score: v } })) }} style={{ fontSize: 12, width: 40, textAlign: 'center', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '1px 2px' }} />
-                              : <span style={{ fontWeight: 'bold', color: `hsl(${(u.weighted_score ?? 10) * 12}, 80%, 35%)` }}>{u.weighted_score ?? 10}</span>}
+                              : <span style={{ fontWeight: 'bold', color: `hsl(${(Number(u.weighted_score ?? 10)) * 12}, 80%, 35%)` }}>{u.weighted_score ?? 10}</span>}
                           </td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{created}</td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>
