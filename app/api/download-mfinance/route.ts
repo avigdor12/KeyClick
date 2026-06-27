@@ -1,6 +1,6 @@
 ﻿import { NextResponse } from 'next/server'
 
-const EXE_URL = 'https://github.com/avigdor12/KeyClick/releases/download/v67.0.2/M_Finance-win-Setup.exe'
+const EXE_URL = 'https://github.com/avigdor12/KeyClick/releases/download/v69.0.0/M_Finance-win-Setup.exe'
 
 export async function GET() {
   const res  = await fetch(EXE_URL)
@@ -12,5 +12,6 @@ export async function GET() {
     },
   })
 }
+
 
 
