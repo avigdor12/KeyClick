@@ -7,117 +7,117 @@ import { LICENSE_TYPES } from '@/lib/license-types'
 const languages = [
   { code: 'en', flag: 'בריטניה', name: 'English',  welcome: 'Welcome',
     menu: ['Feedback','Updates','Messages','Reminders','Banking Services','Personal Page'],
-    card: { title: 'Home Budget Management', namePh: 'Name / Last Name', emailPh: 'Email / Email Address', passPh: 'Password', confirmPassPh: 'Confirm Password', register: 'Register', login: 'Login', update: 'Update', line1: 'During launch period', line2: 'Free', errName: 'Please enter your name', errEmail: 'Please enter a valid email', errPassLen: 'Password must be at least 6 characters', errPassMatch: 'Passwords do not match', errEmailExists: 'Email already registered', cancel: 'Cancel', install: 'Install', library: 'Guide Files', run: 'Run', videos: 'Videos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Already installed\nNo need to reinstall', msgDownloading: 'Downloading installation file', msgInstallComplete: 'Save and run the file\nto complete installation', msgDownloadError: 'Download error\nTry again', msgNotInstalled: 'Not installed\nPlease click Install', mFinance: 'M Finance', msgExists: 'User already registered\nwith these details', msgUpdated: 'Details updated successfully', msgRegistered: 'Registration complete' },
+    card: { title: 'Home Budget Management', namePh: 'Name / Last Name', emailPh: 'Email / Email Address', passPh: 'Password', confirmPassPh: 'Confirm Password', register: 'Register', login: 'Login', update: 'Update', line1: 'During launch period', line2: 'Free', errName: 'Please enter your name', errEmail: 'Please enter a valid email', errPassLen: 'Password must be at least 6 characters', errPassMatch: 'Passwords do not match', errEmailExists: 'Email already registered', cancel: 'Cancel', install: 'Install', library: 'Guide Files', run: 'Run', videos: 'Videos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Already installed\nNo need to reinstall', msgDownloading: 'Downloading installation file', msgInstallComplete: 'Save and run the file\nto complete installation', msgDownloadError: 'Download error\nTry again', msgNotInstalled: 'Not installed\nPlease click Install', mFinance: 'M Finance', msgExists: 'User already registered\nwith these details', msgUpdated: 'Details updated successfully', msgRegistered: 'Registration complete', existingCustomer: 'Existing Customer', newCustomer: 'New Customer', notRecognized: 'Customer not found. Click to register', msgSelectPlan: 'Please select a plan in your personal page', infoServices: 'Information Services', guidesAndVideos: 'Guides & Videos' },
     profile: { fullName: 'Full Name', email: 'Email', ip: 'IP', language: 'Language', country: 'Country', plan: 'Plan', planStart: 'Plan Start', planEnd: 'Plan End', unlimited: 'Unlimited', comingSoon: 'Coming Soon', choosePlan: 'Choose Plan', close: '✕ Close', loginRequired: 'Login required to view personal page', login: 'Login', products: 'Products', change: 'Change',
       price: 'Price', changePlan: 'Change Plan', planName: 'Name', planFrom: 'From', planTo: 'To', back: 'Back', currencyLocal: '$', free: 'Free',       planNames: { System_Free_Run: 'Free Run', User_Trial: 'Trial', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monthly', User_Annual: 'Annual', User_One_Time: 'Single Entry', System_Suspended_NonPayment: 'Suspended', User_Cancelled: 'Cancelled' } },
     feedback: { customerRelations: 'Customer Relations', systemMessage: 'System Message', respectfully: 'Respectfully,', rating: 'Rating', ratingWebsite: 'Website', ratingBudget: 'Home Budget Management', userMessage: 'User Message', date: 'Date:', title: 'Title:', from: 'From:', systemReply: 'System Reply' },
-    system: { systemLabel: 'System', selectAction: 'Select action from right sidebar', users: 'Users', buildMessages: 'Build Messages', schedule: 'Schedule & Pricing', pr: 'Public Relations', publishedDate: 'Published date:', reset: 'Reset', saved: 'Saved', records: 'records', scheduleSubject: 'Subject', schedulePriceUSD: 'Price\n[$]', schedulePeriod: 'Period\n[mo]', scheduleNotes: 'Notes', clear: 'Clear', pause: 'Pause', resume: 'Resume', active: '● Active', paused: 'Paused', lines: 'lines', filter: 'Filter', refresh: 'Refresh', loading: 'Loading...', loadingBuild: 'Loading build data...', error: 'Error', noBuildData: 'No build data. Run Release_KeyClick.bat', networkError: 'Network error', adminButton: 'System Use', generalGroup: 'General', colName: 'Name', colCurrency: 'Currency', colCreated: 'Created', colActive: 'Is Active', colAppInstalled: 'App Installed', colLicenceType: 'Licence Type', colSystemForce: 'System Force', distributionDay: 'Distribution Day X', messages: 'Messages', send: 'Send', sent: 'Sent!', reply: 'Reply', noMessages: 'No messages', replySent: 'Reply sent!', ref: 'Ref.', msgNo: 'No.', replyToRef: 'Reply to ref.', msgNumber: 'Message No.', new: 'New', delete: 'Delete', newMessage: '+ New Message', selectToView: 'Select a message to view', monitor: 'Monitor', systemData: 'System Data', resetTable: 'Reset Table', debug: 'Debug', db: 'DB', sensitivePoints: 'Sensitive Points', productVersionTable: 'Product Version Table in Updates Tab' },
+    system: { systemLabel: 'System', selectAction: 'Select action from right sidebar', users: 'Users', buildMessages: 'Build Messages', schedule: 'טבלאות ונתונים', pr: 'Public Relations', publishedDate: 'Published date:', reset: 'Reset', saved: 'Saved', records: 'records', scheduleSubject: 'Subject', schedulePriceUSD: 'Price\n[$]', schedulePeriod: 'Period\n[mo]', scheduleNotes: 'Notes', clear: 'Clear', pause: 'Pause', resume: 'Resume', active: '● Active', paused: 'Paused', lines: 'lines', filter: 'Filter', refresh: 'Refresh', loading: 'Loading...', loadingBuild: 'Loading build data...', error: 'Error', noBuildData: 'No build data. Run Release_KeyClick.bat', networkError: 'Network error', adminButton: 'System Use', generalGroup: 'General', colName: 'Name', colCurrency: 'Currency', colCreated: 'Created', colActive: 'Is Active', colAppInstalled: 'App Installed', colLicenceType: 'Licence Type', colSystemForce: 'System Force', distributionDay: 'Distribution Day X', messages: 'Messages', send: 'Send', sent: 'Sent!', reply: 'Reply', noMessages: 'No messages', replySent: 'Reply sent!', ref: 'Ref.', msgNo: 'No.', replyToRef: 'Reply to ref.', msgNumber: 'Message No.', new: 'New', delete: 'Delete', newMessage: '+ New Message', selectToView: 'Select a message to view', monitor: 'Monitor', systemData: 'System Data', resetTable: 'Reset Table', debug: 'Debug', db: 'DB', sensitivePoints: 'Sensitive Points', productVersionTable: 'Product Version Table in Updates Tab' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Pound', EUR: 'Euro', RUB: 'Ruble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupee' },
     updates: { colDate: 'Date & Time', colProduct: 'Product', colVersion: 'Version', colTitle: 'Title', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Home Budget' },
     reminders: { loginRequired: 'Login required to view reminders', titlePh: 'Reminder title', timePh: 'Time', add: '+ Add', noReminders: 'No reminders' } },
   { code: 'ru', flag: 'רוסיה',   name: 'Русский',  welcome: 'Добро пожаловать',
     menu: ['Отзыв','Обновления','Сообщения','Напоминания','Банковские услуги','Личная страница'],
-    card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства', run: 'Запуск', videos: 'Видео', guide: 'Руководство', ok: 'ОК', msgAlreadyInstalled: 'Уже установлено\nПереустановка не нужна', msgDownloading: 'Загрузка установщика', msgInstallComplete: 'Сохраните и запустите файл\nдля завершения установки', msgDownloadError: 'Ошибка загрузки\nПопробуйте снова', msgNotInstalled: 'Не установлено\nНажмите Установить', mFinance: 'M Finance', msgExists: 'Пользователь уже зарегистрирован\nс этими данными', msgUpdated: 'Данные обновлены успешно', msgRegistered: 'Регистрация завершена' },
+    card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства', run: 'Запуск', videos: 'Видео', guide: 'Руководство', ok: 'ОК', msgAlreadyInstalled: 'Уже установлено\nПереустановка не нужна', msgDownloading: 'Загрузка установщика', msgInstallComplete: 'Сохраните и запустите файл\nдля завершения установки', msgDownloadError: 'Ошибка загрузки\nПопробуйте снова', msgNotInstalled: 'Не установлено\nНажмите Установить', mFinance: 'M Finance', msgExists: 'Пользователь уже зарегистрирован\nс этими данными', msgUpdated: 'Данные обновлены успешно', msgRegistered: 'Регистрация завершена', existingCustomer: 'Существующий клиент', newCustomer: 'Новый клиент', notRecognized: 'Клиент не найден. Нажмите для регистрации', msgSelectPlan: 'Выберите тарифный план в личном кабинете', infoServices: 'Информационные услуги', guidesAndVideos: 'Руководства и видео' },
     profile: { fullName: 'Полное имя', email: 'Email', ip: 'IP', language: 'Язык', country: 'Страна', plan: 'Тариф', planStart: 'Начало тарифа', planEnd: 'Конец тарифа', unlimited: 'Без ограничений', comingSoon: 'Скоро', choosePlan: 'Выбрать тариф', close: '✕ Закрыть', loginRequired: 'Необходимо войти для просмотра', login: 'Войти', products: 'Продукты', change: 'Изменить',
       price: 'Цена', changePlan: 'Изменить тариф', planName: 'Название', planFrom: 'С', planTo: 'По', back: 'Назад', currencyLocal: '₽', free: 'Бесплатно',       planNames: { System_Free_Run: 'Тест', User_Trial: 'Пробный', User_VIP_Free: 'VIP', System_Owner: 'Система', User_Monthly: 'Ежемесячно', User_Annual: 'Ежегодно', User_One_Time: 'Разовый', System_Suspended_NonPayment: 'Отключён', User_Cancelled: 'Отменён' } },
     feedback: { customerRelations: 'Связи с клиентами', systemMessage: 'Системное сообщение', respectfully: 'С уважением,', rating: 'Оценка', ratingWebsite: 'Сайт', ratingBudget: 'Управление бюджетом', userMessage: 'Сообщение пользователя', date: 'Дата:', title: 'Тема:', from: 'От:', systemReply: 'Ответ системы' },
-    system: { systemLabel: 'Система', selectAction: 'Выберите действие на правой панели', users: 'Пользователи', buildMessages: 'Журнал сборки', schedule: 'Расписание и цены', pr: 'PR', publishedDate: 'Опубликовано:', reset: 'Сбросить', saved: 'Сохранено', records: 'записей', scheduleSubject: 'Тема', schedulePriceUSD: 'Цена\n[$]', schedulePeriod: 'Период\n[мес]', scheduleNotes: 'Заметки', clear: 'Очистить', pause: 'Пауза', resume: 'Продолжить', active: '● Активно', paused: 'На паузе', lines: 'строк', filter: 'Фильтр', refresh: 'Обновить', loading: 'Загрузка...', loadingBuild: 'Загрузка данных сборки...', error: 'Ошибка', noBuildData: 'Нет данных. Запустите Release_KeyClick.bat', networkError: 'Ошибка сети', adminButton: 'Системный вход', generalGroup: 'Общие', colName: 'Имя', colCurrency: 'Валюта', colCreated: 'Создан', colActive: 'Активен', colAppInstalled: 'Приложение', colLicenceType: 'Тип лицензии', colSystemForce: 'Системный режим', distributionDay: 'День X распространения', messages: 'Сообщения', send: 'Отправить', sent: 'Отправлено!', reply: 'Ответить', noMessages: 'Нет сообщений', replySent: 'Ответ отправлен!', ref: 'Реф.', msgNo: '№', replyToRef: 'Ответ на реф.', msgNumber: 'Сообщение №', new: 'Новое', delete: 'Удалить', newMessage: '+ Новое сообщение', selectToView: 'Выберите сообщение', monitor: 'Монитор', systemData: 'Данные системы', resetTable: 'Сброс таблицы', debug: 'Отладка', db: 'БД', sensitivePoints: 'Уязвимые точки', productVersionTable: 'Таблица версий продукта (вкладка обновлений)' },
+    system: { systemLabel: 'Система', selectAction: 'Выберите действие на правой панели', users: 'Пользователи', buildMessages: 'Журнал сборки', schedule: 'טבלאות ונתונים', pr: 'PR', publishedDate: 'Опубликовано:', reset: 'Сбросить', saved: 'Сохранено', records: 'записей', scheduleSubject: 'Тема', schedulePriceUSD: 'Цена\n[$]', schedulePeriod: 'Период\n[мес]', scheduleNotes: 'Заметки', clear: 'Очистить', pause: 'Пауза', resume: 'Продолжить', active: '● Активно', paused: 'На паузе', lines: 'строк', filter: 'Фильтр', refresh: 'Обновить', loading: 'Загрузка...', loadingBuild: 'Загрузка данных сборки...', error: 'Ошибка', noBuildData: 'Нет данных. Запустите Release_KeyClick.bat', networkError: 'Ошибка сети', adminButton: 'Системный вход', generalGroup: 'Общие', colName: 'Имя', colCurrency: 'Валюта', colCreated: 'Создан', colActive: 'Активен', colAppInstalled: 'Приложение', colLicenceType: 'Тип лицензии', colSystemForce: 'Системный режим', distributionDay: 'День X распространения', messages: 'Сообщения', send: 'Отправить', sent: 'Отправлено!', reply: 'Ответить', noMessages: 'Нет сообщений', replySent: 'Ответ отправлен!', ref: 'Реф.', msgNo: '№', replyToRef: 'Ответ на реф.', msgNumber: 'Сообщение №', new: 'Новое', delete: 'Удалить', newMessage: '+ Новое сообщение', selectToView: 'Выберите сообщение', monitor: 'Монитор', systemData: 'Данные системы', resetTable: 'Сброс таблицы', debug: 'Отладка', db: 'БД', sensitivePoints: 'Уязвимые точки', productVersionTable: 'Таблица версий продукта (вкладка обновлений)' },
     currencyNames: { ILS: 'Шекель', USD: 'Доллар', GBP: 'Фунт', EUR: 'Евро', RUB: 'Рубль', JPY: 'Иена', SAR: 'Риял', CNY: 'Юань', INR: 'Рупия' },
     updates: { colDate: 'Дата и время', colProduct: 'Продукт', colVersion: 'Версия', colTitle: 'Заголовок', productKeyClick: 'KeyClick Сайт', productMFinance: 'M Finance Бюджет' },
     reminders: { loginRequired: 'Войдите для просмотра напоминаний', titlePh: 'Название напоминания', timePh: 'Время', add: '+ Добавить', noReminders: 'Нет напоминаний' } },
   { code: 'de', flag: 'גרמניה',  name: 'Deutsch',  welcome: 'Willkommen',
     menu: ['Feedback','Updates','Nachrichten','Erinnerungen','Bankdienstleistungen','Persönliche Seite'],
-    card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien', run: 'Starten', videos: 'Videos', guide: 'Anleitung', ok: 'OK', msgAlreadyInstalled: 'Bereits installiert\nKeine Neuinstallation nötig', msgDownloading: 'Installationsdatei wird heruntergeladen', msgInstallComplete: 'Datei speichern und ausführen\num die Installation abzuschließen', msgDownloadError: 'Fehler beim Herunterladen\nNochmal versuchen', msgNotInstalled: 'Nicht installiert\nBitte auf Installieren klicken', mFinance: 'M Finance', msgExists: 'Benutzer bereits registriert\nmit diesen Daten', msgUpdated: 'Daten erfolgreich aktualisiert', msgRegistered: 'Registrierung abgeschlossen' },
+    card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien', run: 'Starten', videos: 'Videos', guide: 'Anleitung', ok: 'OK', msgAlreadyInstalled: 'Bereits installiert\nKeine Neuinstallation nötig', msgDownloading: 'Installationsdatei wird heruntergeladen', msgInstallComplete: 'Datei speichern und ausführen\num die Installation abzuschließen', msgDownloadError: 'Fehler beim Herunterladen\nNochmal versuchen', msgNotInstalled: 'Nicht installiert\nBitte auf Installieren klicken', mFinance: 'M Finance', msgExists: 'Benutzer bereits registriert\nmit diesen Daten', msgUpdated: 'Daten erfolgreich aktualisiert', msgRegistered: 'Registrierung abgeschlossen', existingCustomer: 'Bestehender Kunde', newCustomer: 'Neuer Kunde', notRecognized: 'Kunde nicht gefunden. Klicken zum Registrieren', msgSelectPlan: 'Bitte wähle einen Plan auf deiner persönlichen Seite', infoServices: 'Informationsdienste', guidesAndVideos: 'Anleitungen & Videos' },
     profile: { fullName: 'Vollständiger Name', email: 'E-Mail', ip: 'IP', language: 'Sprache', country: 'Land', plan: 'Tarif', planStart: 'Tarif Beginn', planEnd: 'Tarif Ende', unlimited: 'Unbegrenzt', comingSoon: 'Demnächst', choosePlan: 'Tarif wählen', close: '✕ Schließen', loginRequired: 'Anmeldung erforderlich', login: 'Anmelden', products: 'Produkte', change: 'Ändern',
       price: 'Preis', changePlan: 'Tarif ändern', planName: 'Name', planFrom: 'Von', planTo: 'Bis', back: 'Zurück', currencyLocal: '€', free: 'Kostenlos',       planNames: { System_Free_Run: 'Testlauf', User_Trial: 'Testphase', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monatlich', User_Annual: 'Jährlich', User_One_Time: 'Einmalig', System_Suspended_NonPayment: 'Gesperrt', User_Cancelled: 'Storniert' } },
     feedback: { customerRelations: 'Kundenpflege', systemMessage: 'Systemnachricht', respectfully: 'Mit freundlichen Grüßen,', rating: 'Bewertung', ratingWebsite: 'Website', ratingBudget: 'Haushaltsverwaltung', userMessage: 'Nutzernachricht', date: 'Datum:', title: 'Betreff:', from: 'Von:', systemReply: 'Systemantwort' },
-    system: { systemLabel: 'System', selectAction: 'Aktion in der rechten Leiste wählen', users: 'Benutzer', buildMessages: 'Build-Protokoll', schedule: 'Zeitplan & Preise', pr: 'PR', publishedDate: 'Veröffentlicht:', reset: 'Zurücksetzen', saved: 'Gespeichert', records: 'Einträge', scheduleSubject: 'Thema', schedulePriceUSD: 'Preis\n[$]', schedulePeriod: 'Zeitraum\n[Mo]', scheduleNotes: 'Notizen', clear: 'Löschen', pause: 'Pause', resume: 'Fortsetzen', active: '● Aktiv', paused: 'Pausiert', lines: 'Zeilen', filter: 'Filter', refresh: 'Aktualisieren', loading: 'Laden...', loadingBuild: 'Build-Daten laden...', error: 'Fehler', noBuildData: 'Keine Daten. Starten Sie Release_KeyClick.bat', networkError: 'Netzwerkfehler', adminButton: 'Systembereich', generalGroup: 'Allgemein', colName: 'Name', colCurrency: 'Währung', colCreated: 'Erstellt', colActive: 'Aktiv', colAppInstalled: 'App', colLicenceType: 'Lizenztyp', colSystemForce: 'Systemmodus', distributionDay: 'Verbreitungstag X', messages: 'Nachrichten', send: 'Senden', sent: 'Gesendet!', reply: 'Antworten', noMessages: 'Keine Nachrichten', replySent: 'Antwort gesendet!', ref: 'Ref.', msgNo: 'Nr.', replyToRef: 'Antwort auf Ref.', msgNumber: 'Nachricht Nr.', new: 'Neu', delete: 'Löschen', newMessage: '+ Neue Nachricht', selectToView: 'Nachricht auswählen', monitor: 'Monitor', systemData: 'Systemdaten', resetTable: 'Tabelle zurücksetzen', debug: 'Debug', db: 'DB', sensitivePoints: 'Schwachstellen', productVersionTable: 'Produktversionstabelle (Updates)' },
+    system: { systemLabel: 'System', selectAction: 'Aktion in der rechten Leiste wählen', users: 'Benutzer', buildMessages: 'Build-Protokoll', schedule: 'טבלאות ונתונים', pr: 'PR', publishedDate: 'Veröffentlicht:', reset: 'Zurücksetzen', saved: 'Gespeichert', records: 'Einträge', scheduleSubject: 'Thema', schedulePriceUSD: 'Preis\n[$]', schedulePeriod: 'Zeitraum\n[Mo]', scheduleNotes: 'Notizen', clear: 'Löschen', pause: 'Pause', resume: 'Fortsetzen', active: '● Aktiv', paused: 'Pausiert', lines: 'Zeilen', filter: 'Filter', refresh: 'Aktualisieren', loading: 'Laden...', loadingBuild: 'Build-Daten laden...', error: 'Fehler', noBuildData: 'Keine Daten. Starten Sie Release_KeyClick.bat', networkError: 'Netzwerkfehler', adminButton: 'Systembereich', generalGroup: 'Allgemein', colName: 'Name', colCurrency: 'Währung', colCreated: 'Erstellt', colActive: 'Aktiv', colAppInstalled: 'App', colLicenceType: 'Lizenztyp', colSystemForce: 'Systemmodus', distributionDay: 'Verbreitungstag X', messages: 'Nachrichten', send: 'Senden', sent: 'Gesendet!', reply: 'Antworten', noMessages: 'Keine Nachrichten', replySent: 'Antwort gesendet!', ref: 'Ref.', msgNo: 'Nr.', replyToRef: 'Antwort auf Ref.', msgNumber: 'Nachricht Nr.', new: 'Neu', delete: 'Löschen', newMessage: '+ Neue Nachricht', selectToView: 'Nachricht auswählen', monitor: 'Monitor', systemData: 'Systemdaten', resetTable: 'Tabelle zurücksetzen', debug: 'Debug', db: 'DB', sensitivePoints: 'Schwachstellen', productVersionTable: 'Produktversionstabelle (Updates)' },
     currencyNames: { ILS: 'Schekel', USD: 'Dollar', GBP: 'Pfund', EUR: 'Euro', RUB: 'Rubel', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupie' },
     updates: { colDate: 'Datum & Uhrzeit', colProduct: 'Produkt', colVersion: 'Version', colTitle: 'Titel', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Haushalt' },
     reminders: { loginRequired: 'Anmeldung für Erinnerungen erforderlich', titlePh: 'Erinnerungstitel', timePh: 'Uhrzeit', add: '+ Hinzufügen', noReminders: 'Keine Erinnerungen' } },
   { code: 'fr', flag: 'צרפת',    name: 'Français', welcome: 'Bienvenue',
     menu: ['Retour','Mises à jour','Messages','Rappels','Services bancaires','Page personnelle'],
-    card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide', run: 'Lancer', videos: 'Vidéos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Déjà installé\nPas besoin de réinstaller', msgDownloading: 'Téléchargement du fichier', msgInstallComplete: 'Enregistrez et exécutez le fichier\npour terminer l\'installation', msgDownloadError: 'Erreur de téléchargement\nRéessayer', msgNotInstalled: 'Non installé\nVeuillez cliquer sur Installer', mFinance: 'M Finance', msgExists: 'Utilisateur déjà enregistré\navec ces informations', msgUpdated: 'Informations mises à jour avec succès', msgRegistered: 'Inscription terminée' },
+    card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide', run: 'Lancer', videos: 'Vidéos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Déjà installé\nPas besoin de réinstaller', msgDownloading: 'Téléchargement du fichier', msgInstallComplete: 'Enregistrez et exécutez le fichier\npour terminer l\'installation', msgDownloadError: 'Erreur de téléchargement\nRéessayer', msgNotInstalled: 'Non installé\nVeuillez cliquer sur Installer', mFinance: 'M Finance', msgExists: 'Utilisateur déjà enregistré\navec ces informations', msgUpdated: 'Informations mises à jour avec succès', msgRegistered: 'Inscription terminée', existingCustomer: 'Client existant', newCustomer: 'Nouveau client', notRecognized: 'Client non reconnu. Cliquer pour s\'inscrire', msgSelectPlan: 'Veuillez choisir un forfait sur votre page personnelle', infoServices: 'Services d\'information', guidesAndVideos: 'Guides & Vidéos' },
     profile: { fullName: 'Nom complet', email: 'E-mail', ip: 'IP', language: 'Langue', country: 'Pays', plan: 'Abonnement', planStart: 'Début', planEnd: 'Fin', unlimited: 'Illimité', comingSoon: 'Bientôt', choosePlan: 'Choisir un abonnement', close: '✕ Fermer', loginRequired: 'Connexion requise', login: 'Se connecter', products: 'Produits', change: 'Modifier',
       price: 'Prix', changePlan: "Changer d'abonnement", planName: 'Nom', planFrom: 'De', planTo: 'Au', back: 'Retour', currencyLocal: '€', free: 'Gratuit',       planNames: { System_Free_Run: 'Lancement', User_Trial: 'Essai', User_VIP_Free: 'VIP', System_Owner: 'Système', User_Monthly: 'Mensuel', User_Annual: 'Annuel', User_One_Time: 'Unique', System_Suspended_NonPayment: 'Suspendu', User_Cancelled: 'Annulé' } },
     feedback: { customerRelations: 'Relations clients', systemMessage: 'Message du système', respectfully: 'Cordialement,', rating: 'Évaluation', ratingWebsite: 'Site web', ratingBudget: 'Gestion du budget familial', userMessage: "Message de l'utilisateur", date: 'Date :', title: 'Titre :', from: 'De :', systemReply: 'Réponse du système' },
-    system: { systemLabel: 'Système', selectAction: 'Sélectionner une action dans la barre droite', users: 'Utilisateurs', buildMessages: 'Journal de build', schedule: 'Planning & Tarifs', pr: 'RP', publishedDate: 'Publié le :', reset: 'Réinitialiser', saved: 'Enregistré', records: 'enregistrements', scheduleSubject: 'Sujet', schedulePriceUSD: 'Prix\n[$]', schedulePeriod: 'Période\n[mois]', scheduleNotes: 'Notes', clear: 'Effacer', pause: 'Pause', resume: 'Reprendre', active: '● Actif', paused: 'En pause', lines: 'lignes', filter: 'Filtre', refresh: 'Actualiser', loading: 'Chargement...', loadingBuild: 'Chargement du build...', error: 'Erreur', noBuildData: 'Aucune donnée. Lancez Release_KeyClick.bat', networkError: 'Erreur réseau', adminButton: 'Espace système', generalGroup: 'Général', colName: 'Nom', colCurrency: 'Devise', colCreated: 'Créé', colActive: 'Actif', colAppInstalled: 'Application', colLicenceType: 'Type de licence', colSystemForce: 'Mode système', distributionDay: 'Jour de distribution X', messages: 'Messages', send: 'Envoyer', sent: 'Envoyé !', reply: 'Répondre', noMessages: 'Aucun message', replySent: 'Réponse envoyée !', ref: 'Réf.', msgNo: 'N°', replyToRef: 'Réponse à réf.', msgNumber: 'Message N°', new: 'Nouveau', delete: 'Supprimer', newMessage: '+ Nouveau message', selectToView: 'Sélectionner un message', monitor: 'Moniteur', systemData: 'Données système', resetTable: 'Réinitialiser la table', debug: 'Débogage', db: 'BD', sensitivePoints: 'Points sensibles', productVersionTable: 'Tableau des versions (onglet mises à jour)' },
+    system: { systemLabel: 'Système', selectAction: 'Sélectionner une action dans la barre droite', users: 'Utilisateurs', buildMessages: 'Journal de build', schedule: 'טבלאות ונתונים', pr: 'RP', publishedDate: 'Publié le :', reset: 'Réinitialiser', saved: 'Enregistré', records: 'enregistrements', scheduleSubject: 'Sujet', schedulePriceUSD: 'Prix\n[$]', schedulePeriod: 'Période\n[mois]', scheduleNotes: 'Notes', clear: 'Effacer', pause: 'Pause', resume: 'Reprendre', active: '● Actif', paused: 'En pause', lines: 'lignes', filter: 'Filtre', refresh: 'Actualiser', loading: 'Chargement...', loadingBuild: 'Chargement du build...', error: 'Erreur', noBuildData: 'Aucune donnée. Lancez Release_KeyClick.bat', networkError: 'Erreur réseau', adminButton: 'Espace système', generalGroup: 'Général', colName: 'Nom', colCurrency: 'Devise', colCreated: 'Créé', colActive: 'Actif', colAppInstalled: 'Application', colLicenceType: 'Type de licence', colSystemForce: 'Mode système', distributionDay: 'Jour de distribution X', messages: 'Messages', send: 'Envoyer', sent: 'Envoyé !', reply: 'Répondre', noMessages: 'Aucun message', replySent: 'Réponse envoyée !', ref: 'Réf.', msgNo: 'N°', replyToRef: 'Réponse à réf.', msgNumber: 'Message N°', new: 'Nouveau', delete: 'Supprimer', newMessage: '+ Nouveau message', selectToView: 'Sélectionner un message', monitor: 'Moniteur', systemData: 'Données système', resetTable: 'Réinitialiser la table', debug: 'Débogage', db: 'BD', sensitivePoints: 'Points sensibles', productVersionTable: 'Tableau des versions (onglet mises à jour)' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Livre', EUR: 'Euro', RUB: 'Rouble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Roupie' },
     updates: { colDate: 'Date et heure', colProduct: 'Produit', colVersion: 'Version', colTitle: 'Titre', productKeyClick: 'KeyClick Site web', productMFinance: 'M Finance Budget familial' },
     reminders: { loginRequired: 'Connexion requise pour les rappels', titlePh: 'Titre du rappel', timePh: 'Heure', add: '+ Ajouter', noReminders: 'Aucun rappel' } },
   { code: 'he', flag: 'ישראל',   name: 'עברית',    welcome: 'ברוכים הבאים',
     menu: ['משוב','עדכונים','הודעות','תזכורות','שרותים בנקאיים','דף אישי'],
-    card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכן', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה', run: 'הפעלה', videos: 'סרטונים', guide: 'הדרכה', ok: 'לחץ', msgAlreadyInstalled: 'כבר מותקן\nאין צורך בהתקנה', msgDownloading: 'הורד קובץ התקנה', msgInstallComplete: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה', msgDownloadError: 'שגיאה בהורדה\nנסה שוב', msgNotInstalled: 'לא מותקן\nאנא לחץ על כפתור ההתקנה', mFinance: 'M Finance', msgExists: 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת', msgUpdated: 'הפרטים עודכנו בהצלחה', msgRegistered: 'הרשמה הושלמה' },
+    card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכון', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה', run: 'הפעלה', videos: 'סרטונים', guide: 'הדרכה', ok: 'לחץ', msgAlreadyInstalled: 'כבר מותקן\nאין צורך בהתקנה', msgDownloading: 'הורד קובץ התקנה', msgInstallComplete: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה', msgDownloadError: 'שגיאה בהורדה\nנסה שוב', msgNotInstalled: 'לא מותקן\nאנא לחץ על כפתור ההתקנה', mFinance: 'M Finance', msgExists: 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת', msgUpdated: 'הפרטים עודכנו בהצלחה', msgRegistered: 'הרשמה הושלמה', existingCustomer: 'לקוח קיים', newCustomer: 'לקוח חדש', notRecognized: 'לקוח לא מוכר. לחץ להרשמה', msgSelectPlan: 'בחר תכנית בדף האישי', infoServices: 'שרותי מידע', guidesAndVideos: 'מדריכים וסרטונים' },
     profile: { fullName: 'שם ומשפחה', email: 'דוא"ל', ip: 'IP', language: 'שפה', country: 'מדינה', plan: 'תכנית', planStart: 'תחילת תכנית', planEnd: 'סיום תכנית', unlimited: 'ללא הגבלה', comingSoon: 'בקרוב', choosePlan: 'בחר תכנית', close: '✕ סגור', loginRequired: 'נדרשת כניסה לצפייה בדף האישי', login: 'כניסה', products: 'מוצרים', change: 'שינוי',
       price: 'מחיר', changePlan: 'שינוי תכנית', planName: 'שם', planFrom: 'מ-', planTo: 'עד-', back: 'חזרה', currencyLocal: '₪', free: 'חינם',       planNames: { System_Free_Run: 'תקופת הרצה', User_Trial: 'תקופת נסיון', User_VIP_Free: 'VIP', System_Owner: 'מערכת', User_Monthly: 'חודשי', User_Annual: 'שנתי', User_One_Time: 'כניסה בודדת', System_Suspended_NonPayment: 'מנותק', User_Cancelled: 'בוטל' } },
     feedback: { customerRelations: 'קשרי לקוחות', systemMessage: 'הודעת המערכת', respectfully: 'בכבוד רב,', rating: 'דירוג', ratingWebsite: 'אתר', ratingBudget: 'ניהול תקציב בית', userMessage: 'דבר המשתמש', date: 'תאריך:', title: 'כותרת:', from: 'מאת:', systemReply: 'תשובת המערכת' },
-    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'לו"ז ומחירון', pr: 'יחסי ציבור', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים' },
+    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'טבלאות ונתונים', pr: 'יחסי ציבור', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים' },
     currencyNames: { ILS: 'ש"ח', USD: 'דולר', GBP: 'ליש"ט', EUR: 'יורו', RUB: 'רובל', JPY: 'ין', SAR: 'ריאל', CNY: 'יואן', INR: 'רופי' },
     updates: { colDate: 'תאריך ושעה', colProduct: 'מוצר', colVersion: 'גרסה', colTitle: 'כותרת', productKeyClick: 'אתר KeyClick', productMFinance: 'ניהול תקציב בית M Finance' },
     reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' } },
   { code: 'es', flag: 'ספרד',    name: 'Español',  welcome: 'Bienvenido',
     menu: ['Comentarios','Actualizaciones','Mensajes','Recordatorios','Servicios bancarios','Página personal'],
-    card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía', run: 'Ejecutar', videos: 'Videos', guide: 'Guía', ok: 'OK', msgAlreadyInstalled: 'Ya instalado\nNo es necesario reinstalar', msgDownloading: 'Descargando archivo de instalación', msgInstallComplete: 'Guarda y ejecuta el archivo\npara completar la instalación', msgDownloadError: 'Error de descarga\nInténtalo de nuevo', msgNotInstalled: 'No instalado\nHaz clic en Instalar', mFinance: 'M Finance', msgExists: 'El usuario ya está registrado\ncon estos datos', msgUpdated: 'Datos actualizados correctamente', msgRegistered: 'Registro completado' },
+    card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía', run: 'Ejecutar', videos: 'Videos', guide: 'Guía', ok: 'OK', msgAlreadyInstalled: 'Ya instalado\nNo es necesario reinstalar', msgDownloading: 'Descargando archivo de instalación', msgInstallComplete: 'Guarda y ejecuta el archivo\npara completar la instalación', msgDownloadError: 'Error de descarga\nInténtalo de nuevo', msgNotInstalled: 'No instalado\nHaz clic en Instalar', mFinance: 'M Finance', msgExists: 'El usuario ya está registrado\ncon estos datos', msgUpdated: 'Datos actualizados correctamente', msgRegistered: 'Registro completado', existingCustomer: 'Cliente existente', newCustomer: 'Cliente nuevo', notRecognized: 'Cliente no encontrado. Haga clic para registrarse', msgSelectPlan: 'Por favor selecciona un plan en tu página personal', infoServices: 'Servicios de información', guidesAndVideos: 'Guías y Videos' },
     profile: { fullName: 'Nombre completo', email: 'Correo', ip: 'IP', language: 'Idioma', country: 'País', plan: 'Plan', planStart: 'Inicio del plan', planEnd: 'Fin del plan', unlimited: 'Sin límite', comingSoon: 'Próximamente', choosePlan: 'Elegir plan', close: '✕ Cerrar', loginRequired: 'Se requiere inicio de sesión', login: 'Iniciar sesión', products: 'Productos', change: 'Cambiar',
       price: 'Precio', changePlan: 'Cambiar plan', planName: 'Nombre', planFrom: 'Desde', planTo: 'Hasta', back: 'Volver', currencyLocal: '€', free: 'Gratis',       planNames: { System_Free_Run: 'Ejecución', User_Trial: 'Prueba', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensual', User_Annual: 'Anual', User_One_Time: 'Único', System_Suspended_NonPayment: 'Suspendido', User_Cancelled: 'Cancelado' } },
     feedback: { customerRelations: 'Relaciones con clientes', systemMessage: 'Mensaje del sistema', respectfully: 'Atentamente,', rating: 'Calificación', ratingWebsite: 'Sitio web', ratingBudget: 'Gestión del presupuesto familiar', userMessage: 'Mensaje del usuario', date: 'Fecha:', title: 'Título:', from: 'De:', systemReply: 'Respuesta del sistema' },
-    system: { systemLabel: 'Sistema', selectAction: 'Seleccionar acción de la barra derecha', users: 'Usuarios', buildMessages: 'Registro de build', schedule: 'Horario y precios', pr: 'RRPP', publishedDate: 'Publicado:', reset: 'Restablecer', saved: 'Guardado', records: 'registros', scheduleSubject: 'Asunto', schedulePriceUSD: 'Precio\n[$]', schedulePeriod: 'Período\n[mes]', scheduleNotes: 'Notas', clear: 'Limpiar', pause: 'Pausar', resume: 'Reanudar', active: '● Activo', paused: 'En pausa', lines: 'líneas', filter: 'Filtro', refresh: 'Actualizar', loading: 'Cargando...', loadingBuild: 'Cargando datos de build...', error: 'Error', noBuildData: 'Sin datos. Ejecute Release_KeyClick.bat', networkError: 'Error de red', adminButton: 'Área del sistema', generalGroup: 'General', colName: 'Nombre', colCurrency: 'Moneda', colCreated: 'Creado', colActive: 'Activo', colAppInstalled: 'Aplicación', colLicenceType: 'Tipo de licencia', colSystemForce: 'Modo sistema', distributionDay: 'Día de distribución X', messages: 'Mensajes', send: 'Enviar', sent: '¡Enviado!', reply: 'Responder', noMessages: 'Sin mensajes', replySent: '¡Respuesta enviada!', ref: 'Ref.', msgNo: 'N°', replyToRef: 'Respuesta a ref.', msgNumber: 'Mensaje N°', new: 'Nuevo', delete: 'Eliminar', newMessage: '+ Nuevo mensaje', selectToView: 'Seleccionar un mensaje', monitor: 'Monitor', systemData: 'Datos del sistema', resetTable: 'Restablecer tabla', debug: 'Depurar', db: 'BD', sensitivePoints: 'Puntos sensibles', productVersionTable: 'Tabla de versiones (pestaña actualizaciones)' },
+    system: { systemLabel: 'Sistema', selectAction: 'Seleccionar acción de la barra derecha', users: 'Usuarios', buildMessages: 'Registro de build', schedule: 'טבלאות ונתונים', pr: 'RRPP', publishedDate: 'Publicado:', reset: 'Restablecer', saved: 'Guardado', records: 'registros', scheduleSubject: 'Asunto', schedulePriceUSD: 'Precio\n[$]', schedulePeriod: 'Período\n[mes]', scheduleNotes: 'Notas', clear: 'Limpiar', pause: 'Pausar', resume: 'Reanudar', active: '● Activo', paused: 'En pausa', lines: 'líneas', filter: 'Filtro', refresh: 'Actualizar', loading: 'Cargando...', loadingBuild: 'Cargando datos de build...', error: 'Error', noBuildData: 'Sin datos. Ejecute Release_KeyClick.bat', networkError: 'Error de red', adminButton: 'Área del sistema', generalGroup: 'General', colName: 'Nombre', colCurrency: 'Moneda', colCreated: 'Creado', colActive: 'Activo', colAppInstalled: 'Aplicación', colLicenceType: 'Tipo de licencia', colSystemForce: 'Modo sistema', distributionDay: 'Día de distribución X', messages: 'Mensajes', send: 'Enviar', sent: '¡Enviado!', reply: 'Responder', noMessages: 'Sin mensajes', replySent: '¡Respuesta enviada!', ref: 'Ref.', msgNo: 'N°', replyToRef: 'Respuesta a ref.', msgNumber: 'Mensaje N°', new: 'Nuevo', delete: 'Eliminar', newMessage: '+ Nuevo mensaje', selectToView: 'Seleccionar un mensaje', monitor: 'Monitor', systemData: 'Datos del sistema', resetTable: 'Restablecer tabla', debug: 'Depurar', db: 'BD', sensitivePoints: 'Puntos sensibles', productVersionTable: 'Tabla de versiones (pestaña actualizaciones)' },
     currencyNames: { ILS: 'Séquel', USD: 'Dólar', GBP: 'Libra', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
     updates: { colDate: 'Fecha y hora', colProduct: 'Producto', colVersion: 'Versión', colTitle: 'Título', productKeyClick: 'KeyClick Sitio web', productMFinance: 'M Finance Presupuesto familiar' },
     reminders: { loginRequired: 'Inicio de sesión requerido', titlePh: 'Título del recordatorio', timePh: 'Hora', add: '+ Agregar', noReminders: 'Sin recordatorios' } },
   { code: 'ja', flag: 'יפן',     name: '日本語',    welcome: 'ようこそ',
     menu: ['フィードバック','更新','メッセージ','リマインダー','銀行サービス','個人ページ'],
-    card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル', run: '起動', videos: 'ビデオ', guide: 'ガイド', ok: 'OK', msgAlreadyInstalled: 'インストール済み\n再インストール不要', msgDownloading: 'インストールファイルをダウンロード中', msgInstallComplete: 'ファイルを保存して実行\nインストールを完了', msgDownloadError: 'ダウンロードエラー\n再試行', msgNotInstalled: '未インストール\nインストールをクリック', mFinance: 'M Finance', msgExists: 'このメールは\nすでに登録されています', msgUpdated: '情報が正常に更新されました', msgRegistered: '登録が完了しました' },
+    card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル', run: '起動', videos: 'ビデオ', guide: 'ガイド', ok: 'OK', msgAlreadyInstalled: 'インストール済み\n再インストール不要', msgDownloading: 'インストールファイルをダウンロード中', msgInstallComplete: 'ファイルを保存して実行\nインストールを完了', msgDownloadError: 'ダウンロードエラー\n再試行', msgNotInstalled: '未インストール\nインストールをクリック', mFinance: 'M Finance', msgExists: 'このメールは\nすでに登録されています', msgUpdated: '情報が正常に更新されました', msgRegistered: '登録が完了しました', existingCustomer: '既存のお客様', newCustomer: '新規のお客様', notRecognized: 'お客様が見つかりません。登録するにはクリック', msgSelectPlan: '個人ページでプランを選択してください', infoServices: '情報サービス', guidesAndVideos: 'ガイドと動画' },
     profile: { fullName: 'フルネーム', email: 'メール', ip: 'IP', language: '言語', country: '国', plan: 'プラン', planStart: 'プラン開始', planEnd: 'プラン終了', unlimited: '無制限', comingSoon: '近日公開', choosePlan: 'プランを選択', close: '✕ 閉じる', loginRequired: 'ログインが必要です', login: 'ログイン', products: '製品', change: '変更',
       price: '価格', changePlan: 'プラン変更', planName: '名前', planFrom: 'から', planTo: 'まで', back: '戻る', currencyLocal: '¥', free: '無料',       planNames: { System_Free_Run: '試運転', User_Trial: '試用', User_VIP_Free: 'VIP', System_Owner: 'システム', User_Monthly: '月次', User_Annual: '年次', User_One_Time: '単回', System_Suspended_NonPayment: '停止', User_Cancelled: 'キャンセル' } },
     feedback: { customerRelations: 'カスタマーサービス', systemMessage: 'システムメッセージ', respectfully: '敬具,', rating: '評価', ratingWebsite: 'ウェブサイト', ratingBudget: '家計管理', userMessage: 'ユーザーメッセージ', date: '日付:', title: 'タイトル:', from: '差出人:', systemReply: 'システム返信' },
-    system: { systemLabel: 'システム', selectAction: '右サイドバーからアクションを選択', users: 'ユーザー', buildMessages: 'ビルドログ', schedule: 'スケジュールと価格', pr: 'PR', publishedDate: '公開日:', reset: 'リセット', saved: '保存済み', records: '件', scheduleSubject: '件名', schedulePriceUSD: '価格\n[$]', schedulePeriod: '期間\n[月]', scheduleNotes: 'メモ', clear: 'クリア', pause: '一時停止', resume: '再開', active: '● アクティブ', paused: '一時停止中', lines: '行', filter: 'フィルター', refresh: '更新', loading: '読み込み中...', loadingBuild: 'ビルドデータ読み込み中...', error: 'エラー', noBuildData: 'データなし。Release_KeyClick.bat を実行', networkError: 'ネットワークエラー', adminButton: 'システム管理', generalGroup: '全般', colName: '名前', colCurrency: '通貨', colCreated: '作成日', colActive: '有効', colAppInstalled: 'アプリ', colLicenceType: 'ライセンス種別', colSystemForce: 'システムモード', distributionDay: '配布日X', messages: 'メッセージ', send: '送信', sent: '送信済み!', reply: '返信', noMessages: 'メッセージなし', replySent: '返信済み!', ref: '参照', msgNo: 'No.', replyToRef: '参照への返信', msgNumber: 'メッセージNo.', new: '新着', delete: '削除', newMessage: '+ 新メッセージ', selectToView: 'メッセージを選択', monitor: 'モニター', systemData: 'システムデータ', resetTable: 'テーブルリセット', debug: 'デバッグ', db: 'DB', sensitivePoints: '重要ポイント', productVersionTable: '更新タブの製品バージョン一覧' },
+    system: { systemLabel: 'システム', selectAction: '右サイドバーからアクションを選択', users: 'ユーザー', buildMessages: 'ビルドログ', schedule: 'טבלאות ונתונים', pr: 'PR', publishedDate: '公開日:', reset: 'リセット', saved: '保存済み', records: '件', scheduleSubject: '件名', schedulePriceUSD: '価格\n[$]', schedulePeriod: '期間\n[月]', scheduleNotes: 'メモ', clear: 'クリア', pause: '一時停止', resume: '再開', active: '● アクティブ', paused: '一時停止中', lines: '行', filter: 'フィルター', refresh: '更新', loading: '読み込み中...', loadingBuild: 'ビルドデータ読み込み中...', error: 'エラー', noBuildData: 'データなし。Release_KeyClick.bat を実行', networkError: 'ネットワークエラー', adminButton: 'システム管理', generalGroup: '全般', colName: '名前', colCurrency: '通貨', colCreated: '作成日', colActive: '有効', colAppInstalled: 'アプリ', colLicenceType: 'ライセンス種別', colSystemForce: 'システムモード', distributionDay: '配布日X', messages: 'メッセージ', send: '送信', sent: '送信済み!', reply: '返信', noMessages: 'メッセージなし', replySent: '返信済み!', ref: '参照', msgNo: 'No.', replyToRef: '参照への返信', msgNumber: 'メッセージNo.', new: '新着', delete: '削除', newMessage: '+ 新メッセージ', selectToView: 'メッセージを選択', monitor: 'モニター', systemData: 'システムデータ', resetTable: 'テーブルリセット', debug: 'デバッグ', db: 'DB', sensitivePoints: '重要ポイント', productVersionTable: '更新タブの製品バージョン一覧' },
     currencyNames: { ILS: 'シェケル', USD: 'ドル', GBP: 'ポンド', EUR: 'ユーロ', RUB: 'ルーブル', JPY: '円', SAR: 'リヤル', CNY: '元', INR: 'ルピー' },
     updates: { colDate: '日時', colProduct: '製品', colVersion: 'バージョン', colTitle: 'タイトル', productKeyClick: 'KeyClick サイト', productMFinance: 'M Finance 家計管理' },
     reminders: { loginRequired: 'リマインダーを表示するにはログインが必要です', titlePh: 'リマインダーのタイトル', timePh: '時刻', add: '+ 追加', noReminders: 'リマインダーなし' } },
   { code: 'ar', flag: 'סעודיה',  name: 'العربية',  welcome: 'أهلاً وسهلاً',
     menu: ['ملاحظات','تحديثات','رسائل','تذكيرات','خدمات مصرفية','الصفحة الشخصية'],
-    card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل', run: 'تشغيل', videos: 'مقاطع', guide: 'دليل', ok: 'حسناً', msgAlreadyInstalled: 'مثبت بالفعل\nلا حاجة لإعادة التثبيت', msgDownloading: 'جارٍ تنزيل ملف التثبيت', msgInstallComplete: 'احفظ الملف وشغّله\nلإكمال التثبيت', msgDownloadError: 'خطأ في التنزيل\nحاول مرة أخرى', msgNotInstalled: 'غير مثبت\nانقر على تثبيت', mFinance: 'M Finance', msgExists: 'المستخدم مسجل بالفعل\nبهذه البيانات', msgUpdated: 'تم تحديث البيانات بنجاح', msgRegistered: 'اكتمل التسجيل' },
+    card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل', run: 'تشغيل', videos: 'مقاطع', guide: 'دليل', ok: 'حسناً', msgAlreadyInstalled: 'مثبت بالفعل\nلا حاجة لإعادة التثبيت', msgDownloading: 'جارٍ تنزيل ملف التثبيت', msgInstallComplete: 'احفظ الملف وشغّله\nلإكمال التثبيت', msgDownloadError: 'خطأ في التنزيل\nحاول مرة أخرى', msgNotInstalled: 'غير مثبت\nانقر على تثبيت', mFinance: 'M Finance', msgExists: 'المستخدم مسجل بالفعل\nبهذه البيانات', msgUpdated: 'تم تحديث البيانات بنجاح', msgRegistered: 'اكتمل التسجيل', existingCustomer: 'عميل موجود', newCustomer: 'عميل جديد', notRecognized: 'العميل غير معروف. انقر للتسجيل', msgSelectPlan: 'يرجى اختيار خطة في صفحتك الشخصية', infoServices: 'خدمات المعلومات', guidesAndVideos: 'أدلة ومقاطع فيديو' },
     profile: { fullName: 'الاسم الكامل', email: 'البريد الإلكتروني', ip: 'IP', language: 'اللغة', country: 'الدولة', plan: 'الخطة', planStart: 'بداية الخطة', planEnd: 'نهاية الخطة', unlimited: 'بلا حدود', comingSoon: 'قريباً', choosePlan: 'اختر خطة', close: '✕ إغلاق', loginRequired: 'تسجيل الدخول مطلوب', login: 'دخول', products: 'المنتجات', change: 'تغيير',
       price: 'السعر', changePlan: 'تغيير الخطة', planName: 'الاسم', planFrom: 'من', planTo: 'إلى', back: 'رجوع', currencyLocal: '﷼', free: 'مجاناً',       planNames: { System_Free_Run: 'تشغيل', User_Trial: 'تجريبي', User_VIP_Free: 'VIP', System_Owner: 'النظام', User_Monthly: 'شهري', User_Annual: 'سنوي', User_One_Time: 'مرة واحدة', System_Suspended_NonPayment: 'موقوف', User_Cancelled: 'ملغى' } },
     feedback: { customerRelations: 'خدمة العملاء', systemMessage: 'رسالة النظام', respectfully: 'مع التحية،', rating: 'تقييم', ratingWebsite: 'الموقع', ratingBudget: 'إدارة الميزانية المنزلية', userMessage: 'رسالة المستخدم', date: 'التاريخ:', title: 'الموضوع:', from: 'من:', systemReply: 'رد النظام' },
-    system: { systemLabel: 'النظام', selectAction: 'اختر إجراء من الشريط الأيمن', users: 'المستخدمون', buildMessages: 'سجل البناء', schedule: 'الجدول والأسعار', pr: 'العلاقات العامة', publishedDate: 'تاريخ النشر:', reset: 'إعادة تعيين', saved: 'تم الحفظ', records: 'سجلات', scheduleSubject: 'الموضوع', schedulePriceUSD: 'السعر\n[$]', schedulePeriod: 'الفترة\n[شهر]', scheduleNotes: 'ملاحظات', clear: 'مسح', pause: 'إيقاف مؤقت', resume: 'استئناف', active: '● نشط', paused: 'متوقف مؤقتاً', lines: 'سطور', filter: 'تصفية', refresh: 'تحديث', loading: 'جارٍ التحميل...', loadingBuild: 'تحميل بيانات البناء...', error: 'خطأ', noBuildData: 'لا بيانات. شغّل Release_KeyClick.bat', networkError: 'خطأ في الشبكة', adminButton: 'النظام', generalGroup: 'عام', colName: 'الاسم', colCurrency: 'العملة', colCreated: 'تاريخ الإنشاء', colActive: 'نشط', colAppInstalled: 'التطبيق', colLicenceType: 'نوع الترخيص', colSystemForce: 'وضع النظام', distributionDay: 'يوم التوزيع X', messages: 'الرسائل', send: 'إرسال', sent: 'تم!', reply: 'رد', noMessages: 'لا رسائل', replySent: 'تم إرسال الرد!', ref: 'مرجع', msgNo: 'رقم', replyToRef: 'رد على المرجع', msgNumber: 'رسالة رقم', new: 'جديد', delete: 'حذف', newMessage: '+ رسالة جديدة', selectToView: 'اختر رسالة للعرض', monitor: 'مراقب', systemData: 'بيانات النظام', resetTable: 'إعادة تعيين الجدول', debug: 'تصحيح', db: 'قاعدة', sensitivePoints: 'نقاط حساسة', productVersionTable: 'جدول الإصدارات في تبويب التحديثات' },
+    system: { systemLabel: 'النظام', selectAction: 'اختر إجراء من الشريط الأيمن', users: 'المستخدمون', buildMessages: 'سجل البناء', schedule: 'טבלאות ונתונים', pr: 'العلاقات العامة', publishedDate: 'تاريخ النشر:', reset: 'إعادة تعيين', saved: 'تم الحفظ', records: 'سجلات', scheduleSubject: 'الموضوع', schedulePriceUSD: 'السعر\n[$]', schedulePeriod: 'الفترة\n[شهر]', scheduleNotes: 'ملاحظات', clear: 'مسح', pause: 'إيقاف مؤقت', resume: 'استئناف', active: '● نشط', paused: 'متوقف مؤقتاً', lines: 'سطور', filter: 'تصفية', refresh: 'تحديث', loading: 'جارٍ التحميل...', loadingBuild: 'تحميل بيانات البناء...', error: 'خطأ', noBuildData: 'لا بيانات. شغّل Release_KeyClick.bat', networkError: 'خطأ في الشبكة', adminButton: 'النظام', generalGroup: 'عام', colName: 'الاسم', colCurrency: 'العملة', colCreated: 'تاريخ الإنشاء', colActive: 'نشط', colAppInstalled: 'التطبيق', colLicenceType: 'نوع الترخيص', colSystemForce: 'وضع النظام', distributionDay: 'يوم التوزيع X', messages: 'الرسائل', send: 'إرسال', sent: 'تم!', reply: 'رد', noMessages: 'لا رسائل', replySent: 'تم إرسال الرد!', ref: 'مرجع', msgNo: 'رقم', replyToRef: 'رد على المرجع', msgNumber: 'رسالة رقم', new: 'جديد', delete: 'حذف', newMessage: '+ رسالة جديدة', selectToView: 'اختر رسالة للعرض', monitor: 'مراقب', systemData: 'بيانات النظام', resetTable: 'إعادة تعيين الجدول', debug: 'تصحيح', db: 'قاعدة', sensitivePoints: 'نقاط حساسة', productVersionTable: 'جدول الإصدارات في تبويب التحديثات' },
     currencyNames: { ILS: 'شيكل', USD: 'دولار', GBP: 'جنيه', EUR: 'يورو', RUB: 'روبل', JPY: 'ين', SAR: 'ريال', CNY: 'يوان', INR: 'روبية' },
     updates: { colDate: 'التاريخ والوقت', colProduct: 'المنتج', colVersion: 'الإصدار', colTitle: 'العنوان', productKeyClick: 'KeyClick موقع', productMFinance: 'M Finance ميزانية المنزل' },
     reminders: { loginRequired: 'تسجيل الدخول مطلوب لعرض التذكيرات', titlePh: 'عنوان التذكير', timePh: 'الوقت', add: '+ إضافة', noReminders: 'لا توجد تذكيرات' } },
   { code: 'zh', flag: 'סין',     name: '中文',      welcome: '欢迎',
     menu: ['反馈','更新','消息','提醒','银行服务','个人页面'],
-    card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件', run: '运行', videos: '视频', guide: '指南', ok: '确定', msgAlreadyInstalled: '已安装\n无需重新安装', msgDownloading: '正在下载安装文件', msgInstallComplete: '保存并运行文件\n以完成安装', msgDownloadError: '下载错误\n请重试', msgNotInstalled: '未安装\n请点击安装', mFinance: 'M Finance', msgExists: '该用户已注册\n使用这些信息', msgUpdated: '信息更新成功', msgRegistered: '注册完成' },
+    card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件', run: '运行', videos: '视频', guide: '指南', ok: '确定', msgAlreadyInstalled: '已安装\n无需重新安装', msgDownloading: '正在下载安装文件', msgInstallComplete: '保存并运行文件\n以完成安装', msgDownloadError: '下载错误\n请重试', msgNotInstalled: '未安装\n请点击安装', mFinance: 'M Finance', msgExists: '该用户已注册\n使用这些信息', msgUpdated: '信息更新成功', msgRegistered: '注册完成', existingCustomer: '现有客户', newCustomer: '新客户', notRecognized: '未找到客户。点击注册', msgSelectPlan: '请在个人页面选择套餐', infoServices: '信息服务', guidesAndVideos: '指南与视频' },
     profile: { fullName: '全名', email: '邮箱', ip: 'IP', language: '语言', country: '国家', plan: '套餐', planStart: '套餐开始', planEnd: '套餐结束', unlimited: '无限制', comingSoon: '即将推出', choosePlan: '选择套餐', close: '✕ 关闭', loginRequired: '需要登录', login: '登录', products: '产品', change: '更改',
       price: '价格', changePlan: '更改套餐', planName: '名称', planFrom: '从', planTo: '至', back: '返回', currencyLocal: '¥', free: '免费',       planNames: { System_Free_Run: '试运行', User_Trial: '试用', User_VIP_Free: 'VIP', System_Owner: '系统', User_Monthly: '每月', User_Annual: '每年', User_One_Time: '单次', System_Suspended_NonPayment: '停用', User_Cancelled: '已取消' } },
     feedback: { customerRelations: '客户关系', systemMessage: '系统消息', respectfully: '此致敬礼,', rating: '评分', ratingWebsite: '网站', ratingBudget: '家庭预算管理', userMessage: '用户消息', date: '日期:', title: '标题:', from: '发件人:', systemReply: '系统回复' },
-    system: { systemLabel: '系统', selectAction: '从右侧栏选择操作', users: '用户', buildMessages: '构建日志', schedule: '计划与定价', pr: '公关', publishedDate: '发布日期:', reset: '重置', saved: '已保存', records: '条记录', scheduleSubject: '主题', schedulePriceUSD: '价格\n[$]', schedulePeriod: '周期\n[月]', scheduleNotes: '备注', clear: '清除', pause: '暂停', resume: '继续', active: '● 活跃', paused: '已暂停', lines: '行', filter: '筛选', refresh: '刷新', loading: '加载中...', loadingBuild: '正在加载构建数据...', error: '错误', noBuildData: '无构建数据。请运行 Release_KeyClick.bat', networkError: '网络错误', adminButton: '系统管理', generalGroup: '常规', colName: '姓名', colCurrency: '货币', colCreated: '创建时间', colActive: '已激活', colAppInstalled: '应用程序', colLicenceType: '许可证类型', colSystemForce: '系统模式', distributionDay: '分发日X', messages: '消息', send: '发送', sent: '已发送!', reply: '回复', noMessages: '无消息', replySent: '回复已发送!', ref: '参考', msgNo: '编号', replyToRef: '回复参考', msgNumber: '消息编号', new: '新', delete: '删除', newMessage: '+ 新消息', selectToView: '选择消息以查看', monitor: '监控', systemData: '系统数据', resetTable: '重置表格', debug: '调试', db: 'DB', sensitivePoints: '敏感点', productVersionTable: '更新标签中的产品版本表' },
+    system: { systemLabel: '系统', selectAction: '从右侧栏选择操作', users: '用户', buildMessages: '构建日志', schedule: 'טבלאות ונתונים', pr: '公关', publishedDate: '发布日期:', reset: '重置', saved: '已保存', records: '条记录', scheduleSubject: '主题', schedulePriceUSD: '价格\n[$]', schedulePeriod: '周期\n[月]', scheduleNotes: '备注', clear: '清除', pause: '暂停', resume: '继续', active: '● 活跃', paused: '已暂停', lines: '行', filter: '筛选', refresh: '刷新', loading: '加载中...', loadingBuild: '正在加载构建数据...', error: '错误', noBuildData: '无构建数据。请运行 Release_KeyClick.bat', networkError: '网络错误', adminButton: '系统管理', generalGroup: '常规', colName: '姓名', colCurrency: '货币', colCreated: '创建时间', colActive: '已激活', colAppInstalled: '应用程序', colLicenceType: '许可证类型', colSystemForce: '系统模式', distributionDay: '分发日X', messages: '消息', send: '发送', sent: '已发送!', reply: '回复', noMessages: '无消息', replySent: '回复已发送!', ref: '参考', msgNo: '编号', replyToRef: '回复参考', msgNumber: '消息编号', new: '新', delete: '删除', newMessage: '+ 新消息', selectToView: '选择消息以查看', monitor: '监控', systemData: '系统数据', resetTable: '重置表格', debug: '调试', db: 'DB', sensitivePoints: '敏感点', productVersionTable: '更新标签中的产品版本表' },
     currencyNames: { ILS: '谢克尔', USD: '美元', GBP: '英镑', EUR: '欧元', RUB: '卢布', JPY: '日元', SAR: '里亚尔', CNY: '人民币', INR: '卢比' },
     updates: { colDate: '日期与时间', colProduct: '产品', colVersion: '版本', colTitle: '标题', productKeyClick: 'KeyClick 网站', productMFinance: 'M Finance 家庭预算' },
     reminders: { loginRequired: '需要登录才能查看提醒', titlePh: '提醒标题', timePh: '时间', add: '+ 添加', noReminders: '暂无提醒' } },
   { code: 'it', flag: 'איטליה',  name: 'Italiano', welcome: 'Benvenuto',
     menu: ['Feedback','Aggiornamenti','Messaggi','Promemoria','Servizi bancari','Pagina personale'],
-    card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida', run: 'Avvia', videos: 'Video', guide: 'Guida', ok: 'OK', msgAlreadyInstalled: 'Già installato\nNessuna reinstallazione necessaria', msgDownloading: 'Download del file di installazione', msgInstallComplete: 'Salva ed esegui il file\nper completare l\'installazione', msgDownloadError: 'Errore di download\nRiprova', msgNotInstalled: 'Non installato\nFai clic su Installa', mFinance: 'M Finance', msgExists: 'Utente già registrato\ncon questi dati', msgUpdated: 'Dati aggiornati con successo', msgRegistered: 'Registrazione completata' },
+    card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida', run: 'Avvia', videos: 'Video', guide: 'Guida', ok: 'OK', msgAlreadyInstalled: 'Già installato\nNessuna reinstallazione necessaria', msgDownloading: 'Download del file di installazione', msgInstallComplete: 'Salva ed esegui il file\nper completare l\'installazione', msgDownloadError: 'Errore di download\nRiprova', msgNotInstalled: 'Non installato\nFai clic su Installa', mFinance: 'M Finance', msgExists: 'Utente già registrato\ncon questi dati', msgUpdated: 'Dati aggiornati con successo', msgRegistered: 'Registrazione completata', existingCustomer: 'Cliente esistente', newCustomer: 'Nuovo cliente', notRecognized: 'Cliente non trovato. Clicca per registrarti', msgSelectPlan: 'Seleziona un piano nella tua pagina personale', infoServices: 'Servizi informativi', guidesAndVideos: 'Guide e Video' },
     profile: { fullName: 'Nome completo', email: 'Email', ip: 'IP', language: 'Lingua', country: 'Paese', plan: 'Piano', planStart: 'Inizio piano', planEnd: 'Fine piano', unlimited: 'Illimitato', comingSoon: 'Prossimamente', choosePlan: 'Scegli piano', close: '✕ Chiudi', loginRequired: 'Accesso richiesto', login: 'Accedi', products: 'Prodotti', change: 'Modifica',
       price: 'Prezzo', changePlan: 'Cambia piano', planName: 'Nome', planFrom: 'Da', planTo: 'A', back: 'Indietro', currencyLocal: '€', free: 'Gratuito',       planNames: { System_Free_Run: 'Lancio', User_Trial: 'Prova', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensile', User_Annual: 'Annuale', User_One_Time: 'Singolo', System_Suspended_NonPayment: 'Sospeso', User_Cancelled: 'Annullato' } },
     feedback: { customerRelations: 'Relazioni clienti', systemMessage: 'Messaggio di sistema', respectfully: 'Cordiali saluti,', rating: 'Valutazione', ratingWebsite: 'Sito web', ratingBudget: 'Gestione del budget familiare', userMessage: 'Messaggio utente', date: 'Data:', title: 'Titolo:', from: 'Da:', systemReply: 'Risposta di sistema' },
-    system: { systemLabel: 'Sistema', selectAction: 'Seleziona azione dalla barra destra', users: 'Utenti', buildMessages: 'Registro di build', schedule: 'Pianificazione e prezzi', pr: 'RP', publishedDate: 'Pubblicato il:', reset: 'Reimposta', saved: 'Salvato', records: 'record', scheduleSubject: 'Oggetto', schedulePriceUSD: 'Prezzo\n[$]', schedulePeriod: 'Periodo\n[mesi]', scheduleNotes: 'Note', clear: 'Cancella', pause: 'Pausa', resume: 'Riprendi', active: '● Attivo', paused: 'In pausa', lines: 'righe', filter: 'Filtra', refresh: 'Aggiorna', loading: 'Caricamento...', loadingBuild: 'Caricamento dati di build...', error: 'Errore', noBuildData: 'Nessun dato. Eseguire Release_KeyClick.bat', networkError: 'Errore di rete', adminButton: 'Area di sistema', generalGroup: 'Generale', colName: 'Nome', colCurrency: 'Valuta', colCreated: 'Creato', colActive: 'Attivo', colAppInstalled: 'App', colLicenceType: 'Tipo di licenza', colSystemForce: 'Modalità sistema', distributionDay: 'Giorno di distribuzione X', messages: 'Messaggi', send: 'Invia', sent: 'Inviato!', reply: 'Rispondi', noMessages: 'Nessun messaggio', replySent: 'Risposta inviata!', ref: 'Rif.', msgNo: 'N°', replyToRef: 'Risposta a rif.', msgNumber: 'Messaggio N°', new: 'Nuovo', delete: 'Elimina', newMessage: '+ Nuovo messaggio', selectToView: 'Seleziona un messaggio', monitor: 'Monitor', systemData: 'Dati di sistema', resetTable: 'Reimposta tabella', debug: 'Debug', db: 'DB', sensitivePoints: 'Punti sensibili', productVersionTable: 'Tabella versioni (scheda aggiornamenti)' },
+    system: { systemLabel: 'Sistema', selectAction: 'Seleziona azione dalla barra destra', users: 'Utenti', buildMessages: 'Registro di build', schedule: 'טבלאות ונתונים', pr: 'RP', publishedDate: 'Pubblicato il:', reset: 'Reimposta', saved: 'Salvato', records: 'record', scheduleSubject: 'Oggetto', schedulePriceUSD: 'Prezzo\n[$]', schedulePeriod: 'Periodo\n[mesi]', scheduleNotes: 'Note', clear: 'Cancella', pause: 'Pausa', resume: 'Riprendi', active: '● Attivo', paused: 'In pausa', lines: 'righe', filter: 'Filtra', refresh: 'Aggiorna', loading: 'Caricamento...', loadingBuild: 'Caricamento dati di build...', error: 'Errore', noBuildData: 'Nessun dato. Eseguire Release_KeyClick.bat', networkError: 'Errore di rete', adminButton: 'Area di sistema', generalGroup: 'Generale', colName: 'Nome', colCurrency: 'Valuta', colCreated: 'Creato', colActive: 'Attivo', colAppInstalled: 'App', colLicenceType: 'Tipo di licenza', colSystemForce: 'Modalità sistema', distributionDay: 'Giorno di distribuzione X', messages: 'Messaggi', send: 'Invia', sent: 'Inviato!', reply: 'Rispondi', noMessages: 'Nessun messaggio', replySent: 'Risposta inviata!', ref: 'Rif.', msgNo: 'N°', replyToRef: 'Risposta a rif.', msgNumber: 'Messaggio N°', new: 'Nuovo', delete: 'Elimina', newMessage: '+ Nuovo messaggio', selectToView: 'Seleziona un messaggio', monitor: 'Monitor', systemData: 'Dati di sistema', resetTable: 'Reimposta tabella', debug: 'Debug', db: 'DB', sensitivePoints: 'Punti sensibili', productVersionTable: 'Tabella versioni (scheda aggiornamenti)' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollaro', GBP: 'Sterlina', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
     updates: { colDate: 'Data e ora', colProduct: 'Prodotto', colVersion: 'Versione', colTitle: 'Titolo', productKeyClick: 'KeyClick Sito web', productMFinance: 'M Finance Gestione budget' },
     reminders: { loginRequired: 'Accesso richiesto per i promemoria', titlePh: 'Titolo promemoria', timePh: 'Ora', add: '+ Aggiungi', noReminders: 'Nessun promemoria' } },
   { code: 'hi', flag: 'הודו',    name: 'हिंदी',     welcome: 'स्वागत है',
     menu: ['फीडबैक','अपडेट','संदेश','अनुस्मारक','बैंकिंग सेवाएं','व्यक्तिगत पृष्ठ'],
-    card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें', run: 'चलाएं', videos: 'वीडियो', guide: 'मार्गदर्शिका', ok: 'ठीक है', msgAlreadyInstalled: 'पहले से इंस्टॉल है\nपुनः इंस्टॉल की आवश्यकता नहीं', msgDownloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है', msgInstallComplete: 'फ़ाइल सहेजें और चलाएं\nइंस्टॉलेशन पूरा करने के लिए', msgDownloadError: 'डाउनलोड त्रुटि\nपुनः प्रयास करें', msgNotInstalled: 'इंस्टॉल नहीं है\nकृपया इंस्टॉल पर क्लिक करें', mFinance: 'M Finance', msgExists: 'यह उपयोगकर्ता पहले से पंजीकृत है\nइन विवरणों के साथ', msgUpdated: 'विवरण सफलतापूर्वक अपडेट किए गए', msgRegistered: 'पंजीकरण पूरा हो गया' },
+    card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें', run: 'चलाएं', videos: 'वीडियो', guide: 'मार्गदर्शिका', ok: 'ठीक है', msgAlreadyInstalled: 'पहले से इंस्टॉल है\nपुनः इंस्टॉल की आवश्यकता नहीं', msgDownloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है', msgInstallComplete: 'फ़ाइल सहेजें और चलाएं\nइंस्टॉलेशन पूरा करने के लिए', msgDownloadError: 'डाउनलोड त्रुटि\nपुनः प्रयास करें', msgNotInstalled: 'इंस्टॉल नहीं है\nकृपया इंस्टॉल पर क्लिक करें', mFinance: 'M Finance', msgExists: 'यह उपयोगकर्ता पहले से पंजीकृत है\nइन विवरणों के साथ', msgUpdated: 'विवरण सफलतापूर्वक अपडेट किए गए', msgRegistered: 'पंजीकरण पूरा हो गया', existingCustomer: 'मौजूदा ग्राहक', newCustomer: 'नया ग्राहक', notRecognized: 'ग्राहक नहीं मिला। पंजीकरण के लिए क्लिक करें', msgSelectPlan: 'कृपया अपने व्यक्तिगत पृष्ठ पर एक योजना चुनें', infoServices: 'सूचना सेवाएं', guidesAndVideos: 'गाइड और वीडियो' },
     profile: { fullName: 'पूरा नाम', email: 'ईमेल', ip: 'IP', language: 'भाषा', country: 'देश', plan: 'योजना', planStart: 'योजना शुरू', planEnd: 'योजना समाप्त', unlimited: 'असीमित', comingSoon: 'जल्द आ रहा है', choosePlan: 'योजना चुनें', close: '✕ बंद करें', loginRequired: 'लॉगिन आवश्यक है', login: 'लॉग इन', products: 'उत्पाद', change: 'बदलें',
       price: 'मूल्य', changePlan: 'योजना बदलें', planName: 'नाम', planFrom: 'से', planTo: 'तक', back: 'वापस', currencyLocal: '₹', free: 'मुफ्त',       planNames: { System_Free_Run: 'परीक्षण रन', User_Trial: 'परीक्षण', User_VIP_Free: 'VIP', System_Owner: 'सिस्टम', User_Monthly: 'मासिक', User_Annual: 'वार्षिक', User_One_Time: 'एकल', System_Suspended_NonPayment: 'निलंबित', User_Cancelled: 'रद्द' } },
     feedback: { customerRelations: 'ग्राहक सेवा', systemMessage: 'सिस्टम संदेश', respectfully: 'सादर,', rating: 'रेटिंग', ratingWebsite: 'वेबसाइट', ratingBudget: 'गृह बजट प्रबंधन', userMessage: 'उपयोगकर्ता संदेश', date: 'तारीख:', title: 'शीर्षक:', from: 'से:', systemReply: 'सिस्टम उत्तर' },
-    system: { systemLabel: 'सिस्टम', selectAction: 'दाहिनी बार से क्रिया चुनें', users: 'उपयोगकर्ता', buildMessages: 'बिल्ड लॉग', schedule: 'शेड्यूल और मूल्य', pr: 'जनसंपर्क', publishedDate: 'प्रकाशन तिथि:', reset: 'रीसेट', saved: 'सहेजा', records: 'रिकॉर्ड', scheduleSubject: 'विषय', schedulePriceUSD: 'मूल्य\n[$]', schedulePeriod: 'अवधि\n[माह]', scheduleNotes: 'नोट्स', clear: 'साफ़ करें', pause: 'रोकें', resume: 'जारी रखें', active: '● सक्रिय', paused: 'रुका हुआ', lines: 'पंक्तियाँ', filter: 'फ़िल्टर', refresh: 'ताज़ा करें', loading: 'लोड हो रहा है...', loadingBuild: 'बिल्ड डेटा लोड हो रहा है...', error: 'त्रुटि', noBuildData: 'कोई डेटा नहीं। Release_KeyClick.bat चलाएं', networkError: 'नेटवर्क त्रुटि', adminButton: 'सिस्टम उपयोग', generalGroup: 'सामान्य', colName: 'नाम', colCurrency: 'मुद्रा', colCreated: 'निर्माण तिथि', colActive: 'सक्रिय', colAppInstalled: 'ऐप', colLicenceType: 'लाइसेंस प्रकार', colSystemForce: 'सिस्टम मोड', distributionDay: 'वितरण दिवस X', messages: 'संदेश', send: 'भेजें', sent: 'भेजा!', reply: 'उत्तर', noMessages: 'कोई संदेश नहीं', replySent: 'उत्तर भेजा!', ref: 'संदर्भ', msgNo: 'क्र.', replyToRef: 'संदर्भ का उत्तर', msgNumber: 'संदेश क्र.', new: 'नया', delete: 'हटाएं', newMessage: '+ नया संदेश', selectToView: 'देखने के लिए संदेश चुनें', monitor: 'मॉनिटर', systemData: 'सिस्टम डेटा', resetTable: 'टेबल रीसेट', debug: 'डीबग', db: 'DB', sensitivePoints: 'संवेदनशील बिंदु', productVersionTable: 'अपडेट टैब में संस्करण तालिका' },
+    system: { systemLabel: 'सिस्टम', selectAction: 'दाहिनी बार से क्रिया चुनें', users: 'उपयोगकर्ता', buildMessages: 'बिल्ड लॉग', schedule: 'טבלאות ונתונים', pr: 'जनसंपर्क', publishedDate: 'प्रकाशन तिथि:', reset: 'रीसेट', saved: 'सहेजा', records: 'रिकॉर्ड', scheduleSubject: 'विषय', schedulePriceUSD: 'मूल्य\n[$]', schedulePeriod: 'अवधि\n[माह]', scheduleNotes: 'नोट्स', clear: 'साफ़ करें', pause: 'रोकें', resume: 'जारी रखें', active: '● सक्रिय', paused: 'रुका हुआ', lines: 'पंक्तियाँ', filter: 'फ़िल्टर', refresh: 'ताज़ा करें', loading: 'लोड हो रहा है...', loadingBuild: 'बिल्ड डेटा लोड हो रहा है...', error: 'त्रुटि', noBuildData: 'कोई डेटा नहीं। Release_KeyClick.bat चलाएं', networkError: 'नेटवर्क त्रुटि', adminButton: 'सिस्टम उपयोग', generalGroup: 'सामान्य', colName: 'नाम', colCurrency: 'मुद्रा', colCreated: 'निर्माण तिथि', colActive: 'सक्रिय', colAppInstalled: 'ऐप', colLicenceType: 'लाइसेंस प्रकार', colSystemForce: 'सिस्टम मोड', distributionDay: 'वितरण दिवस X', messages: 'संदेश', send: 'भेजें', sent: 'भेजा!', reply: 'उत्तर', noMessages: 'कोई संदेश नहीं', replySent: 'उत्तर भेजा!', ref: 'संदर्भ', msgNo: 'क्र.', replyToRef: 'संदर्भ का उत्तर', msgNumber: 'संदेश क्र.', new: 'नया', delete: 'हटाएं', newMessage: '+ नया संदेश', selectToView: 'देखने के लिए संदेश चुनें', monitor: 'मॉनिटर', systemData: 'सिस्टम डेटा', resetTable: 'टेबल रीसेट', debug: 'डीबग', db: 'DB', sensitivePoints: 'संवेदनशील बिंदु', productVersionTable: 'अपडेट टैब में संस्करण तालिका' },
     currencyNames: { ILS: 'शेकेल', USD: 'डॉलर', GBP: 'पाउंड', EUR: 'यूरो', RUB: 'रूबल', JPY: 'येन', SAR: 'रियाल', CNY: 'युआन', INR: 'रुपया' },
     updates: { colDate: 'दिनांक और समय', colProduct: 'उत्पाद', colVersion: 'संस्करण', colTitle: 'शीर्षक', productKeyClick: 'KeyClick वेबसाइट', productMFinance: 'M Finance घरेलू बजट' },
     reminders: { loginRequired: 'अनुस्मारक देखने के लिए लॉगिन आवश्यक है', titlePh: 'अनुस्मारक शीर्षक', timePh: 'समय', add: '+ जोड़ें', noReminders: 'कोई अनुस्मारक नहीं' } },
 ]
 
-type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null }
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null }
 
 const _txCache = new Map<string, string>()
 async function _txChunk(chunk: string, lc: string): Promise<string> {
@@ -167,6 +167,7 @@ export default function Home() {
   const debugEndRef    = useRef<HTMLDivElement>(null)
   const debugPausedRef = useRef(false)
   const debugWinRef    = useRef<Window | null>(null)
+  const mfChainRef     = useRef(false)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
   const [clientIp, setClientIp] = useState('')
   const [activeMfBtn, setActiveMfBtn] = useState<string | null>(null)
@@ -216,6 +217,7 @@ export default function Home() {
         .then(r => r.json())
         .then(d => { if (d.ok && d.user) set_Current_User_Pointer_to_DB(d.user); dbg('installCallback', `DB updated ok=${d.ok}`) })
         .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
+      handleRun()
     }
     const last = Number(localStorage.getItem('kc_last_version_check') || '0')
     const elapsedH = Math.round((Date.now() - last) / 3600000)
@@ -463,7 +465,15 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onClose={() => setActivePage(null)} onLogin={(user) => set_Current_User_Pointer_to_DB(user)} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onOpenDebug={() => {
+            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onClose={() => setActivePage(null)} onLogin={(user) => {
+              set_Current_User_Pointer_to_DB(user)
+              if (mfChainRef.current) {
+                mfChainRef.current = false
+                if (!user.is_active) { setActivePage(null); setPopupMsg({ title: lang.card.title, subtitle: 'M Finance', body: lang.card.msgSelectPlan }); return }
+                if (!user.is_M_Finance_installed) setActivePage('mf-install')
+                else { setActivePage(null); handleRun() }
+              }
+            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -478,54 +488,72 @@ export default function Home() {
               <Image src={`/flags/${lang.code}1.png`} alt={lang.flag} width={55} height={55} />
             </div>
           </div>
-          {lang.menu.map((item, idx) => idx === 2 ? null : (
-            <button key={idx} onClick={() => setActivePage(String(idx) === activePage ? null : String(idx))}
+          {/* 1. מדריכים וסרטונים */}
+          <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '16px auto 10px', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
+            <button onClick={() => setActiveMfBtn(activeMfBtn === 'guide' ? null : 'guide')}
               style={{
-                background: activePage === String(idx) ? '#4a1a6e' : 'none', border: 'none',
-                borderBottom: '1px solid #333', color: activePage === String(idx) ? '#fff' : '#ccc',
-                padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
-                fontSize: '13px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
+                display: 'block', width: '100%', background: activeMfBtn === 'guide' ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
+                border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
+                color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
+                fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3',
               }}
-              onMouseEnter={e => { if (activePage !== String(idx)) e.currentTarget.style.color = '#fff' }}
-              onMouseLeave={e => { if (activePage !== String(idx)) e.currentTarget.style.color = '#ccc' }}
-            >{item}</button>
-          ))}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+            >{lang.card.guidesAndVideos}</button>
+          </div>
 
+          {/* 2. ניהול תקציב בית */}
+          <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '10px auto', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '22px 6px 8px', overflow: 'visible' }}>
+            <div style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 5px', fontSize: '11px', fontWeight: 'bold', color: '#FFD700', whiteSpace: 'nowrap', maxWidth: '116px', overflow: 'hidden', textOverflow: 'ellipsis' }}>M Finance</div>
+            <button onClick={() => { mfChainRef.current = true; setActivePage('mf-login') }}
+              style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.2', fontFamily: 'var(--font-amatic),"Amatic SC",cursive', textShadow: '0 0 8px rgba(255,215,0,0.8), 0 1px 3px rgba(0,0,0,0.9)', letterSpacing: '1px', WebkitTextStroke: '0.6px #FFD700' }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+            >{lang.card.title}</button>
+          </div>
 
+          {/* 3. קשרי לקוחות */}
+          <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '24px auto 10px', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
+            <div style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 5px', fontSize: '11px', fontWeight: 'bold', color: '#FFD700', whiteSpace: 'nowrap', maxWidth: '116px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lang.feedback.customerRelations}</div>
+            {[0, 5].map(idx => (
+              <button key={idx} onClick={() => setActivePage(String(idx) === activePage ? null : String(idx))}
+                style={{
+                  display: 'block', width: '100%', background: activePage === String(idx) ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
+                  border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
+                  color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
+                  fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+              >{lang.menu[idx]}</button>
+            ))}
+          </div>
 
-          <button onClick={() => {
-              if (!Current_User_Pointer_to_DB) {
-                setActivePage('mf-register'); setActiveMfBtn(null)
-              } else if (!Current_User_Pointer_to_DB.is_M_Finance_installed) {
-                setActiveMfBtn('install'); handleInstall()
-              } else {
-                setActiveMfBtn('run'); handleRun()
-              }
-            }}
-            style={{ display: 'block', margin: '6px auto', width: '70px', height: '60px', background: '#003399', border: '1px solid #FFD700', borderRadius: '6px', boxShadow: '0 0 8px rgba(255,215,0,0.4)', color: '#fff', cursor: 'pointer', textAlign: 'center', fontSize: '16px', lineHeight: '1.3' }}>
-            {lang.card.title}
-          </button>
+          {/* 4. שרותי מידע */}
+          <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '24px auto 10px', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
+            <div style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 5px', fontSize: '11px', fontWeight: 'bold', color: '#FFD700', whiteSpace: 'nowrap', maxWidth: '116px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{lang.card.infoServices}</div>
+            {[1, 3].map(idx => (
+              <button key={idx} onClick={() => setActivePage(String(idx) === activePage ? null : String(idx))}
+                style={{
+                  display: 'block', width: '100%', background: activePage === String(idx) ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
+                  border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
+                  color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
+                  fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+              >{lang.menu[idx]}</button>
+            ))}
+          </div>
 
-          <button onClick={() => setActiveMfBtn(activeMfBtn === 'videos' ? null : 'videos')}
-            style={{
-              background: activeMfBtn === 'videos' ? '#4a1a6e' : 'none', border: 'none',
-              borderTop: '1px solid #333', color: activeMfBtn === 'videos' ? '#fff' : '#ccc',
-              padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
-              fontSize: '13px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
-            }}
-            onMouseEnter={e => { if (activeMfBtn !== 'videos') e.currentTarget.style.color = '#fff' }}
-            onMouseLeave={e => { if (activeMfBtn !== 'videos') e.currentTarget.style.color = '#ccc' }}
-          >{lang.card.videos}</button>
-          <button onClick={() => setActiveMfBtn(activeMfBtn === 'guide' ? null : 'guide')}
-            style={{
-              background: activeMfBtn === 'guide' ? '#4a1a6e' : 'none', border: 'none',
-              borderTop: '1px solid #333', borderBottom: '1px solid #333', color: activeMfBtn === 'guide' ? '#fff' : '#ccc',
-              padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
-              fontSize: '13px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
-            }}
-            onMouseEnter={e => { if (activeMfBtn !== 'guide') e.currentTarget.style.color = '#fff' }}
-            onMouseLeave={e => { if (activeMfBtn !== 'guide') e.currentTarget.style.color = '#ccc' }}
-          >{lang.card.guide}</button>
+          {/* 5. שרותים בנקאיים */}
+          <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '10px auto', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
+            <button onClick={() => setActivePage(activePage === '4' ? null : '4')}
+              style={{ display: 'block', width: '100%', background: activePage === '4' ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '15px' : '13px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3' }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+            >{lang.menu[4]}</button>
+          </div>
 
           <div style={{ flex: 1 }} />
           <button onClick={() => {
@@ -567,7 +595,18 @@ type FeedbackMessage = { id: number; user_id: number | null; user_name: string |
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests'>('none')
+  const [isScanning, setIsScanning] = useState(false)
+  const [weightedRows, setWeightedRows] = useState<{ weight: string; metric: string; explanation: string }[]>([
+    { weight: '20', metric: 'לקוח רשום',        explanation: 'נרשם למערכת' },
+    { weight: '10', metric: 'לקוח פעיל',        explanation: 'פעיל' },
+    { weight: '30', metric: 'אפליקציה מותקנת',  explanation: 'ניהול תקציב בית' },
+    { weight: '30', metric: 'תכנית תקינה',      explanation: 'תכנית רכישה ותשלומים תקינים' },
+    { weight: '5',  metric: 'משוב חיובי',       explanation: 'כל המשובים חיוביים' },
+    { weight: '5',  metric: 'מתעניין',          explanation: 'מרבה להתכתב (יותר מ 3 לחודש)' },
+  ])
   const [activeMfBtnTest, setActiveMfBtnTest] = useState<string | null>(null)
+  const [usersEditMode, setUsersEditMode] = useState(false)
+  const [pendingUserEdits, setPendingUserEdits] = useState<Record<string, Record<string, unknown>>>({})
   const [debugOpen, setDebugOpen] = useState(false)
   const [buildOpen, setBuildOpen] = useState(false)
   const [prSaved, setPrSaved] = useState(false)
@@ -851,33 +890,9 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                   {lang.card.register}
                 </button>
-                <button onClick={async () => {
-                    const res = await fetch('/api/current-user', { method: 'DELETE' })
-                    const d = await res.json()
-                    if (d.ok) { onUserUpdate(null as unknown as UserRecord); onNavigate('mf-register'); onDbg('tests.unregister', 'user deleted') }
-                  }}
-                  style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
-                  בטל הרשמה
-                </button>
                 <button onClick={() => { setActiveMfBtnTest(activeMfBtnTest === 'install' ? null : 'install'); onInstall() }}
                   style={{ background: activeMfBtnTest === 'install' ? '#4a1a6e' : '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                   {lang.card.install}
-                </button>
-                <button onClick={async () => {
-                    const res = await fetch('/api/current-user', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field: 'is_m_finance_installed', value: false }) })
-                    const d = await res.json()
-                    if (d.ok && d.user) {
-                      onUserUpdate(d.user)
-                      onDbg('tests.uninstall', 'is_M_Finance_installed=false => launching mfinance://uninstall')
-                      const iframe = document.createElement('iframe')
-                      iframe.style.display = 'none'
-                      iframe.src = 'mfinance://uninstall'
-                      document.body.appendChild(iframe)
-                      setTimeout(() => { try { document.body.removeChild(iframe) } catch { /* */ } }, 3000)
-                    }
-                  }}
-                  style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
-                  בטל התקנה
                 </button>
                 <button onClick={() => { onNavigate('mf-login'); setActiveMfBtnTest(null) }}
                   style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
@@ -922,11 +937,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <table style={{ borderCollapse: 'collapse', fontSize: 13, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
-                    <th colSpan={8} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
+                    <th colSpan={9} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
                     <th colSpan={6} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
-                    {['ID', lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.system.colCurrency, 'IP', 'Last IP'].map(h => (
+                    {['ID', 'דרוג משוקלל 0-10', lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.system.colCurrency, 'IP', 'Last IP'].map(h => (
                       <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
                     ))}
                     {[lang.system.colActive, lang.system.colAppInstalled, lang.profile.planFrom, lang.profile.planTo, lang.system.colLicenceType, lang.system.colSystemForce].map(h => (
@@ -937,74 +952,106 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                 <tbody>
                   {users.map((u, idx) => {
                     const created = u.created_at ? String(u.created_at).slice(0, 10) : ''
+                    const rowBg = idx % 2 === 0 ? '#fff' : '#f5f5fc'
                     return (
-                      <tr key={String(u.id)} style={{ background: idx % 2 === 0 ? '#fff' : '#f5f5fc' }}>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.id ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{created}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.name ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.email ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_active ? '✓' : ''}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.is_M_Finance_installed ? '✓' : ''}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
-                        <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
-                          <select
-                            value={String(u.system_force ?? 'User')}
-                            onChange={e => {
-                              const systemForce = e.target.value
-                              onDbg('dropdown', `userId=${u.id} system_force changed → ${systemForce}`)
-                              setPendingForce(prev => ({ ...prev, [String(u.id)]: systemForce }))
-                              setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, system_force: systemForce === 'User' ? null : systemForce } : usr))
-                              onDbg('dropdown', `pendingForce updated userId=${u.id}`)
-                            }}
-                            style={{ fontSize: 12, border: '1px solid #a0a8c0', borderRadius: 3, padding: '1px 2px', background: u.system_force && u.system_force !== 'User' ? '#fff3e0' : '#fff', cursor: 'pointer' }}
-                          >
-                            <option value="User">User</option>
-                            <option value="System_Free_Run">{lang.profile.planNames.System_Free_Run}</option>
-                            <option value="User_VIP_Free">VIP</option>
-                            <option value="System_Owner">{lang.profile.planNames.System_Owner}</option>
-                          </select>
-                        </td>
-                      </tr>
+                      <React.Fragment key={String(u.id)}>
+                        <tr style={{ background: rowBg }}>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.id ?? '')}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                            {usersEditMode
+                              ? <input type="number" min={0} max={10} value={u.weighted_score ?? 10} onChange={e => { const v = Math.min(10, Math.max(0, Number(e.target.value))); setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, weighted_score: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], weighted_score: v } })) }} style={{ fontSize: 12, width: 40, textAlign: 'center', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '1px 2px' }} />
+                              : <span style={{ fontWeight: 'bold', color: `hsl(${(u.weighted_score ?? 10) * 12}, 80%, 35%)` }}>{u.weighted_score ?? 10}</span>}
+                          </td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{created}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>
+                            {usersEditMode
+                              ? <input value={String(u.name ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, name: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], name: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '100px', backgroundColor: 'yellow' }} />
+                              : String(u.name ?? '')}
+                          </td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>
+                            {usersEditMode
+                              ? <input value={String(u.email ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, email: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], email: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '130px', backgroundColor: 'yellow' }} />
+                              : String(u.email ?? '')}
+                          </td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                            {usersEditMode
+                              ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_active} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_active: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_active: v } })) }} /></span>
+                              : u.is_active ? '✓' : ''}
+                          </td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                            {usersEditMode
+                              ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_M_Finance_installed} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_M_Finance_installed: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_m_finance_installed: v } })) }} /></span>
+                              : u.is_M_Finance_installed ? '✓' : ''}
+                          </td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                            <select
+                              value={String(u.system_force ?? 'User')}
+                              onChange={e => {
+                                const systemForce = e.target.value
+                                onDbg('dropdown', `userId=${u.id} system_force changed → ${systemForce}`)
+                                setPendingForce(prev => ({ ...prev, [String(u.id)]: systemForce }))
+                                setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, system_force: systemForce === 'User' ? null : systemForce } : usr))
+                                onDbg('dropdown', `pendingForce updated userId=${u.id}`)
+                              }}
+                              style={{ fontSize: 12, border: '1px solid #a0a8c0', borderRadius: 3, padding: '1px 2px', background: u.system_force && u.system_force !== 'User' ? '#fff3e0' : '#fff', cursor: 'pointer', color: 'red', fontWeight: 'bold' }}
+                            >
+                              <option value="User">User</option>
+                              <option value="System_Free_Run">{lang.profile.planNames.System_Free_Run}</option>
+                              <option value="User_VIP_Free">VIP</option>
+                              <option value="System_Owner">{lang.profile.planNames.System_Owner}</option>
+                            </select>
+                          </td>
+                        </tr>
+                        <tr style={{ background: rowBg }}>
+                          <td colSpan={15} style={{ padding: '2px 8px', border: '1px solid #c8cce0', borderTop: 'none' }}>
+                            {usersEditMode
+                              ? <textarea value={String(u.notes ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, notes: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], notes: v } })) }} style={{ fontSize: 11, width: '100%', height: 36, resize: 'vertical', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '2px 4px', boxSizing: 'border-box', direction: 'rtl', textAlign: 'right' }} />
+                              : <div style={{ fontSize: 11, color: '#444', minHeight: 18, padding: '1px 4px', backgroundColor: '#f9f9f9', borderRadius: 3, direction: 'rtl', textAlign: 'right' }}>{String(u.notes ?? '')}</div>}
+                          </td>
+                        </tr>
+                      </React.Fragment>
                     )
                   })}
                 </tbody>
               </table>
             </div>
-            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
+              <button
+                onClick={() => { setUsersEditMode(m => !m); if (usersEditMode) { setPendingUserEdits({}); setPendingForce({}) } }}
+                style={{ background: usersEditMode ? '#cc6600' : '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                עריכה
+              </button>
               <button
                 onClick={async () => {
-                  const entries = Object.entries(pendingForce)
-                  onDbg('update', `click — ${entries.length} changes: ${entries.map(([id, f]) => `user${id}→${f}`).join(', ')}`)
-                  await Promise.all(entries.map(async ([userId, systemForce]) => {
-                    onDbg('update', `sending force-plan userId=${userId} systemForce=${systemForce}`)
+                  const forceEntries = Object.entries(pendingForce)
+                  await Promise.all(forceEntries.map(async ([userId, systemForce]) => {
                     try {
-                      const res = await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) })
-                      const data = await res.json()
-                      onDbg('update', `force-plan response userId=${userId} ok=${data.ok ?? false} error=${data.error ?? 'none'}`)
-                    } catch (e) {
-                      onDbg('update', `force-plan error userId=${userId} err=${String(e)}`)
-                    }
+                      await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) })
+                    } catch { /* */ }
+                  }))
+                  const editEntries = Object.entries(pendingUserEdits)
+                  await Promise.all(editEntries.map(async ([userId, fields]) => {
+                    await Promise.all(Object.entries(fields).map(async ([field, value]) => {
+                      try {
+                        await fetch('/api/system/update-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, field, value }) })
+                      } catch { /* */ }
+                    }))
                   }))
                   setPendingForce({})
-                  onDbg('update', 'fetching current-user to refresh state')
-                  fetch('/api/current-user')
-                    .then(r => r.json())
-                    .then(d => {
-                      onDbg('update', `current-user response id=${d.user?.id ?? 'none'} license=${d.user?.M_Finance_license_type ?? 'none'} system_force=${d.user?.system_force ?? 'none'}`)
-                      if (d.user) { onUserUpdate(d.user); onDbg('update', 'onUserUpdate called — state updated') }
-                    })
-                    .catch(e => onDbg('update', `current-user error err=${String(e)}`))
-                  onDbg('update', 'refreshing users table')
-                  fetch('/api/system/users').then(r => r.json()).then(d => { setUsers(d.users ?? []); onDbg('update', `users table refreshed — ${d.users?.length ?? 0} rows`) }).catch(e => onDbg('update', `users error err=${String(e)}`))
+                  setPendingUserEdits({})
+                  if (Object.keys(pendingUserEdits).length > 0) setUsersEditMode(false)
+                  fetch('/api/current-user').then(r => r.json()).then(d => { if (d.user) onUserUpdate(d.user) }).catch(() => {})
+                  fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
                 }}
-                disabled={Object.keys(pendingForce).length === 0}
-                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: Object.keys(pendingForce).length > 0 ? 'pointer' : 'default', fontWeight: 'bold', opacity: Object.keys(pendingForce).length > 0 ? 1 : 0.4 }}>
+                disabled={Object.keys(pendingForce).length === 0 && Object.keys(pendingUserEdits).length === 0}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 16px', fontSize: 13, fontWeight: 'bold', cursor: (Object.keys(pendingForce).length > 0 || Object.keys(pendingUserEdits).length > 0) ? 'pointer' : 'default', opacity: (Object.keys(pendingForce).length > 0 || Object.keys(pendingUserEdits).length > 0) ? 1 : 0.4 }}>
                 {lang.card.update}
               </button>
             </div>
@@ -1015,7 +1062,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         {view === 'schedule' && (
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <div style={{ width: 'fit-content', minWidth: 500 }}>
-                            <div style={{ marginBottom: 6, display: 'flex', gap: 8, justifyContent: 'flex-end', alignItems: 'baseline' }}>
+                            <div style={{ marginBottom: 6, display: 'flex', gap: 16, justifyContent: 'flex-end', alignItems: 'baseline' }}>
+                <span style={{ fontSize: 15, fontWeight: 'bold', color: '#003399' }}>מחירון ולו״ז</span>
                 <span style={{ fontSize: 16, color: '#003399' }}>M Finance</span>
                 <span style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 20, color: '#003399', fontWeight: 'bold' }}>{lang.card.title}</span>
               </div>
@@ -1084,6 +1132,123 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                 <button onClick={handleUpdate}
                   style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 16px', fontSize: 13, cursor: 'pointer', fontWeight: 'bold' }}>{lang.card.update}</button>
               </div>
+
+              {/* Weighted Score Table */}
+              <div style={{ marginTop: 24, direction: 'rtl' }}>
+                <div style={{ fontSize: 15, fontWeight: 'bold', color: '#003399', marginBottom: 6 }}>דרוג משוקלל</div>
+                <div style={{ border: '2px solid #003399', borderRadius: 3, display: 'inline-block' }}>
+                  <table style={{ borderCollapse: 'collapse', fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ background: '#e8eaf6' }}>
+                        <th style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', width: 70 }}>אחוזים</th>
+                        <th style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', width: 130 }}>מדד</th>
+                        <th style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', width: 220 }}>הסבר</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {weightedRows.map((row, i) => (
+                        <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#f5f5fc' }}>
+                          <td style={{ padding: '1px 2px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                            <input type="text" value={row.weight} onChange={e => setWeightedRows(prev => prev.map((r, j) => j === i ? { ...r, weight: e.target.value } : r))}
+                              style={{ width: '100%', border: 'none', outline: 'none', fontSize: 13, textAlign: 'center', background: 'transparent', boxSizing: 'border-box', padding: '2px 3px' }} />
+                          </td>
+                          <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                            <input type="text" value={row.metric} onChange={e => setWeightedRows(prev => prev.map((r, j) => j === i ? { ...r, metric: e.target.value } : r))}
+                              style={{ width: '100%', border: 'none', outline: 'none', fontSize: 13, textAlign: 'right', background: 'transparent', boxSizing: 'border-box', padding: '2px 3px' }} />
+                          </td>
+                          <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                            <input type="text" value={row.explanation} onChange={e => setWeightedRows(prev => prev.map((r, j) => j === i ? { ...r, explanation: e.target.value } : r))}
+                              style={{ width: '100%', border: 'none', outline: 'none', fontSize: 13, textAlign: 'right', background: 'transparent', boxSizing: 'border-box', padding: '2px 3px' }} />
+                          </td>
+                        </tr>
+                      ))}
+                      <tr style={{ background: '#e8eaf6', fontWeight: 'bold' }}>
+                        <td style={{ padding: '4px 8px', border: '1px solid #a0a8c0', textAlign: 'center', color: '#555', fontSize: 11 }}>
+                          סה״כ משקלות: {weightedRows.reduce((sum, r) => sum + (parseFloat(r.weight) || 0), 0)}%
+                        </td>
+                        <td style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', textAlign: 'center' }}>מספר משוקלל</td>
+                        <td style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', textAlign: 'center' }}>0 – 10</td>
+                      </tr>
+                      <tr>
+                        <td colSpan={3} style={{ padding: '4px 8px', border: '1px solid #a0a8c0' }}>
+                          <div style={{ background: 'linear-gradient(to left, hsl(0,80%,45%), hsl(30,80%,45%), hsl(60,80%,45%), hsl(90,80%,45%), hsl(120,80%,45%))', borderRadius: 4, height: 10, width: '100%' }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#555', marginTop: 2, paddingLeft: 1, paddingRight: 1 }}>
+                            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colSpan={3} style={{ padding: 0, border: '1px solid #a0a8c0' }}>
+                          <div style={{ margin: 6, padding: '6px 10px', border: '1px solid #003399', borderRadius: 4, fontSize: 12, color: '#333', fontFamily: 'monospace', background: '#f0f4ff' }}>
+                            דרוג משוקלל (0–10) = Σ ( מדד_i ∈ &#123;0,1&#125; × משקל_i% ) × 10 / 100
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', direction: 'ltr' }}>
+                  <button
+                    onClick={async () => {
+                      setIsScanning(true)
+                      const isRegular = (u: typeof users[0]) =>
+                        !u.system_force || u.system_force === 'User'
+
+                      const systemUsers = users.filter(u => !isRegular(u))
+                      await Promise.all(systemUsers.map(async u => {
+                        try {
+                          await fetch('/api/system/update-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: u.id, field: 'weighted_score', value: 10 }) })
+                        } catch { /* */ }
+                      }))
+
+                      const allMsgs: { user_id: number | null; rating_site: number | null; rating_budget: number | null; created_at: string }[] =
+                        await fetch('/api/feedback').then(r => r.json()).then(d => d.messages ?? []).catch(() => [])
+
+                      const now = new Date()
+                      const thisMonth = now.getMonth()
+                      const thisYear  = now.getFullYear()
+
+                      const regularUsers = users.filter(u => isRegular(u))
+                      await Promise.all(regularUsers.map(async u => {
+                        const uid = String(u.id)
+                        const userMsgs = allMsgs.filter(m => String(m.user_id) === uid)
+                        const hasNegative = userMsgs.some(m =>
+                          (m.rating_site   !== null && m.rating_site   < 6) ||
+                          (m.rating_budget !== null && m.rating_budget < 6)
+                        )
+                        const msgsThisMonth = userMsgs.filter(m => {
+                          const d = new Date(m.created_at)
+                          return d.getMonth() === thisMonth && d.getFullYear() === thisYear
+                        }).length
+
+                        const today = new Date()
+                        const scores: Record<string, number> = {
+                          'לקוח רשום':       u.email ? 1 : 0,
+                          'לקוח פעיל':       u.is_active ? 1 : 0,
+                          'אפליקציה מותקנת': u.is_M_Finance_installed ? 1 : 0,
+                          'משוב חיובי':      hasNegative ? 0 : 1,
+                          'מתעניין':         msgsThisMonth > 3 ? 1 : 0,
+                          'תכנית תקינה':     (u.plan_end && new Date(u.plan_end) > today) ? 1 : 0,
+                        }
+                        const total = weightedRows.reduce((sum, r) => {
+                          const w = parseFloat(r.weight) || 0
+                          const s = scores[r.metric] ?? 0
+                          return sum + w * s
+                        }, 0)
+                        const score = Math.round(total / 10)
+                        try {
+                          await fetch('/api/system/update-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: u.id, field: 'weighted_score', value: score }) })
+                        } catch { /* */ }
+                      }))
+                      await fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
+                      setIsScanning(false)
+                    }}
+                    style={{ background: isScanning ? '#cc6600' : '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '6px 14px', fontSize: 13, fontWeight: 'bold', cursor: isScanning ? 'wait' : 'pointer', direction: 'rtl', transition: 'background 0.3s' }}>
+                    {isScanning ? 'סורק...' : 'סרוק משתמשים חשב ועדכן דרוג'}
+                  </button>
+                </div>
+              </div>
+
             </div>
           </div>
         )}
@@ -2143,6 +2308,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   return (
@@ -2155,10 +2321,42 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   )
 }
 
+function InstallCard({ lang, onInstall, onRun, onDbg }: { lang: typeof languages[0]; onInstall: () => void; onRun: () => void; onDbg: (func: string, msg: string) => void }) {
+  useEffect(() => {
+    onDbg('InstallCard', 'mount => onInstall()')
+    onInstall()
+  }, [])
+  const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
+  return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f2eef2', direction: dir }}>
+      <div style={{ textAlign: 'center', padding: '32px' }}>
+        <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#003399', marginBottom: '6px' }}>{lang.card.mFinance}</div>
+        <div style={{ fontSize: '15px', color: '#555', marginBottom: '28px', whiteSpace: 'pre-line', lineHeight: '1.7' }}>{lang.card.msgInstallComplete}</div>
+        <button onClick={onRun} style={{ background: '#003399', color: '#FFD700', border: '2px solid #FFD700', borderRadius: '8px', padding: '12px 32px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
+          {lang.card.run}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function handFont(code: string) {
   if (code === 'he') return '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif'
   if (code === 'ru') return 'var(--font-caveat),"Caveat",cursive'
   return 'var(--font-dancing),"Dancing Script",Georgia,serif'
+}
+
+function EyeIcon({ open }: { open: boolean }) {
+  return open ? (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+    </svg>
+  ) : (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  )
 }
 
 function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, onLogin, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
@@ -2198,7 +2396,10 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
   const [savedConf,  setSavedConf]  = useState('')
   const [error,      setError]      = useState('')
   const [done,       setDone]       = useState(false)
-  const [registered, setRegistered] = useState(false)
+  const [registered,       setRegistered]       = useState(false)
+  const [showNotFoundMsg,  setShowNotFoundMsg]  = useState(false)
+  const [showPass,         setShowPass]         = useState(false)
+  const [showConfPass,     setShowConfPass]     = useState(false)
 
   const locked: React.CSSProperties = { background: '#222', color: '#777', cursor: 'default' }
 
@@ -2246,7 +2447,11 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     })
     const data = await res.json()
     onDbg('handleLogin', `res.status=${res.status} res.ok=${res.ok}`)
-    if (!res.ok) { onDbg('handleLogin', `res.ok=false err="${data.error}"`); setError(data.error); return }
+    if (!res.ok) {
+      onDbg('handleLogin', `res.ok=false err="${data.error}" code="${data.code}"`)
+      if (data.code === 'NOT_FOUND') { setShowNotFoundMsg(true); return }
+      setError(data.error); return
+    }
     onDbg('handleLogin', `success user.id=${data.user?.id} email="${data.user?.email}" last_ip="${data.user?.last_ip}" => onLogin => onClose`)
     onLogin(data.user)
     setSavedName('')
@@ -2270,19 +2475,36 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
 
         {phase === 'default' ? (
           <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <input type="text"     placeholder={c.namePh}  value={savedName}  onChange={e => setSavedName(e.target.value)}  style={{ ...regInput, direction: dir }} />
-              <input type="email"    placeholder={c.emailPh} value={savedEmail} onChange={e => setSavedEmail(e.target.value)} style={{ ...regInput }} />
-              <input type="password" placeholder={c.passPh}  value={savedPass}  onChange={e => setSavedPass(e.target.value)}  style={{ ...regInput }} />
+            <div style={{ position: 'relative', border: '2px solid #555', borderRadius: '10px', padding: '16px', paddingTop: '22px', marginBottom: '10px' }}>
+              <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: '#2a2a2a', padding: '0 10px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', direction: dir }}>{c.existingCustomer}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input type="text"     placeholder={c.namePh}  value={savedName}  onChange={e => { setSavedName(e.target.value);  setShowNotFoundMsg(false) }} style={{ ...regInput, direction: dir }} />
+                <input type="email"    placeholder={c.emailPh} value={savedEmail} onChange={e => { setSavedEmail(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput }} />
+                <div style={{ position: 'relative' }}>
+                  <input type={showPass ? 'text' : 'password'} placeholder={c.passPh} value={savedPass} onChange={e => { setSavedPass(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showPass} /></button>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+                <button onClick={handleLogin} style={{ ...regBtn, padding: '5px 18px', fontSize: '13px' }}>{c.login}</button>
+              </div>
+              {error && !showNotFoundMsg && <div style={{ color: '#ff6b6b', fontSize: '13px', marginTop: '8px', textAlign: 'center' }}>{error}</div>}
+              {showNotFoundMsg && (
+                <div onClick={() => setPhase('register')} style={{ marginTop: '10px', padding: '8px 14px', background: '#3a1a00', border: '1px solid #FFD700', borderRadius: '8px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', cursor: 'pointer', direction: dir }}>
+                  {c.notRecognized}
+                </div>
+              )}
             </div>
-            <div style={{ marginTop: '18px', textAlign: 'center', fontFamily: font, color: '#ffffff', fontWeight: 'bold' }}>
-              <div style={{ fontSize: '22px' }}>{c.line1}</div>
-              <div style={{ fontSize: '32px' }}>{c.line2}</div>
+            <div style={{ position: 'relative', border: '2px solid #555', borderRadius: '10px', padding: '14px', paddingTop: '22px', marginBottom: '10px' }}>
+              <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: '#2a2a2a', padding: '0 10px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', direction: dir }}>{c.newCustomer}</div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button onClick={() => setPhase('register')} style={{ ...regBtn, padding: '5px 18px', fontSize: '13px' }}>{c.register}</button>
+              </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-              <button onClick={handleLogin} style={{ ...regBtn }}>{c.login}</button>
+            <div style={{ textAlign: 'center', fontFamily: font, color: '#ffffff', fontWeight: 'bold' }}>
+              <div style={{ fontSize: '12px' }}>{c.line1}</div>
+              <div style={{ fontSize: '16px' }}>{c.line2}</div>
             </div>
-            {error && <div style={{ color: '#ff6b6b', fontSize: '13px', marginTop: '8px', textAlign: 'center' }}>{error}</div>}
             <div onClick={onClose} style={{ position: 'absolute', right: '12px', bottom: '12px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>{c.cancel}</div>
           </>
         ) : (
@@ -2290,8 +2512,14 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <input type="text"     placeholder={c.namePh}        value={savedName}  onChange={e => setSavedName(e.target.value)}  style={{ ...regInput, direction: dir }} />
               <input type="email"    placeholder={c.emailPh}       value={savedEmail} onChange={e => setSavedEmail(e.target.value)} style={{ ...regInput }} />
-              <input type="password" placeholder={c.passPh}        value={savedPass}  onChange={e => setSavedPass(e.target.value)}  style={{ ...regInput }} />
-              <input type="password" placeholder={c.confirmPassPh} value={savedConf}  onChange={e => setSavedConf(e.target.value)}  style={{ ...regInput }} />
+              <div style={{ position: 'relative' }}>
+                <input type={showPass ? 'text' : 'password'} placeholder={c.passPh} value={savedPass} onChange={e => setSavedPass(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
+                <button type="button" onClick={() => setShowPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showPass} /></button>
+              </div>
+              <div style={{ position: 'relative' }}>
+                <input type={showConfPass ? 'text' : 'password'} placeholder={c.confirmPassPh} value={savedConf} onChange={e => setSavedConf(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
+                <button type="button" onClick={() => setShowConfPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showConfPass} /></button>
+              </div>
             </div>
             {error && <div style={{ color: '#ff6b6b', fontSize: '13px', marginTop: '8px', textAlign: 'center' }}>{error}</div>}
             <div style={{ marginTop: '18px', textAlign: 'center', fontFamily: font, color: '#ffffff', fontWeight: 'bold' }}>
@@ -2423,8 +2651,8 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
         onDbg('selectPlan', 'onUserUpdate called'); onUserUpdate(data.user)
         const displayName = lang.profile.planNames[key as keyof typeof lang.profile.planNames]
         await fetch(`/api/reminders?user_id=${user.id}&type=plan`, { method: 'DELETE' })
-        await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: `${displayName} - תחילת תכנית`, date: planStart, time: null, type: 'plan' }) })
-        if (planEnd) await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: `${displayName} - סיום תכנית`, date: planEnd, time: null, type: 'plan' }) })
+        await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: `${displayName} - ${lang.profile.planStart}`, date: planStart, time: null, type: 'plan' }) })
+        if (planEnd) await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: `${displayName} - ${lang.profile.planEnd}`, date: planEnd, time: null, type: 'plan' }) })
         onDbg('selectPlan', `plan reminders synced — start=${planStart} end=${planEnd ?? 'none'}`)
         setUpdating(false); return true
       }
@@ -2473,65 +2701,70 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   const thStyle:  React.CSSProperties  = { padding: '8px 12px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }
   const tdStyle:  React.CSSProperties  = { padding: '9px 12px', border: '1px solid #ccd' }
 
+  const thP: React.CSSProperties = { padding: '9px 10px', textAlign: 'right', color: '#FFD700', fontWeight: 'bold', border: '1px solid #3355bb' }
+  const tdP: React.CSSProperties = { padding: '9px 10px', border: '1px solid #c5cde8', background: '#fff' }
+  const secBox: React.CSSProperties = { position: 'relative', border: '2px solid #c5cde8', borderRadius: '12px', background: '#f7f9ff' }
+  const secLabel: React.CSSProperties = { position: 'absolute', top: '-11px', right: '18px', background: '#f7f9ff', padding: '0 10px', color: '#003399', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap' }
+
   if (planView) {
     const createdAt = user.created_at ? new Date(String(user.created_at)) : new Date()
     return (
       <div style={outerWrap}>
         <div style={cardBox}>
 
-          <div style={{ fontFamily: handFont(lang.code), fontSize: '28px', color: '#003399', marginBottom: '2px' }}>
-            {lang.card.title}
-          </div>
-          <div style={{ fontSize: '18px', color: '#003399', marginBottom: '4px' }}>
-            M Finance
-          </div>
-          <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#003399', marginBottom: '24px', borderBottom: '2px solid #e0e0f0', paddingBottom: '12px' }}>
-            {p.changePlan}
+          {/* Header */}
+          <div style={{ marginBottom: '22px', paddingBottom: '14px', borderBottom: '3px solid #003399' }}>
+            <div style={{ fontSize: '22px', color: '#003399', fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', marginBottom: '2px' }}>KeyClick</div>
+            <div style={{ fontSize: '30px', fontWeight: 'bold', color: '#003399' }}>{p.changePlan}</div>
           </div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px', marginBottom: '22px' }}>
-            <thead>
-              <tr style={{ background: '#e8eaf6' }}>
-                <th style={thStyle}>{p.planName}</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}><div>{p.price}</div><div style={{ fontSize: '11px', color: '#666', fontWeight: 'normal' }}>[$]</div></th>
-                <th style={{ ...thStyle, textAlign: 'center' }}><div>{p.price}</div><select value={selectedCurrency} onChange={e => handleCurrencyChange(e.target.value)} style={{ fontSize: '11px', border: '1px solid #aab', borderRadius: '3px', padding: '1px 2px', marginTop: '2px', background: '#f0f2ff', cursor: 'pointer', color: '#003399', fontWeight: 'bold', outline: 'none' }}>{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.symbol} {lang.currencyNames[c.code as keyof typeof lang.currencyNames]}</option>)}</select></th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>{p.planFrom}</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>{p.planTo}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {CHANGE_PLAN_OPTIONS.map(({ key, paid }) => {
-                const sched = scheduleData[key]
-                const price = sched?.price || ''
-                const currencyCode = selectedCurrency
-                const rate = exchangeRates[currencyCode] ?? 1
-                const priceNum = parseFloat(price)
-                const priceLocal = price && !isNaN(priceNum) ? Math.round(priceNum * rate).toString() : ''
-                const months = sched ? parseInt(sched.months) || 0 : 0
-                const toDate = months > 0 ? fmtDate(new Date(createdAt.getFullYear(), createdAt.getMonth() + months, createdAt.getDate())) : '—'
-                const displayName = lang.profile.planNames[key as keyof typeof lang.profile.planNames]
-                const sel     = selKey === key
-                const isTrial = key === 'User_Trial'
-                void paid
-                return (
-                  <tr key={key} style={{ background: sel ? '#eef2ff' : '#fff' }}>
-                    <td style={tdStyle}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                        <input type="radio" name="plan" checked={sel}
-                          onChange={() => setSelKey(key)}
-                          style={{ width: '16px', height: '16px', accentColor: '#003399', cursor: 'pointer' }} />
-                        <span style={{ fontWeight: sel ? 'bold' : 'normal', color: sel ? '#003399' : '#1a1a1a' }}>{displayName}</span>
-                      </label>
-                    </td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : price}</td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : priceLocal}</td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{sel ? fmtDate(createdAt) : ''}</td>
-                    <td style={{ ...tdStyle, textAlign: 'center', color: '#555' }}>{sel ? toDate : ''}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+          {/* Plans table */}
+          <div style={{ ...secBox, padding: '22px 16px 16px', marginBottom: '18px' }}>
+            <span style={secLabel}>{lang.card.title}</span>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px' }}>
+              <thead>
+                <tr style={{ background: 'linear-gradient(to left, #003399, #1a4acc)' }}>
+                  <th style={thP}>{p.planName}</th>
+                  <th style={{ ...thP, textAlign: 'center' }}><div>{p.price}</div><div style={{ fontSize: '11px', color: '#ffd70099', fontWeight: 'normal' }}>[$]</div></th>
+                  <th style={{ ...thP, textAlign: 'center' }}><div>{p.price}</div><select value={selectedCurrency} onChange={e => handleCurrencyChange(e.target.value)} style={{ fontSize: '11px', border: '1px solid #5577cc', borderRadius: '3px', padding: '1px 2px', marginTop: '2px', background: '#1a3a88', cursor: 'pointer', color: '#FFD700', fontWeight: 'bold', outline: 'none' }}>{CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.symbol} {lang.currencyNames[c.code as keyof typeof lang.currencyNames]}</option>)}</select></th>
+                  <th style={{ ...thP, textAlign: 'center' }}>{p.planFrom}</th>
+                  <th style={{ ...thP, textAlign: 'center' }}>{p.planTo}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CHANGE_PLAN_OPTIONS.map(({ key, paid }) => {
+                  const sched = scheduleData[key]
+                  const price = sched?.price || ''
+                  const currencyCode = selectedCurrency
+                  const rate = exchangeRates[currencyCode] ?? 1
+                  const priceNum = parseFloat(price)
+                  const priceLocal = price && !isNaN(priceNum) ? Math.round(priceNum * rate).toString() : ''
+                  const months = sched ? parseInt(sched.months) || 0 : 0
+                  const toDate = months > 0 ? fmtDate(new Date(createdAt.getFullYear(), createdAt.getMonth() + months, createdAt.getDate())) : '—'
+                  const displayName = lang.profile.planNames[key as keyof typeof lang.profile.planNames]
+                  const sel     = selKey === key
+                  const isTrial = key === 'User_Trial'
+                  void paid
+                  return (
+                    <tr key={key} style={{ background: sel ? '#e8edff' : '#fff' }}>
+                      <td style={tdP}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          <input type="radio" name="plan" checked={sel}
+                            onChange={() => setSelKey(key)}
+                            style={{ width: '16px', height: '16px', accentColor: '#003399', cursor: 'pointer' }} />
+                          <span style={{ fontWeight: sel ? 'bold' : 'normal', color: sel ? '#003399' : '#1a1a1a' }}>{displayName}</span>
+                        </label>
+                      </td>
+                      <td style={{ ...tdP, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : price}</td>
+                      <td style={{ ...tdP, textAlign: 'center', color: '#555' }}>{isTrial ? p.free : priceLocal}</td>
+                      <td style={{ ...tdP, textAlign: 'center', color: '#555' }}>{sel ? fmtDate(createdAt) : ''}</td>
+                      <td style={{ ...tdP, textAlign: 'center', color: '#555' }}>{sel ? toDate : ''}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
@@ -2543,7 +2776,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
             <button
               onClick={() => setPlanView(false)}
               disabled={updating}
-              style={{ background: '#f0f0f8', border: '1px solid #ccd', borderRadius: '7px', color: '#555', fontSize: '13px', padding: '7px 16px', cursor: 'pointer' }}>
+              style={{ background: '#f0f0f8', border: '1px solid #c5cde8', borderRadius: '7px', color: '#555', fontSize: '13px', padding: '7px 16px', cursor: 'pointer' }}>
               {p.back}
             </button>
           </div>
@@ -2557,35 +2790,41 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     <div style={outerWrap}>
       <div style={cardBox}>
 
-        <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#003399', marginBottom: '24px', borderBottom: '2px solid #003399', paddingBottom: '10px' }}>
-          {lang.menu[5]}
+        {/* Header */}
+        <div style={{ marginBottom: '22px', paddingBottom: '14px', borderBottom: '3px solid #003399' }}>
+          <div style={{ fontSize: '22px', color: '#003399', fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', marginBottom: '2px' }}>KeyClick</div>
+          <div style={{ fontSize: '30px', fontWeight: 'bold', color: '#003399' }}>{lang.menu[5]}</div>
         </div>
 
         {/* Personal info */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
-          {personalFields.map(({ label, value }) => (
-            <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
-              <span style={{ color: '#888', fontSize: '15px', minWidth: '130px' }}>{label}:</span>
-              <span style={{ color: '#1a1a1a', fontSize: '18px' }}>{value}</span>
-            </div>
-          ))}
+        <div style={{ ...secBox, padding: '22px 20px 18px', marginBottom: '20px' }}>
+          <span style={secLabel}>{lang.menu[5]}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}>
+            {personalFields.map(({ label, value }) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                <span style={{ color: '#6670a0', fontSize: '13px', minWidth: '130px' }}>{label}:</span>
+                <span style={{ color: '#1a1a1a', fontSize: '16px', fontWeight: 'bold' }}>{value}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Products table */}
-        <div style={{ borderTop: '2px solid #e0e0f0', paddingTop: '20px' }}>
+        {/* Products */}
+        <div style={{ ...secBox, padding: '22px 16px 16px' }}>
+          <span style={secLabel}>{p.products}</span>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '15px' }}>
             <thead>
-              <tr style={{ background: '#e8eaf6' }}>
-                <th style={{ padding: '8px 10px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd', width: '1%' }}></th>
-                <th style={{ padding: '8px 10px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }}>{p.products}</th>
-                <th style={{ padding: '8px 10px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }}>{p.plan}</th>
-                <th style={{ padding: '8px 10px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }}>{p.planStart}</th>
-                <th style={{ padding: '8px 10px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }}>{p.planEnd}</th>
+              <tr style={{ background: 'linear-gradient(to left, #003399, #1a4acc)' }}>
+                <th style={{ ...thP, width: '1%' }}></th>
+                <th style={thP}>{p.products}</th>
+                <th style={thP}>{p.plan}</th>
+                <th style={thP}>{p.planStart}</th>
+                <th style={thP}>{p.planEnd}</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style={{ padding: '8px 10px', border: '1px solid #ccd', whiteSpace: 'nowrap' }}>
+                <td style={{ ...tdP, whiteSpace: 'nowrap' }}>
                   <button
                     onClick={() => {
                       onDbg('changePlan', `click — isFreeRun=${isFreeRun} isSystemForced=${isSystemForced}`)
@@ -2606,19 +2845,18 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
                     {p.change}
                   </button>
                 </td>
-                <td style={{ padding: '8px 10px', border: '1px solid #ccd' }}>
-                  <div style={{ fontWeight: 'bold' }}>{lang.card.title}</div>
+                <td style={tdP}>
+                  <div style={{ fontWeight: 'bold', fontFamily: handFont(lang.code), fontSize: '17px' }}>{lang.card.title}</div>
                   <div style={{ color: '#888', fontSize: '12px' }}>M Finance</div>
                 </td>
-                <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#003399', fontWeight: 'bold' }}>
+                <td style={{ ...tdP, color: '#003399', fontWeight: 'bold' }}>
                   {(() => { const k = Object.entries(LICENSE_TYPES).find(([,v]) => v === user.M_Finance_license_type)?.[0]; return k ? (p.planNames as Record<string,string>)[k] ?? user.M_Finance_license_type : user.M_Finance_license_type })()}
                 </td>
-                <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#555' }}>{user.plan_start ? fmtDate(new Date(String(user.plan_start))) : '—'}</td>
-                <td style={{ padding: '8px 10px', border: '1px solid #ccd', color: '#555' }}>{user.plan_end ? fmtDate(new Date(String(user.plan_end))) : isFreePlan ? p.unlimited : '—'}</td>
+                <td style={{ ...tdP, color: '#555' }}>{user.plan_start ? fmtDate(new Date(String(user.plan_start))) : '—'}</td>
+                <td style={{ ...tdP, color: '#555' }}>{user.plan_end ? fmtDate(new Date(String(user.plan_end))) : isFreePlan ? p.unlimited : '—'}</td>
               </tr>
             </tbody>
           </table>
-
         </div>
 
       </div>

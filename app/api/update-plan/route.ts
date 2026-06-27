@@ -14,11 +14,12 @@ export async function POST(req: NextRequest) {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS user_plan TEXT;
     `)
 
+    const isActive = !['System_Suspended_NonPayment', 'User_Cancelled'].includes(licenseType)
     const result = await pool.query(
-      `UPDATE users SET license_type=$1, user_plan=$2, plan_start=$3, plan_end=$4
-       WHERE id=$5
+      `UPDATE users SET license_type=$1, user_plan=$2, plan_start=$3, plan_end=$4, is_active=$5
+       WHERE id=$6
        RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, plan_start, plan_end`,
-      [licenseType, licenseType, planStart ?? null, planEnd ?? null, userId]
+      [licenseType, licenseType, planStart ?? null, planEnd ?? null, isActive, userId]
     )
     if (result.rowCount === 0) return NextResponse.json({ error: 'user not found' }, { status: 404 })
     return NextResponse.json({ user: result.rows[0] })

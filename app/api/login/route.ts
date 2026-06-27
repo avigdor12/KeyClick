@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     [email]
   )
   const user = result.rows[0]
-  if (!user) return NextResponse.json({ error: 'משתמש לא נמצא' }, { status: 401 })
+  if (!user) return NextResponse.json({ error: 'משתמש לא נמצא', code: 'NOT_FOUND' }, { status: 401 })
 
   if (user.password_hash) {
     const valid = await bcrypt.compare(password, user.password_hash)
