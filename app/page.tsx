@@ -614,7 +614,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
-  const [users, setUsers] = useState<Record<string, unknown>[]>([])
+  const [users, setUsers] = useState<UserRecord[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
   const [prTxText, setPrTxText] = useState('')
   const [prEditing, setPrEditing] = useState(false)
@@ -1228,7 +1228,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           'אפליקציה מותקנת': u.is_M_Finance_installed ? 1 : 0,
                           'משוב חיובי':      hasNegative ? 0 : 1,
                           'מתעניין':         msgsThisMonth > 3 ? 1 : 0,
-                          'תכנית תקינה':     (u.plan_end && new Date(u.plan_end) > today) ? 1 : 0,
+                          'תכנית תקינה':     (u.plan_end && new Date(String(u.plan_end)) > today) ? 1 : 0,
                         }
                         const total = weightedRows.reduce((sum, r) => {
                           const w = parseFloat(r.weight) || 0
