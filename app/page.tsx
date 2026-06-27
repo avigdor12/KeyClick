@@ -370,17 +370,13 @@ export default function Home() {
   }
 
   async function handleRun() {
-    dbg('handleRun', 'mfinance:// via hidden iframe — waiting for blur')
+    dbg('handleRun', 'mfinance:// via window.location.href — waiting for blur')
     let appOpened = false
     const onBlur = () => { appOpened = true }
     window.addEventListener('blur', onBlur)
-    const iframe = document.createElement('iframe')
-    iframe.style.display = 'none'
-    iframe.src = 'mfinance://'
-    document.body.appendChild(iframe)
+    window.location.href = 'mfinance://'
     await new Promise(r => setTimeout(r, 3000))
     window.removeEventListener('blur', onBlur)
-    try { document.body.removeChild(iframe) } catch { /* */ }
     dbg('handleRun', `appOpened=${appOpened}`)
     if (!appOpened) {
       setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgNotInstalled, bodyColor: '#ff6600' })
