@@ -170,7 +170,6 @@ export default function Home() {
   const mfChainRef     = useRef(false)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
   const [clientIp, setClientIp] = useState('')
-  const [activeMfBtn, setActiveMfBtn] = useState<string | null>(null)
   const lang = languages[langIdx]
 
   useEffect(() => {
@@ -489,9 +488,9 @@ export default function Home() {
           </div>
           {/* 1. מדריכים וסרטונים */}
           <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '16px auto 10px', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
-            <button onClick={() => setActiveMfBtn(activeMfBtn === 'guide' ? null : 'guide')}
+            <button onClick={() => setActivePage(activePage === 'guides' ? null : 'guides')}
               style={{
-                display: 'block', width: '100%', background: activeMfBtn === 'guide' ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
+                display: 'block', width: '100%', background: activePage === 'guides' ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
                 border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
                 color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
                 fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3',
@@ -580,6 +579,7 @@ export default function Home() {
       {/* BOTTOM */}
       <footer style={{ background: '#111', color: '#666', padding: '6px 16px', fontSize: '12px', minHeight: '36px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
         <span style={{ color: '#FFD700' }}>{siteVersion.line1 || 'KeyClick · M Solution Group'}</span>
+        <span style={{ color: '#FFD700' }}>- Avigdor Meir -</span>
         <span style={{ color: '#FFD700' }}>{siteVersion.line2 || ''}</span>
       </footer>
 
@@ -813,7 +813,9 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   }
 
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', fontFamily: 'Arial, sans-serif', overflow: 'hidden' }}>
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'Arial, sans-serif', overflow: 'hidden' }}>
+      <PageHeader subtitle="בשימוש המערכת" />
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
       {/* Main content */}
       <div style={{ flex: 1, overflow: 'auto', padding: view === 'messages' ? 0 : '16px 20px', background: '#f7f7f7' }}>
@@ -1453,6 +1455,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
       </aside>
 
     </div>
+    </div>
   )
 }
 
@@ -1804,7 +1807,9 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const side16 = isRTL ? { right: '16px' } : { left: '16px' }
   const side12 = isRTL ? { right: '12px' } : { left: '12px' }
   return (
-    <div style={{ width: '100%', height: '100%', background: '#d0d0d0', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+      <PageHeader subtitle="קשרי לקוחות - משוב" />
+      <div style={{ width: '100%', flex: 1, background: '#d0d0d0', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
 
       {/* LEFT - Messages Library */}
       <div style={{ flex: 1, minWidth: '320px', flexShrink: 0, position: 'sticky', top: 0, background: '#f5f5f5', borderRadius: '12px', border: '2px solid #003399', overflow: 'auto' }}>
@@ -1987,6 +1992,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
 
       </div>
       </div>
+    </div>
     </div>
   )
 }
@@ -2321,8 +2327,8 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
+      <PageHeader subtitle="שרותי מידע - עדכונים" />
       <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: '#003399', marginBottom: 18 }}>{lang.menu[1]}</div>
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>{lang.system.loading}</div>
         ) : updates.length === 0 ? (
@@ -2353,6 +2359,392 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
           </table>
           </div>
         )}
+      </div>
+    </div>
+  )
+}
+
+const PAGE_HEADER_CSS = `
+  .page-header-block{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    padding-top:28px;
+    padding-bottom:26px;
+  }
+
+  .page-header-block.stack{
+    flex-direction:column;
+  }
+
+  .page-header-block .site-header{
+    display:inline-flex;
+    align-items:baseline;
+    gap:16px;
+    flex-wrap:wrap;
+    justify-content:center;
+    background:linear-gradient(180deg, #1e2a6b, #12163a);
+    color:#ffd700;
+    padding:14px 34px;
+    border-radius:999px;
+    box-shadow:0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);
+    font-family:"Segoe UI Semibold","Segoe UI",Arial,sans-serif;
+    font-weight:700;
+    font-size:20px;
+  }
+
+  .page-header-block .site-header .brand-script{
+    font-family:var(--font-dancing),Georgia,serif;
+    font-style:italic;
+    font-size:36px;
+    line-height:1;
+    margin:0 12px;
+  }
+
+  .page-header-block .page-subtitle{
+    display:inline-flex;
+    align-items:baseline;
+    justify-content:center;
+    background:linear-gradient(180deg, #1e2a6b, #12163a);
+    color:#ffffff;
+    padding:8px 26px;
+    border-radius:999px;
+    box-shadow:0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);
+    font-family:var(--font-amatic),"Amatic SC","Segoe UI Semibold",Arial,sans-serif;
+    font-weight:700;
+    font-size:30px;
+  }
+`
+
+function PageHeader({ subtitle, layout = 'row' }: { subtitle: string; layout?: 'row' | 'column' }) {
+  return (
+    <div className={layout === 'column' ? 'page-header-block stack' : 'page-header-block'} dir="rtl" lang="he">
+      <style>{PAGE_HEADER_CSS}</style>
+      <div className="site-header">
+        <span>אתר האינטרנט של</span>
+        <span className="brand-script">KeyClick</span>
+        <span>-</span>
+        <span>M Solution Group</span>
+      </div>
+      <div className="page-subtitle">{subtitle}</div>
+    </div>
+  )
+}
+
+const GUIDES_CSS = `
+  .guides-page, .guides-page *{ box-sizing:border-box; }
+
+  .guides-page{
+    height:100%;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:26px;
+    padding:32px 20px 90px;
+    overflow:auto;
+    background:
+      radial-gradient(1200px 640px at 50% -12%, #ffffff 0%, transparent 60%),
+      #f2eef2;
+    font-family:"Segoe UI","Segoe UI Semibold",Arial,sans-serif;
+    color:#131a3d;
+  }
+
+  .guides-page .eyebrow{ font-size:13px; letter-spacing:.06em; color:#7c5c1c; opacity:.9; }
+
+  .guides-page h1{
+    margin:0;
+    font-family:"Segoe UI Semibold","Segoe UI",Arial,sans-serif;
+    font-weight:700;
+    font-size:clamp(26px,3.6vw,36px);
+    text-wrap:balance;
+    text-align:center;
+    color:#131a4a;
+  }
+
+  .guides-page .subtitle{
+    margin-top:-10px;
+    font-size:16px;
+    color:#4a5178;
+    text-align:center;
+    max-width:46ch;
+  }
+
+  .guides-page .furniture{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    filter:drop-shadow(0 28px 34px rgba(20,20,40,.28));
+  }
+
+  .guides-page .cap{
+    position:relative;
+    width:calc(min(520px,92vw) + 20px);
+    height:30px;
+    background:linear-gradient(180deg, #f3dd94, #b6892c 55%, #7c5c1c);
+    border-radius:10px 10px 3px 3px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5), inset 0 -6px 10px -6px rgba(0,0,0,.4);
+    z-index:2;
+  }
+
+  .guides-page .brandplate{
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    font-family:"Segoe UI Semibold","Segoe UI",Arial,sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:.04em;
+    color:#ffd700;
+    padding:5px 20px;
+    border-radius:999px;
+    background:linear-gradient(180deg, #232c68, #12163a);
+    box-shadow:0 3px 6px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+
+  .guides-page .cabinet{
+    position:relative;
+    width:min(520px,92vw);
+    margin-top:-4px;
+    padding:22px 20px 26px;
+    border-radius:5px;
+    background:linear-gradient(155deg, #4b5266 0%, #343a49 45%, #1a1e28 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1), inset 0 -2px 10px rgba(0,0,0,.35);
+    border:1px solid #0e1016;
+  }
+
+  .guides-page .cabinet::before, .guides-page .cabinet::after{
+    content:"";
+    position:absolute;
+    top:12px;
+    width:14px; height:14px;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 30%, #7d8496, #2b2f3b 75%);
+    box-shadow:inset 0 1px 1px rgba(0,0,0,.6), 0 1px 0 rgba(255,255,255,.15);
+  }
+  .guides-page .cabinet::before{ right:12px; }
+  .guides-page .cabinet::after{ left:12px; }
+
+  .guides-page .feet{
+    display:flex;
+    justify-content:space-between;
+    width:calc(min(520px,92vw) - 34px);
+    margin-top:0;
+  }
+  .guides-page .foot{
+    width:30px; height:12px;
+    border-radius:0 0 4px 4px;
+    background:linear-gradient(180deg, #2c3140, #101319);
+  }
+
+  .guides-page .columns{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    margin-top:6px;
+  }
+
+  .guides-page .column{ display:flex; flex-direction:column; gap:16px; }
+
+  .guides-page .col-plate{
+    text-align:center;
+    font-family:"Segoe UI Semibold","Segoe UI",Arial,sans-serif;
+    font-weight:700;
+    font-size:19px;
+    color:#ff1a2b;
+    text-shadow:
+      -1px -1px 0 rgba(0,0,0,.55),
+       1px -1px 0 rgba(0,0,0,.55),
+      -1px  1px 0 rgba(0,0,0,.55),
+       1px  1px 0 rgba(0,0,0,.55),
+       0 2px 3px rgba(0,0,0,.35);
+    background:linear-gradient(180deg, #ecd68a, #b6892c 70%, #7c5c1c);
+    padding:8px 6px;
+    border-radius:7px 7px 3px 3px;
+    box-shadow:0 1px 0 rgba(255,255,255,.35) inset, 0 3px 6px rgba(0,0,0,.35);
+    letter-spacing:.01em;
+  }
+
+  .guides-page .col-plate.script{
+    font-family:var(--font-amatic),"Amatic SC","Segoe UI Semibold",Arial,sans-serif;
+    font-weight:700;
+    font-size:30px;
+    letter-spacing:.02em;
+    padding-top:2px;
+  }
+
+  .guides-page .drawer{ display:flex; flex-direction:column; }
+
+  .guides-page .d-front{
+    all:unset;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    position:relative;
+    width:100%;
+    height:74px;
+    cursor:pointer;
+    border-radius:8px;
+    background:linear-gradient(180deg, #232c68, #1a2151 55%, #141a44 100%);
+    border:1px solid #0c0f2c;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.14) inset,
+      0 -3px 0 rgba(0,0,0,.32) inset,
+      0 5px 9px -3px rgba(0,0,0,.5);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+
+  .guides-page .handle{
+    position:relative;
+    width:64px; height:10px;
+    border-radius:6px;
+    background:linear-gradient(180deg, #fff3c4, #ffd700 35%, #b6892c 78%, #7c5c1c);
+    box-shadow:0 3px 4px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.65);
+  }
+  .guides-page .handle::before, .guides-page .handle::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:7px; height:7px;
+    border-radius:50%;
+    transform:translateY(-50%);
+    background:radial-gradient(circle at 35% 30%, #fff3c4, #b6892c 70%, #7c5c1c);
+    box-shadow:0 1px 2px rgba(0,0,0,.5);
+  }
+  .guides-page .handle::before{ inset-inline-end:-3px; }
+  .guides-page .handle::after{ inset-inline-start:-3px; }
+
+  .guides-page .drawer-label{
+    font-family:var(--font-amatic),"Amatic SC","Segoe UI Semibold",Arial,sans-serif;
+    font-size:26px;
+    font-weight:700;
+    color:#f4f2ff;
+    letter-spacing:.01em;
+    text-shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+
+  .guides-page .d-front:hover{ background:linear-gradient(180deg, #2b3576, #1a2151 55%, #141a44 100%); }
+
+  .guides-page .d-front:focus-visible{ outline:2px solid #ffd700; outline-offset:2px; }
+
+  .guides-page .drawer.open .d-front{
+    transform:scale(1.045) translateY(1px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.14) inset,
+      0 -3px 0 rgba(0,0,0,.32) inset,
+      0 16px 22px -6px rgba(0,0,0,.55);
+    background:linear-gradient(180deg, #333e88, #232c68 60%, #141a44 100%);
+  }
+
+  .guides-page .drawer.open .handle{
+    background:linear-gradient(180deg, #fff9e0, #ffd700 35%, #b6892c 78%, #7c5c1c);
+  }
+
+  .guides-page .drawer-tray{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows .34s cubic-bezier(.2,.7,.2,1) .05s;
+  }
+  .guides-page .drawer.open .drawer-tray{ grid-template-rows:1fr; }
+
+  .guides-page .drawer-tray-inner{ overflow:hidden; }
+
+  .guides-page .tray-card{
+    margin-top:12px;
+    padding:14px 14px 12px;
+    border-radius:10px;
+    background:#eef1f9;
+    color:#131a3d;
+    box-shadow:0 10px 22px -12px rgba(0,0,0,.5);
+  }
+
+  .guides-page .tray-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+
+  .guides-page .tray-desc{ margin:6px 0 0; font-size:13px; line-height:1.55; color:#4a5178; max-width:46ch; }
+
+  .guides-page .status-chip{
+    flex:none;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:999px;
+    background:#fbe6b0;
+    color:#7a5a10;
+    white-space:nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .guides-page .d-front, .guides-page .drawer-tray{ transition:none; }
+  }
+
+  @media (max-width:480px){
+    .guides-page .columns{ gap:14px; }
+    .guides-page .column{ gap:12px; }
+    .guides-page .drawer-label{ font-size:12px; }
+    .guides-page .handle{ width:46px; }
+  }
+`
+
+function GuidesDrawer({ id, label, title, desc, openId, setOpenId }: {
+  id: string; label: string; title: string; desc: string
+  openId: string | null; setOpenId: (v: string | null) => void
+}) {
+  const open = openId === id
+  return (
+    <div className={open ? 'drawer open' : 'drawer'} data-id={id}>
+      <button className="d-front" aria-expanded={open} onClick={() => setOpenId(open ? null : id)}>
+        <span className="drawer-label">{label}</span>
+        <span className="handle" />
+      </button>
+      <div className="drawer-tray"><div className="drawer-tray-inner">
+        <div className="tray-card">
+          <div className="tray-row"><strong>{title}</strong><span className="status-chip">בקרוב</span></div>
+          <p className="tray-desc">{desc}</p>
+        </div>
+      </div></div>
+    </div>
+  )
+}
+
+function GuidesPage({ lang }: { lang: typeof languages[0] }) {
+  const [openFin, setOpenFin] = useState<string | null>(null)
+  const [openSite, setOpenSite] = useState<string | null>(null)
+
+  return (
+    <div className="guides-page" dir="rtl" lang="he">
+      <style>{GUIDES_CSS}</style>
+
+      <PageHeader subtitle="מדריכים וסרטונים" layout="column" />
+
+      <div className="furniture">
+        <div className="cap"><span className="brandplate">KeyClick</span></div>
+
+        <div className="cabinet">
+          <div className="columns">
+
+            <div className="column">
+              <div className="col-plate script">ניהול תקציב בית</div>
+              <GuidesDrawer id="fin-overview" label="תיאור כללי" title="מה זה M Finance" desc="סקירה קצרה של ניהול תקציב הבית — חשבונות, תנועות, קטגוריות ותחזיות, ולמי זה מיועד." openId={openFin} setOpenId={setOpenFin} />
+              <GuidesDrawer id="fin-guide" label="מדריך למשתמש" title="שימוש שלב-אחר-שלב" desc="מדריך כתוב עם צילומי מסך: התקנה, חיבור חשבונות, סיווגים ודוחות." openId={openFin} setOpenId={setOpenFin} />
+              <GuidesDrawer id="fin-videos" label="סרטונים" title="הדרכות קצרות" desc="סרטוני וידאו קצרים לכל תכונה עיקרית בניהול משק הבית." openId={openFin} setOpenId={setOpenFin} />
+            </div>
+
+            <div className="column">
+              <div className="col-plate script">האתר</div>
+              <GuidesDrawer id="site-overview" label="תיאור כללי" title="מה מציע האתר" desc="סיור קצר על פלטפורמת KeyClick — המוצרים, השירותים וקשרי הלקוחות." openId={openSite} setOpenId={setOpenSite} />
+              <GuidesDrawer id="site-guide" label="מדריך למשתמש" title="הרשמה וניווט" desc="איך נרשמים, מתחברים ומוצאים כל שירות באתר." openId={openSite} setOpenId={setOpenSite} />
+              <GuidesDrawer id="site-videos" label="סרטונים" title="הדגמות האתר" desc="הדגמות מצולמות קצרות של תכונות האתר המרכזיות." openId={openSite} setOpenId={setOpenSite} />
+            </div>
+
+          </div>
+        </div>
+
+        <div className="feet"><div className="foot" /><div className="foot" /></div>
       </div>
     </div>
   )
@@ -2403,8 +2795,8 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
+      <PageHeader subtitle="שרותי מידע - תזכורות" />
       <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: '#003399', marginBottom: 20 }}>{lang.menu[3]}</div>
 
         {/* Add form */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 24, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -2464,6 +2856,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '4')           return <BankingPage user={user} lang={lang} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
+  if (page === 'guides')      return <GuidesPage lang={lang} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ textAlign: 'center', color: '#555' }}>
@@ -2925,6 +3318,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
 
   return (
     <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflowY: 'auto', padding: '12px 14px', direction: 'rtl' }}>
+      <PageHeader subtitle="שרותים בנקאיים" />
       <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
         <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{lang.menu[4]}</div>
 
@@ -3127,7 +3521,8 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative', background: '#f2eef2' }}>
-      <div style={{ background: '#2a2a2a', borderRadius: '12px', padding: '40px', width: '360px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', fontFamily: 'Arial, sans-serif', position: 'absolute', top: '50%', left: '50%', transform: `translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px))` }}>
+      <PageHeader subtitle="ניהול תקציב בית - כניסה" />
+      <div style={{ background: '#2a2a2a', borderRadius: '12px', padding: '40px', width: '360px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', fontFamily: 'Arial, sans-serif', position: 'absolute', top: '100px', left: '50%', transform: `translate(calc(-50% + ${pos.x}px), ${pos.y}px)` }}>
 
         <div onMouseDown={onDragStart} style={{ textAlign: 'center', marginBottom: '28px', cursor: 'grab', userSelect: 'none' }}>
           <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#FFD700', fontStyle: 'italic', fontFamily: 'var(--font-dancing), Georgia, serif' }}>KeyClick</div>
@@ -3358,7 +3753,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     { label: p.language,  value: languages.find(l => l.code === user.language)?.name ?? user.language ?? '—' },
   ]
 
-  const outerWrap: React.CSSProperties = { width: '100%', height: '100%', background: '#f2eef2', overflow: 'auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '28px 20px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }
+  const outerWrap: React.CSSProperties = { width: '100%', height: '100%', background: '#f2eef2', overflow: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '0 20px 28px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }
   const cardBox:  React.CSSProperties  = { width: '100%', maxWidth: '780px', background: '#fff', border: '2px solid #003399', borderRadius: '12px', padding: '32px 36px', boxShadow: '0 4px 16px rgba(0,0,60,0.08)' }
   const thStyle:  React.CSSProperties  = { padding: '8px 12px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }
   const tdStyle:  React.CSSProperties  = { padding: '9px 12px', border: '1px solid #ccd' }
@@ -3372,6 +3767,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     const createdAt = user.created_at ? new Date(String(user.created_at)) : new Date()
     return (
       <div style={outerWrap}>
+        <PageHeader subtitle="קשרי לקוחות - דף האישי" />
         <div style={cardBox}>
 
           {/* Header */}
@@ -3450,6 +3846,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
   return (
     <div style={outerWrap}>
+      <PageHeader subtitle="קשרי לקוחות - דף האישי" />
       <div style={cardBox}>
 
         {/* Header */}
