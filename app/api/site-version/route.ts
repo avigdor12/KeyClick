@@ -12,7 +12,7 @@ export async function GET() {
     const [line1, line2] = raw.split('|')
     return NextResponse.json({ line1: line1 ?? '', line2: line2 ?? '' })
   } catch {
-    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 05.06  07.07.2026 12.45' })
+    return NextResponse.json({ line1: 'KeyClick: M Solution Group', line2: 'ver 05.07  07.07.2026 16.30' })
   }
 }
 

@@ -7,114 +7,136 @@ import { LICENSE_TYPES } from '@/lib/license-types'
 const languages = [
   { code: 'en', flag: 'בריטניה', name: 'English',  welcome: 'Welcome',
     menu: ['Feedback','Updates','Messages','Reminders','Banking Services','Personal Page'],
-    card: { title: 'Home Budget Management', namePh: 'Name / Last Name', emailPh: 'Email / Email Address', passPh: 'Password', confirmPassPh: 'Confirm Password', register: 'Register', login: 'Login', update: 'Update', line1: 'During launch period', line2: 'Free', errName: 'Please enter your name', errEmail: 'Please enter a valid email', errPassLen: 'Password must be at least 6 characters', errPassMatch: 'Passwords do not match', errEmailExists: 'Email already registered', cancel: 'Cancel', install: 'Install', library: 'Guide Files', run: 'Run', videos: 'Videos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Already installed\nNo need to reinstall', msgDownloading: 'Downloading installation file', msgInstallComplete: 'Save and run the file\nto complete installation', msgDownloadError: 'Download error\nTry again', mFinance: 'M Finance', msgExists: 'User already registered\nwith these details', msgUpdated: 'Details updated successfully', msgRegistered: 'Registration complete', existingCustomer: 'Existing Customer', newCustomer: 'New Customer', notRecognized: 'Customer not found. Click to register', msgSelectPlan: 'Please select a plan in your personal page', infoServices: 'Information Services', guidesAndVideos: 'Guides & Videos' },
+    card: { title: 'Home Budget Management', namePh: 'Name / Last Name', emailPh: 'Email / Email Address', passPh: 'Password', confirmPassPh: 'Confirm Password', register: 'Register', login: 'Login', update: 'Update', line1: 'During launch period', line2: 'Free', errName: 'Please enter your name', errEmail: 'Please enter a valid email', errPassLen: 'Password must be at least 6 characters', errPassMatch: 'Passwords do not match', errEmailExists: 'Email already registered', cancel: 'Cancel', install: 'Install', library: 'Guide Files', run: 'Run', videos: 'Videos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Already installed\nNo need to reinstall', msgDownloading: 'Downloading installation file', msgInstallComplete: 'Save and run the file\nto complete installation', msgDownloadError: 'Download error\nTry again', mFinance: 'M Finance', msgExists: 'User already registered\nwith these details', msgUpdated: 'Details updated successfully', msgRegistered: 'Registration complete', existingCustomer: 'Existing Customer', newCustomer: 'New Customer', notRecognized: 'Customer not found. Click to register', msgSelectPlan: 'Please select a plan in your personal page', infoServices: 'Information Services', guidesAndVideos: 'Guides & Videos', siteHeaderPrefix: 'The website of', theWebsite: 'The Website' },
     profile: { fullName: 'Full Name', email: 'Email', ip: 'IP', language: 'Language', country: 'Country', plan: 'Plan', planStart: 'Plan Start', planEnd: 'Plan End', unlimited: 'Unlimited', comingSoon: 'Coming Soon', choosePlan: 'Choose Plan', close: '✕ Close', loginRequired: 'Login required to view personal page', login: 'Login', products: 'Products', change: 'Change',
       price: 'Price', changePlan: 'Change Plan', planName: 'Name', planFrom: 'From', planTo: 'To', back: 'Back', currencyLocal: '$', free: 'Free',       planNames: { System_Free_Run: 'Free Run', User_Trial: 'Trial', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monthly', User_Annual: 'Annual', User_One_Time: 'Single Entry', System_Suspended_NonPayment: 'Suspended', User_Cancelled: 'Cancelled' } },
     feedback: { customerRelations: 'Customer Relations', systemMessage: 'System Message', respectfully: 'Respectfully,', rating: 'Rating', ratingWebsite: 'Website', ratingBudget: 'Home Budget Management', userMessage: 'User Message', date: 'Date:', title: 'Title:', from: 'From:', systemReply: 'System Reply' },
     system: { systemLabel: 'System', selectAction: 'Select action from right sidebar', users: 'Users', buildMessages: 'Build Messages', schedule: 'טבלאות ונתונים', pr: 'Public Relations', publishedDate: 'Published date:', reset: 'Reset', saved: 'Saved', records: 'records', scheduleSubject: 'Subject', schedulePriceUSD: 'Price\n[$]', schedulePeriod: 'Period\n[mo]', scheduleNotes: 'Notes', clear: 'Clear', pause: 'Pause', resume: 'Resume', active: '● Active', paused: 'Paused', lines: 'lines', filter: 'Filter', refresh: 'Refresh', loading: 'Loading...', loadingBuild: 'Loading build data...', error: 'Error', noBuildData: 'No build data. Run Release_KeyClick.bat', networkError: 'Network error', adminButton: 'System Use', generalGroup: 'General', colName: 'Name', colCurrency: 'Currency', colCreated: 'Created', colActive: 'Is Active', colAppInstalled: 'App Installed', colLicenceType: 'Licence Type', colSystemForce: 'System Force', distributionDay: 'Distribution Day X', messages: 'Messages', send: 'Send', sent: 'Sent!', reply: 'Reply', noMessages: 'No messages', replySent: 'Reply sent!', ref: 'Ref.', msgNo: 'No.', replyToRef: 'Reply to ref.', msgNumber: 'Message No.', new: 'New', delete: 'Delete', newMessage: '+ New Message', selectToView: 'Select a message to view', monitor: 'Monitor', systemData: 'System Data', resetTable: 'Reset Table', debug: 'Debug', db: 'DB', sensitivePoints: 'Sensitive Points', productVersionTable: 'Product Version Table in Updates Tab' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Pound', EUR: 'Euro', RUB: 'Ruble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupee' },
     updates: { colDate: 'Date & Time', colProduct: 'Product', colVersion: 'Version', colTitle: 'Title', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Home Budget' },
-    reminders: { loginRequired: 'Login required to view reminders', titlePh: 'Reminder title', timePh: 'Time', add: '+ Add', noReminders: 'No reminders' } },
+    reminders: { loginRequired: 'Login required to view reminders', titlePh: 'Reminder title', timePh: 'Time', add: '+ Add', noReminders: 'No reminders' },
+    guides: { overview: 'Overview', userGuide: 'User Guide', financeOverviewTitle: 'What is M Finance', financeOverviewDesc: 'A short overview of home budget management — accounts, transactions, categories and forecasts, and who it is intended for.', financeGuideTitle: 'Step-by-step usage', financeGuideDesc: 'A written guide with screenshots: installation, connecting accounts, categorization and reports.', financeVideosTitle: 'Short tutorials', financeVideosDesc: 'Short video tutorials for every key feature in home budget management.', siteOverviewTitle: 'What the website offers', siteOverviewDesc: "A short tour of the KeyClick platform — products, services and customer relations.", siteGuideTitle: 'Registration and navigation', siteGuideDesc: 'How to register, log in and find every service on the website.', siteVideosTitle: 'Website demos', siteVideosDesc: "Short recorded demos of the website's main features." },
+    banking: { autoDetectFailed: 'Auto-detect failed — choose manually', detectionError: 'Detection error', loadBanksError: 'Error loading banks', plaidTokenError: 'Plaid token error', bankConnected: 'Bank connected', connectionError: 'Connection error', linkOpened: 'A connection window opened for {name}. After approving, come back and click refresh.', linkCreateError: 'Error creating bank link', refreshing: 'Refreshing...', updated: 'Updated', fetchingData: 'Fetching data...', noAccountsConnected: 'No accounts connected', downloadedFiles: 'Downloaded {count} files', downloadError: 'Download error', connectBankTitle: 'Connect Bank', autoDetect: 'Auto Detect', orManually: 'or manually', unitedStates: 'United States', back: 'Back', selectInstitution: 'Select institution', noInstitutions: 'No institutions', refresh: 'Refresh', downloadFiles: 'Download Files' } },
   { code: 'ru', flag: 'רוסיה',   name: 'Русский',  welcome: 'Добро пожаловать',
     menu: ['Отзыв','Обновления','Сообщения','Напоминания','Банковские услуги','Личная страница'],
-    card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства', run: 'Запуск', videos: 'Видео', guide: 'Руководство', ok: 'ОК', msgAlreadyInstalled: 'Уже установлено\nПереустановка не нужна', msgDownloading: 'Загрузка установщика', msgInstallComplete: 'Сохраните и запустите файл\nдля завершения установки', msgDownloadError: 'Ошибка загрузки\nПопробуйте снова', mFinance: 'M Finance', msgExists: 'Пользователь уже зарегистрирован\nс этими данными', msgUpdated: 'Данные обновлены успешно', msgRegistered: 'Регистрация завершена', existingCustomer: 'Существующий клиент', newCustomer: 'Новый клиент', notRecognized: 'Клиент не найден. Нажмите для регистрации', msgSelectPlan: 'Выберите тарифный план в личном кабинете', infoServices: 'Информационные услуги', guidesAndVideos: 'Руководства и видео' },
+    card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства', run: 'Запуск', videos: 'Видео', guide: 'Руководство', ok: 'ОК', msgAlreadyInstalled: 'Уже установлено\nПереустановка не нужна', msgDownloading: 'Загрузка установщика', msgInstallComplete: 'Сохраните и запустите файл\nдля завершения установки', msgDownloadError: 'Ошибка загрузки\nПопробуйте снова', mFinance: 'M Finance', msgExists: 'Пользователь уже зарегистрирован\nс этими данными', msgUpdated: 'Данные обновлены успешно', msgRegistered: 'Регистрация завершена', existingCustomer: 'Существующий клиент', newCustomer: 'Новый клиент', notRecognized: 'Клиент не найден. Нажмите для регистрации', msgSelectPlan: 'Выберите тарифный план в личном кабинете', infoServices: 'Информационные услуги', guidesAndVideos: 'Руководства и видео', siteHeaderPrefix: 'Веб-сайт', theWebsite: 'Сайт' },
     profile: { fullName: 'Полное имя', email: 'Email', ip: 'IP', language: 'Язык', country: 'Страна', plan: 'Тариф', planStart: 'Начало тарифа', planEnd: 'Конец тарифа', unlimited: 'Без ограничений', comingSoon: 'Скоро', choosePlan: 'Выбрать тариф', close: '✕ Закрыть', loginRequired: 'Необходимо войти для просмотра', login: 'Войти', products: 'Продукты', change: 'Изменить',
       price: 'Цена', changePlan: 'Изменить тариф', planName: 'Название', planFrom: 'С', planTo: 'По', back: 'Назад', currencyLocal: '₽', free: 'Бесплатно',       planNames: { System_Free_Run: 'Тест', User_Trial: 'Пробный', User_VIP_Free: 'VIP', System_Owner: 'Система', User_Monthly: 'Ежемесячно', User_Annual: 'Ежегодно', User_One_Time: 'Разовый', System_Suspended_NonPayment: 'Отключён', User_Cancelled: 'Отменён' } },
     feedback: { customerRelations: 'Связи с клиентами', systemMessage: 'Системное сообщение', respectfully: 'С уважением,', rating: 'Оценка', ratingWebsite: 'Сайт', ratingBudget: 'Управление бюджетом', userMessage: 'Сообщение пользователя', date: 'Дата:', title: 'Тема:', from: 'От:', systemReply: 'Ответ системы' },
     system: { systemLabel: 'Система', selectAction: 'Выберите действие на правой панели', users: 'Пользователи', buildMessages: 'Журнал сборки', schedule: 'טבלאות ונתונים', pr: 'PR', publishedDate: 'Опубликовано:', reset: 'Сбросить', saved: 'Сохранено', records: 'записей', scheduleSubject: 'Тема', schedulePriceUSD: 'Цена\n[$]', schedulePeriod: 'Период\n[мес]', scheduleNotes: 'Заметки', clear: 'Очистить', pause: 'Пауза', resume: 'Продолжить', active: '● Активно', paused: 'На паузе', lines: 'строк', filter: 'Фильтр', refresh: 'Обновить', loading: 'Загрузка...', loadingBuild: 'Загрузка данных сборки...', error: 'Ошибка', noBuildData: 'Нет данных. Запустите Release_KeyClick.bat', networkError: 'Ошибка сети', adminButton: 'Системный вход', generalGroup: 'Общие', colName: 'Имя', colCurrency: 'Валюта', colCreated: 'Создан', colActive: 'Активен', colAppInstalled: 'Приложение', colLicenceType: 'Тип лицензии', colSystemForce: 'Системный режим', distributionDay: 'День X распространения', messages: 'Сообщения', send: 'Отправить', sent: 'Отправлено!', reply: 'Ответить', noMessages: 'Нет сообщений', replySent: 'Ответ отправлен!', ref: 'Реф.', msgNo: '№', replyToRef: 'Ответ на реф.', msgNumber: 'Сообщение №', new: 'Новое', delete: 'Удалить', newMessage: '+ Новое сообщение', selectToView: 'Выберите сообщение', monitor: 'Монитор', systemData: 'Данные системы', resetTable: 'Сброс таблицы', debug: 'Отладка', db: 'БД', sensitivePoints: 'Уязвимые точки', productVersionTable: 'Таблица версий продукта (вкладка обновлений)' },
     currencyNames: { ILS: 'Шекель', USD: 'Доллар', GBP: 'Фунт', EUR: 'Евро', RUB: 'Рубль', JPY: 'Иена', SAR: 'Риял', CNY: 'Юань', INR: 'Рупия' },
     updates: { colDate: 'Дата и время', colProduct: 'Продукт', colVersion: 'Версия', colTitle: 'Заголовок', productKeyClick: 'KeyClick Сайт', productMFinance: 'M Finance Бюджет' },
-    reminders: { loginRequired: 'Войдите для просмотра напоминаний', titlePh: 'Название напоминания', timePh: 'Время', add: '+ Добавить', noReminders: 'Нет напоминаний' } },
+    reminders: { loginRequired: 'Войдите для просмотра напоминаний', titlePh: 'Название напоминания', timePh: 'Время', add: '+ Добавить', noReminders: 'Нет напоминаний' },
+    guides: { overview: 'Общее описание', userGuide: 'Руководство пользователя', financeOverviewTitle: 'Что такое M Finance', financeOverviewDesc: 'Краткий обзор управления домашним бюджетом — счета, операции, категории и прогнозы, и для кого это подходит.', financeGuideTitle: 'Пошаговое использование', financeGuideDesc: 'Письменное руководство со скриншотами: установка, подключение счетов, категоризация и отчёты.', financeVideosTitle: 'Короткие уроки', financeVideosDesc: 'Короткие видеоуроки по каждой ключевой функции управления домашним бюджетом.', siteOverviewTitle: 'Что предлагает сайт', siteOverviewDesc: 'Краткий обзор платформы KeyClick — продукты, услуги и работа с клиентами.', siteGuideTitle: 'Регистрация и навигация', siteGuideDesc: 'Как зарегистрироваться, войти и найти любую услугу на сайте.', siteVideosTitle: 'Демонстрации сайта', siteVideosDesc: 'Короткие видеозаписи основных функций сайта.' },
+    banking: { autoDetectFailed: 'Автоопределение не удалось — выберите вручную', detectionError: 'Ошибка определения', loadBanksError: 'Ошибка загрузки банков', plaidTokenError: 'Ошибка Plaid Token', bankConnected: 'Банк подключён', connectionError: 'Ошибка подключения', linkOpened: 'Открыто окно подключения к {name}. После подтверждения вернитесь и нажмите обновить.', linkCreateError: 'Ошибка создания ссылки на банк', refreshing: 'Обновление...', updated: 'Обновлено', fetchingData: 'Получение данных...', noAccountsConnected: 'Нет подключённых счетов', downloadedFiles: 'Загружено файлов: {count}', downloadError: 'Ошибка загрузки', connectBankTitle: 'Подключить банк', autoDetect: 'Автоопределение', orManually: 'или вручную', unitedStates: 'США', back: 'Назад', selectInstitution: 'Выберите банк', noInstitutions: 'Нет банков', refresh: 'Обновить', downloadFiles: 'Скачать файлы' } },
   { code: 'de', flag: 'גרמניה',  name: 'Deutsch',  welcome: 'Willkommen',
     menu: ['Feedback','Updates','Nachrichten','Erinnerungen','Bankdienstleistungen','Persönliche Seite'],
-    card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien', run: 'Starten', videos: 'Videos', guide: 'Anleitung', ok: 'OK', msgAlreadyInstalled: 'Bereits installiert\nKeine Neuinstallation nötig', msgDownloading: 'Installationsdatei wird heruntergeladen', msgInstallComplete: 'Datei speichern und ausführen\num die Installation abzuschließen', msgDownloadError: 'Fehler beim Herunterladen\nNochmal versuchen', mFinance: 'M Finance', msgExists: 'Benutzer bereits registriert\nmit diesen Daten', msgUpdated: 'Daten erfolgreich aktualisiert', msgRegistered: 'Registrierung abgeschlossen', existingCustomer: 'Bestehender Kunde', newCustomer: 'Neuer Kunde', notRecognized: 'Kunde nicht gefunden. Klicken zum Registrieren', msgSelectPlan: 'Bitte wähle einen Plan auf deiner persönlichen Seite', infoServices: 'Informationsdienste', guidesAndVideos: 'Anleitungen & Videos' },
+    card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien', run: 'Starten', videos: 'Videos', guide: 'Anleitung', ok: 'OK', msgAlreadyInstalled: 'Bereits installiert\nKeine Neuinstallation nötig', msgDownloading: 'Installationsdatei wird heruntergeladen', msgInstallComplete: 'Datei speichern und ausführen\num die Installation abzuschließen', msgDownloadError: 'Fehler beim Herunterladen\nNochmal versuchen', mFinance: 'M Finance', msgExists: 'Benutzer bereits registriert\nmit diesen Daten', msgUpdated: 'Daten erfolgreich aktualisiert', msgRegistered: 'Registrierung abgeschlossen', existingCustomer: 'Bestehender Kunde', newCustomer: 'Neuer Kunde', notRecognized: 'Kunde nicht gefunden. Klicken zum Registrieren', msgSelectPlan: 'Bitte wähle einen Plan auf deiner persönlichen Seite', infoServices: 'Informationsdienste', guidesAndVideos: 'Anleitungen & Videos', siteHeaderPrefix: 'Die Website von', theWebsite: 'Die Website' },
     profile: { fullName: 'Vollständiger Name', email: 'E-Mail', ip: 'IP', language: 'Sprache', country: 'Land', plan: 'Tarif', planStart: 'Tarif Beginn', planEnd: 'Tarif Ende', unlimited: 'Unbegrenzt', comingSoon: 'Demnächst', choosePlan: 'Tarif wählen', close: '✕ Schließen', loginRequired: 'Anmeldung erforderlich', login: 'Anmelden', products: 'Produkte', change: 'Ändern',
       price: 'Preis', changePlan: 'Tarif ändern', planName: 'Name', planFrom: 'Von', planTo: 'Bis', back: 'Zurück', currencyLocal: '€', free: 'Kostenlos',       planNames: { System_Free_Run: 'Testlauf', User_Trial: 'Testphase', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monatlich', User_Annual: 'Jährlich', User_One_Time: 'Einmalig', System_Suspended_NonPayment: 'Gesperrt', User_Cancelled: 'Storniert' } },
     feedback: { customerRelations: 'Kundenpflege', systemMessage: 'Systemnachricht', respectfully: 'Mit freundlichen Grüßen,', rating: 'Bewertung', ratingWebsite: 'Website', ratingBudget: 'Haushaltsverwaltung', userMessage: 'Nutzernachricht', date: 'Datum:', title: 'Betreff:', from: 'Von:', systemReply: 'Systemantwort' },
     system: { systemLabel: 'System', selectAction: 'Aktion in der rechten Leiste wählen', users: 'Benutzer', buildMessages: 'Build-Protokoll', schedule: 'טבלאות ונתונים', pr: 'PR', publishedDate: 'Veröffentlicht:', reset: 'Zurücksetzen', saved: 'Gespeichert', records: 'Einträge', scheduleSubject: 'Thema', schedulePriceUSD: 'Preis\n[$]', schedulePeriod: 'Zeitraum\n[Mo]', scheduleNotes: 'Notizen', clear: 'Löschen', pause: 'Pause', resume: 'Fortsetzen', active: '● Aktiv', paused: 'Pausiert', lines: 'Zeilen', filter: 'Filter', refresh: 'Aktualisieren', loading: 'Laden...', loadingBuild: 'Build-Daten laden...', error: 'Fehler', noBuildData: 'Keine Daten. Starten Sie Release_KeyClick.bat', networkError: 'Netzwerkfehler', adminButton: 'Systembereich', generalGroup: 'Allgemein', colName: 'Name', colCurrency: 'Währung', colCreated: 'Erstellt', colActive: 'Aktiv', colAppInstalled: 'App', colLicenceType: 'Lizenztyp', colSystemForce: 'Systemmodus', distributionDay: 'Verbreitungstag X', messages: 'Nachrichten', send: 'Senden', sent: 'Gesendet!', reply: 'Antworten', noMessages: 'Keine Nachrichten', replySent: 'Antwort gesendet!', ref: 'Ref.', msgNo: 'Nr.', replyToRef: 'Antwort auf Ref.', msgNumber: 'Nachricht Nr.', new: 'Neu', delete: 'Löschen', newMessage: '+ Neue Nachricht', selectToView: 'Nachricht auswählen', monitor: 'Monitor', systemData: 'Systemdaten', resetTable: 'Tabelle zurücksetzen', debug: 'Debug', db: 'DB', sensitivePoints: 'Schwachstellen', productVersionTable: 'Produktversionstabelle (Updates)' },
     currencyNames: { ILS: 'Schekel', USD: 'Dollar', GBP: 'Pfund', EUR: 'Euro', RUB: 'Rubel', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupie' },
     updates: { colDate: 'Datum & Uhrzeit', colProduct: 'Produkt', colVersion: 'Version', colTitle: 'Titel', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Haushalt' },
-    reminders: { loginRequired: 'Anmeldung für Erinnerungen erforderlich', titlePh: 'Erinnerungstitel', timePh: 'Uhrzeit', add: '+ Hinzufügen', noReminders: 'Keine Erinnerungen' } },
+    reminders: { loginRequired: 'Anmeldung für Erinnerungen erforderlich', titlePh: 'Erinnerungstitel', timePh: 'Uhrzeit', add: '+ Hinzufügen', noReminders: 'Keine Erinnerungen' },
+    guides: { overview: 'Allgemeine Beschreibung', userGuide: 'Benutzerhandbuch', financeOverviewTitle: 'Was ist M Finance', financeOverviewDesc: 'Ein kurzer Überblick über die Haushaltsbudgetverwaltung — Konten, Transaktionen, Kategorien und Prognosen, und für wen es gedacht ist.', financeGuideTitle: 'Schritt-für-Schritt-Anleitung', financeGuideDesc: 'Eine schriftliche Anleitung mit Screenshots: Installation, Kontoverbindung, Kategorisierung und Berichte.', financeVideosTitle: 'Kurze Anleitungen', financeVideosDesc: 'Kurze Video-Tutorials zu jeder wichtigen Funktion der Haushaltsbudgetverwaltung.', siteOverviewTitle: 'Was die Website bietet', siteOverviewDesc: 'Ein kurzer Rundgang durch die KeyClick-Plattform — Produkte, Dienstleistungen und Kundenbeziehungen.', siteGuideTitle: 'Registrierung und Navigation', siteGuideDesc: 'Wie man sich registriert, anmeldet und jeden Dienst auf der Website findet.', siteVideosTitle: 'Website-Demos', siteVideosDesc: 'Kurze aufgezeichnete Demos der wichtigsten Funktionen der Website.' },
+    banking: { autoDetectFailed: 'Automatische Erkennung fehlgeschlagen — manuell wählen', detectionError: 'Erkennungsfehler', loadBanksError: 'Fehler beim Laden der Banken', plaidTokenError: 'Plaid-Token-Fehler', bankConnected: 'Bank verbunden', connectionError: 'Verbindungsfehler', linkOpened: 'Ein Verbindungsfenster für {name} wurde geöffnet. Nach der Bestätigung zurückkehren und aktualisieren klicken.', linkCreateError: 'Fehler beim Erstellen des Bank-Links', refreshing: 'Wird aktualisiert...', updated: 'Aktualisiert', fetchingData: 'Daten werden abgerufen...', noAccountsConnected: 'Keine Konten verbunden', downloadedFiles: '{count} Dateien heruntergeladen', downloadError: 'Download-Fehler', connectBankTitle: 'Bank verbinden', autoDetect: 'Automatische Erkennung', orManually: 'oder manuell', unitedStates: 'USA', back: 'Zurück', selectInstitution: 'Bank auswählen', noInstitutions: 'Keine Banken', refresh: 'Aktualisieren', downloadFiles: 'Dateien herunterladen' } },
   { code: 'fr', flag: 'צרפת',    name: 'Français', welcome: 'Bienvenue',
     menu: ['Retour','Mises à jour','Messages','Rappels','Services bancaires','Page personnelle'],
-    card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide', run: 'Lancer', videos: 'Vidéos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Déjà installé\nPas besoin de réinstaller', msgDownloading: 'Téléchargement du fichier', msgInstallComplete: 'Enregistrez et exécutez le fichier\npour terminer l\'installation', msgDownloadError: 'Erreur de téléchargement\nRéessayer', mFinance: 'M Finance', msgExists: 'Utilisateur déjà enregistré\navec ces informations', msgUpdated: 'Informations mises à jour avec succès', msgRegistered: 'Inscription terminée', existingCustomer: 'Client existant', newCustomer: 'Nouveau client', notRecognized: 'Client non reconnu. Cliquer pour s\'inscrire', msgSelectPlan: 'Veuillez choisir un forfait sur votre page personnelle', infoServices: 'Services d\'information', guidesAndVideos: 'Guides & Vidéos' },
+    card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide', run: 'Lancer', videos: 'Vidéos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Déjà installé\nPas besoin de réinstaller', msgDownloading: 'Téléchargement du fichier', msgInstallComplete: 'Enregistrez et exécutez le fichier\npour terminer l\'installation', msgDownloadError: 'Erreur de téléchargement\nRéessayer', mFinance: 'M Finance', msgExists: 'Utilisateur déjà enregistré\navec ces informations', msgUpdated: 'Informations mises à jour avec succès', msgRegistered: 'Inscription terminée', existingCustomer: 'Client existant', newCustomer: 'Nouveau client', notRecognized: 'Client non reconnu. Cliquer pour s\'inscrire', msgSelectPlan: 'Veuillez choisir un forfait sur votre page personnelle', infoServices: 'Services d\'information', guidesAndVideos: 'Guides & Vidéos', siteHeaderPrefix: 'Le site Internet de', theWebsite: 'Le Site' },
     profile: { fullName: 'Nom complet', email: 'E-mail', ip: 'IP', language: 'Langue', country: 'Pays', plan: 'Abonnement', planStart: 'Début', planEnd: 'Fin', unlimited: 'Illimité', comingSoon: 'Bientôt', choosePlan: 'Choisir un abonnement', close: '✕ Fermer', loginRequired: 'Connexion requise', login: 'Se connecter', products: 'Produits', change: 'Modifier',
       price: 'Prix', changePlan: "Changer d'abonnement", planName: 'Nom', planFrom: 'De', planTo: 'Au', back: 'Retour', currencyLocal: '€', free: 'Gratuit',       planNames: { System_Free_Run: 'Lancement', User_Trial: 'Essai', User_VIP_Free: 'VIP', System_Owner: 'Système', User_Monthly: 'Mensuel', User_Annual: 'Annuel', User_One_Time: 'Unique', System_Suspended_NonPayment: 'Suspendu', User_Cancelled: 'Annulé' } },
     feedback: { customerRelations: 'Relations clients', systemMessage: 'Message du système', respectfully: 'Cordialement,', rating: 'Évaluation', ratingWebsite: 'Site web', ratingBudget: 'Gestion du budget familial', userMessage: "Message de l'utilisateur", date: 'Date :', title: 'Titre :', from: 'De :', systemReply: 'Réponse du système' },
     system: { systemLabel: 'Système', selectAction: 'Sélectionner une action dans la barre droite', users: 'Utilisateurs', buildMessages: 'Journal de build', schedule: 'טבלאות ונתונים', pr: 'RP', publishedDate: 'Publié le :', reset: 'Réinitialiser', saved: 'Enregistré', records: 'enregistrements', scheduleSubject: 'Sujet', schedulePriceUSD: 'Prix\n[$]', schedulePeriod: 'Période\n[mois]', scheduleNotes: 'Notes', clear: 'Effacer', pause: 'Pause', resume: 'Reprendre', active: '● Actif', paused: 'En pause', lines: 'lignes', filter: 'Filtre', refresh: 'Actualiser', loading: 'Chargement...', loadingBuild: 'Chargement du build...', error: 'Erreur', noBuildData: 'Aucune donnée. Lancez Release_KeyClick.bat', networkError: 'Erreur réseau', adminButton: 'Espace système', generalGroup: 'Général', colName: 'Nom', colCurrency: 'Devise', colCreated: 'Créé', colActive: 'Actif', colAppInstalled: 'Application', colLicenceType: 'Type de licence', colSystemForce: 'Mode système', distributionDay: 'Jour de distribution X', messages: 'Messages', send: 'Envoyer', sent: 'Envoyé !', reply: 'Répondre', noMessages: 'Aucun message', replySent: 'Réponse envoyée !', ref: 'Réf.', msgNo: 'N°', replyToRef: 'Réponse à réf.', msgNumber: 'Message N°', new: 'Nouveau', delete: 'Supprimer', newMessage: '+ Nouveau message', selectToView: 'Sélectionner un message', monitor: 'Moniteur', systemData: 'Données système', resetTable: 'Réinitialiser la table', debug: 'Débogage', db: 'BD', sensitivePoints: 'Points sensibles', productVersionTable: 'Tableau des versions (onglet mises à jour)' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Livre', EUR: 'Euro', RUB: 'Rouble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Roupie' },
     updates: { colDate: 'Date et heure', colProduct: 'Produit', colVersion: 'Version', colTitle: 'Titre', productKeyClick: 'KeyClick Site web', productMFinance: 'M Finance Budget familial' },
-    reminders: { loginRequired: 'Connexion requise pour les rappels', titlePh: 'Titre du rappel', timePh: 'Heure', add: '+ Ajouter', noReminders: 'Aucun rappel' } },
+    reminders: { loginRequired: 'Connexion requise pour les rappels', titlePh: 'Titre du rappel', timePh: 'Heure', add: '+ Ajouter', noReminders: 'Aucun rappel' },
+    guides: { overview: 'Description générale', userGuide: 'Guide utilisateur', financeOverviewTitle: 'Présentation de M Finance', financeOverviewDesc: "Un bref aperçu de la gestion du budget familial — comptes, transactions, catégories et prévisions, et à qui elle est destinée.", financeGuideTitle: 'Utilisation étape par étape', financeGuideDesc: "Un guide écrit avec des captures d'écran : installation, connexion des comptes, catégorisation et rapports.", financeVideosTitle: 'Tutoriels courts', financeVideosDesc: 'De courts tutoriels vidéo pour chaque fonctionnalité clé de la gestion du budget familial.', siteOverviewTitle: 'Ce que propose le site', siteOverviewDesc: 'Un bref tour de la plateforme KeyClick — produits, services et relations clients.', siteGuideTitle: 'Inscription et navigation', siteGuideDesc: 'Comment créer un compte, se connecter et trouver chaque service sur le site.', siteVideosTitle: 'Démonstrations du site', siteVideosDesc: 'De courtes démonstrations filmées des principales fonctionnalités du site.' },
+    banking: { autoDetectFailed: 'Détection automatique échouée — choisir manuellement', detectionError: 'Erreur de détection', loadBanksError: 'Erreur de chargement des banques', plaidTokenError: 'Erreur de jeton Plaid', bankConnected: 'Banque connectée', connectionError: 'Erreur de connexion', linkOpened: 'Une fenêtre de connexion pour {name} a été ouverte. Après approbation, revenez et cliquez sur actualiser.', linkCreateError: 'Erreur lors de la création du lien bancaire', refreshing: 'Actualisation...', updated: 'Mis à jour', fetchingData: 'Récupération des données...', noAccountsConnected: 'Aucun compte connecté', downloadedFiles: '{count} fichiers téléchargés', downloadError: 'Erreur de téléchargement', connectBankTitle: 'Connecter une banque', autoDetect: 'Détection automatique', orManually: 'ou manuellement', unitedStates: 'États-Unis', back: 'Retour', selectInstitution: 'Choisir une banque', noInstitutions: 'Aucune banque', refresh: 'Actualiser', downloadFiles: 'Télécharger les fichiers' } },
   { code: 'he', flag: 'ישראל',   name: 'עברית',    welcome: 'ברוכים הבאים',
     menu: ['משוב','עדכונים','הודעות','תזכורות','שרותים בנקאיים','דף אישי'],
-    card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכון', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה', run: 'הפעלה', videos: 'סרטונים', guide: 'הדרכה', ok: 'לחץ', msgAlreadyInstalled: 'כבר מותקן\nאין צורך בהתקנה', msgDownloading: 'הורד קובץ התקנה', msgInstallComplete: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה', msgDownloadError: 'שגיאה בהורדה\nנסה שוב', mFinance: 'M Finance', msgExists: 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת', msgUpdated: 'הפרטים עודכנו בהצלחה', msgRegistered: 'הרשמה הושלמה', existingCustomer: 'לקוח קיים', newCustomer: 'לקוח חדש', notRecognized: 'לקוח לא מוכר. לחץ להרשמה', msgSelectPlan: 'בחר תכנית בדף האישי', infoServices: 'שרותי מידע', guidesAndVideos: 'מדריכים וסרטונים' },
+    card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכון', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה', run: 'הפעלה', videos: 'סרטונים', guide: 'הדרכה', ok: 'לחץ', msgAlreadyInstalled: 'כבר מותקן\nאין צורך בהתקנה', msgDownloading: 'הורד קובץ התקנה', msgInstallComplete: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה', msgDownloadError: 'שגיאה בהורדה\nנסה שוב', mFinance: 'M Finance', msgExists: 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת', msgUpdated: 'הפרטים עודכנו בהצלחה', msgRegistered: 'הרשמה הושלמה', existingCustomer: 'לקוח קיים', newCustomer: 'לקוח חדש', notRecognized: 'לקוח לא מוכר. לחץ להרשמה', msgSelectPlan: 'בחר תכנית בדף האישי', infoServices: 'שרותי מידע', guidesAndVideos: 'מדריכים וסרטונים', siteHeaderPrefix: 'אתר האינטרנט של', theWebsite: 'האתר' },
     profile: { fullName: 'שם ומשפחה', email: 'דוא"ל', ip: 'IP', language: 'שפה', country: 'מדינה', plan: 'תכנית', planStart: 'תחילת תכנית', planEnd: 'סיום תכנית', unlimited: 'ללא הגבלה', comingSoon: 'בקרוב', choosePlan: 'בחר תכנית', close: '✕ סגור', loginRequired: 'נדרשת כניסה לצפייה בדף האישי', login: 'כניסה', products: 'מוצרים', change: 'שינוי',
       price: 'מחיר', changePlan: 'שינוי תכנית', planName: 'שם', planFrom: 'מ-', planTo: 'עד-', back: 'חזרה', currencyLocal: '₪', free: 'חינם',       planNames: { System_Free_Run: 'תקופת הרצה', User_Trial: 'תקופת נסיון', User_VIP_Free: 'VIP', System_Owner: 'מערכת', User_Monthly: 'חודשי', User_Annual: 'שנתי', User_One_Time: 'כניסה בודדת', System_Suspended_NonPayment: 'מנותק', User_Cancelled: 'בוטל' } },
     feedback: { customerRelations: 'קשרי לקוחות', systemMessage: 'הודעת המערכת', respectfully: 'בכבוד רב,', rating: 'דירוג', ratingWebsite: 'אתר', ratingBudget: 'ניהול תקציב בית', userMessage: 'דבר המשתמש', date: 'תאריך:', title: 'כותרת:', from: 'מאת:', systemReply: 'תשובת המערכת' },
     system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'טבלאות ונתונים', pr: 'יחסי ציבור', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים' },
     currencyNames: { ILS: 'ש"ח', USD: 'דולר', GBP: 'ליש"ט', EUR: 'יורו', RUB: 'רובל', JPY: 'ין', SAR: 'ריאל', CNY: 'יואן', INR: 'רופי' },
     updates: { colDate: 'תאריך ושעה', colProduct: 'מוצר', colVersion: 'גרסה', colTitle: 'כותרת', productKeyClick: 'אתר KeyClick', productMFinance: 'ניהול תקציב בית M Finance' },
-    reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' } },
+    reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' },
+    guides: { overview: 'תיאור כללי', userGuide: 'מדריך למשתמש', financeOverviewTitle: 'מה זה M Finance', financeOverviewDesc: 'סקירה קצרה של ניהול תקציב הבית — חשבונות, תנועות, קטגוריות ותחזיות, ולמי זה מיועד.', financeGuideTitle: 'שימוש שלב-אחר-שלב', financeGuideDesc: 'מדריך כתוב עם צילומי מסך: התקנה, חיבור חשבונות, סיווגים ודוחות.', financeVideosTitle: 'הדרכות קצרות', financeVideosDesc: 'סרטוני וידאו קצרים לכל תכונה עיקרית בניהול משק הבית.', siteOverviewTitle: 'מה מציע האתר', siteOverviewDesc: 'סיור קצר על פלטפורמת KeyClick — המוצרים, השירותים וקשרי הלקוחות.', siteGuideTitle: 'הרשמה וניווט', siteGuideDesc: 'איך נרשמים, מתחברים ומוצאים כל שירות באתר.', siteVideosTitle: 'הדגמות האתר', siteVideosDesc: 'הדגמות מצולמות קצרות של תכונות האתר המרכזיות.' },
+    banking: { autoDetectFailed: 'לא זוהה אוטומטית — בחר ידנית', detectionError: 'שגיאה בזיהוי', loadBanksError: 'שגיאה בטעינת בנקים', plaidTokenError: 'שגיאה ביצירת Plaid Token', bankConnected: 'הבנק חובר בהצלחה', connectionError: 'שגיאה בחיבור', linkOpened: 'נפתח חלון חיבור ל-{name}. לאחר האישור חזור ולחץ רענן.', linkCreateError: 'שגיאה ביצירת קישור לבנק', refreshing: 'מרענן...', updated: 'עודכן', fetchingData: 'שולף נתונים...', noAccountsConnected: 'אין חשבונות מחוברים', downloadedFiles: 'הורדו {count} קבצים', downloadError: 'שגיאה בהורדה', connectBankTitle: 'חיבור לבנק', autoDetect: 'זיהוי אוטומטי', orManually: 'או בחר ידנית', unitedStates: 'ארצות הברית', back: 'חזור', selectInstitution: 'בחר מוסד פיננסי', noInstitutions: 'אין מוסדות', refresh: 'רענן', downloadFiles: 'הורד קבצים' } },
   { code: 'es', flag: 'ספרד',    name: 'Español',  welcome: 'Bienvenido',
     menu: ['Comentarios','Actualizaciones','Mensajes','Recordatorios','Servicios bancarios','Página personal'],
-    card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía', run: 'Ejecutar', videos: 'Videos', guide: 'Guía', ok: 'OK', msgAlreadyInstalled: 'Ya instalado\nNo es necesario reinstalar', msgDownloading: 'Descargando archivo de instalación', msgInstallComplete: 'Guarda y ejecuta el archivo\npara completar la instalación', msgDownloadError: 'Error de descarga\nInténtalo de nuevo', mFinance: 'M Finance', msgExists: 'El usuario ya está registrado\ncon estos datos', msgUpdated: 'Datos actualizados correctamente', msgRegistered: 'Registro completado', existingCustomer: 'Cliente existente', newCustomer: 'Cliente nuevo', notRecognized: 'Cliente no encontrado. Haga clic para registrarse', msgSelectPlan: 'Por favor selecciona un plan en tu página personal', infoServices: 'Servicios de información', guidesAndVideos: 'Guías y Videos' },
+    card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía', run: 'Ejecutar', videos: 'Videos', guide: 'Guía', ok: 'OK', msgAlreadyInstalled: 'Ya instalado\nNo es necesario reinstalar', msgDownloading: 'Descargando archivo de instalación', msgInstallComplete: 'Guarda y ejecuta el archivo\npara completar la instalación', msgDownloadError: 'Error de descarga\nInténtalo de nuevo', mFinance: 'M Finance', msgExists: 'El usuario ya está registrado\ncon estos datos', msgUpdated: 'Datos actualizados correctamente', msgRegistered: 'Registro completado', existingCustomer: 'Cliente existente', newCustomer: 'Cliente nuevo', notRecognized: 'Cliente no encontrado. Haga clic para registrarse', msgSelectPlan: 'Por favor selecciona un plan en tu página personal', infoServices: 'Servicios de información', guidesAndVideos: 'Guías y Videos', siteHeaderPrefix: 'El sitio web de', theWebsite: 'El Sitio' },
     profile: { fullName: 'Nombre completo', email: 'Correo', ip: 'IP', language: 'Idioma', country: 'País', plan: 'Plan', planStart: 'Inicio del plan', planEnd: 'Fin del plan', unlimited: 'Sin límite', comingSoon: 'Próximamente', choosePlan: 'Elegir plan', close: '✕ Cerrar', loginRequired: 'Se requiere inicio de sesión', login: 'Iniciar sesión', products: 'Productos', change: 'Cambiar',
       price: 'Precio', changePlan: 'Cambiar plan', planName: 'Nombre', planFrom: 'Desde', planTo: 'Hasta', back: 'Volver', currencyLocal: '€', free: 'Gratis',       planNames: { System_Free_Run: 'Ejecución', User_Trial: 'Prueba', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensual', User_Annual: 'Anual', User_One_Time: 'Único', System_Suspended_NonPayment: 'Suspendido', User_Cancelled: 'Cancelado' } },
     feedback: { customerRelations: 'Relaciones con clientes', systemMessage: 'Mensaje del sistema', respectfully: 'Atentamente,', rating: 'Calificación', ratingWebsite: 'Sitio web', ratingBudget: 'Gestión del presupuesto familiar', userMessage: 'Mensaje del usuario', date: 'Fecha:', title: 'Título:', from: 'De:', systemReply: 'Respuesta del sistema' },
     system: { systemLabel: 'Sistema', selectAction: 'Seleccionar acción de la barra derecha', users: 'Usuarios', buildMessages: 'Registro de build', schedule: 'טבלאות ונתונים', pr: 'RRPP', publishedDate: 'Publicado:', reset: 'Restablecer', saved: 'Guardado', records: 'registros', scheduleSubject: 'Asunto', schedulePriceUSD: 'Precio\n[$]', schedulePeriod: 'Período\n[mes]', scheduleNotes: 'Notas', clear: 'Limpiar', pause: 'Pausar', resume: 'Reanudar', active: '● Activo', paused: 'En pausa', lines: 'líneas', filter: 'Filtro', refresh: 'Actualizar', loading: 'Cargando...', loadingBuild: 'Cargando datos de build...', error: 'Error', noBuildData: 'Sin datos. Ejecute Release_KeyClick.bat', networkError: 'Error de red', adminButton: 'Área del sistema', generalGroup: 'General', colName: 'Nombre', colCurrency: 'Moneda', colCreated: 'Creado', colActive: 'Activo', colAppInstalled: 'Aplicación', colLicenceType: 'Tipo de licencia', colSystemForce: 'Modo sistema', distributionDay: 'Día de distribución X', messages: 'Mensajes', send: 'Enviar', sent: '¡Enviado!', reply: 'Responder', noMessages: 'Sin mensajes', replySent: '¡Respuesta enviada!', ref: 'Ref.', msgNo: 'N°', replyToRef: 'Respuesta a ref.', msgNumber: 'Mensaje N°', new: 'Nuevo', delete: 'Eliminar', newMessage: '+ Nuevo mensaje', selectToView: 'Seleccionar un mensaje', monitor: 'Monitor', systemData: 'Datos del sistema', resetTable: 'Restablecer tabla', debug: 'Depurar', db: 'BD', sensitivePoints: 'Puntos sensibles', productVersionTable: 'Tabla de versiones (pestaña actualizaciones)' },
     currencyNames: { ILS: 'Séquel', USD: 'Dólar', GBP: 'Libra', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
     updates: { colDate: 'Fecha y hora', colProduct: 'Producto', colVersion: 'Versión', colTitle: 'Título', productKeyClick: 'KeyClick Sitio web', productMFinance: 'M Finance Presupuesto familiar' },
-    reminders: { loginRequired: 'Inicio de sesión requerido', titlePh: 'Título del recordatorio', timePh: 'Hora', add: '+ Agregar', noReminders: 'Sin recordatorios' } },
+    reminders: { loginRequired: 'Inicio de sesión requerido', titlePh: 'Título del recordatorio', timePh: 'Hora', add: '+ Agregar', noReminders: 'Sin recordatorios' },
+    guides: { overview: 'Descripción general', userGuide: 'Guía del usuario', financeOverviewTitle: 'Qué es M Finance', financeOverviewDesc: 'Una breve descripción de la gestión del presupuesto familiar — cuentas, transacciones, categorías y previsiones, y a quién está dirigido.', financeGuideTitle: 'Uso paso a paso', financeGuideDesc: 'Una guía escrita con capturas de pantalla: instalación, conexión de cuentas, categorización e informes.', financeVideosTitle: 'Tutoriales cortos', financeVideosDesc: 'Breves videotutoriales de cada función clave en la gestión del presupuesto familiar.', siteOverviewTitle: 'Qué ofrece el sitio', siteOverviewDesc: 'Un breve recorrido por la plataforma KeyClick — productos, servicios y relación con los clientes.', siteGuideTitle: 'Registro y navegación', siteGuideDesc: 'Cómo registrarse, iniciar sesión y encontrar cada servicio en el sitio.', siteVideosTitle: 'Demostraciones del sitio', siteVideosDesc: 'Breves demostraciones grabadas de las principales funciones del sitio.' },
+    banking: { autoDetectFailed: 'Detección automática fallida — elija manualmente', detectionError: 'Error de detección', loadBanksError: 'Error al cargar los bancos', plaidTokenError: 'Error de token de Plaid', bankConnected: 'Banco conectado', connectionError: 'Error de conexión', linkOpened: 'Se abrió una ventana de conexión para {name}. Después de aprobar, vuelva y haga clic en actualizar.', linkCreateError: 'Error al crear el enlace bancario', refreshing: 'Actualizando...', updated: 'Actualizado', fetchingData: 'Obteniendo datos...', noAccountsConnected: 'No hay cuentas conectadas', downloadedFiles: '{count} archivos descargados', downloadError: 'Error de descarga', connectBankTitle: 'Conectar banco', autoDetect: 'Detección automática', orManually: 'o manualmente', unitedStates: 'Estados Unidos', back: 'Volver', selectInstitution: 'Seleccionar banco', noInstitutions: 'No hay bancos', refresh: 'Actualizar', downloadFiles: 'Descargar archivos' } },
   { code: 'ja', flag: 'יפן',     name: '日本語',    welcome: 'ようこそ',
     menu: ['フィードバック','更新','メッセージ','リマインダー','銀行サービス','個人ページ'],
-    card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル', run: '起動', videos: 'ビデオ', guide: 'ガイド', ok: 'OK', msgAlreadyInstalled: 'インストール済み\n再インストール不要', msgDownloading: 'インストールファイルをダウンロード中', msgInstallComplete: 'ファイルを保存して実行\nインストールを完了', msgDownloadError: 'ダウンロードエラー\n再試行', mFinance: 'M Finance', msgExists: 'このメールは\nすでに登録されています', msgUpdated: '情報が正常に更新されました', msgRegistered: '登録が完了しました', existingCustomer: '既存のお客様', newCustomer: '新規のお客様', notRecognized: 'お客様が見つかりません。登録するにはクリック', msgSelectPlan: '個人ページでプランを選択してください', infoServices: '情報サービス', guidesAndVideos: 'ガイドと動画' },
+    card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル', run: '起動', videos: 'ビデオ', guide: 'ガイド', ok: 'OK', msgAlreadyInstalled: 'インストール済み\n再インストール不要', msgDownloading: 'インストールファイルをダウンロード中', msgInstallComplete: 'ファイルを保存して実行\nインストールを完了', msgDownloadError: 'ダウンロードエラー\n再試行', mFinance: 'M Finance', msgExists: 'このメールは\nすでに登録されています', msgUpdated: '情報が正常に更新されました', msgRegistered: '登録が完了しました', existingCustomer: '既存のお客様', newCustomer: '新規のお客様', notRecognized: 'お客様が見つかりません。登録するにはクリック', msgSelectPlan: '個人ページでプランを選択してください', infoServices: '情報サービス', guidesAndVideos: 'ガイドと動画', siteHeaderPrefix: '公式サイト：', theWebsite: '本サイト' },
     profile: { fullName: 'フルネーム', email: 'メール', ip: 'IP', language: '言語', country: '国', plan: 'プラン', planStart: 'プラン開始', planEnd: 'プラン終了', unlimited: '無制限', comingSoon: '近日公開', choosePlan: 'プランを選択', close: '✕ 閉じる', loginRequired: 'ログインが必要です', login: 'ログイン', products: '製品', change: '変更',
       price: '価格', changePlan: 'プラン変更', planName: '名前', planFrom: 'から', planTo: 'まで', back: '戻る', currencyLocal: '¥', free: '無料',       planNames: { System_Free_Run: '試運転', User_Trial: '試用', User_VIP_Free: 'VIP', System_Owner: 'システム', User_Monthly: '月次', User_Annual: '年次', User_One_Time: '単回', System_Suspended_NonPayment: '停止', User_Cancelled: 'キャンセル' } },
     feedback: { customerRelations: 'カスタマーサービス', systemMessage: 'システムメッセージ', respectfully: '敬具,', rating: '評価', ratingWebsite: 'ウェブサイト', ratingBudget: '家計管理', userMessage: 'ユーザーメッセージ', date: '日付:', title: 'タイトル:', from: '差出人:', systemReply: 'システム返信' },
     system: { systemLabel: 'システム', selectAction: '右サイドバーからアクションを選択', users: 'ユーザー', buildMessages: 'ビルドログ', schedule: 'טבלאות ונתונים', pr: 'PR', publishedDate: '公開日:', reset: 'リセット', saved: '保存済み', records: '件', scheduleSubject: '件名', schedulePriceUSD: '価格\n[$]', schedulePeriod: '期間\n[月]', scheduleNotes: 'メモ', clear: 'クリア', pause: '一時停止', resume: '再開', active: '● アクティブ', paused: '一時停止中', lines: '行', filter: 'フィルター', refresh: '更新', loading: '読み込み中...', loadingBuild: 'ビルドデータ読み込み中...', error: 'エラー', noBuildData: 'データなし。Release_KeyClick.bat を実行', networkError: 'ネットワークエラー', adminButton: 'システム管理', generalGroup: '全般', colName: '名前', colCurrency: '通貨', colCreated: '作成日', colActive: '有効', colAppInstalled: 'アプリ', colLicenceType: 'ライセンス種別', colSystemForce: 'システムモード', distributionDay: '配布日X', messages: 'メッセージ', send: '送信', sent: '送信済み!', reply: '返信', noMessages: 'メッセージなし', replySent: '返信済み!', ref: '参照', msgNo: 'No.', replyToRef: '参照への返信', msgNumber: 'メッセージNo.', new: '新着', delete: '削除', newMessage: '+ 新メッセージ', selectToView: 'メッセージを選択', monitor: 'モニター', systemData: 'システムデータ', resetTable: 'テーブルリセット', debug: 'デバッグ', db: 'DB', sensitivePoints: '重要ポイント', productVersionTable: '更新タブの製品バージョン一覧' },
     currencyNames: { ILS: 'シェケル', USD: 'ドル', GBP: 'ポンド', EUR: 'ユーロ', RUB: 'ルーブル', JPY: '円', SAR: 'リヤル', CNY: '元', INR: 'ルピー' },
     updates: { colDate: '日時', colProduct: '製品', colVersion: 'バージョン', colTitle: 'タイトル', productKeyClick: 'KeyClick サイト', productMFinance: 'M Finance 家計管理' },
-    reminders: { loginRequired: 'リマインダーを表示するにはログインが必要です', titlePh: 'リマインダーのタイトル', timePh: '時刻', add: '+ 追加', noReminders: 'リマインダーなし' } },
+    reminders: { loginRequired: 'リマインダーを表示するにはログインが必要です', titlePh: 'リマインダーのタイトル', timePh: '時刻', add: '+ 追加', noReminders: 'リマインダーなし' },
+    guides: { overview: '概要', userGuide: 'ユーザーガイド', financeOverviewTitle: 'M Financeとは', financeOverviewDesc: '家計管理の簡単な概要 — 口座、取引、カテゴリ、予測、対象となる方について。', financeGuideTitle: '使い方ステップガイド', financeGuideDesc: 'スクリーンショット付きの説明書：インストール、口座の連携、分類とレポート。', financeVideosTitle: '短いチュートリアル', financeVideosDesc: '家計管理の主要機能ごとの短い動画チュートリアル。', siteOverviewTitle: 'サイトが提供するもの', siteOverviewDesc: 'KeyClickプラットフォームの簡単な紹介 — 製品、サービス、カスタマーリレーション。', siteGuideTitle: '登録とナビゲーション', siteGuideDesc: '登録方法、ログイン方法、サイト内の各サービスの見つけ方。', siteVideosTitle: 'サイトのデモ', siteVideosDesc: 'サイトの主要機能を短く撮影したデモ。' },
+    banking: { autoDetectFailed: '自動検出に失敗しました。手動で選択してください', detectionError: '検出エラー', loadBanksError: '銀行の読み込みエラー', plaidTokenError: 'Plaidトークンエラー', bankConnected: '銀行が接続されました', connectionError: '接続エラー', linkOpened: '{name}への接続ウィンドウが開きました。承認後、戻って更新をクリックしてください。', linkCreateError: '銀行リンクの作成エラー', refreshing: '更新中...', updated: '更新しました', fetchingData: 'データを取得中...', noAccountsConnected: '接続された口座がありません', downloadedFiles: '{count}件のファイルをダウンロードしました', downloadError: 'ダウンロードエラー', connectBankTitle: '銀行を接続', autoDetect: '自動検出', orManually: 'または手動で', unitedStates: 'アメリカ合衆国', back: '戻る', selectInstitution: '銀行を選択', noInstitutions: '銀行がありません', refresh: '更新', downloadFiles: 'ファイルをダウンロード' } },
   { code: 'ar', flag: 'סעודיה',  name: 'العربية',  welcome: 'أهلاً وسهلاً',
     menu: ['ملاحظات','تحديثات','رسائل','تذكيرات','خدمات مصرفية','الصفحة الشخصية'],
-    card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل', run: 'تشغيل', videos: 'مقاطع', guide: 'دليل', ok: 'حسناً', msgAlreadyInstalled: 'مثبت بالفعل\nلا حاجة لإعادة التثبيت', msgDownloading: 'جارٍ تنزيل ملف التثبيت', msgInstallComplete: 'احفظ الملف وشغّله\nلإكمال التثبيت', msgDownloadError: 'خطأ في التنزيل\nحاول مرة أخرى', mFinance: 'M Finance', msgExists: 'المستخدم مسجل بالفعل\nبهذه البيانات', msgUpdated: 'تم تحديث البيانات بنجاح', msgRegistered: 'اكتمل التسجيل', existingCustomer: 'عميل موجود', newCustomer: 'عميل جديد', notRecognized: 'العميل غير معروف. انقر للتسجيل', msgSelectPlan: 'يرجى اختيار خطة في صفحتك الشخصية', infoServices: 'خدمات المعلومات', guidesAndVideos: 'أدلة ومقاطع فيديو' },
+    card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل', run: 'تشغيل', videos: 'مقاطع', guide: 'دليل', ok: 'حسناً', msgAlreadyInstalled: 'مثبت بالفعل\nلا حاجة لإعادة التثبيت', msgDownloading: 'جارٍ تنزيل ملف التثبيت', msgInstallComplete: 'احفظ الملف وشغّله\nلإكمال التثبيت', msgDownloadError: 'خطأ في التنزيل\nحاول مرة أخرى', mFinance: 'M Finance', msgExists: 'المستخدم مسجل بالفعل\nبهذه البيانات', msgUpdated: 'تم تحديث البيانات بنجاح', msgRegistered: 'اكتمل التسجيل', existingCustomer: 'عميل موجود', newCustomer: 'عميل جديد', notRecognized: 'العميل غير معروف. انقر للتسجيل', msgSelectPlan: 'يرجى اختيار خطة في صفحتك الشخصية', infoServices: 'خدمات المعلومات', guidesAndVideos: 'أدلة ومقاطع فيديو', siteHeaderPrefix: 'الموقع الإلكتروني لـ', theWebsite: 'الموقع' },
     profile: { fullName: 'الاسم الكامل', email: 'البريد الإلكتروني', ip: 'IP', language: 'اللغة', country: 'الدولة', plan: 'الخطة', planStart: 'بداية الخطة', planEnd: 'نهاية الخطة', unlimited: 'بلا حدود', comingSoon: 'قريباً', choosePlan: 'اختر خطة', close: '✕ إغلاق', loginRequired: 'تسجيل الدخول مطلوب', login: 'دخول', products: 'المنتجات', change: 'تغيير',
       price: 'السعر', changePlan: 'تغيير الخطة', planName: 'الاسم', planFrom: 'من', planTo: 'إلى', back: 'رجوع', currencyLocal: '﷼', free: 'مجاناً',       planNames: { System_Free_Run: 'تشغيل', User_Trial: 'تجريبي', User_VIP_Free: 'VIP', System_Owner: 'النظام', User_Monthly: 'شهري', User_Annual: 'سنوي', User_One_Time: 'مرة واحدة', System_Suspended_NonPayment: 'موقوف', User_Cancelled: 'ملغى' } },
     feedback: { customerRelations: 'خدمة العملاء', systemMessage: 'رسالة النظام', respectfully: 'مع التحية،', rating: 'تقييم', ratingWebsite: 'الموقع', ratingBudget: 'إدارة الميزانية المنزلية', userMessage: 'رسالة المستخدم', date: 'التاريخ:', title: 'الموضوع:', from: 'من:', systemReply: 'رد النظام' },
     system: { systemLabel: 'النظام', selectAction: 'اختر إجراء من الشريط الأيمن', users: 'المستخدمون', buildMessages: 'سجل البناء', schedule: 'טבלאות ונתונים', pr: 'العلاقات العامة', publishedDate: 'تاريخ النشر:', reset: 'إعادة تعيين', saved: 'تم الحفظ', records: 'سجلات', scheduleSubject: 'الموضوع', schedulePriceUSD: 'السعر\n[$]', schedulePeriod: 'الفترة\n[شهر]', scheduleNotes: 'ملاحظات', clear: 'مسح', pause: 'إيقاف مؤقت', resume: 'استئناف', active: '● نشط', paused: 'متوقف مؤقتاً', lines: 'سطور', filter: 'تصفية', refresh: 'تحديث', loading: 'جارٍ التحميل...', loadingBuild: 'تحميل بيانات البناء...', error: 'خطأ', noBuildData: 'لا بيانات. شغّل Release_KeyClick.bat', networkError: 'خطأ في الشبكة', adminButton: 'النظام', generalGroup: 'عام', colName: 'الاسم', colCurrency: 'العملة', colCreated: 'تاريخ الإنشاء', colActive: 'نشط', colAppInstalled: 'التطبيق', colLicenceType: 'نوع الترخيص', colSystemForce: 'وضع النظام', distributionDay: 'يوم التوزيع X', messages: 'الرسائل', send: 'إرسال', sent: 'تم!', reply: 'رد', noMessages: 'لا رسائل', replySent: 'تم إرسال الرد!', ref: 'مرجع', msgNo: 'رقم', replyToRef: 'رد على المرجع', msgNumber: 'رسالة رقم', new: 'جديد', delete: 'حذف', newMessage: '+ رسالة جديدة', selectToView: 'اختر رسالة للعرض', monitor: 'مراقب', systemData: 'بيانات النظام', resetTable: 'إعادة تعيين الجدول', debug: 'تصحيح', db: 'قاعدة', sensitivePoints: 'نقاط حساسة', productVersionTable: 'جدول الإصدارات في تبويب التحديثات' },
     currencyNames: { ILS: 'شيكل', USD: 'دولار', GBP: 'جنيه', EUR: 'يورو', RUB: 'روبل', JPY: 'ين', SAR: 'ريال', CNY: 'يوان', INR: 'روبية' },
     updates: { colDate: 'التاريخ والوقت', colProduct: 'المنتج', colVersion: 'الإصدار', colTitle: 'العنوان', productKeyClick: 'KeyClick موقع', productMFinance: 'M Finance ميزانية المنزل' },
-    reminders: { loginRequired: 'تسجيل الدخول مطلوب لعرض التذكيرات', titlePh: 'عنوان التذكير', timePh: 'الوقت', add: '+ إضافة', noReminders: 'لا توجد تذكيرات' } },
+    reminders: { loginRequired: 'تسجيل الدخول مطلوب لعرض التذكيرات', titlePh: 'عنوان التذكير', timePh: 'الوقت', add: '+ إضافة', noReminders: 'لا توجد تذكيرات' },
+    guides: { overview: 'وصف عام', userGuide: 'دليل المستخدم', financeOverviewTitle: 'ما هو M Finance', financeOverviewDesc: 'نظرة عامة موجزة على إدارة ميزانية المنزل — الحسابات، المعاملات، الفئات والتوقعات، ولمن هذا مخصص.', financeGuideTitle: 'الاستخدام خطوة بخطوة', financeGuideDesc: 'دليل مكتوب مع لقطات شاشة: التثبيت، ربط الحسابات، التصنيف والتقارير.', financeVideosTitle: 'شروحات قصيرة', financeVideosDesc: 'مقاطع فيديو تعليمية قصيرة لكل ميزة أساسية في إدارة ميزانية المنزل.', siteOverviewTitle: 'ما الذي يقدمه الموقع', siteOverviewDesc: 'جولة قصيرة في منصة KeyClick — المنتجات والخدمات وخدمة العملاء.', siteGuideTitle: 'التسجيل والتنقل', siteGuideDesc: 'كيفية التسجيل وتسجيل الدخول والعثور على كل خدمة في الموقع.', siteVideosTitle: 'عروض توضيحية للموقع', siteVideosDesc: 'عروض توضيحية مصورة قصيرة لأهم ميزات الموقع.' },
+    banking: { autoDetectFailed: 'فشل الاكتشاف التلقائي — اختر يدويًا', detectionError: 'خطأ في الاكتشاف', loadBanksError: 'خطأ في تحميل البنوك', plaidTokenError: 'خطأ في رمز Plaid', bankConnected: 'تم ربط البنك بنجاح', connectionError: 'خطأ في الاتصال', linkOpened: 'تم فتح نافذة الاتصال بـ {name}. بعد الموافقة، ارجع واضغط تحديث.', linkCreateError: 'خطأ في إنشاء رابط البنك', refreshing: 'جارٍ التحديث...', updated: 'تم التحديث', fetchingData: 'جارٍ جلب البيانات...', noAccountsConnected: 'لا توجد حسابات متصلة', downloadedFiles: 'تم تنزيل {count} ملفات', downloadError: 'خطأ في التنزيل', connectBankTitle: 'ربط بنك', autoDetect: 'اكتشاف تلقائي', orManually: 'أو يدويًا', unitedStates: 'الولايات المتحدة', back: 'رجوع', selectInstitution: 'اختر مؤسسة مالية', noInstitutions: 'لا توجد مؤسسات', refresh: 'تحديث', downloadFiles: 'تنزيل الملفات' } },
   { code: 'zh', flag: 'סין',     name: '中文',      welcome: '欢迎',
     menu: ['反馈','更新','消息','提醒','银行服务','个人页面'],
-    card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件', run: '运行', videos: '视频', guide: '指南', ok: '确定', msgAlreadyInstalled: '已安装\n无需重新安装', msgDownloading: '正在下载安装文件', msgInstallComplete: '保存并运行文件\n以完成安装', msgDownloadError: '下载错误\n请重试', mFinance: 'M Finance', msgExists: '该用户已注册\n使用这些信息', msgUpdated: '信息更新成功', msgRegistered: '注册完成', existingCustomer: '现有客户', newCustomer: '新客户', notRecognized: '未找到客户。点击注册', msgSelectPlan: '请在个人页面选择套餐', infoServices: '信息服务', guidesAndVideos: '指南与视频' },
+    card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件', run: '运行', videos: '视频', guide: '指南', ok: '确定', msgAlreadyInstalled: '已安装\n无需重新安装', msgDownloading: '正在下载安装文件', msgInstallComplete: '保存并运行文件\n以完成安装', msgDownloadError: '下载错误\n请重试', mFinance: 'M Finance', msgExists: '该用户已注册\n使用这些信息', msgUpdated: '信息更新成功', msgRegistered: '注册完成', existingCustomer: '现有客户', newCustomer: '新客户', notRecognized: '未找到客户。点击注册', msgSelectPlan: '请在个人页面选择套餐', infoServices: '信息服务', guidesAndVideos: '指南与视频', siteHeaderPrefix: '官方网站：', theWebsite: '网站' },
     profile: { fullName: '全名', email: '邮箱', ip: 'IP', language: '语言', country: '国家', plan: '套餐', planStart: '套餐开始', planEnd: '套餐结束', unlimited: '无限制', comingSoon: '即将推出', choosePlan: '选择套餐', close: '✕ 关闭', loginRequired: '需要登录', login: '登录', products: '产品', change: '更改',
       price: '价格', changePlan: '更改套餐', planName: '名称', planFrom: '从', planTo: '至', back: '返回', currencyLocal: '¥', free: '免费',       planNames: { System_Free_Run: '试运行', User_Trial: '试用', User_VIP_Free: 'VIP', System_Owner: '系统', User_Monthly: '每月', User_Annual: '每年', User_One_Time: '单次', System_Suspended_NonPayment: '停用', User_Cancelled: '已取消' } },
     feedback: { customerRelations: '客户关系', systemMessage: '系统消息', respectfully: '此致敬礼,', rating: '评分', ratingWebsite: '网站', ratingBudget: '家庭预算管理', userMessage: '用户消息', date: '日期:', title: '标题:', from: '发件人:', systemReply: '系统回复' },
     system: { systemLabel: '系统', selectAction: '从右侧栏选择操作', users: '用户', buildMessages: '构建日志', schedule: 'טבלאות ונתונים', pr: '公关', publishedDate: '发布日期:', reset: '重置', saved: '已保存', records: '条记录', scheduleSubject: '主题', schedulePriceUSD: '价格\n[$]', schedulePeriod: '周期\n[月]', scheduleNotes: '备注', clear: '清除', pause: '暂停', resume: '继续', active: '● 活跃', paused: '已暂停', lines: '行', filter: '筛选', refresh: '刷新', loading: '加载中...', loadingBuild: '正在加载构建数据...', error: '错误', noBuildData: '无构建数据。请运行 Release_KeyClick.bat', networkError: '网络错误', adminButton: '系统管理', generalGroup: '常规', colName: '姓名', colCurrency: '货币', colCreated: '创建时间', colActive: '已激活', colAppInstalled: '应用程序', colLicenceType: '许可证类型', colSystemForce: '系统模式', distributionDay: '分发日X', messages: '消息', send: '发送', sent: '已发送!', reply: '回复', noMessages: '无消息', replySent: '回复已发送!', ref: '参考', msgNo: '编号', replyToRef: '回复参考', msgNumber: '消息编号', new: '新', delete: '删除', newMessage: '+ 新消息', selectToView: '选择消息以查看', monitor: '监控', systemData: '系统数据', resetTable: '重置表格', debug: '调试', db: 'DB', sensitivePoints: '敏感点', productVersionTable: '更新标签中的产品版本表' },
     currencyNames: { ILS: '谢克尔', USD: '美元', GBP: '英镑', EUR: '欧元', RUB: '卢布', JPY: '日元', SAR: '里亚尔', CNY: '人民币', INR: '卢比' },
     updates: { colDate: '日期与时间', colProduct: '产品', colVersion: '版本', colTitle: '标题', productKeyClick: 'KeyClick 网站', productMFinance: 'M Finance 家庭预算' },
-    reminders: { loginRequired: '需要登录才能查看提醒', titlePh: '提醒标题', timePh: '时间', add: '+ 添加', noReminders: '暂无提醒' } },
+    reminders: { loginRequired: '需要登录才能查看提醒', titlePh: '提醒标题', timePh: '时间', add: '+ 添加', noReminders: '暂无提醒' },
+    guides: { overview: '概述', userGuide: '用户指南', financeOverviewTitle: '什么是 M Finance', financeOverviewDesc: '家庭预算管理简介 — 账户、交易、分类和预测，以及适用对象。', financeGuideTitle: '分步使用说明', financeGuideDesc: '附截图的图文指南：安装、连接账户、分类和报表。', financeVideosTitle: '简短教程', financeVideosDesc: '家庭预算管理每项主要功能的简短视频教程。', siteOverviewTitle: '网站提供的内容', siteOverviewDesc: 'KeyClick 平台简介 — 产品、服务与客户关系。', siteGuideTitle: '注册与导航', siteGuideDesc: '如何注册、登录并在网站上找到每项服务。', siteVideosTitle: '网站演示', siteVideosDesc: '网站主要功能的简短录制演示。' },
+    banking: { autoDetectFailed: '自动检测失败 — 请手动选择', detectionError: '检测错误', loadBanksError: '加载银行时出错', plaidTokenError: 'Plaid 令牌错误', bankConnected: '银行已连接', connectionError: '连接错误', linkOpened: '已打开与{name}的连接窗口。批准后请返回并点击刷新。', linkCreateError: '创建银行链接时出错', refreshing: '正在刷新...', updated: '已更新', fetchingData: '正在获取数据...', noAccountsConnected: '没有已连接的账户', downloadedFiles: '已下载 {count} 个文件', downloadError: '下载错误', connectBankTitle: '连接银行', autoDetect: '自动检测', orManually: '或手动选择', unitedStates: '美国', back: '返回', selectInstitution: '选择银行', noInstitutions: '没有银行', refresh: '刷新', downloadFiles: '下载文件' } },
   { code: 'it', flag: 'איטליה',  name: 'Italiano', welcome: 'Benvenuto',
     menu: ['Feedback','Aggiornamenti','Messaggi','Promemoria','Servizi bancari','Pagina personale'],
-    card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida', run: 'Avvia', videos: 'Video', guide: 'Guida', ok: 'OK', msgAlreadyInstalled: 'Già installato\nNessuna reinstallazione necessaria', msgDownloading: 'Download del file di installazione', msgInstallComplete: 'Salva ed esegui il file\nper completare l\'installazione', msgDownloadError: 'Errore di download\nRiprova', mFinance: 'M Finance', msgExists: 'Utente già registrato\ncon questi dati', msgUpdated: 'Dati aggiornati con successo', msgRegistered: 'Registrazione completata', existingCustomer: 'Cliente esistente', newCustomer: 'Nuovo cliente', notRecognized: 'Cliente non trovato. Clicca per registrarti', msgSelectPlan: 'Seleziona un piano nella tua pagina personale', infoServices: 'Servizi informativi', guidesAndVideos: 'Guide e Video' },
+    card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida', run: 'Avvia', videos: 'Video', guide: 'Guida', ok: 'OK', msgAlreadyInstalled: 'Già installato\nNessuna reinstallazione necessaria', msgDownloading: 'Download del file di installazione', msgInstallComplete: 'Salva ed esegui il file\nper completare l\'installazione', msgDownloadError: 'Errore di download\nRiprova', mFinance: 'M Finance', msgExists: 'Utente già registrato\ncon questi dati', msgUpdated: 'Dati aggiornati con successo', msgRegistered: 'Registrazione completata', existingCustomer: 'Cliente esistente', newCustomer: 'Nuovo cliente', notRecognized: 'Cliente non trovato. Clicca per registrarti', msgSelectPlan: 'Seleziona un piano nella tua pagina personale', infoServices: 'Servizi informativi', guidesAndVideos: 'Guide e Video', siteHeaderPrefix: 'Il sito web di', theWebsite: 'Il Sito' },
     profile: { fullName: 'Nome completo', email: 'Email', ip: 'IP', language: 'Lingua', country: 'Paese', plan: 'Piano', planStart: 'Inizio piano', planEnd: 'Fine piano', unlimited: 'Illimitato', comingSoon: 'Prossimamente', choosePlan: 'Scegli piano', close: '✕ Chiudi', loginRequired: 'Accesso richiesto', login: 'Accedi', products: 'Prodotti', change: 'Modifica',
       price: 'Prezzo', changePlan: 'Cambia piano', planName: 'Nome', planFrom: 'Da', planTo: 'A', back: 'Indietro', currencyLocal: '€', free: 'Gratuito',       planNames: { System_Free_Run: 'Lancio', User_Trial: 'Prova', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensile', User_Annual: 'Annuale', User_One_Time: 'Singolo', System_Suspended_NonPayment: 'Sospeso', User_Cancelled: 'Annullato' } },
     feedback: { customerRelations: 'Relazioni clienti', systemMessage: 'Messaggio di sistema', respectfully: 'Cordiali saluti,', rating: 'Valutazione', ratingWebsite: 'Sito web', ratingBudget: 'Gestione del budget familiare', userMessage: 'Messaggio utente', date: 'Data:', title: 'Titolo:', from: 'Da:', systemReply: 'Risposta di sistema' },
     system: { systemLabel: 'Sistema', selectAction: 'Seleziona azione dalla barra destra', users: 'Utenti', buildMessages: 'Registro di build', schedule: 'טבלאות ונתונים', pr: 'RP', publishedDate: 'Pubblicato il:', reset: 'Reimposta', saved: 'Salvato', records: 'record', scheduleSubject: 'Oggetto', schedulePriceUSD: 'Prezzo\n[$]', schedulePeriod: 'Periodo\n[mesi]', scheduleNotes: 'Note', clear: 'Cancella', pause: 'Pausa', resume: 'Riprendi', active: '● Attivo', paused: 'In pausa', lines: 'righe', filter: 'Filtra', refresh: 'Aggiorna', loading: 'Caricamento...', loadingBuild: 'Caricamento dati di build...', error: 'Errore', noBuildData: 'Nessun dato. Eseguire Release_KeyClick.bat', networkError: 'Errore di rete', adminButton: 'Area di sistema', generalGroup: 'Generale', colName: 'Nome', colCurrency: 'Valuta', colCreated: 'Creato', colActive: 'Attivo', colAppInstalled: 'App', colLicenceType: 'Tipo di licenza', colSystemForce: 'Modalità sistema', distributionDay: 'Giorno di distribuzione X', messages: 'Messaggi', send: 'Invia', sent: 'Inviato!', reply: 'Rispondi', noMessages: 'Nessun messaggio', replySent: 'Risposta inviata!', ref: 'Rif.', msgNo: 'N°', replyToRef: 'Risposta a rif.', msgNumber: 'Messaggio N°', new: 'Nuovo', delete: 'Elimina', newMessage: '+ Nuovo messaggio', selectToView: 'Seleziona un messaggio', monitor: 'Monitor', systemData: 'Dati di sistema', resetTable: 'Reimposta tabella', debug: 'Debug', db: 'DB', sensitivePoints: 'Punti sensibili', productVersionTable: 'Tabella versioni (scheda aggiornamenti)' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollaro', GBP: 'Sterlina', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
     updates: { colDate: 'Data e ora', colProduct: 'Prodotto', colVersion: 'Versione', colTitle: 'Titolo', productKeyClick: 'KeyClick Sito web', productMFinance: 'M Finance Gestione budget' },
-    reminders: { loginRequired: 'Accesso richiesto per i promemoria', titlePh: 'Titolo promemoria', timePh: 'Ora', add: '+ Aggiungi', noReminders: 'Nessun promemoria' } },
+    reminders: { loginRequired: 'Accesso richiesto per i promemoria', titlePh: 'Titolo promemoria', timePh: 'Ora', add: '+ Aggiungi', noReminders: 'Nessun promemoria' },
+    guides: { overview: 'Descrizione generale', userGuide: 'Guida utente', financeOverviewTitle: 'Panoramica di M Finance', financeOverviewDesc: 'Una breve panoramica della gestione del bilancio familiare — conti, transazioni, categorie e previsioni, e a chi è destinata.', financeGuideTitle: 'Utilizzo passo dopo passo', financeGuideDesc: "Una guida scritta con screenshot: installazione, collegamento dei conti, categorizzazione e report.", financeVideosTitle: 'Brevi tutorial', financeVideosDesc: 'Brevi video tutorial per ogni funzione principale della gestione del bilancio familiare.', siteOverviewTitle: 'Cosa offre il sito', siteOverviewDesc: 'Un breve tour della piattaforma KeyClick — prodotti, servizi e relazioni con i clienti.', siteGuideTitle: 'Registrazione e navigazione', siteGuideDesc: 'Come registrarsi, accedere e trovare ogni servizio sul sito.', siteVideosTitle: 'Demo del sito', siteVideosDesc: 'Brevi demo registrate delle principali funzionalità del sito.' },
+    banking: { autoDetectFailed: 'Rilevamento automatico fallito — scegli manualmente', detectionError: 'Errore di rilevamento', loadBanksError: 'Errore nel caricamento delle banche', plaidTokenError: 'Errore token Plaid', bankConnected: 'Banca collegata', connectionError: 'Errore di connessione', linkOpened: 'È stata aperta una finestra di collegamento per {name}. Dopo aver approvato, torna e clicca su aggiorna.', linkCreateError: 'Errore nella creazione del collegamento bancario', refreshing: 'Aggiornamento...', updated: 'Aggiornato', fetchingData: 'Recupero dati...', noAccountsConnected: 'Nessun conto collegato', downloadedFiles: '{count} file scaricati', downloadError: 'Errore di download', connectBankTitle: 'Collega banca', autoDetect: 'Rilevamento automatico', orManually: 'o manualmente', unitedStates: 'Stati Uniti', back: 'Indietro', selectInstitution: 'Seleziona banca', noInstitutions: 'Nessuna banca', refresh: 'Aggiorna', downloadFiles: 'Scarica file' } },
   { code: 'hi', flag: 'הודו',    name: 'हिंदी',     welcome: 'स्वागत है',
     menu: ['फीडबैक','अपडेट','संदेश','अनुस्मारक','बैंकिंग सेवाएं','व्यक्तिगत पृष्ठ'],
-    card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें', run: 'चलाएं', videos: 'वीडियो', guide: 'मार्गदर्शिका', ok: 'ठीक है', msgAlreadyInstalled: 'पहले से इंस्टॉल है\nपुनः इंस्टॉल की आवश्यकता नहीं', msgDownloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है', msgInstallComplete: 'फ़ाइल सहेजें और चलाएं\nइंस्टॉलेशन पूरा करने के लिए', msgDownloadError: 'डाउनलोड त्रुटि\nपुनः प्रयास करें', mFinance: 'M Finance', msgExists: 'यह उपयोगकर्ता पहले से पंजीकृत है\nइन विवरणों के साथ', msgUpdated: 'विवरण सफलतापूर्वक अपडेट किए गए', msgRegistered: 'पंजीकरण पूरा हो गया', existingCustomer: 'मौजूदा ग्राहक', newCustomer: 'नया ग्राहक', notRecognized: 'ग्राहक नहीं मिला। पंजीकरण के लिए क्लिक करें', msgSelectPlan: 'कृपया अपने व्यक्तिगत पृष्ठ पर एक योजना चुनें', infoServices: 'सूचना सेवाएं', guidesAndVideos: 'गाइड और वीडियो' },
+    card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें', run: 'चलाएं', videos: 'वीडियो', guide: 'मार्गदर्शिका', ok: 'ठीक है', msgAlreadyInstalled: 'पहले से इंस्टॉल है\nपुनः इंस्टॉल की आवश्यकता नहीं', msgDownloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है', msgInstallComplete: 'फ़ाइल सहेजें और चलाएं\nइंस्टॉलेशन पूरा करने के लिए', msgDownloadError: 'डाउनलोड त्रुटि\nपुनः प्रयास करें', mFinance: 'M Finance', msgExists: 'यह उपयोगकर्ता पहले से पंजीकृत है\nइन विवरणों के साथ', msgUpdated: 'विवरण सफलतापूर्वक अपडेट किए गए', msgRegistered: 'पंजीकरण पूरा हो गया', existingCustomer: 'मौजूदा ग्राहक', newCustomer: 'नया ग्राहक', notRecognized: 'ग्राहक नहीं मिला। पंजीकरण के लिए क्लिक करें', msgSelectPlan: 'कृपया अपने व्यक्तिगत पृष्ठ पर एक योजना चुनें', infoServices: 'सूचना सेवाएं', guidesAndVideos: 'गाइड और वीडियो', siteHeaderPrefix: 'आधिकारिक वेबसाइट:', theWebsite: 'वेबसाइट' },
     profile: { fullName: 'पूरा नाम', email: 'ईमेल', ip: 'IP', language: 'भाषा', country: 'देश', plan: 'योजना', planStart: 'योजना शुरू', planEnd: 'योजना समाप्त', unlimited: 'असीमित', comingSoon: 'जल्द आ रहा है', choosePlan: 'योजना चुनें', close: '✕ बंद करें', loginRequired: 'लॉगिन आवश्यक है', login: 'लॉग इन', products: 'उत्पाद', change: 'बदलें',
       price: 'मूल्य', changePlan: 'योजना बदलें', planName: 'नाम', planFrom: 'से', planTo: 'तक', back: 'वापस', currencyLocal: '₹', free: 'मुफ्त',       planNames: { System_Free_Run: 'परीक्षण रन', User_Trial: 'परीक्षण', User_VIP_Free: 'VIP', System_Owner: 'सिस्टम', User_Monthly: 'मासिक', User_Annual: 'वार्षिक', User_One_Time: 'एकल', System_Suspended_NonPayment: 'निलंबित', User_Cancelled: 'रद्द' } },
     feedback: { customerRelations: 'ग्राहक सेवा', systemMessage: 'सिस्टम संदेश', respectfully: 'सादर,', rating: 'रेटिंग', ratingWebsite: 'वेबसाइट', ratingBudget: 'गृह बजट प्रबंधन', userMessage: 'उपयोगकर्ता संदेश', date: 'तारीख:', title: 'शीर्षक:', from: 'से:', systemReply: 'सिस्टम उत्तर' },
     system: { systemLabel: 'सिस्टम', selectAction: 'दाहिनी बार से क्रिया चुनें', users: 'उपयोगकर्ता', buildMessages: 'बिल्ड लॉग', schedule: 'טבלאות ונתונים', pr: 'जनसंपर्क', publishedDate: 'प्रकाशन तिथि:', reset: 'रीसेट', saved: 'सहेजा', records: 'रिकॉर्ड', scheduleSubject: 'विषय', schedulePriceUSD: 'मूल्य\n[$]', schedulePeriod: 'अवधि\n[माह]', scheduleNotes: 'नोट्स', clear: 'साफ़ करें', pause: 'रोकें', resume: 'जारी रखें', active: '● सक्रिय', paused: 'रुका हुआ', lines: 'पंक्तियाँ', filter: 'फ़िल्टर', refresh: 'ताज़ा करें', loading: 'लोड हो रहा है...', loadingBuild: 'बिल्ड डेटा लोड हो रहा है...', error: 'त्रुटि', noBuildData: 'कोई डेटा नहीं। Release_KeyClick.bat चलाएं', networkError: 'नेटवर्क त्रुटि', adminButton: 'सिस्टम उपयोग', generalGroup: 'सामान्य', colName: 'नाम', colCurrency: 'मुद्रा', colCreated: 'निर्माण तिथि', colActive: 'सक्रिय', colAppInstalled: 'ऐप', colLicenceType: 'लाइसेंस प्रकार', colSystemForce: 'सिस्टम मोड', distributionDay: 'वितरण दिवस X', messages: 'संदेश', send: 'भेजें', sent: 'भेजा!', reply: 'उत्तर', noMessages: 'कोई संदेश नहीं', replySent: 'उत्तर भेजा!', ref: 'संदर्भ', msgNo: 'क्र.', replyToRef: 'संदर्भ का उत्तर', msgNumber: 'संदेश क्र.', new: 'नया', delete: 'हटाएं', newMessage: '+ नया संदेश', selectToView: 'देखने के लिए संदेश चुनें', monitor: 'मॉनिटर', systemData: 'सिस्टम डेटा', resetTable: 'टेबल रीसेट', debug: 'डीबग', db: 'DB', sensitivePoints: 'संवेदनशील बिंदु', productVersionTable: 'अपडेट टैब में संस्करण तालिका' },
     currencyNames: { ILS: 'शेकेल', USD: 'डॉलर', GBP: 'पाउंड', EUR: 'यूरो', RUB: 'रूबल', JPY: 'येन', SAR: 'रियाल', CNY: 'युआन', INR: 'रुपया' },
     updates: { colDate: 'दिनांक और समय', colProduct: 'उत्पाद', colVersion: 'संस्करण', colTitle: 'शीर्षक', productKeyClick: 'KeyClick वेबसाइट', productMFinance: 'M Finance घरेलू बजट' },
-    reminders: { loginRequired: 'अनुस्मारक देखने के लिए लॉगिन आवश्यक है', titlePh: 'अनुस्मारक शीर्षक', timePh: 'समय', add: '+ जोड़ें', noReminders: 'कोई अनुस्मारक नहीं' } },
+    reminders: { loginRequired: 'अनुस्मारक देखने के लिए लॉगिन आवश्यक है', titlePh: 'अनुस्मारक शीर्षक', timePh: 'समय', add: '+ जोड़ें', noReminders: 'कोई अनुस्मारक नहीं' },
+    guides: { overview: 'सामान्य विवरण', userGuide: 'उपयोगकर्ता गाइड', financeOverviewTitle: 'M Finance क्या है', financeOverviewDesc: 'घरेलू बजट प्रबंधन का संक्षिप्त विवरण — खाते, लेन-देन, श्रेणियां और पूर्वानुमान, और यह किसके लिए है।', financeGuideTitle: 'चरण-दर-चरण उपयोग', financeGuideDesc: 'स्क्रीनशॉट के साथ लिखित गाइड: इंस्टॉलेशन, खाते जोड़ना, वर्गीकरण और रिपोर्ट।', financeVideosTitle: 'संक्षिप्त ट्यूटोरियल', financeVideosDesc: 'घरेलू बजट प्रबंधन की हर मुख्य विशेषता के लिए संक्षिप्त वीडियो ट्यूटोरियल।', siteOverviewTitle: 'वेबसाइट क्या प्रदान करती है', siteOverviewDesc: 'KeyClick प्लेटफ़ॉर्म का संक्षिप्त भ्रमण — उत्पाद, सेवाएं और ग्राहक संबंध।', siteGuideTitle: 'पंजीकरण और नेविगेशन', siteGuideDesc: 'कैसे पंजीकरण करें, लॉगिन करें और वेबसाइट पर हर सेवा खोजें।', siteVideosTitle: 'वेबसाइट डेमो', siteVideosDesc: 'वेबसाइट की मुख्य विशेषताओं के संक्षिप्त रिकॉर्ड किए गए डेमो।' },
+    banking: { autoDetectFailed: 'स्वचालित पहचान विफल — मैन्युअल रूप से चुनें', detectionError: 'पहचान त्रुटि', loadBanksError: 'बैंक लोड करने में त्रुटि', plaidTokenError: 'Plaid टोकन त्रुटि', bankConnected: 'बैंक सफलतापूर्वक जुड़ा', connectionError: 'कनेक्शन त्रुटि', linkOpened: '{name} के लिए कनेक्शन विंडो खुली। स्वीकृति के बाद वापस आकर रिफ्रेश पर क्लिक करें।', linkCreateError: 'बैंक लिंक बनाने में त्रुटि', refreshing: 'रीफ्रेश हो रहा है...', updated: 'अपडेट हो गया', fetchingData: 'डेटा प्राप्त हो रहा है...', noAccountsConnected: 'कोई खाता कनेक्ट नहीं है', downloadedFiles: '{count} फ़ाइलें डाउनलोड हुईं', downloadError: 'डाउनलोड त्रुटि', connectBankTitle: 'बैंक कनेक्ट करें', autoDetect: 'स्वचालित पहचान', orManually: 'या मैन्युअल रूप से', unitedStates: 'संयुक्त राज्य अमेरिका', back: 'वापस', selectInstitution: 'बैंक चुनें', noInstitutions: 'कोई बैंक नहीं', refresh: 'रीफ्रेश', downloadFiles: 'फ़ाइलें डाउनलोड करें' } },
 ]
 
 type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null }
@@ -504,7 +526,7 @@ export default function Home() {
           <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '10px auto', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '22px 6px 8px', overflow: 'visible' }}>
             <div style={{ position: 'absolute', top: '-10px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 5px', fontSize: '11px', fontWeight: 'bold', color: '#FFD700', whiteSpace: 'nowrap', maxWidth: '116px', overflow: 'hidden', textOverflow: 'ellipsis' }}>M Finance</div>
             <button onClick={() => { mfChainRef.current = true; setActivePage('mf-login') }}
-              style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.2', fontFamily: 'var(--font-amatic),"Amatic SC",cursive', textShadow: '0 0 8px rgba(255,215,0,0.8), 0 1px 3px rgba(0,0,0,0.9)', letterSpacing: '1px', WebkitTextStroke: '0.6px #FFD700' }}
+              style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.2', fontFamily: 'var(--font-amatic),"Amatic SC",cursive', textShadow: '0 0 8px rgba(255,215,0,0.8), 0 1px 3px rgba(0,0,0,0.9)', letterSpacing: '1px', WebkitTextStroke: '0.6px #FFD700', wordBreak: 'break-word' }}
               onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
             >{lang.card.title}</button>
@@ -519,7 +541,7 @@ export default function Home() {
                   display: 'block', width: '100%', background: activePage === String(idx) ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
                   border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
                   color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
-                  fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3',
+                  fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3', wordBreak: 'break-word',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
                 onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
@@ -536,7 +558,7 @@ export default function Home() {
                   display: 'block', width: '100%', background: activePage === String(idx) ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
                   border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
                   color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
-                  fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3',
+                  fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3', wordBreak: 'break-word',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
                 onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
@@ -547,7 +569,7 @@ export default function Home() {
           {/* 5. שרותים בנקאיים */}
           <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '10px auto', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
             <button onClick={() => setActivePage(activePage === '4' ? null : '4')}
-              style={{ display: 'block', width: '100%', background: activePage === '4' ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '15px' : '13px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3' }}
+              style={{ display: 'block', width: '100%', background: activePage === '4' ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '15px' : '13px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3', wordBreak: 'break-word' }}
               onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
             >{lang.menu[4]}</button>
@@ -814,7 +836,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'Arial, sans-serif', overflow: 'hidden' }}>
-      <PageHeader subtitle="בשימוש המערכת" />
+      <PageHeader subtitle={lang.system.adminButton} lang={lang} />
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
       {/* Main content */}
@@ -1808,7 +1830,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const side12 = isRTL ? { right: '12px' } : { left: '12px' }
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-      <PageHeader subtitle="קשרי לקוחות - משוב" />
+      <PageHeader subtitle={`${lang.feedback.customerRelations} - ${lang.menu[0]}`} lang={lang} />
       <div style={{ width: '100%', flex: 1, background: '#d0d0d0', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
 
       {/* LEFT - Messages Library */}
@@ -2327,7 +2349,7 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
-      <PageHeader subtitle="שרותי מידע - עדכונים" />
+      <PageHeader subtitle={`${lang.card.infoServices} - ${lang.menu[1]}`} lang={lang} />
       <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>{lang.system.loading}</div>
@@ -2419,12 +2441,12 @@ const PAGE_HEADER_CSS = `
   }
 `
 
-function PageHeader({ subtitle, layout = 'row' }: { subtitle: string; layout?: 'row' | 'column' }) {
+function PageHeader({ subtitle, layout = 'row', lang }: { subtitle: string; layout?: 'row' | 'column'; lang: typeof languages[0] }) {
   return (
-    <div className={layout === 'column' ? 'page-header-block stack' : 'page-header-block'} dir="rtl" lang="he">
+    <div className={layout === 'column' ? 'page-header-block stack' : 'page-header-block'} dir="rtl">
       <style>{PAGE_HEADER_CSS}</style>
       <div className="site-header">
-        <span>אתר האינטרנט של</span>
+        <span>{lang.card.siteHeaderPrefix}</span>
         <span className="brand-script">KeyClick</span>
         <span>-</span>
         <span>M Solution Group</span>
@@ -2690,8 +2712,8 @@ const GUIDES_CSS = `
   }
 `
 
-function GuidesDrawer({ id, label, title, desc, openId, setOpenId }: {
-  id: string; label: string; title: string; desc: string
+function GuidesDrawer({ id, label, title, desc, openId, setOpenId, comingSoon }: {
+  id: string; label: string; title: string; desc: string; comingSoon: string
   openId: string | null; setOpenId: (v: string | null) => void
 }) {
   const open = openId === id
@@ -2703,7 +2725,7 @@ function GuidesDrawer({ id, label, title, desc, openId, setOpenId }: {
       </button>
       <div className="drawer-tray"><div className="drawer-tray-inner">
         <div className="tray-card">
-          <div className="tray-row"><strong>{title}</strong><span className="status-chip">בקרוב</span></div>
+          <div className="tray-row"><strong>{title}</strong><span className="status-chip">{comingSoon}</span></div>
           <p className="tray-desc">{desc}</p>
         </div>
       </div></div>
@@ -2715,11 +2737,13 @@ function GuidesPage({ lang }: { lang: typeof languages[0] }) {
   const [openFin, setOpenFin] = useState<string | null>(null)
   const [openSite, setOpenSite] = useState<string | null>(null)
 
+  const g = lang.guides
+
   return (
-    <div className="guides-page" dir="rtl" lang="he">
+    <div className="guides-page" dir="rtl">
       <style>{GUIDES_CSS}</style>
 
-      <PageHeader subtitle="מדריכים וסרטונים" layout="column" />
+      <PageHeader subtitle={lang.card.guidesAndVideos} layout="column" lang={lang} />
 
       <div className="furniture">
         <div className="cap"><span className="brandplate">KeyClick</span></div>
@@ -2728,17 +2752,17 @@ function GuidesPage({ lang }: { lang: typeof languages[0] }) {
           <div className="columns">
 
             <div className="column">
-              <div className="col-plate script">ניהול תקציב בית</div>
-              <GuidesDrawer id="fin-overview" label="תיאור כללי" title="מה זה M Finance" desc="סקירה קצרה של ניהול תקציב הבית — חשבונות, תנועות, קטגוריות ותחזיות, ולמי זה מיועד." openId={openFin} setOpenId={setOpenFin} />
-              <GuidesDrawer id="fin-guide" label="מדריך למשתמש" title="שימוש שלב-אחר-שלב" desc="מדריך כתוב עם צילומי מסך: התקנה, חיבור חשבונות, סיווגים ודוחות." openId={openFin} setOpenId={setOpenFin} />
-              <GuidesDrawer id="fin-videos" label="סרטונים" title="הדרכות קצרות" desc="סרטוני וידאו קצרים לכל תכונה עיקרית בניהול משק הבית." openId={openFin} setOpenId={setOpenFin} />
+              <div className="col-plate script">{lang.card.title}</div>
+              <GuidesDrawer id="fin-overview" label={g.overview} title={g.financeOverviewTitle} desc={g.financeOverviewDesc} comingSoon={lang.profile.comingSoon} openId={openFin} setOpenId={setOpenFin} />
+              <GuidesDrawer id="fin-guide" label={g.userGuide} title={g.financeGuideTitle} desc={g.financeGuideDesc} comingSoon={lang.profile.comingSoon} openId={openFin} setOpenId={setOpenFin} />
+              <GuidesDrawer id="fin-videos" label={lang.card.videos} title={g.financeVideosTitle} desc={g.financeVideosDesc} comingSoon={lang.profile.comingSoon} openId={openFin} setOpenId={setOpenFin} />
             </div>
 
             <div className="column">
-              <div className="col-plate script">האתר</div>
-              <GuidesDrawer id="site-overview" label="תיאור כללי" title="מה מציע האתר" desc="סיור קצר על פלטפורמת KeyClick — המוצרים, השירותים וקשרי הלקוחות." openId={openSite} setOpenId={setOpenSite} />
-              <GuidesDrawer id="site-guide" label="מדריך למשתמש" title="הרשמה וניווט" desc="איך נרשמים, מתחברים ומוצאים כל שירות באתר." openId={openSite} setOpenId={setOpenSite} />
-              <GuidesDrawer id="site-videos" label="סרטונים" title="הדגמות האתר" desc="הדגמות מצולמות קצרות של תכונות האתר המרכזיות." openId={openSite} setOpenId={setOpenSite} />
+              <div className="col-plate script">{lang.card.theWebsite}</div>
+              <GuidesDrawer id="site-overview" label={g.overview} title={g.siteOverviewTitle} desc={g.siteOverviewDesc} comingSoon={lang.profile.comingSoon} openId={openSite} setOpenId={setOpenSite} />
+              <GuidesDrawer id="site-guide" label={g.userGuide} title={g.siteGuideTitle} desc={g.siteGuideDesc} comingSoon={lang.profile.comingSoon} openId={openSite} setOpenId={setOpenSite} />
+              <GuidesDrawer id="site-videos" label={lang.card.videos} title={g.siteVideosTitle} desc={g.siteVideosDesc} comingSoon={lang.profile.comingSoon} openId={openSite} setOpenId={setOpenSite} />
             </div>
 
           </div>
@@ -2795,7 +2819,7 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
-      <PageHeader subtitle="שרותי מידע - תזכורות" />
+      <PageHeader subtitle={`${lang.card.infoServices} - ${lang.menu[3]}`} lang={lang} />
       <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
 
         {/* Add form */}
@@ -3063,6 +3087,11 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   const [selectedCountry, setSelectedCountry] = useState('DE')
   const [loading, setLoading]         = useState(false)
   const [msg, setMsg]                 = useState('')
+  const [msgIsError, setMsgIsError]   = useState(false)
+  const b = lang.banking
+
+  const setError = (text: string) => { setMsg(text); setMsgIsError(true) }
+  const setInfo  = (text: string) => { setMsg(text); setMsgIsError(false) }
 
   useEffect(() => { if (user) loadConnections() }, [user])
 
@@ -3098,9 +3127,9 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
       } else if (dp.provider === 'plaid') {
         await handleSelectRegion('plaid')
       } else {
-        setMsg(lang.code === 'he' ? 'לא זוהה אוטומטית — בחר ידנית' : 'Auto-detect failed — choose manually')
+        setError(b.autoDetectFailed)
       }
-    } catch { setMsg(lang.code === 'he' ? 'שגיאה בזיהוי' : 'Detection error') }
+    } catch { setError(b.detectionError) }
     finally { setLoading(false) }
   }
 
@@ -3111,7 +3140,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         const inst = await fetch(`/api/banking/nordigen/institutions?country=${selectedCountry}`).then(r => r.json())
         setInstitutions(Array.isArray(inst) ? inst : [])
         setStep('institutions')
-      } catch { setMsg(lang.code === 'he' ? 'שגיאה בטעינת בנקים' : 'Error loading banks') }
+      } catch { setError(b.loadBanksError) }
       finally { setLoading(false) }
     } else {
       if (!user) return
@@ -3121,7 +3150,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: user.id }),
         }).then(r => r.json())
-        if (!lt.link_token) { setMsg(lang.code === 'he' ? 'שגיאה ביצירת Plaid Token' : 'Plaid token error'); return }
+        if (!lt.link_token) { setError(b.plaidTokenError); return }
         const openPlaid = (token: string) => {
           const handler = (window as any).Plaid.create({
             token,
@@ -3132,9 +3161,9 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
                   method: 'POST', headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ publicToken, userId: user.id, institutionName: metadata?.institution?.name ?? 'Bank' }),
                 }).then(r => r.json())
-                if (res.ok) { setMsg(lang.code === 'he' ? 'הבנק חובר בהצלחה' : 'Bank connected'); await loadConnections() }
-                else { setMsg(lang.code === 'he' ? 'שגיאה בחיבור' : 'Connection error') }
-              } catch { setMsg(lang.code === 'he' ? 'שגיאה בחיבור' : 'Connection error') }
+                if (res.ok) { setInfo(b.bankConnected); await loadConnections() }
+                else { setError(b.connectionError) }
+              } catch { setError(b.connectionError) }
               finally { setLoading(false) }
             },
             onExit: () => { setLoading(false) },
@@ -3149,7 +3178,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
           document.head.appendChild(script)
         }
         setStep('main')
-      } catch { setMsg(lang.code === 'he' ? 'שגיאה בחיבור' : 'Connection error') }
+      } catch { setError(b.connectionError) }
       finally { setLoading(false) }
     }
   }
@@ -3165,16 +3194,16 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
       const d = await r.json()
       if (d.link) {
         window.open(d.link, '_blank', 'width=600,height=700')
-        setMsg(`נפתח חלון חיבור ל-${instName}. לאחר האישור חזור ולחץ רענן.`)
+        setInfo(b.linkOpened.replace('{name}', instName))
         setStep('main')
-      } else { setMsg('שגיאה ביצירת קישור לבנק') }
-    } catch { setMsg('שגיאה בחיבור') } finally { setLoading(false) }
+      } else { setError(b.linkCreateError) }
+    } catch { setError(b.connectionError) } finally { setLoading(false) }
   }
 
   async function handleRefresh() {
-    setLoading(true); setMsg('מרענן...')
+    setLoading(true); setInfo(b.refreshing)
     await loadConnections()
-    setMsg('עודכן')
+    setInfo(b.updated)
     setTimeout(() => setMsg(''), 2000)
   }
 
@@ -3220,14 +3249,13 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
 
   async function handleDownloadAll() {
     if (!user) return
-    const isHe = lang.code === 'he'
-    setLoading(true); setMsg(isHe ? 'שולף נתונים...' : 'Fetching data...')
+    setLoading(true); setInfo(b.fetchingData)
     try {
       const r = await fetch(`/api/banking/accounts?userId=${user.id}`)
       const d = await r.json()
       const conns: BankConnection[] = d.connections ?? []
       const accs: BankAccount[]     = d.accounts ?? []
-      if (accs.length === 0) { setMsg(isHe ? 'אין חשבונות מחוברים' : 'No accounts connected'); return }
+      if (accs.length === 0) { setError(b.noAccountsConnected); return }
       let count = 0
       for (const acc of accs) {
         const conn = conns.find(c => c.id === acc.connection_id)
@@ -3240,47 +3268,33 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         count++
         await new Promise(res => setTimeout(res, 300))
       }
-      setMsg(isHe ? `הורדו ${count} קבצים` : `Downloaded ${count} files`)
-    } catch { setMsg(lang.code === 'he' ? 'שגיאה בהורדה' : 'Download error') }
+      setInfo(b.downloadedFiles.replace('{count}', String(count)))
+    } catch { setError(b.downloadError) }
     finally { setLoading(false) }
   }
 
-  const isHe = lang.code === 'he'
   const hasConnections = connections.length > 0
 
-  const EU_COUNTRIES = [
-    { code: 'DE', name: isHe ? 'גרמניה' : 'Germany' },
-    { code: 'FR', name: isHe ? 'צרפת' : 'France' },
-    { code: 'GB', name: isHe ? 'בריטניה' : 'United Kingdom' },
-    { code: 'IT', name: isHe ? 'איטליה' : 'Italy' },
-    { code: 'ES', name: isHe ? 'ספרד' : 'Spain' },
-    { code: 'NL', name: isHe ? 'הולנד' : 'Netherlands' },
-    { code: 'BE', name: isHe ? 'בלגיה' : 'Belgium' },
-    { code: 'AT', name: isHe ? 'אוסטריה' : 'Austria' },
-    { code: 'CH', name: isHe ? 'שווייץ' : 'Switzerland' },
-    { code: 'SE', name: isHe ? 'שוודיה' : 'Sweden' },
-    { code: 'NO', name: isHe ? 'נורווגיה' : 'Norway' },
-    { code: 'DK', name: isHe ? 'דנמרק' : 'Denmark' },
-    { code: 'FI', name: isHe ? 'פינלנד' : 'Finland' },
-    { code: 'PL', name: isHe ? 'פולין' : 'Poland' },
-    { code: 'PT', name: isHe ? 'פורטוגל' : 'Portugal' },
-    { code: 'IE', name: isHe ? 'אירלנד' : 'Ireland' },
-  ]
+  const EU_CODES = ['DE','FR','GB','IT','ES','NL','BE','AT','CH','SE','NO','DK','FI','PL','PT','IE']
+  let countryNames: Intl.DisplayNames | null = null
+  try { countryNames = new Intl.DisplayNames([lang.code], { type: 'region' }) } catch { countryNames = null }
+  const EU_COUNTRIES = EU_CODES.map(code => ({ code, name: countryNames?.of(code) ?? code }))
+  const unitedStatesName = countryNames?.of('US') ?? b.unitedStates
 
   if (step === 'region') return (
-    <div style={{ width: '100%', height: '100%', background: '#f2eef2', padding: '12px 14px', direction: 'rtl' }}>
+    <div style={{ width: '100%', height: '100%', background: '#f2eef2', padding: '12px 14px', direction: dir as 'rtl' | 'ltr' }}>
       <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 7, alignItems: 'flex-end' }}>
-        <button onClick={() => setStep('main')} style={{ background: 'none', border: 'none', color: '#003399', cursor: 'pointer', fontSize: 18, padding: 0, alignSelf: 'flex-end' }}>חזור ←</button>
-        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{isHe ? 'חיבור לבנק' : 'Connect Bank'}</div>
+        <button onClick={() => setStep('main')} style={{ background: 'none', border: 'none', color: '#003399', cursor: 'pointer', fontSize: 18, padding: 0, alignSelf: 'flex-end' }}>← {b.back}</button>
+        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{b.connectBankTitle}</div>
 
         <button onClick={handleAutoDetect} disabled={loading}
           style={{ background: '#eef2ff', border: '1px solid #99aadd', borderRadius: 6, padding: '6px 14px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, color: '#003399', fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
-          🔍 {isHe ? 'זיהוי אוטומטי' : 'Auto Detect'}
+          🔍 {b.autoDetect}
         </button>
 
-        <span style={{ color: '#aaa', fontSize: 18 }}>— {isHe ? 'או בחר ידנית' : 'or manually'} —</span>
+        <span style={{ color: '#aaa', fontSize: 18 }}>— {b.orManually} —</span>
 
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
           <button onClick={() => handleSelectRegion('nordigen')} disabled={loading}
             style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
           <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}
@@ -3290,13 +3304,13 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
           <span style={{ fontSize: 18, color: '#333' }}>🇪🇺</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
           <button onClick={() => handleSelectRegion('plaid')} disabled={loading}
             style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
-          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {isHe ? 'ארצות הברית' : 'United States'}</span>
+          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {unitedStatesName}</span>
         </div>
 
-        {msg && <div style={{ color: '#cc0000', fontSize: 18 }}>{msg}</div>}
+        {msg && <div style={{ color: msgIsError ? '#cc0000' : '#006600', fontSize: 18 }}>{msg}</div>}
         {loading && <div style={{ color: '#aaa', fontSize: 18 }}>...</div>}
       </div>
     </div>
@@ -3304,21 +3318,21 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
 
   if (step === 'institutions') return (
     <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflowY: 'auto', padding: 24, direction: dir as 'rtl' | 'ltr' }}>
-      <button onClick={() => setStep('main')} style={{ marginBottom: 16, background: '#eee', border: '1px solid #ccc', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← {isHe ? 'חזור' : 'Back'}</button>
-      <div style={{ fontWeight: 'bold', fontSize: 16, color: '#003399', marginBottom: 12 }}>{isHe ? 'בחר מוסד פיננסי' : 'Select institution'}</div>
+      <button onClick={() => setStep('main')} style={{ marginBottom: 16, background: '#eee', border: '1px solid #ccc', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← {b.back}</button>
+      <div style={{ fontWeight: 'bold', fontSize: 16, color: '#003399', marginBottom: 12 }}>{b.selectInstitution}</div>
       {institutions.map(inst => (
         <div key={inst.id} onClick={() => handleSelectInstitution(inst.id, inst.name)}
           style={{ padding: '10px 14px', borderBottom: '1px solid #ddd', cursor: 'pointer', fontSize: 14, color: '#222' }}>
           {inst.name}
         </div>
       ))}
-      {institutions.length === 0 && !loading && <div style={{ color: '#aaa', fontSize: 13 }}>{isHe ? 'אין מוסדות' : 'No institutions'}</div>}
+      {institutions.length === 0 && !loading && <div style={{ color: '#aaa', fontSize: 13 }}>{b.noInstitutions}</div>}
     </div>
   )
 
   return (
     <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflowY: 'auto', padding: '12px 14px', direction: 'rtl' }}>
-      <PageHeader subtitle="שרותים בנקאיים" />
+      <PageHeader subtitle={lang.menu[4]} lang={lang} />
       <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
         <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{lang.menu[4]}</div>
 
@@ -3334,20 +3348,20 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
               </div>
             ))}
             <button onClick={handleRefresh} disabled={loading} style={{ background: 'none', border: '1px solid #999', borderRadius: 5, padding: '3px 10px', cursor: 'pointer', fontSize: 14, color: '#555' }}>
-              ↻ {isHe ? 'רענן' : 'Refresh'}
+              ↻ {b.refresh}
             </button>
           </div>
         )}
 
-        {/* חיבור לבנק */}
+        {/* Connect bank */}
         <button onClick={handleAutoDetect} disabled={loading}
           style={{ background: '#eef2ff', border: '1px solid #99aadd', borderRadius: 6, padding: '6px 14px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, color: '#003399', fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
-          🔍 {isHe ? 'זיהוי אוטומטי' : 'Auto Detect'}
+          🔍 {b.autoDetect}
         </button>
 
-        <span style={{ color: '#aaa', fontSize: 16 }}>— {isHe ? 'או בחר ידנית' : 'or manually'} —</span>
+        <span style={{ color: '#aaa', fontSize: 16 }}>— {b.orManually} —</span>
 
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
           <button onClick={() => handleSelectRegion('nordigen')} disabled={loading}
             style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
           <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}
@@ -3357,19 +3371,19 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
           <span style={{ fontSize: 18, color: '#333' }}>🇪🇺</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: 'rtl' }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
           <button onClick={() => handleSelectRegion('plaid')} disabled={loading}
             style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
-          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {isHe ? 'ארצות הברית' : 'United States'}</span>
+          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {unitedStatesName}</span>
         </div>
 
-        {/* הורד קבצים */}
+        {/* Download files */}
         <button onClick={handleDownloadAll} disabled={loading}
           style={{ background: '#006600', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
-          ⬇ {isHe ? 'הורד קבצים' : 'Download Files'}
+          ⬇ {b.downloadFiles}
         </button>
 
-        {msg && <div style={{ color: msg.includes('שגיאה') || msg.includes('error') ? '#cc0000' : '#006600', fontSize: 16, fontWeight: 'bold' }}>{msg}</div>}
+        {msg && <div style={{ color: msgIsError ? '#cc0000' : '#006600', fontSize: 16, fontWeight: 'bold' }}>{msg}</div>}
         {loading && <div style={{ color: '#aaa', fontSize: 16 }}>...</div>}
       </div>
     </div>
@@ -3521,7 +3535,7 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative', background: '#f2eef2' }}>
-      <PageHeader subtitle="ניהול תקציב בית - כניסה" />
+      <PageHeader subtitle={`${lang.card.title} - ${lang.card.login}`} lang={lang} />
       <div style={{ background: '#2a2a2a', borderRadius: '12px', padding: '40px', width: '360px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', fontFamily: 'Arial, sans-serif', position: 'absolute', top: '100px', left: '50%', transform: `translate(calc(-50% + ${pos.x}px), ${pos.y}px)` }}>
 
         <div onMouseDown={onDragStart} style={{ textAlign: 'center', marginBottom: '28px', cursor: 'grab', userSelect: 'none' }}>
@@ -3767,7 +3781,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     const createdAt = user.created_at ? new Date(String(user.created_at)) : new Date()
     return (
       <div style={outerWrap}>
-        <PageHeader subtitle="קשרי לקוחות - דף האישי" />
+        <PageHeader subtitle={`${lang.feedback.customerRelations} - ${lang.menu[5]}`} lang={lang} />
         <div style={cardBox}>
 
           {/* Header */}
@@ -3846,7 +3860,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
   return (
     <div style={outerWrap}>
-      <PageHeader subtitle="קשרי לקוחות - דף האישי" />
+      <PageHeader subtitle={`${lang.feedback.customerRelations} - ${lang.menu[5]}`} lang={lang} />
       <div style={cardBox}>
 
         {/* Header */}
