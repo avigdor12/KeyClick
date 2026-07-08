@@ -16,7 +16,7 @@ const languages = [
     updates: { colDate: 'Date & Time', colProduct: 'Product', colVersion: 'Version', colTitle: 'Title', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Home Budget' },
     reminders: { loginRequired: 'Login required to view reminders', titlePh: 'Reminder title', timePh: 'Time', add: '+ Add', noReminders: 'No reminders' },
     guides: { overview: 'Overview', userGuide: 'User Guide', financeOverviewTitle: 'What is M Finance', financeOverviewDesc: 'A short overview of home budget management — accounts, transactions, categories and forecasts, and who it is intended for.', financeGuideTitle: 'Step-by-step usage', financeGuideDesc: 'A written guide with screenshots: installation, connecting accounts, categorization and reports.', financeVideosTitle: 'Short tutorials', financeVideosDesc: 'Short video tutorials for every key feature in home budget management.', siteOverviewTitle: 'What the website offers', siteOverviewDesc: "A short tour of the KeyClick platform — products, services and customer relations.", siteGuideTitle: 'Registration and navigation', siteGuideDesc: 'How to register, log in and find every service on the website.', siteVideosTitle: 'Website demos', siteVideosDesc: "Short recorded demos of the website's main features." },
-    banking: { autoDetectFailed: 'Auto-detect failed — choose manually', detectionError: 'Detection error', loadBanksError: 'Error loading banks', plaidTokenError: 'Plaid token error', bankConnected: 'Bank connected', connectionError: 'Connection error', linkOpened: 'A connection window opened for {name}. After approving, come back and click refresh.', linkCreateError: 'Error creating bank link', refreshing: 'Refreshing...', updated: 'Updated', fetchingData: 'Fetching data...', noAccountsConnected: 'No accounts connected', downloadedFiles: 'Downloaded {count} files', downloadError: 'Download error', connectBankTitle: 'Connect Bank', autoDetect: 'Auto Detect', orManually: 'or manually', unitedStates: 'United States', back: 'Back', selectInstitution: 'Select institution', noInstitutions: 'No institutions', refresh: 'Refresh', downloadFiles: 'Download Files' } },
+    banking: { autoDetectFailed: 'Auto-detect failed — choose manually', detectionError: 'Detection error', loadBanksError: 'Error loading banks', plaidTokenError: 'Plaid token error', bankConnected: 'Bank connected', connectionError: 'Connection error', linkOpened: 'A connection window opened for {name}. After approving, come back and click refresh.', linkCreateError: 'Error creating bank link', refreshing: 'Refreshing...', updated: 'Updated', fetchingData: 'Fetching data...', noAccountsConnected: 'No accounts connected', downloadedFiles: 'Downloaded {count} files', downloadError: 'Download error', connectBankTitle: 'Connect Bank', autoDetect: 'Auto Detect', orManually: 'or manually', unitedStates: 'United States', back: 'Back', selectInstitution: 'Select institution', noInstitutions: 'No institutions', refresh: 'Refresh', downloadFiles: 'Download Files' }, captions: { guidesRight1: 'A cabinet of drawers', guidesRight2: 'with guides and videos', guidesLeft: 'Treasure drawers...', registerRight1: 'A quick registration', registerRight2: 'on the way to a variety of surprises...', personalDefaultRight: 'Basic personal details, from the system', personalDefaultLeft: 'Active plan. Option to change the plan', personalPlanRight: 'Selecting a plan will show the period and price', personalPlanLeft1: 'Click', personalPlanLeft2: 'Update', personalPlanLeft3: "when you're done choosing", feedbackAboveButton: 'Each new form is for one message and one reply. See the New Message button', updatesWord1: 'Software', updatesWord2: 'versions', updatesWord3: "for the project's", updatesWord4: 'components', remindersRight1: 'Reminders service', remindersRight2: 'Calendar of important events', remindersLeft1: 'Dates of the active plan', remindersLeft2: 'Option to add private', remindersLeft3: 'reminder dates' } },
   { code: 'ru', flag: 'רוסיה',   name: 'Русский',  welcome: 'Добро пожаловать',
     menu: ['Отзыв','Обновления','Сообщения','Напоминания','Банковские услуги','Личная страница'],
     card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства', run: 'Запуск', videos: 'Видео', guide: 'Руководство', ok: 'ОК', msgAlreadyInstalled: 'Уже установлено\nПереустановка не нужна', msgDownloading: 'Загрузка установщика', msgInstallComplete: 'Сохраните и запустите файл\nдля завершения установки', msgDownloadError: 'Ошибка загрузки\nПопробуйте снова', mFinance: 'M Finance', msgExists: 'Пользователь уже зарегистрирован\nс этими данными', msgUpdated: 'Данные обновлены успешно', msgRegistered: 'Регистрация завершена', existingCustomer: 'Существующий клиент', newCustomer: 'Новый клиент', notRecognized: 'Клиент не найден. Нажмите для регистрации', msgSelectPlan: 'Выберите тарифный план в личном кабинете', infoServices: 'Информационные услуги', guidesAndVideos: 'Руководства и видео', siteHeaderPrefix: 'Веб-сайт', theWebsite: 'Сайт' },
@@ -28,7 +28,7 @@ const languages = [
     updates: { colDate: 'Дата и время', colProduct: 'Продукт', colVersion: 'Версия', colTitle: 'Заголовок', productKeyClick: 'KeyClick Сайт', productMFinance: 'M Finance Бюджет' },
     reminders: { loginRequired: 'Войдите для просмотра напоминаний', titlePh: 'Название напоминания', timePh: 'Время', add: '+ Добавить', noReminders: 'Нет напоминаний' },
     guides: { overview: 'Общее описание', userGuide: 'Руководство пользователя', financeOverviewTitle: 'Что такое M Finance', financeOverviewDesc: 'Краткий обзор управления домашним бюджетом — счета, операции, категории и прогнозы, и для кого это подходит.', financeGuideTitle: 'Пошаговое использование', financeGuideDesc: 'Письменное руководство со скриншотами: установка, подключение счетов, категоризация и отчёты.', financeVideosTitle: 'Короткие уроки', financeVideosDesc: 'Короткие видеоуроки по каждой ключевой функции управления домашним бюджетом.', siteOverviewTitle: 'Что предлагает сайт', siteOverviewDesc: 'Краткий обзор платформы KeyClick — продукты, услуги и работа с клиентами.', siteGuideTitle: 'Регистрация и навигация', siteGuideDesc: 'Как зарегистрироваться, войти и найти любую услугу на сайте.', siteVideosTitle: 'Демонстрации сайта', siteVideosDesc: 'Короткие видеозаписи основных функций сайта.' },
-    banking: { autoDetectFailed: 'Автоопределение не удалось — выберите вручную', detectionError: 'Ошибка определения', loadBanksError: 'Ошибка загрузки банков', plaidTokenError: 'Ошибка Plaid Token', bankConnected: 'Банк подключён', connectionError: 'Ошибка подключения', linkOpened: 'Открыто окно подключения к {name}. После подтверждения вернитесь и нажмите обновить.', linkCreateError: 'Ошибка создания ссылки на банк', refreshing: 'Обновление...', updated: 'Обновлено', fetchingData: 'Получение данных...', noAccountsConnected: 'Нет подключённых счетов', downloadedFiles: 'Загружено файлов: {count}', downloadError: 'Ошибка загрузки', connectBankTitle: 'Подключить банк', autoDetect: 'Автоопределение', orManually: 'или вручную', unitedStates: 'США', back: 'Назад', selectInstitution: 'Выберите банк', noInstitutions: 'Нет банков', refresh: 'Обновить', downloadFiles: 'Скачать файлы' } },
+    banking: { autoDetectFailed: 'Автоопределение не удалось — выберите вручную', detectionError: 'Ошибка определения', loadBanksError: 'Ошибка загрузки банков', plaidTokenError: 'Ошибка Plaid Token', bankConnected: 'Банк подключён', connectionError: 'Ошибка подключения', linkOpened: 'Открыто окно подключения к {name}. После подтверждения вернитесь и нажмите обновить.', linkCreateError: 'Ошибка создания ссылки на банк', refreshing: 'Обновление...', updated: 'Обновлено', fetchingData: 'Получение данных...', noAccountsConnected: 'Нет подключённых счетов', downloadedFiles: 'Загружено файлов: {count}', downloadError: 'Ошибка загрузки', connectBankTitle: 'Подключить банк', autoDetect: 'Автоопределение', orManually: 'или вручную', unitedStates: 'США', back: 'Назад', selectInstitution: 'Выберите банк', noInstitutions: 'Нет банков', refresh: 'Обновить', downloadFiles: 'Скачать файлы' }, captions: { guidesRight1: 'Шкаф с ящиками', guidesRight2: 'с руководствами и видео', guidesLeft: 'Ящики сокровищ...', registerRight1: 'Быстрая регистрация', registerRight2: 'на пути к множеству сюрпризов...', personalDefaultRight: 'Основные личные данные из системы', personalDefaultLeft: 'Активный тариф. Возможность сменить тариф', personalPlanRight: 'При выборе тарифа отобразятся срок и цена', personalPlanLeft1: 'Нажмите', personalPlanLeft2: '«Обновить»', personalPlanLeft3: 'по завершении выбора', feedbackAboveButton: 'Каждая новая форма — для одного сообщения и одного ответа. См. кнопку «Новое сообщение»', updatesWord1: 'Версии', updatesWord2: 'программного', updatesWord3: 'обеспечения', updatesWord4: 'проекта', remindersRight1: 'Сервис напоминаний', remindersRight2: 'Календарь важных событий', remindersLeft1: 'Даты активного тарифа', remindersLeft2: 'Возможность добавить личные', remindersLeft3: 'даты напоминаний' } },
   { code: 'de', flag: 'גרמניה',  name: 'Deutsch',  welcome: 'Willkommen',
     menu: ['Feedback','Updates','Nachrichten','Erinnerungen','Bankdienstleistungen','Persönliche Seite'],
     card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien', run: 'Starten', videos: 'Videos', guide: 'Anleitung', ok: 'OK', msgAlreadyInstalled: 'Bereits installiert\nKeine Neuinstallation nötig', msgDownloading: 'Installationsdatei wird heruntergeladen', msgInstallComplete: 'Datei speichern und ausführen\num die Installation abzuschließen', msgDownloadError: 'Fehler beim Herunterladen\nNochmal versuchen', mFinance: 'M Finance', msgExists: 'Benutzer bereits registriert\nmit diesen Daten', msgUpdated: 'Daten erfolgreich aktualisiert', msgRegistered: 'Registrierung abgeschlossen', existingCustomer: 'Bestehender Kunde', newCustomer: 'Neuer Kunde', notRecognized: 'Kunde nicht gefunden. Klicken zum Registrieren', msgSelectPlan: 'Bitte wähle einen Plan auf deiner persönlichen Seite', infoServices: 'Informationsdienste', guidesAndVideos: 'Anleitungen & Videos', siteHeaderPrefix: 'Die Website von', theWebsite: 'Die Website' },
@@ -40,7 +40,7 @@ const languages = [
     updates: { colDate: 'Datum & Uhrzeit', colProduct: 'Produkt', colVersion: 'Version', colTitle: 'Titel', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Haushalt' },
     reminders: { loginRequired: 'Anmeldung für Erinnerungen erforderlich', titlePh: 'Erinnerungstitel', timePh: 'Uhrzeit', add: '+ Hinzufügen', noReminders: 'Keine Erinnerungen' },
     guides: { overview: 'Allgemeine Beschreibung', userGuide: 'Benutzerhandbuch', financeOverviewTitle: 'Was ist M Finance', financeOverviewDesc: 'Ein kurzer Überblick über die Haushaltsbudgetverwaltung — Konten, Transaktionen, Kategorien und Prognosen, und für wen es gedacht ist.', financeGuideTitle: 'Schritt-für-Schritt-Anleitung', financeGuideDesc: 'Eine schriftliche Anleitung mit Screenshots: Installation, Kontoverbindung, Kategorisierung und Berichte.', financeVideosTitle: 'Kurze Anleitungen', financeVideosDesc: 'Kurze Video-Tutorials zu jeder wichtigen Funktion der Haushaltsbudgetverwaltung.', siteOverviewTitle: 'Was die Website bietet', siteOverviewDesc: 'Ein kurzer Rundgang durch die KeyClick-Plattform — Produkte, Dienstleistungen und Kundenbeziehungen.', siteGuideTitle: 'Registrierung und Navigation', siteGuideDesc: 'Wie man sich registriert, anmeldet und jeden Dienst auf der Website findet.', siteVideosTitle: 'Website-Demos', siteVideosDesc: 'Kurze aufgezeichnete Demos der wichtigsten Funktionen der Website.' },
-    banking: { autoDetectFailed: 'Automatische Erkennung fehlgeschlagen — manuell wählen', detectionError: 'Erkennungsfehler', loadBanksError: 'Fehler beim Laden der Banken', plaidTokenError: 'Plaid-Token-Fehler', bankConnected: 'Bank verbunden', connectionError: 'Verbindungsfehler', linkOpened: 'Ein Verbindungsfenster für {name} wurde geöffnet. Nach der Bestätigung zurückkehren und aktualisieren klicken.', linkCreateError: 'Fehler beim Erstellen des Bank-Links', refreshing: 'Wird aktualisiert...', updated: 'Aktualisiert', fetchingData: 'Daten werden abgerufen...', noAccountsConnected: 'Keine Konten verbunden', downloadedFiles: '{count} Dateien heruntergeladen', downloadError: 'Download-Fehler', connectBankTitle: 'Bank verbinden', autoDetect: 'Automatische Erkennung', orManually: 'oder manuell', unitedStates: 'USA', back: 'Zurück', selectInstitution: 'Bank auswählen', noInstitutions: 'Keine Banken', refresh: 'Aktualisieren', downloadFiles: 'Dateien herunterladen' } },
+    banking: { autoDetectFailed: 'Automatische Erkennung fehlgeschlagen — manuell wählen', detectionError: 'Erkennungsfehler', loadBanksError: 'Fehler beim Laden der Banken', plaidTokenError: 'Plaid-Token-Fehler', bankConnected: 'Bank verbunden', connectionError: 'Verbindungsfehler', linkOpened: 'Ein Verbindungsfenster für {name} wurde geöffnet. Nach der Bestätigung zurückkehren und aktualisieren klicken.', linkCreateError: 'Fehler beim Erstellen des Bank-Links', refreshing: 'Wird aktualisiert...', updated: 'Aktualisiert', fetchingData: 'Daten werden abgerufen...', noAccountsConnected: 'Keine Konten verbunden', downloadedFiles: '{count} Dateien heruntergeladen', downloadError: 'Download-Fehler', connectBankTitle: 'Bank verbinden', autoDetect: 'Automatische Erkennung', orManually: 'oder manuell', unitedStates: 'USA', back: 'Zurück', selectInstitution: 'Bank auswählen', noInstitutions: 'Keine Banken', refresh: 'Aktualisieren', downloadFiles: 'Dateien herunterladen' }, captions: { guidesRight1: 'Ein Schubladenschrank', guidesRight2: 'mit Anleitungen und Videos', guidesLeft: 'Schatztruhen-Schubladen...', registerRight1: 'Eine kurze Registrierung', registerRight2: 'auf dem Weg zu vielen Überraschungen...', personalDefaultRight: 'Grundlegende persönliche Daten aus dem System', personalDefaultLeft: 'Aktiver Tarif. Möglichkeit, den Tarif zu ändern', personalPlanRight: 'Bei der Tarifwahl werden Zeitraum und Preis angezeigt', personalPlanLeft1: 'Klicken Sie auf', personalPlanLeft2: '„Aktualisieren"', personalPlanLeft3: 'nach Abschluss der Auswahl', feedbackAboveButton: 'Jedes neue Formular ist für eine Nachricht und eine Antwort. Siehe Schaltfläche „Neue Nachricht"', updatesWord1: 'Software-', updatesWord2: 'versionen', updatesWord3: 'der Projekt-', updatesWord4: 'komponenten', remindersRight1: 'Erinnerungsdienst', remindersRight2: 'Kalender wichtiger Ereignisse', remindersLeft1: 'Termine des aktiven Tarifs', remindersLeft2: 'Möglichkeit, private Erinnerungs-', remindersLeft3: 'termine hinzuzufügen' } },
   { code: 'fr', flag: 'צרפת',    name: 'Français', welcome: 'Bienvenue',
     menu: ['Retour','Mises à jour','Messages','Rappels','Services bancaires','Page personnelle'],
     card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide', run: 'Lancer', videos: 'Vidéos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Déjà installé\nPas besoin de réinstaller', msgDownloading: 'Téléchargement du fichier', msgInstallComplete: 'Enregistrez et exécutez le fichier\npour terminer l\'installation', msgDownloadError: 'Erreur de téléchargement\nRéessayer', mFinance: 'M Finance', msgExists: 'Utilisateur déjà enregistré\navec ces informations', msgUpdated: 'Informations mises à jour avec succès', msgRegistered: 'Inscription terminée', existingCustomer: 'Client existant', newCustomer: 'Nouveau client', notRecognized: 'Client non reconnu. Cliquer pour s\'inscrire', msgSelectPlan: 'Veuillez choisir un forfait sur votre page personnelle', infoServices: 'Services d\'information', guidesAndVideos: 'Guides & Vidéos', siteHeaderPrefix: 'Le site Internet de', theWebsite: 'Le Site' },
@@ -52,7 +52,7 @@ const languages = [
     updates: { colDate: 'Date et heure', colProduct: 'Produit', colVersion: 'Version', colTitle: 'Titre', productKeyClick: 'KeyClick Site web', productMFinance: 'M Finance Budget familial' },
     reminders: { loginRequired: 'Connexion requise pour les rappels', titlePh: 'Titre du rappel', timePh: 'Heure', add: '+ Ajouter', noReminders: 'Aucun rappel' },
     guides: { overview: 'Description générale', userGuide: 'Guide utilisateur', financeOverviewTitle: 'Présentation de M Finance', financeOverviewDesc: "Un bref aperçu de la gestion du budget familial — comptes, transactions, catégories et prévisions, et à qui elle est destinée.", financeGuideTitle: 'Utilisation étape par étape', financeGuideDesc: "Un guide écrit avec des captures d'écran : installation, connexion des comptes, catégorisation et rapports.", financeVideosTitle: 'Tutoriels courts', financeVideosDesc: 'De courts tutoriels vidéo pour chaque fonctionnalité clé de la gestion du budget familial.', siteOverviewTitle: 'Ce que propose le site', siteOverviewDesc: 'Un bref tour de la plateforme KeyClick — produits, services et relations clients.', siteGuideTitle: 'Inscription et navigation', siteGuideDesc: 'Comment créer un compte, se connecter et trouver chaque service sur le site.', siteVideosTitle: 'Démonstrations du site', siteVideosDesc: 'De courtes démonstrations filmées des principales fonctionnalités du site.' },
-    banking: { autoDetectFailed: 'Détection automatique échouée — choisir manuellement', detectionError: 'Erreur de détection', loadBanksError: 'Erreur de chargement des banques', plaidTokenError: 'Erreur de jeton Plaid', bankConnected: 'Banque connectée', connectionError: 'Erreur de connexion', linkOpened: 'Une fenêtre de connexion pour {name} a été ouverte. Après approbation, revenez et cliquez sur actualiser.', linkCreateError: 'Erreur lors de la création du lien bancaire', refreshing: 'Actualisation...', updated: 'Mis à jour', fetchingData: 'Récupération des données...', noAccountsConnected: 'Aucun compte connecté', downloadedFiles: '{count} fichiers téléchargés', downloadError: 'Erreur de téléchargement', connectBankTitle: 'Connecter une banque', autoDetect: 'Détection automatique', orManually: 'ou manuellement', unitedStates: 'États-Unis', back: 'Retour', selectInstitution: 'Choisir une banque', noInstitutions: 'Aucune banque', refresh: 'Actualiser', downloadFiles: 'Télécharger les fichiers' } },
+    banking: { autoDetectFailed: 'Détection automatique échouée — choisir manuellement', detectionError: 'Erreur de détection', loadBanksError: 'Erreur de chargement des banques', plaidTokenError: 'Erreur de jeton Plaid', bankConnected: 'Banque connectée', connectionError: 'Erreur de connexion', linkOpened: 'Une fenêtre de connexion pour {name} a été ouverte. Après approbation, revenez et cliquez sur actualiser.', linkCreateError: 'Erreur lors de la création du lien bancaire', refreshing: 'Actualisation...', updated: 'Mis à jour', fetchingData: 'Récupération des données...', noAccountsConnected: 'Aucun compte connecté', downloadedFiles: '{count} fichiers téléchargés', downloadError: 'Erreur de téléchargement', connectBankTitle: 'Connecter une banque', autoDetect: 'Détection automatique', orManually: 'ou manuellement', unitedStates: 'États-Unis', back: 'Retour', selectInstitution: 'Choisir une banque', noInstitutions: 'Aucune banque', refresh: 'Actualiser', downloadFiles: 'Télécharger les fichiers' }, captions: { guidesRight1: 'Une armoire à tiroirs', guidesRight2: 'avec guides et vidéos', guidesLeft: 'Tiroirs aux trésors...', registerRight1: 'Une inscription rapide', registerRight2: "vers tout un monde de surprises...", personalDefaultRight: "Coordonnées personnelles de base, issues du système", personalDefaultLeft: "Abonnement actif. Possibilité de changer d'abonnement", personalPlanRight: "La sélection d'un abonnement affichera la durée et le prix", personalPlanLeft1: 'Cliquez sur', personalPlanLeft2: '« Mettre à jour »', personalPlanLeft3: 'une fois votre choix terminé', feedbackAboveButton: "Chaque nouveau formulaire correspond à un message et une réponse. Voir le bouton « Nouveau message »", updatesWord1: 'Versions', updatesWord2: 'logicielles', updatesWord3: 'des composants', updatesWord4: 'du projet', remindersRight1: 'Service de rappels', remindersRight2: 'Agenda des événements importants', remindersLeft1: "Dates de l'abonnement actif", remindersLeft2: "Possibilité d'ajouter des dates", remindersLeft3: 'de rappel privées' } },
   { code: 'he', flag: 'ישראל',   name: 'עברית',    welcome: 'ברוכים הבאים',
     menu: ['משוב','עדכונים','הודעות','תזכורות','שרותים בנקאיים','דף אישי'],
     card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכון', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה', run: 'הפעלה', videos: 'סרטונים', guide: 'הדרכה', ok: 'לחץ', msgAlreadyInstalled: 'כבר מותקן\nאין צורך בהתקנה', msgDownloading: 'הורד קובץ התקנה', msgInstallComplete: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה', msgDownloadError: 'שגיאה בהורדה\nנסה שוב', mFinance: 'M Finance', msgExists: 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת', msgUpdated: 'הפרטים עודכנו בהצלחה', msgRegistered: 'הרשמה הושלמה', existingCustomer: 'לקוח קיים', newCustomer: 'לקוח חדש', notRecognized: 'לקוח לא מוכר. לחץ להרשמה', msgSelectPlan: 'בחר תכנית בדף האישי', infoServices: 'שרותי מידע', guidesAndVideos: 'מדריכים וסרטונים', siteHeaderPrefix: 'אתר האינטרנט של', theWebsite: 'האתר' },
@@ -64,7 +64,7 @@ const languages = [
     updates: { colDate: 'תאריך ושעה', colProduct: 'מוצר', colVersion: 'גרסה', colTitle: 'כותרת', productKeyClick: 'אתר KeyClick', productMFinance: 'ניהול תקציב בית M Finance' },
     reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' },
     guides: { overview: 'תיאור כללי', userGuide: 'מדריך למשתמש', financeOverviewTitle: 'מה זה M Finance', financeOverviewDesc: 'סקירה קצרה של ניהול תקציב הבית — חשבונות, תנועות, קטגוריות ותחזיות, ולמי זה מיועד.', financeGuideTitle: 'שימוש שלב-אחר-שלב', financeGuideDesc: 'מדריך כתוב עם צילומי מסך: התקנה, חיבור חשבונות, סיווגים ודוחות.', financeVideosTitle: 'הדרכות קצרות', financeVideosDesc: 'סרטוני וידאו קצרים לכל תכונה עיקרית בניהול משק הבית.', siteOverviewTitle: 'מה מציע האתר', siteOverviewDesc: 'סיור קצר על פלטפורמת KeyClick — המוצרים, השירותים וקשרי הלקוחות.', siteGuideTitle: 'הרשמה וניווט', siteGuideDesc: 'איך נרשמים, מתחברים ומוצאים כל שירות באתר.', siteVideosTitle: 'הדגמות האתר', siteVideosDesc: 'הדגמות מצולמות קצרות של תכונות האתר המרכזיות.' },
-    banking: { autoDetectFailed: 'לא זוהה אוטומטית — בחר ידנית', detectionError: 'שגיאה בזיהוי', loadBanksError: 'שגיאה בטעינת בנקים', plaidTokenError: 'שגיאה ביצירת Plaid Token', bankConnected: 'הבנק חובר בהצלחה', connectionError: 'שגיאה בחיבור', linkOpened: 'נפתח חלון חיבור ל-{name}. לאחר האישור חזור ולחץ רענן.', linkCreateError: 'שגיאה ביצירת קישור לבנק', refreshing: 'מרענן...', updated: 'עודכן', fetchingData: 'שולף נתונים...', noAccountsConnected: 'אין חשבונות מחוברים', downloadedFiles: 'הורדו {count} קבצים', downloadError: 'שגיאה בהורדה', connectBankTitle: 'חיבור לבנק', autoDetect: 'זיהוי אוטומטי', orManually: 'או בחר ידנית', unitedStates: 'ארצות הברית', back: 'חזור', selectInstitution: 'בחר מוסד פיננסי', noInstitutions: 'אין מוסדות', refresh: 'רענן', downloadFiles: 'הורד קבצים' } },
+    banking: { autoDetectFailed: 'לא זוהה אוטומטית — בחר ידנית', detectionError: 'שגיאה בזיהוי', loadBanksError: 'שגיאה בטעינת בנקים', plaidTokenError: 'שגיאה ביצירת Plaid Token', bankConnected: 'הבנק חובר בהצלחה', connectionError: 'שגיאה בחיבור', linkOpened: 'נפתח חלון חיבור ל-{name}. לאחר האישור חזור ולחץ רענן.', linkCreateError: 'שגיאה ביצירת קישור לבנק', refreshing: 'מרענן...', updated: 'עודכן', fetchingData: 'שולף נתונים...', noAccountsConnected: 'אין חשבונות מחוברים', downloadedFiles: 'הורדו {count} קבצים', downloadError: 'שגיאה בהורדה', connectBankTitle: 'חיבור לבנק', autoDetect: 'זיהוי אוטומטי', orManually: 'או בחר ידנית', unitedStates: 'ארצות הברית', back: 'חזור', selectInstitution: 'בחר מוסד פיננסי', noInstitutions: 'אין מוסדות', refresh: 'רענן', downloadFiles: 'הורד קבצים' }, captions: { guidesRight1: 'ארונית מגירות עם', guidesRight2: 'מדריכים וסרטונים', guidesLeft: 'מגירות מטמון...', registerRight1: 'הרשמה קצרה', registerRight2: '…בדרך אל מגוון ההפתעות', personalDefaultRight: 'פרטים אישיים בסיסיים, מתוך המערכת', personalDefaultLeft: 'תכנית פעילה. אפשרות שינוי התכנית', personalPlanRight: 'בבחירת התכנית תוצג התקופה והמחיר', personalPlanLeft1: 'יש ללחוץ', personalPlanLeft2: 'על עדכון', personalPlanLeft3: 'בסיום הבחירה', feedbackAboveButton: 'טופס חדש להודעה אחת ותשובה אחת. ראה כפתור להודעה חדשה', updatesWord1: 'גרסאות', updatesWord2: 'תוכנה', updatesWord3: 'למרכיבי', updatesWord4: 'הפרויקט', remindersRight1: 'שרות תזכורות', remindersRight2: 'יומן ארועים חשובים', remindersLeft1: 'תאריכי התכנית הפעילה', remindersLeft2: 'אפשרות הוספת תאריכי', remindersLeft3: 'תזכורות פרטיים' } },
   { code: 'es', flag: 'ספרד',    name: 'Español',  welcome: 'Bienvenido',
     menu: ['Comentarios','Actualizaciones','Mensajes','Recordatorios','Servicios bancarios','Página personal'],
     card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía', run: 'Ejecutar', videos: 'Videos', guide: 'Guía', ok: 'OK', msgAlreadyInstalled: 'Ya instalado\nNo es necesario reinstalar', msgDownloading: 'Descargando archivo de instalación', msgInstallComplete: 'Guarda y ejecuta el archivo\npara completar la instalación', msgDownloadError: 'Error de descarga\nInténtalo de nuevo', mFinance: 'M Finance', msgExists: 'El usuario ya está registrado\ncon estos datos', msgUpdated: 'Datos actualizados correctamente', msgRegistered: 'Registro completado', existingCustomer: 'Cliente existente', newCustomer: 'Cliente nuevo', notRecognized: 'Cliente no encontrado. Haga clic para registrarse', msgSelectPlan: 'Por favor selecciona un plan en tu página personal', infoServices: 'Servicios de información', guidesAndVideos: 'Guías y Videos', siteHeaderPrefix: 'El sitio web de', theWebsite: 'El Sitio' },
@@ -76,7 +76,7 @@ const languages = [
     updates: { colDate: 'Fecha y hora', colProduct: 'Producto', colVersion: 'Versión', colTitle: 'Título', productKeyClick: 'KeyClick Sitio web', productMFinance: 'M Finance Presupuesto familiar' },
     reminders: { loginRequired: 'Inicio de sesión requerido', titlePh: 'Título del recordatorio', timePh: 'Hora', add: '+ Agregar', noReminders: 'Sin recordatorios' },
     guides: { overview: 'Descripción general', userGuide: 'Guía del usuario', financeOverviewTitle: 'Qué es M Finance', financeOverviewDesc: 'Una breve descripción de la gestión del presupuesto familiar — cuentas, transacciones, categorías y previsiones, y a quién está dirigido.', financeGuideTitle: 'Uso paso a paso', financeGuideDesc: 'Una guía escrita con capturas de pantalla: instalación, conexión de cuentas, categorización e informes.', financeVideosTitle: 'Tutoriales cortos', financeVideosDesc: 'Breves videotutoriales de cada función clave en la gestión del presupuesto familiar.', siteOverviewTitle: 'Qué ofrece el sitio', siteOverviewDesc: 'Un breve recorrido por la plataforma KeyClick — productos, servicios y relación con los clientes.', siteGuideTitle: 'Registro y navegación', siteGuideDesc: 'Cómo registrarse, iniciar sesión y encontrar cada servicio en el sitio.', siteVideosTitle: 'Demostraciones del sitio', siteVideosDesc: 'Breves demostraciones grabadas de las principales funciones del sitio.' },
-    banking: { autoDetectFailed: 'Detección automática fallida — elija manualmente', detectionError: 'Error de detección', loadBanksError: 'Error al cargar los bancos', plaidTokenError: 'Error de token de Plaid', bankConnected: 'Banco conectado', connectionError: 'Error de conexión', linkOpened: 'Se abrió una ventana de conexión para {name}. Después de aprobar, vuelva y haga clic en actualizar.', linkCreateError: 'Error al crear el enlace bancario', refreshing: 'Actualizando...', updated: 'Actualizado', fetchingData: 'Obteniendo datos...', noAccountsConnected: 'No hay cuentas conectadas', downloadedFiles: '{count} archivos descargados', downloadError: 'Error de descarga', connectBankTitle: 'Conectar banco', autoDetect: 'Detección automática', orManually: 'o manualmente', unitedStates: 'Estados Unidos', back: 'Volver', selectInstitution: 'Seleccionar banco', noInstitutions: 'No hay bancos', refresh: 'Actualizar', downloadFiles: 'Descargar archivos' } },
+    banking: { autoDetectFailed: 'Detección automática fallida — elija manualmente', detectionError: 'Error de detección', loadBanksError: 'Error al cargar los bancos', plaidTokenError: 'Error de token de Plaid', bankConnected: 'Banco conectado', connectionError: 'Error de conexión', linkOpened: 'Se abrió una ventana de conexión para {name}. Después de aprobar, vuelva y haga clic en actualizar.', linkCreateError: 'Error al crear el enlace bancario', refreshing: 'Actualizando...', updated: 'Actualizado', fetchingData: 'Obteniendo datos...', noAccountsConnected: 'No hay cuentas conectadas', downloadedFiles: '{count} archivos descargados', downloadError: 'Error de descarga', connectBankTitle: 'Conectar banco', autoDetect: 'Detección automática', orManually: 'o manualmente', unitedStates: 'Estados Unidos', back: 'Volver', selectInstitution: 'Seleccionar banco', noInstitutions: 'No hay bancos', refresh: 'Actualizar', downloadFiles: 'Descargar archivos' }, captions: { guidesRight1: 'Un armario de cajones', guidesRight2: 'con guías y vídeos', guidesLeft: 'Cajones del tesoro...', registerRight1: 'Un registro rápido', registerRight2: 'hacia un mundo de sorpresas...', personalDefaultRight: 'Datos personales básicos, del sistema', personalDefaultLeft: 'Plan activo. Posibilidad de cambiar de plan', personalPlanRight: 'Al elegir el plan se mostrará el período y el precio', personalPlanLeft1: 'Haga clic en', personalPlanLeft2: '«Actualizar»', personalPlanLeft3: 'al terminar de elegir', feedbackAboveButton: 'Cada formulario nuevo es para un mensaje y una respuesta. Vea el botón «Nuevo mensaje»', updatesWord1: 'Versiones', updatesWord2: 'de software', updatesWord3: 'de los componentes', updatesWord4: 'del proyecto', remindersRight1: 'Servicio de recordatorios', remindersRight2: 'Calendario de eventos importantes', remindersLeft1: 'Fechas del plan activo', remindersLeft2: 'Posibilidad de añadir fechas', remindersLeft3: 'de recordatorio privadas' } },
   { code: 'ja', flag: 'יפן',     name: '日本語',    welcome: 'ようこそ',
     menu: ['フィードバック','更新','メッセージ','リマインダー','銀行サービス','個人ページ'],
     card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル', run: '起動', videos: 'ビデオ', guide: 'ガイド', ok: 'OK', msgAlreadyInstalled: 'インストール済み\n再インストール不要', msgDownloading: 'インストールファイルをダウンロード中', msgInstallComplete: 'ファイルを保存して実行\nインストールを完了', msgDownloadError: 'ダウンロードエラー\n再試行', mFinance: 'M Finance', msgExists: 'このメールは\nすでに登録されています', msgUpdated: '情報が正常に更新されました', msgRegistered: '登録が完了しました', existingCustomer: '既存のお客様', newCustomer: '新規のお客様', notRecognized: 'お客様が見つかりません。登録するにはクリック', msgSelectPlan: '個人ページでプランを選択してください', infoServices: '情報サービス', guidesAndVideos: 'ガイドと動画', siteHeaderPrefix: '公式サイト：', theWebsite: '本サイト' },
@@ -88,7 +88,7 @@ const languages = [
     updates: { colDate: '日時', colProduct: '製品', colVersion: 'バージョン', colTitle: 'タイトル', productKeyClick: 'KeyClick サイト', productMFinance: 'M Finance 家計管理' },
     reminders: { loginRequired: 'リマインダーを表示するにはログインが必要です', titlePh: 'リマインダーのタイトル', timePh: '時刻', add: '+ 追加', noReminders: 'リマインダーなし' },
     guides: { overview: '概要', userGuide: 'ユーザーガイド', financeOverviewTitle: 'M Financeとは', financeOverviewDesc: '家計管理の簡単な概要 — 口座、取引、カテゴリ、予測、対象となる方について。', financeGuideTitle: '使い方ステップガイド', financeGuideDesc: 'スクリーンショット付きの説明書：インストール、口座の連携、分類とレポート。', financeVideosTitle: '短いチュートリアル', financeVideosDesc: '家計管理の主要機能ごとの短い動画チュートリアル。', siteOverviewTitle: 'サイトが提供するもの', siteOverviewDesc: 'KeyClickプラットフォームの簡単な紹介 — 製品、サービス、カスタマーリレーション。', siteGuideTitle: '登録とナビゲーション', siteGuideDesc: '登録方法、ログイン方法、サイト内の各サービスの見つけ方。', siteVideosTitle: 'サイトのデモ', siteVideosDesc: 'サイトの主要機能を短く撮影したデモ。' },
-    banking: { autoDetectFailed: '自動検出に失敗しました。手動で選択してください', detectionError: '検出エラー', loadBanksError: '銀行の読み込みエラー', plaidTokenError: 'Plaidトークンエラー', bankConnected: '銀行が接続されました', connectionError: '接続エラー', linkOpened: '{name}への接続ウィンドウが開きました。承認後、戻って更新をクリックしてください。', linkCreateError: '銀行リンクの作成エラー', refreshing: '更新中...', updated: '更新しました', fetchingData: 'データを取得中...', noAccountsConnected: '接続された口座がありません', downloadedFiles: '{count}件のファイルをダウンロードしました', downloadError: 'ダウンロードエラー', connectBankTitle: '銀行を接続', autoDetect: '自動検出', orManually: 'または手動で', unitedStates: 'アメリカ合衆国', back: '戻る', selectInstitution: '銀行を選択', noInstitutions: '銀行がありません', refresh: '更新', downloadFiles: 'ファイルをダウンロード' } },
+    banking: { autoDetectFailed: '自動検出に失敗しました。手動で選択してください', detectionError: '検出エラー', loadBanksError: '銀行の読み込みエラー', plaidTokenError: 'Plaidトークンエラー', bankConnected: '銀行が接続されました', connectionError: '接続エラー', linkOpened: '{name}への接続ウィンドウが開きました。承認後、戻って更新をクリックしてください。', linkCreateError: '銀行リンクの作成エラー', refreshing: '更新中...', updated: '更新しました', fetchingData: 'データを取得中...', noAccountsConnected: '接続された口座がありません', downloadedFiles: '{count}件のファイルをダウンロードしました', downloadError: 'ダウンロードエラー', connectBankTitle: '銀行を接続', autoDetect: '自動検出', orManually: 'または手動で', unitedStates: 'アメリカ合衆国', back: '戻る', selectInstitution: '銀行を選択', noInstitutions: '銀行がありません', refresh: '更新', downloadFiles: 'ファイルをダウンロード' }, captions: { guidesRight1: 'ガイドと動画が', guidesRight2: '詰まった引き出し棚', guidesLeft: '宝物の引き出し...', registerRight1: '簡単な登録で', registerRight2: '様々なサプライズへ...', personalDefaultRight: 'システムからの基本的な個人情報', personalDefaultLeft: '有効なプラン。プラン変更も可能', personalPlanRight: 'プランを選択すると期間と料金が表示されます', personalPlanLeft1: '選択が終わったら', personalPlanLeft2: '「更新」を', personalPlanLeft3: 'クリックしてください', feedbackAboveButton: '新規フォームは1件のメッセージと1件の返信専用です。「新規メッセージ」ボタンをご覧ください', updatesWord1: 'プロジェクト', updatesWord2: '構成要素の', updatesWord3: 'ソフトウェア', updatesWord4: 'バージョン', remindersRight1: 'リマインダーサービス', remindersRight2: '重要な予定のカレンダー', remindersLeft1: '有効なプランの日付', remindersLeft2: '個人的なリマインダーの', remindersLeft3: '日付を追加可能' } },
   { code: 'ar', flag: 'סעודיה',  name: 'العربية',  welcome: 'أهلاً وسهلاً',
     menu: ['ملاحظات','تحديثات','رسائل','تذكيرات','خدمات مصرفية','الصفحة الشخصية'],
     card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل', run: 'تشغيل', videos: 'مقاطع', guide: 'دليل', ok: 'حسناً', msgAlreadyInstalled: 'مثبت بالفعل\nلا حاجة لإعادة التثبيت', msgDownloading: 'جارٍ تنزيل ملف التثبيت', msgInstallComplete: 'احفظ الملف وشغّله\nلإكمال التثبيت', msgDownloadError: 'خطأ في التنزيل\nحاول مرة أخرى', mFinance: 'M Finance', msgExists: 'المستخدم مسجل بالفعل\nبهذه البيانات', msgUpdated: 'تم تحديث البيانات بنجاح', msgRegistered: 'اكتمل التسجيل', existingCustomer: 'عميل موجود', newCustomer: 'عميل جديد', notRecognized: 'العميل غير معروف. انقر للتسجيل', msgSelectPlan: 'يرجى اختيار خطة في صفحتك الشخصية', infoServices: 'خدمات المعلومات', guidesAndVideos: 'أدلة ومقاطع فيديو', siteHeaderPrefix: 'الموقع الإلكتروني لـ', theWebsite: 'الموقع' },
@@ -100,7 +100,7 @@ const languages = [
     updates: { colDate: 'التاريخ والوقت', colProduct: 'المنتج', colVersion: 'الإصدار', colTitle: 'العنوان', productKeyClick: 'KeyClick موقع', productMFinance: 'M Finance ميزانية المنزل' },
     reminders: { loginRequired: 'تسجيل الدخول مطلوب لعرض التذكيرات', titlePh: 'عنوان التذكير', timePh: 'الوقت', add: '+ إضافة', noReminders: 'لا توجد تذكيرات' },
     guides: { overview: 'وصف عام', userGuide: 'دليل المستخدم', financeOverviewTitle: 'ما هو M Finance', financeOverviewDesc: 'نظرة عامة موجزة على إدارة ميزانية المنزل — الحسابات، المعاملات، الفئات والتوقعات، ولمن هذا مخصص.', financeGuideTitle: 'الاستخدام خطوة بخطوة', financeGuideDesc: 'دليل مكتوب مع لقطات شاشة: التثبيت، ربط الحسابات، التصنيف والتقارير.', financeVideosTitle: 'شروحات قصيرة', financeVideosDesc: 'مقاطع فيديو تعليمية قصيرة لكل ميزة أساسية في إدارة ميزانية المنزل.', siteOverviewTitle: 'ما الذي يقدمه الموقع', siteOverviewDesc: 'جولة قصيرة في منصة KeyClick — المنتجات والخدمات وخدمة العملاء.', siteGuideTitle: 'التسجيل والتنقل', siteGuideDesc: 'كيفية التسجيل وتسجيل الدخول والعثور على كل خدمة في الموقع.', siteVideosTitle: 'عروض توضيحية للموقع', siteVideosDesc: 'عروض توضيحية مصورة قصيرة لأهم ميزات الموقع.' },
-    banking: { autoDetectFailed: 'فشل الاكتشاف التلقائي — اختر يدويًا', detectionError: 'خطأ في الاكتشاف', loadBanksError: 'خطأ في تحميل البنوك', plaidTokenError: 'خطأ في رمز Plaid', bankConnected: 'تم ربط البنك بنجاح', connectionError: 'خطأ في الاتصال', linkOpened: 'تم فتح نافذة الاتصال بـ {name}. بعد الموافقة، ارجع واضغط تحديث.', linkCreateError: 'خطأ في إنشاء رابط البنك', refreshing: 'جارٍ التحديث...', updated: 'تم التحديث', fetchingData: 'جارٍ جلب البيانات...', noAccountsConnected: 'لا توجد حسابات متصلة', downloadedFiles: 'تم تنزيل {count} ملفات', downloadError: 'خطأ في التنزيل', connectBankTitle: 'ربط بنك', autoDetect: 'اكتشاف تلقائي', orManually: 'أو يدويًا', unitedStates: 'الولايات المتحدة', back: 'رجوع', selectInstitution: 'اختر مؤسسة مالية', noInstitutions: 'لا توجد مؤسسات', refresh: 'تحديث', downloadFiles: 'تنزيل الملفات' } },
+    banking: { autoDetectFailed: 'فشل الاكتشاف التلقائي — اختر يدويًا', detectionError: 'خطأ في الاكتشاف', loadBanksError: 'خطأ في تحميل البنوك', plaidTokenError: 'خطأ في رمز Plaid', bankConnected: 'تم ربط البنك بنجاح', connectionError: 'خطأ في الاتصال', linkOpened: 'تم فتح نافذة الاتصال بـ {name}. بعد الموافقة، ارجع واضغط تحديث.', linkCreateError: 'خطأ في إنشاء رابط البنك', refreshing: 'جارٍ التحديث...', updated: 'تم التحديث', fetchingData: 'جارٍ جلب البيانات...', noAccountsConnected: 'لا توجد حسابات متصلة', downloadedFiles: 'تم تنزيل {count} ملفات', downloadError: 'خطأ في التنزيل', connectBankTitle: 'ربط بنك', autoDetect: 'اكتشاف تلقائي', orManually: 'أو يدويًا', unitedStates: 'الولايات المتحدة', back: 'رجوع', selectInstitution: 'اختر مؤسسة مالية', noInstitutions: 'لا توجد مؤسسات', refresh: 'تحديث', downloadFiles: 'تنزيل الملفات' }, captions: { guidesRight1: 'خزانة أدراج مع', guidesRight2: 'أدلة ومقاطع فيديو', guidesLeft: 'أدراج الكنوز...', registerRight1: 'تسجيل سريع', registerRight2: '…في الطريق إلى مجموعة من المفاجآت', personalDefaultRight: 'بيانات شخصية أساسية، من النظام', personalDefaultLeft: 'خطة نشطة. إمكانية تغيير الخطة', personalPlanRight: 'عند اختيار الخطة ستظهر المدة والسعر', personalPlanLeft1: 'يجب الضغط', personalPlanLeft2: 'على تحديث', personalPlanLeft3: 'عند الانتهاء من الاختيار', feedbackAboveButton: 'كل نموذج جديد مخصص لرسالة واحدة ورد واحد. انظر زر رسالة جديدة', updatesWord1: 'إصدارات', updatesWord2: 'البرمجيات', updatesWord3: 'لمكونات', updatesWord4: 'المشروع', remindersRight1: 'خدمة التذكيرات', remindersRight2: 'تقويم الأحداث المهمة', remindersLeft1: 'تواريخ الخطة النشطة', remindersLeft2: 'إمكانية إضافة تواريخ', remindersLeft3: 'تذكير خاصة' } },
   { code: 'zh', flag: 'סין',     name: '中文',      welcome: '欢迎',
     menu: ['反馈','更新','消息','提醒','银行服务','个人页面'],
     card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件', run: '运行', videos: '视频', guide: '指南', ok: '确定', msgAlreadyInstalled: '已安装\n无需重新安装', msgDownloading: '正在下载安装文件', msgInstallComplete: '保存并运行文件\n以完成安装', msgDownloadError: '下载错误\n请重试', mFinance: 'M Finance', msgExists: '该用户已注册\n使用这些信息', msgUpdated: '信息更新成功', msgRegistered: '注册完成', existingCustomer: '现有客户', newCustomer: '新客户', notRecognized: '未找到客户。点击注册', msgSelectPlan: '请在个人页面选择套餐', infoServices: '信息服务', guidesAndVideos: '指南与视频', siteHeaderPrefix: '官方网站：', theWebsite: '网站' },
@@ -112,7 +112,7 @@ const languages = [
     updates: { colDate: '日期与时间', colProduct: '产品', colVersion: '版本', colTitle: '标题', productKeyClick: 'KeyClick 网站', productMFinance: 'M Finance 家庭预算' },
     reminders: { loginRequired: '需要登录才能查看提醒', titlePh: '提醒标题', timePh: '时间', add: '+ 添加', noReminders: '暂无提醒' },
     guides: { overview: '概述', userGuide: '用户指南', financeOverviewTitle: '什么是 M Finance', financeOverviewDesc: '家庭预算管理简介 — 账户、交易、分类和预测，以及适用对象。', financeGuideTitle: '分步使用说明', financeGuideDesc: '附截图的图文指南：安装、连接账户、分类和报表。', financeVideosTitle: '简短教程', financeVideosDesc: '家庭预算管理每项主要功能的简短视频教程。', siteOverviewTitle: '网站提供的内容', siteOverviewDesc: 'KeyClick 平台简介 — 产品、服务与客户关系。', siteGuideTitle: '注册与导航', siteGuideDesc: '如何注册、登录并在网站上找到每项服务。', siteVideosTitle: '网站演示', siteVideosDesc: '网站主要功能的简短录制演示。' },
-    banking: { autoDetectFailed: '自动检测失败 — 请手动选择', detectionError: '检测错误', loadBanksError: '加载银行时出错', plaidTokenError: 'Plaid 令牌错误', bankConnected: '银行已连接', connectionError: '连接错误', linkOpened: '已打开与{name}的连接窗口。批准后请返回并点击刷新。', linkCreateError: '创建银行链接时出错', refreshing: '正在刷新...', updated: '已更新', fetchingData: '正在获取数据...', noAccountsConnected: '没有已连接的账户', downloadedFiles: '已下载 {count} 个文件', downloadError: '下载错误', connectBankTitle: '连接银行', autoDetect: '自动检测', orManually: '或手动选择', unitedStates: '美国', back: '返回', selectInstitution: '选择银行', noInstitutions: '没有银行', refresh: '刷新', downloadFiles: '下载文件' } },
+    banking: { autoDetectFailed: '自动检测失败 — 请手动选择', detectionError: '检测错误', loadBanksError: '加载银行时出错', plaidTokenError: 'Plaid 令牌错误', bankConnected: '银行已连接', connectionError: '连接错误', linkOpened: '已打开与{name}的连接窗口。批准后请返回并点击刷新。', linkCreateError: '创建银行链接时出错', refreshing: '正在刷新...', updated: '已更新', fetchingData: '正在获取数据...', noAccountsConnected: '没有已连接的账户', downloadedFiles: '已下载 {count} 个文件', downloadError: '下载错误', connectBankTitle: '连接银行', autoDetect: '自动检测', orManually: '或手动选择', unitedStates: '美国', back: '返回', selectInstitution: '选择银行', noInstitutions: '没有银行', refresh: '刷新', downloadFiles: '下载文件' }, captions: { guidesRight1: '装满指南和视频', guidesRight2: '的抽屉柜', guidesLeft: '百宝抽屉...', registerRight1: '简短注册', registerRight2: '开启多样惊喜之旅...', personalDefaultRight: '来自系统的基本个人资料', personalDefaultLeft: '当前有效方案。可更改方案', personalPlanRight: '选择方案后将显示期限和价格', personalPlanLeft1: '选择完成后', personalPlanLeft2: '请点击', personalPlanLeft3: '「更新」', feedbackAboveButton: '每份新表单对应一条留言和一条回复。请查看「新留言」按钮', updatesWord1: '项目', updatesWord2: '组件', updatesWord3: '软件', updatesWord4: '版本', remindersRight1: '提醒服务', remindersRight2: '重要事项日历', remindersLeft1: '当前方案的日期', remindersLeft2: '可添加个人', remindersLeft3: '提醒日期' } },
   { code: 'it', flag: 'איטליה',  name: 'Italiano', welcome: 'Benvenuto',
     menu: ['Feedback','Aggiornamenti','Messaggi','Promemoria','Servizi bancari','Pagina personale'],
     card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida', run: 'Avvia', videos: 'Video', guide: 'Guida', ok: 'OK', msgAlreadyInstalled: 'Già installato\nNessuna reinstallazione necessaria', msgDownloading: 'Download del file di installazione', msgInstallComplete: 'Salva ed esegui il file\nper completare l\'installazione', msgDownloadError: 'Errore di download\nRiprova', mFinance: 'M Finance', msgExists: 'Utente già registrato\ncon questi dati', msgUpdated: 'Dati aggiornati con successo', msgRegistered: 'Registrazione completata', existingCustomer: 'Cliente esistente', newCustomer: 'Nuovo cliente', notRecognized: 'Cliente non trovato. Clicca per registrarti', msgSelectPlan: 'Seleziona un piano nella tua pagina personale', infoServices: 'Servizi informativi', guidesAndVideos: 'Guide e Video', siteHeaderPrefix: 'Il sito web di', theWebsite: 'Il Sito' },
@@ -124,7 +124,7 @@ const languages = [
     updates: { colDate: 'Data e ora', colProduct: 'Prodotto', colVersion: 'Versione', colTitle: 'Titolo', productKeyClick: 'KeyClick Sito web', productMFinance: 'M Finance Gestione budget' },
     reminders: { loginRequired: 'Accesso richiesto per i promemoria', titlePh: 'Titolo promemoria', timePh: 'Ora', add: '+ Aggiungi', noReminders: 'Nessun promemoria' },
     guides: { overview: 'Descrizione generale', userGuide: 'Guida utente', financeOverviewTitle: 'Panoramica di M Finance', financeOverviewDesc: 'Una breve panoramica della gestione del bilancio familiare — conti, transazioni, categorie e previsioni, e a chi è destinata.', financeGuideTitle: 'Utilizzo passo dopo passo', financeGuideDesc: "Una guida scritta con screenshot: installazione, collegamento dei conti, categorizzazione e report.", financeVideosTitle: 'Brevi tutorial', financeVideosDesc: 'Brevi video tutorial per ogni funzione principale della gestione del bilancio familiare.', siteOverviewTitle: 'Cosa offre il sito', siteOverviewDesc: 'Un breve tour della piattaforma KeyClick — prodotti, servizi e relazioni con i clienti.', siteGuideTitle: 'Registrazione e navigazione', siteGuideDesc: 'Come registrarsi, accedere e trovare ogni servizio sul sito.', siteVideosTitle: 'Demo del sito', siteVideosDesc: 'Brevi demo registrate delle principali funzionalità del sito.' },
-    banking: { autoDetectFailed: 'Rilevamento automatico fallito — scegli manualmente', detectionError: 'Errore di rilevamento', loadBanksError: 'Errore nel caricamento delle banche', plaidTokenError: 'Errore token Plaid', bankConnected: 'Banca collegata', connectionError: 'Errore di connessione', linkOpened: 'È stata aperta una finestra di collegamento per {name}. Dopo aver approvato, torna e clicca su aggiorna.', linkCreateError: 'Errore nella creazione del collegamento bancario', refreshing: 'Aggiornamento...', updated: 'Aggiornato', fetchingData: 'Recupero dati...', noAccountsConnected: 'Nessun conto collegato', downloadedFiles: '{count} file scaricati', downloadError: 'Errore di download', connectBankTitle: 'Collega banca', autoDetect: 'Rilevamento automatico', orManually: 'o manualmente', unitedStates: 'Stati Uniti', back: 'Indietro', selectInstitution: 'Seleziona banca', noInstitutions: 'Nessuna banca', refresh: 'Aggiorna', downloadFiles: 'Scarica file' } },
+    banking: { autoDetectFailed: 'Rilevamento automatico fallito — scegli manualmente', detectionError: 'Errore di rilevamento', loadBanksError: 'Errore nel caricamento delle banche', plaidTokenError: 'Errore token Plaid', bankConnected: 'Banca collegata', connectionError: 'Errore di connessione', linkOpened: 'È stata aperta una finestra di collegamento per {name}. Dopo aver approvato, torna e clicca su aggiorna.', linkCreateError: 'Errore nella creazione del collegamento bancario', refreshing: 'Aggiornamento...', updated: 'Aggiornato', fetchingData: 'Recupero dati...', noAccountsConnected: 'Nessun conto collegato', downloadedFiles: '{count} file scaricati', downloadError: 'Errore di download', connectBankTitle: 'Collega banca', autoDetect: 'Rilevamento automatico', orManually: 'o manualmente', unitedStates: 'Stati Uniti', back: 'Indietro', selectInstitution: 'Seleziona banca', noInstitutions: 'Nessuna banca', refresh: 'Aggiorna', downloadFiles: 'Scarica file' }, captions: { guidesRight1: 'Un armadio a cassetti', guidesRight2: 'con guide e video', guidesLeft: 'Cassetti del tesoro...', registerRight1: 'Una registrazione rapida', registerRight2: 'verso tante sorprese...', personalDefaultRight: 'Dati personali di base, dal sistema', personalDefaultLeft: 'Piano attivo. Possibilità di cambiare piano', personalPlanRight: 'Selezionando il piano verranno mostrati il periodo e il prezzo', personalPlanLeft1: 'Fare clic su', personalPlanLeft2: '«Aggiorna»', personalPlanLeft3: 'al termine della scelta', feedbackAboveButton: 'Ogni nuovo modulo è per un messaggio e una risposta. Vedi il pulsante «Nuovo messaggio»', updatesWord1: 'Versioni', updatesWord2: 'software', updatesWord3: 'dei componenti', updatesWord4: 'del progetto', remindersRight1: 'Servizio promemoria', remindersRight2: 'Calendario degli eventi importanti', remindersLeft1: 'Date del piano attivo', remindersLeft2: 'Possibilità di aggiungere date', remindersLeft3: 'di promemoria privati' } },
   { code: 'hi', flag: 'הודו',    name: 'हिंदी',     welcome: 'स्वागत है',
     menu: ['फीडबैक','अपडेट','संदेश','अनुस्मारक','बैंकिंग सेवाएं','व्यक्तिगत पृष्ठ'],
     card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें', run: 'चलाएं', videos: 'वीडियो', guide: 'मार्गदर्शिका', ok: 'ठीक है', msgAlreadyInstalled: 'पहले से इंस्टॉल है\nपुनः इंस्टॉल की आवश्यकता नहीं', msgDownloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है', msgInstallComplete: 'फ़ाइल सहेजें और चलाएं\nइंस्टॉलेशन पूरा करने के लिए', msgDownloadError: 'डाउनलोड त्रुटि\nपुनः प्रयास करें', mFinance: 'M Finance', msgExists: 'यह उपयोगकर्ता पहले से पंजीकृत है\nइन विवरणों के साथ', msgUpdated: 'विवरण सफलतापूर्वक अपडेट किए गए', msgRegistered: 'पंजीकरण पूरा हो गया', existingCustomer: 'मौजूदा ग्राहक', newCustomer: 'नया ग्राहक', notRecognized: 'ग्राहक नहीं मिला। पंजीकरण के लिए क्लिक करें', msgSelectPlan: 'कृपया अपने व्यक्तिगत पृष्ठ पर एक योजना चुनें', infoServices: 'सूचना सेवाएं', guidesAndVideos: 'गाइड और वीडियो', siteHeaderPrefix: 'आधिकारिक वेबसाइट:', theWebsite: 'वेबसाइट' },
@@ -136,8 +136,14 @@ const languages = [
     updates: { colDate: 'दिनांक और समय', colProduct: 'उत्पाद', colVersion: 'संस्करण', colTitle: 'शीर्षक', productKeyClick: 'KeyClick वेबसाइट', productMFinance: 'M Finance घरेलू बजट' },
     reminders: { loginRequired: 'अनुस्मारक देखने के लिए लॉगिन आवश्यक है', titlePh: 'अनुस्मारक शीर्षक', timePh: 'समय', add: '+ जोड़ें', noReminders: 'कोई अनुस्मारक नहीं' },
     guides: { overview: 'सामान्य विवरण', userGuide: 'उपयोगकर्ता गाइड', financeOverviewTitle: 'M Finance क्या है', financeOverviewDesc: 'घरेलू बजट प्रबंधन का संक्षिप्त विवरण — खाते, लेन-देन, श्रेणियां और पूर्वानुमान, और यह किसके लिए है।', financeGuideTitle: 'चरण-दर-चरण उपयोग', financeGuideDesc: 'स्क्रीनशॉट के साथ लिखित गाइड: इंस्टॉलेशन, खाते जोड़ना, वर्गीकरण और रिपोर्ट।', financeVideosTitle: 'संक्षिप्त ट्यूटोरियल', financeVideosDesc: 'घरेलू बजट प्रबंधन की हर मुख्य विशेषता के लिए संक्षिप्त वीडियो ट्यूटोरियल।', siteOverviewTitle: 'वेबसाइट क्या प्रदान करती है', siteOverviewDesc: 'KeyClick प्लेटफ़ॉर्म का संक्षिप्त भ्रमण — उत्पाद, सेवाएं और ग्राहक संबंध।', siteGuideTitle: 'पंजीकरण और नेविगेशन', siteGuideDesc: 'कैसे पंजीकरण करें, लॉगिन करें और वेबसाइट पर हर सेवा खोजें।', siteVideosTitle: 'वेबसाइट डेमो', siteVideosDesc: 'वेबसाइट की मुख्य विशेषताओं के संक्षिप्त रिकॉर्ड किए गए डेमो।' },
-    banking: { autoDetectFailed: 'स्वचालित पहचान विफल — मैन्युअल रूप से चुनें', detectionError: 'पहचान त्रुटि', loadBanksError: 'बैंक लोड करने में त्रुटि', plaidTokenError: 'Plaid टोकन त्रुटि', bankConnected: 'बैंक सफलतापूर्वक जुड़ा', connectionError: 'कनेक्शन त्रुटि', linkOpened: '{name} के लिए कनेक्शन विंडो खुली। स्वीकृति के बाद वापस आकर रिफ्रेश पर क्लिक करें।', linkCreateError: 'बैंक लिंक बनाने में त्रुटि', refreshing: 'रीफ्रेश हो रहा है...', updated: 'अपडेट हो गया', fetchingData: 'डेटा प्राप्त हो रहा है...', noAccountsConnected: 'कोई खाता कनेक्ट नहीं है', downloadedFiles: '{count} फ़ाइलें डाउनलोड हुईं', downloadError: 'डाउनलोड त्रुटि', connectBankTitle: 'बैंक कनेक्ट करें', autoDetect: 'स्वचालित पहचान', orManually: 'या मैन्युअल रूप से', unitedStates: 'संयुक्त राज्य अमेरिका', back: 'वापस', selectInstitution: 'बैंक चुनें', noInstitutions: 'कोई बैंक नहीं', refresh: 'रीफ्रेश', downloadFiles: 'फ़ाइलें डाउनलोड करें' } },
+    banking: { autoDetectFailed: 'स्वचालित पहचान विफल — मैन्युअल रूप से चुनें', detectionError: 'पहचान त्रुटि', loadBanksError: 'बैंक लोड करने में त्रुटि', plaidTokenError: 'Plaid टोकन त्रुटि', bankConnected: 'बैंक सफलतापूर्वक जुड़ा', connectionError: 'कनेक्शन त्रुटि', linkOpened: '{name} के लिए कनेक्शन विंडो खुली। स्वीकृति के बाद वापस आकर रिफ्रेश पर क्लिक करें।', linkCreateError: 'बैंक लिंक बनाने में त्रुटि', refreshing: 'रीफ्रेश हो रहा है...', updated: 'अपडेट हो गया', fetchingData: 'डेटा प्राप्त हो रहा है...', noAccountsConnected: 'कोई खाता कनेक्ट नहीं है', downloadedFiles: '{count} फ़ाइलें डाउनलोड हुईं', downloadError: 'डाउनलोड त्रुटि', connectBankTitle: 'बैंक कनेक्ट करें', autoDetect: 'स्वचालित पहचान', orManually: 'या मैन्युअल रूप से', unitedStates: 'संयुक्त राज्य अमेरिका', back: 'वापस', selectInstitution: 'बैंक चुनें', noInstitutions: 'कोई बैंक नहीं', refresh: 'रीफ्रेश', downloadFiles: 'फ़ाइलें डाउनलोड करें' }, captions: { guidesRight1: 'गाइड और वीडियो वाली', guidesRight2: 'दराजों की अलमारी', guidesLeft: 'खज़ाने की दराजें...', registerRight1: 'एक संक्षिप्त पंजीकरण', registerRight2: 'कई आश्चर्यों की ओर...', personalDefaultRight: 'सिस्टम से बुनियादी व्यक्तिगत विवरण', personalDefaultLeft: 'सक्रिय योजना। योजना बदलने का विकल्प', personalPlanRight: 'योजना चुनने पर अवधि और मूल्य दिखाई देगा', personalPlanLeft1: 'चयन पूरा होने पर', personalPlanLeft2: "'अपडेट' पर", personalPlanLeft3: 'क्लिक करें', feedbackAboveButton: "हर नया फॉर्म एक संदेश और एक उत्तर के लिए है। 'नया संदेश' बटन देखें", updatesWord1: 'परियोजना के', updatesWord2: 'घटकों के', updatesWord3: 'सॉफ़्टवेयर', updatesWord4: 'संस्करण', remindersRight1: 'रिमाइंडर सेवा', remindersRight2: 'महत्वपूर्ण घटनाओं की डायरी', remindersLeft1: 'सक्रिय योजना की तिथियां', remindersLeft2: 'निजी रिमाइंडर तिथियां', remindersLeft3: 'जोड़ने का विकल्प' } },
 ]
+
+const GRANITE_BG: React.CSSProperties = {
+  backgroundColor: '#e3e3e6',
+  backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='saturate' values='0' result='grey'/%3E%3CfeComponentTransfer in='grey'%3E%3CfeFuncR type='linear' slope='2.5' intercept='-0.95'/%3E%3CfeFuncG type='linear' slope='2.7' intercept='-0.9'/%3E%3CfeFuncB type='linear' slope='3.4' intercept='-0.78'/%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E\")",
+  backgroundSize: '180px 180px',
+}
 
 type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null }
 
@@ -481,7 +487,7 @@ export default function Home() {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         {/* CENTER */}
-        <main style={{ flex: 1, background: '#f2eef2', position: 'relative', overflow: 'hidden' }}>
+        <main style={{ flex: 1, ...GRANITE_BG, position: 'relative', overflow: 'hidden' }}>
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
@@ -641,6 +647,12 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [bankingData, setBankingData] = useState<{ connections: Record<string,unknown>[]; accounts: Record<string,unknown>[]; transactions: Record<string,unknown>[] } | null>(null)
   const [bankingStatus, setBankingStatus] = useState<{ nordigen: boolean; plaid: boolean; il: boolean; groq: boolean } | null>(null)
   const [prEditing, setPrEditing] = useState(false)
+  const [mfMsgText, setMfMsgText] = useState('')
+  const [mfMsgDate, setMfMsgDate] = useState('')
+  const [mfMsgSaved, setMfMsgSaved] = useState(false)
+  const [gateMsgText, setGateMsgText] = useState('')
+  const [gateMsgDate, setGateMsgDate] = useState('')
+  const [gateMsgSaved, setGateMsgSaved] = useState(false)
   const [pendingForce, setPendingForce] = useState<Record<string, string>>({})
   const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(
     SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' }))
@@ -656,6 +668,17 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     if (prEditing) return
     translateFromHe(prText, lang.code).then(t => setPrTxText(t))
   }, [prText, lang.code, prEditing])
+
+  useEffect(() => {
+    fetch('/api/system/mf-message').then(r => r.json()).then(d => {
+      if (d.text) setMfMsgText(d.text)
+      if (d.date) setMfMsgDate(d.date)
+    }).catch(() => {})
+    fetch('/api/system/gate-message').then(r => r.json()).then(d => {
+      if (d.text) setGateMsgText(d.text)
+      if (d.date) setGateMsgDate(d.date)
+    }).catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (view === 'users') {
@@ -840,7 +863,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
       {/* Main content */}
-      <div style={{ flex: 1, overflow: 'auto', padding: view === 'messages' ? 0 : '16px 20px', background: '#f7f7f7' }}>
+      <div style={{ flex: 1, overflow: 'auto', padding: view === 'messages' ? 0 : '16px 20px', ...GRANITE_BG }}>
         {view === 'none' && (
           <div style={{ color: '#aaa', fontSize: 16, marginTop: 40, textAlign: 'center' }}>{lang.system.selectAction}</div>
         )}
@@ -867,6 +890,48 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                 fetch('/api/system/pr-message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: prText, date: prDate }) }).catch(() => {})
               }} style={{ fontSize: '11px', padding: '2px 10px', background: prSaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{prSaved ? '✓ ' + lang.system.saved : lang.card.update}</button>
               <button onClick={() => { setPrText(''); onSetSystemMessage('') }} style={{ fontSize: '11px', padding: '2px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.reset}</button>
+            </div>
+
+            <div style={{ position: 'relative', marginTop: '28px', direction: 'rtl', width: '730px' }}>
+              <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>הודעות לניהול תקציב בית</span>
+              <div style={{ border: '2px solid #003399', borderRadius: '6px', minHeight: '96px', padding: '12px', display: 'flex', flexDirection: 'column', background: '#fff', resize: 'vertical', overflow: 'auto' }}>
+                <textarea value={mfMsgText} onChange={e => setMfMsgText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', minHeight: '50px', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
+                <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
+                  {lang.feedback.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> ניהול תקציב בית
+                </div>
+              </div>
+            </div>
+            <div style={{ fontSize: '13px', color: '#555', marginTop: '8px', width: '730px', textAlign: 'right', direction: 'rtl' }}>
+              {lang.system.publishedDate} <input type="date" value={mfMsgDate} onChange={e => setMfMsgDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #999', fontSize: '13px', outline: 'none', background: 'transparent', color: '#333' }} />
+            </div>
+            <div style={{ marginTop: '6px', width: '730px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+              <button onClick={() => {
+                setMfMsgSaved(true)
+                setTimeout(() => setMfMsgSaved(false), 2000)
+                fetch('/api/system/mf-message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: mfMsgText, date: mfMsgDate }) }).catch(() => {})
+              }} style={{ fontSize: '11px', padding: '2px 10px', background: mfMsgSaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{mfMsgSaved ? '✓ ' + lang.system.saved : lang.card.update}</button>
+              <button onClick={() => { setMfMsgText('') }} style={{ fontSize: '11px', padding: '2px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.reset}</button>
+            </div>
+
+            <div style={{ position: 'relative', marginTop: '28px', direction: 'rtl', width: '730px' }}>
+              <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>הודעות לשער הכניסה</span>
+              <div style={{ border: '2px solid #003399', borderRadius: '6px', minHeight: '96px', padding: '12px', display: 'flex', flexDirection: 'column', background: '#fff', resize: 'vertical', overflow: 'auto' }}>
+                <textarea value={gateMsgText} onChange={e => setGateMsgText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', minHeight: '50px', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: 'transparent' }} />
+                <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
+                  {lang.feedback.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> שער הכניסה
+                </div>
+              </div>
+            </div>
+            <div style={{ fontSize: '13px', color: '#555', marginTop: '8px', width: '730px', textAlign: 'right', direction: 'rtl' }}>
+              {lang.system.publishedDate} <input type="date" value={gateMsgDate} onChange={e => setGateMsgDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #999', fontSize: '13px', outline: 'none', background: 'transparent', color: '#333' }} />
+            </div>
+            <div style={{ marginTop: '6px', width: '730px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+              <button onClick={() => {
+                setGateMsgSaved(true)
+                setTimeout(() => setGateMsgSaved(false), 2000)
+                fetch('/api/system/gate-message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: gateMsgText, date: gateMsgDate }) }).catch(() => {})
+              }} style={{ fontSize: '11px', padding: '2px 10px', background: gateMsgSaved ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{gateMsgSaved ? '✓ ' + lang.system.saved : lang.card.update}</button>
+              <button onClick={() => { setGateMsgText('') }} style={{ fontSize: '11px', padding: '2px 10px', background: '#888', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.reset}</button>
             </div>
           </div>
         )}
@@ -1482,6 +1547,18 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 }
 
 function GatePage({ lang }: { lang: typeof languages[0] }) {
+  const [gateMsg, setGateMsg] = useState('')
+  const [txGateMsg, setTxGateMsg] = useState('')
+
+  useEffect(() => {
+    fetch('/api/system/gate-message').then(r => r.json()).then(d => { if (d.text) setGateMsg(d.text) }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (lang.code === 'he' || !gateMsg) { setTxGateMsg(''); return }
+    translateFromHe(gateMsg, lang.code).then(t => setTxGateMsg(t))
+  }, [gateMsg, lang.code])
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Image src="/Pictures/Welcome Label1.jpg" alt="scroll" fill style={{ objectFit: 'fill' }} priority />
@@ -1498,6 +1575,12 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
       </div>
       <div style={{ position: 'absolute', top: '56%', left: '14%', right: '4%', textAlign: 'center', fontFamily: 'var(--font-dancing), Georgia, serif', fontWeight: 'bold', fontSize: '94px', color: '#cc00cc', zIndex: 10 }}>
         M Solution Group
+      </div>
+      <div style={{ position: 'absolute', top: '85%', right: '-2%', width: '30%', textAlign: 'center',
+        fontFamily: lang.code === 'he' ? '"Guttman Yad","Levenim MT","Miriam","David",serif' : 'var(--font-dancing),Georgia,serif',
+        fontWeight: 'bold', fontSize: '20px', color: '#cc00cc', whiteSpace: 'pre-wrap', zIndex: 10,
+        direction: lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr' }}>
+        {(lang.code !== 'he' && txGateMsg) || gateMsg}
       </div>
     </div>
   )
@@ -1831,7 +1914,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
       <PageHeader subtitle={`${lang.feedback.customerRelations} - ${lang.menu[0]}`} lang={lang} />
-      <div style={{ width: '100%', flex: 1, background: '#d0d0d0', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
+      <div style={{ width: '100%', flex: 1, ...GRANITE_BG, display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', padding: '24px', boxSizing: 'border-box', overflow: 'auto' }}>
 
       {/* LEFT - Messages Library */}
       <div style={{ flex: 1, minWidth: '320px', flexShrink: 0, position: 'sticky', top: 0, background: '#f5f5f5', borderRadius: '12px', border: '2px solid #003399', overflow: 'auto' }}>
@@ -1879,6 +1962,9 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+        <div style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '26px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', marginBottom: '10px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+          {lang.captions.feedbackAboveButton}
+        </div>
         <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '8px' }}>
           <button onClick={() => { setExpandedMsgId(null); setSelectedMsgId(null); setUserDate(''); setUserTitle(''); setUserFrom(''); setUserText(''); setReplyDate(''); setReplyText(''); setHasReply(false); setRatingSite(null); setRatingBudget(null); setValidationErrors({}); setRefNum('') }}
             style={{ fontSize: '13px', padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.newMessage}</button>
@@ -2136,7 +2222,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   }
 
   return (
-    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '16px', boxSizing: 'border-box' }}>
+    <div style={{ width: '100%', height: '100%', overflow: 'auto', ...GRANITE_BG, padding: '16px', boxSizing: 'border-box' }}>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', direction: 'rtl' }}>
 
         {/* RIGHT — טבלאות לפי משתמש */}
@@ -2348,9 +2434,14 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
   }
 
   return (
-    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'auto', ...GRANITE_BG, padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
       <PageHeader subtitle={`${lang.card.infoServices} - ${lang.menu[1]}`} lang={lang} />
-      <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
+
+      <div style={{ position: 'absolute', top: '220px', right: 0, width: 'calc(50% - 420px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        {lang.captions.updatesWord1}<br/>{lang.captions.updatesWord2}<br/>{lang.captions.updatesWord3}<br/>{lang.captions.updatesWord4}
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 'min-content' }}>
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>{lang.system.loading}</div>
         ) : updates.length === 0 ? (
@@ -2442,10 +2533,11 @@ const PAGE_HEADER_CSS = `
 `
 
 function PageHeader({ subtitle, layout = 'row', lang }: { subtitle: string; layout?: 'row' | 'column'; lang: typeof languages[0] }) {
+  const textDir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   return (
     <div className={layout === 'column' ? 'page-header-block stack' : 'page-header-block'} dir="rtl">
       <style>{PAGE_HEADER_CSS}</style>
-      <div className="site-header">
+      <div className="site-header" dir={textDir}>
         <span>{lang.card.siteHeaderPrefix}</span>
         <span className="brand-script">KeyClick</span>
         <span>-</span>
@@ -2460,6 +2552,7 @@ const GUIDES_CSS = `
   .guides-page, .guides-page *{ box-sizing:border-box; }
 
   .guides-page{
+    position:relative;
     height:100%;
     margin:0;
     display:flex;
@@ -2468,14 +2561,42 @@ const GUIDES_CSS = `
     gap:26px;
     padding:32px 20px 90px;
     overflow:auto;
-    background:
-      radial-gradient(1200px 640px at 50% -12%, #ffffff 0%, transparent 60%),
-      #f2eef2;
+    background-color:#e3e3e6;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='saturate' values='0' result='grey'/%3E%3CfeComponentTransfer in='grey'%3E%3CfeFuncR type='linear' slope='2.5' intercept='-0.95'/%3E%3CfeFuncG type='linear' slope='2.7' intercept='-0.9'/%3E%3CfeFuncB type='linear' slope='3.4' intercept='-0.78'/%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    background-position: 0 0, 3px 5px, 6px 2px;
     font-family:"Segoe UI","Segoe UI Semibold",Arial,sans-serif;
     color:#131a3d;
   }
 
   .guides-page .eyebrow{ font-size:13px; letter-spacing:.06em; color:#7c5c1c; opacity:.9; }
+
+  .guides-page .side-caption{
+    position:absolute;
+    top:62%;
+    transform:translateY(-50%);
+    font-family:"Guttman Yad Brush","Guttman Yad","Levenim MT",serif;
+    font-size:40px;
+    line-height:1.15;
+    color:#c31432;
+    text-align:center;
+    text-shadow:0 2px 4px rgba(0,0,0,.15);
+  }
+  .guides-page .side-caption .cap-line{
+    width:fit-content;
+    margin:0 auto 26px;
+    border-bottom:4px solid #0a8a2c;
+    padding-bottom:6px;
+    transform:rotate(10deg);
+  }
+  .guides-page .side-caption .cap-line:last-child{ margin-bottom:0; }
+  .guides-page .side-caption.right{ right:0; width:calc(50% - 270px); font-size:32px; }
+  .guides-page .side-caption.right .cap-line{ border-bottom:none; padding-bottom:0; transform:none; }
+  .guides-page .side-caption.left{ left:0; width:calc(50% - 270px); }
+
+  @media (max-width:1100px){
+    .guides-page .side-caption{ display:none; }
+  }
 
   .guides-page h1{
     margin:0;
@@ -2745,6 +2866,14 @@ function GuidesPage({ lang }: { lang: typeof languages[0] }) {
 
       <PageHeader subtitle={lang.card.guidesAndVideos} layout="column" lang={lang} />
 
+      <div className="side-caption right">
+        <div className="cap-line">{lang.captions.guidesRight1}</div>
+        <div className="cap-line">{lang.captions.guidesRight2}</div>
+      </div>
+      <div className="side-caption left">
+        <div className="cap-line">{lang.captions.guidesLeft}</div>
+      </div>
+
       <div className="furniture">
         <div className="cap"><span className="brandplate">KeyClick</span></div>
 
@@ -2818,9 +2947,17 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 
   return (
-    <div style={{ width: '100%', height: '100%', overflow: 'auto', background: '#f0f2f8', padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'auto', ...GRANITE_BG, padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
       <PageHeader subtitle={`${lang.card.infoServices} - ${lang.menu[3]}`} lang={lang} />
-      <div style={{ display: 'inline-block', minWidth: 'min-content' }}>
+
+      <div style={{ position: 'absolute', top: 'calc(30% + 70px)', transform: 'translateY(-50%)', right: 0, width: 'calc(50% - 300px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        {lang.captions.remindersRight1}<br/>{lang.captions.remindersRight2}
+      </div>
+      <div style={{ position: 'absolute', top: 'calc(30% + 70px)', transform: 'translateY(-50%)', left: 0, width: 'calc(50% - 300px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        {lang.captions.remindersLeft1}<br/>{lang.captions.remindersLeft2}<br/>{lang.captions.remindersLeft3}
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 'min-content' }}>
 
         {/* Add form */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 24, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -3242,7 +3379,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   }
 
   if (!user) return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f2eef2' }}>
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', ...GRANITE_BG }}>
       <div style={{ color: '#555', fontSize: 16 }}>{lang.profile.loginRequired}</div>
     </div>
   )
@@ -3282,7 +3419,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   const unitedStatesName = countryNames?.of('US') ?? b.unitedStates
 
   if (step === 'region') return (
-    <div style={{ width: '100%', height: '100%', background: '#f2eef2', padding: '12px 14px', direction: dir as 'rtl' | 'ltr' }}>
+    <div style={{ width: '100%', height: '100%', ...GRANITE_BG, padding: '12px 14px', direction: dir as 'rtl' | 'ltr' }}>
       <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 7, alignItems: 'flex-end' }}>
         <button onClick={() => setStep('main')} style={{ background: 'none', border: 'none', color: '#003399', cursor: 'pointer', fontSize: 18, padding: 0, alignSelf: 'flex-end' }}>← {b.back}</button>
         <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{b.connectBankTitle}</div>
@@ -3317,7 +3454,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   )
 
   if (step === 'institutions') return (
-    <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflowY: 'auto', padding: 24, direction: dir as 'rtl' | 'ltr' }}>
+    <div style={{ width: '100%', height: '100%', ...GRANITE_BG, overflowY: 'auto', padding: 24, direction: dir as 'rtl' | 'ltr' }}>
       <button onClick={() => setStep('main')} style={{ marginBottom: 16, background: '#eee', border: '1px solid #ccc', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← {b.back}</button>
       <div style={{ fontWeight: 'bold', fontSize: 16, color: '#003399', marginBottom: 12 }}>{b.selectInstitution}</div>
       {institutions.map(inst => (
@@ -3331,7 +3468,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   )
 
   return (
-    <div style={{ width: '100%', height: '100%', background: '#f2eef2', overflowY: 'auto', padding: '12px 14px', direction: 'rtl' }}>
+    <div style={{ width: '100%', height: '100%', ...GRANITE_BG, overflowY: 'auto', padding: '12px 14px', direction: 'rtl' }}>
       <PageHeader subtitle={lang.menu[4]} lang={lang} />
       <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
         <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{lang.menu[4]}</div>
@@ -3398,7 +3535,7 @@ function InstallCard({ lang, onInstall, onRun, onDbg }: { lang: typeof languages
   }, [])
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f2eef2', direction: dir }}>
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', ...GRANITE_BG, direction: dir }}>
       <div style={{ textAlign: 'center', padding: '32px' }}>
         <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#003399', marginBottom: '6px' }}>{lang.card.mFinance}</div>
         <div style={{ fontSize: '15px', color: '#555', marginBottom: '28px', whiteSpace: 'pre-line', lineHeight: '1.7' }}>{lang.card.msgInstallComplete}</div>
@@ -3470,6 +3607,17 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
   const [showNotFoundMsg,  setShowNotFoundMsg]  = useState(false)
   const [showPass,         setShowPass]         = useState(false)
   const [showConfPass,     setShowConfPass]     = useState(false)
+  const [mfNotice, setMfNotice] = useState('')
+  const [txMfNotice, setTxMfNotice] = useState('')
+
+  useEffect(() => {
+    fetch('/api/system/mf-message').then(r => r.json()).then(d => { if (d.text) setMfNotice(d.text) }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (lang.code === 'he' || !mfNotice) { setTxMfNotice(''); return }
+    translateFromHe(mfNotice, lang.code).then(t => setTxMfNotice(t))
+  }, [mfNotice, lang.code])
 
   const locked: React.CSSProperties = { background: '#222', color: '#777', cursor: 'default' }
 
@@ -3534,8 +3682,17 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
   }
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative', background: '#f2eef2' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative', ...GRANITE_BG }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.login}`} lang={lang} />
+
+      <div style={{ position: 'absolute', top: '50%', right: 0, transform: 'translateY(-50%)', width: 'calc(50% - 200px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '32px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        {lang.captions.registerRight1}<br/>{lang.captions.registerRight2}
+      </div>
+
+      <div style={{ position: 'absolute', top: '50%', left: 0, transform: 'translateY(-50%)', width: 'calc(50% - 200px)', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '90%', boxSizing: 'border-box', direction: lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr', fontSize: '20px', fontWeight: 'normal', color: '#003399', fontFamily: 'Arial, sans-serif', whiteSpace: 'pre-wrap', textAlign: 'center' }}>{(lang.code !== 'he' && txMfNotice) || mfNotice}</div>
+      </div>
+
       <div style={{ background: '#2a2a2a', borderRadius: '12px', padding: '40px', width: '360px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', fontFamily: 'Arial, sans-serif', position: 'absolute', top: '100px', left: '50%', transform: `translate(calc(-50% + ${pos.x}px), ${pos.y}px)` }}>
 
         <div onMouseDown={onDragStart} style={{ textAlign: 'center', marginBottom: '28px', cursor: 'grab', userSelect: 'none' }}>
@@ -3571,10 +3728,6 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <button onClick={() => setPhase('register')} style={{ ...regBtn, padding: '5px 18px', fontSize: '13px' }}>{c.register}</button>
               </div>
-            </div>
-            <div style={{ textAlign: 'center', fontFamily: font, color: '#ffffff', fontWeight: 'bold' }}>
-              <div style={{ fontSize: '12px' }}>{c.line1}</div>
-              <div style={{ fontSize: '16px' }}>{c.line2}</div>
             </div>
             <div onClick={onClose} style={{ position: 'absolute', right: '12px', bottom: '12px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>{c.cancel}</div>
           </>
@@ -3758,7 +3911,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
   const p = lang.profile
 
-  if (!user) return <div style={{ width: '100%', height: '100%', background: '#f2eef2' }} />
+  if (!user) return <div style={{ width: '100%', height: '100%', ...GRANITE_BG }} />
 
   const personalFields = [
     { label: p.fullName,  value: [user.name, user.last_name].filter(Boolean).join(' ') || '—' },
@@ -3767,14 +3920,16 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     { label: p.language,  value: languages.find(l => l.code === user.language)?.name ?? user.language ?? '—' },
   ]
 
-  const outerWrap: React.CSSProperties = { width: '100%', height: '100%', background: '#f2eef2', overflow: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '0 20px 28px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }
+  const outerWrap: React.CSSProperties = { width: '100%', height: '100%', position: 'relative', ...GRANITE_BG, overflow: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '0 20px 28px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }
+
+  const sideCaptionStyle: React.CSSProperties = { position: 'absolute', right: 0, width: 'calc(50% - 400px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '30px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }
   const cardBox:  React.CSSProperties  = { width: '100%', maxWidth: '780px', background: '#fff', border: '2px solid #003399', borderRadius: '12px', padding: '32px 36px', boxShadow: '0 4px 16px rgba(0,0,60,0.08)' }
   const thStyle:  React.CSSProperties  = { padding: '8px 12px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }
   const tdStyle:  React.CSSProperties  = { padding: '9px 12px', border: '1px solid #ccd' }
 
   const thP: React.CSSProperties = { padding: '9px 10px', textAlign: 'right', color: '#FFD700', fontWeight: 'bold', border: '1px solid #3355bb' }
-  const tdP: React.CSSProperties = { padding: '9px 10px', border: '1px solid #c5cde8', background: '#fff' }
-  const secBox: React.CSSProperties = { position: 'relative', border: '2px solid #c5cde8', borderRadius: '12px', background: '#f7f9ff' }
+  const tdP: React.CSSProperties = { padding: '9px 10px', border: '1px solid #003399', background: '#fff' }
+  const secBox: React.CSSProperties = { position: 'relative', border: '2px solid #003399', borderRadius: '12px', background: '#f7f9ff' }
   const secLabel: React.CSSProperties = { position: 'absolute', top: '-11px', right: '18px', background: '#f7f9ff', padding: '0 10px', color: '#003399', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap' }
 
   if (planView) {
@@ -3782,12 +3937,16 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
     return (
       <div style={outerWrap}>
         <PageHeader subtitle={`${lang.feedback.customerRelations} - ${lang.menu[5]}`} lang={lang} />
+
+        <div style={{ ...sideCaptionStyle, top: '260px' }}>{lang.captions.personalPlanRight}</div>
+        <div style={{ ...sideCaptionStyle, right: 'auto', left: 0, top: '260px' }}>{lang.captions.personalPlanLeft1}<br/>{lang.captions.personalPlanLeft2}<br/>{lang.captions.personalPlanLeft3}</div>
+
         <div style={cardBox}>
 
           {/* Header */}
-          <div style={{ marginBottom: '22px', paddingBottom: '14px', borderBottom: '3px solid #003399' }}>
-            <div style={{ fontSize: '22px', color: '#003399', fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', marginBottom: '2px' }}>KeyClick</div>
-            <div style={{ fontSize: '30px', fontWeight: 'bold', color: '#003399' }}>{p.changePlan}</div>
+          <div style={{ marginBottom: '22px', padding: '16px 20px', borderRadius: '10px', background: '#003399' }}>
+            <div style={{ fontSize: '22px', color: '#ffffff', fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', marginBottom: '2px' }}>KeyClick</div>
+            <div style={{ fontSize: '30px', fontWeight: 'bold', color: '#ffffff' }}>{p.changePlan}</div>
           </div>
 
           {/* Plans table */}
@@ -3848,7 +4007,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
             <button
               onClick={() => setPlanView(false)}
               disabled={updating}
-              style={{ background: '#f0f0f8', border: '1px solid #c5cde8', borderRadius: '7px', color: '#555', fontSize: '13px', padding: '7px 16px', cursor: 'pointer' }}>
+              style={{ background: '#f0f0f8', border: '1px solid #003399', borderRadius: '7px', color: '#555', fontSize: '13px', padding: '7px 16px', cursor: 'pointer' }}>
               {p.back}
             </button>
           </div>
@@ -3861,12 +4020,16 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
   return (
     <div style={outerWrap}>
       <PageHeader subtitle={`${lang.feedback.customerRelations} - ${lang.menu[5]}`} lang={lang} />
+
+      <div style={{ ...sideCaptionStyle, top: '260px' }}>{lang.captions.personalDefaultRight}</div>
+      <div style={{ ...sideCaptionStyle, right: 'auto', left: 0, top: '460px' }}>{lang.captions.personalDefaultLeft}</div>
+
       <div style={cardBox}>
 
         {/* Header */}
-        <div style={{ marginBottom: '22px', paddingBottom: '14px', borderBottom: '3px solid #003399' }}>
-          <div style={{ fontSize: '22px', color: '#003399', fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', marginBottom: '2px' }}>KeyClick</div>
-          <div style={{ fontSize: '30px', fontWeight: 'bold', color: '#003399' }}>{lang.menu[5]}</div>
+        <div style={{ marginBottom: '22px', padding: '16px 20px', borderRadius: '10px', background: '#003399' }}>
+          <div style={{ fontSize: '22px', color: '#ffffff', fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', marginBottom: '2px' }}>KeyClick</div>
+          <div style={{ fontSize: '30px', fontWeight: 'bold', color: '#ffffff' }}>{lang.menu[5]}</div>
         </div>
 
         {/* Personal info */}
