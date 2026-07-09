@@ -11,7 +11,7 @@ const languages = [
     profile: { fullName: 'Full Name', email: 'Email', ip: 'IP', language: 'Language', country: 'Country', plan: 'Plan', planStart: 'Plan Start', planEnd: 'Plan End', unlimited: 'Unlimited', comingSoon: 'Coming Soon', choosePlan: 'Choose Plan', close: '✕ Close', loginRequired: 'Login required to view personal page', login: 'Login', products: 'Products', change: 'Change',
       price: 'Price', changePlan: 'Change Plan', planName: 'Name', planFrom: 'From', planTo: 'To', back: 'Back', currencyLocal: '$', free: 'Free',       planNames: { System_Free_Run: 'Free Run', User_Trial: 'Trial', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monthly', User_Annual: 'Annual', User_One_Time: 'Single Entry', System_Suspended_NonPayment: 'Suspended', User_Cancelled: 'Cancelled' } },
     feedback: { customerRelations: 'Customer Relations', systemMessage: 'System Message', respectfully: 'Respectfully,', rating: 'Rating', ratingWebsite: 'Website', ratingBudget: 'Home Budget Management', userMessage: 'User Message', date: 'Date:', title: 'Title:', from: 'From:', systemReply: 'System Reply' },
-    system: { systemLabel: 'System', selectAction: 'Select action from right sidebar', users: 'Users', buildMessages: 'Build Messages', schedule: 'טבלאות ונתונים', pr: 'Public Relations', announcements: 'Announcements', publishedDate: 'Published date:', reset: 'Reset', saved: 'Saved', records: 'records', scheduleSubject: 'Subject', schedulePriceUSD: 'Price\n[$]', schedulePeriod: 'Period\n[mo]', scheduleNotes: 'Notes', clear: 'Clear', pause: 'Pause', resume: 'Resume', active: '● Active', paused: 'Paused', lines: 'lines', filter: 'Filter', refresh: 'Refresh', loading: 'Loading...', loadingBuild: 'Loading build data...', error: 'Error', noBuildData: 'No build data. Run Release_KeyClick.bat', networkError: 'Network error', adminButton: 'System Use', generalGroup: 'General', colName: 'Name', colCurrency: 'Currency', colCreated: 'Created', colActive: 'Is Active', colAppInstalled: 'App Installed', colLicenceType: 'Licence Type', colSystemForce: 'System Force', distributionDay: 'Distribution Day X', messages: 'Messages', send: 'Send', sent: 'Sent!', reply: 'Reply', noMessages: 'No messages', replySent: 'Reply sent!', ref: 'Ref.', msgNo: 'No.', replyToRef: 'Reply to ref.', msgNumber: 'Message No.', new: 'New', delete: 'Delete', newMessage: '+ New Message', selectToView: 'Select a message to view', monitor: 'Monitor', systemData: 'System Data', resetTable: 'Reset Table', debug: 'Debug', db: 'DB', sensitivePoints: 'Sensitive Points', productVersionTable: 'Product Version Table in Updates Tab', lab: 'Lab', allCustomers: 'All Customers', newMessageNotif: 'New message, please click here', colType: 'Type', labTests: 'Tests', labBanking: 'Financial Institutions', colCustomer: 'Customer' },
+    system: { systemLabel: 'System', selectAction: 'Select action from right sidebar', users: 'Users', buildMessages: 'Build Messages', schedule: 'טבלאות ונתונים', pr: 'Public Relations', announcements: 'Announcements', publishedDate: 'Published date:', reset: 'Reset', saved: 'Saved', records: 'records', scheduleSubject: 'Subject', schedulePriceUSD: 'Price\n[$]', schedulePeriod: 'Period\n[mo]', scheduleNotes: 'Notes', clear: 'Clear', pause: 'Pause', resume: 'Resume', active: '● Active', paused: 'Paused', lines: 'lines', filter: 'Filter', refresh: 'Refresh', loading: 'Loading...', loadingBuild: 'Loading build data...', error: 'Error', noBuildData: 'No build data. Run Release_KeyClick.bat', networkError: 'Network error', adminButton: 'System Use', generalGroup: 'General', colName: 'Name', colCurrency: 'Currency', colCreated: 'Created', colActive: 'Is Active', colAppInstalled: 'App Installed', colLicenceType: 'Licence Type', colSystemForce: 'System Force', distributionDay: 'Distribution Day X', messages: 'Messages', send: 'Send', sent: 'Sent!', reply: 'Reply', noMessages: 'No messages', replySent: 'Reply sent!', ref: 'Ref.', msgNo: 'No.', replyToRef: 'Reply to ref.', msgNumber: 'Message No.', new: 'New', delete: 'Delete', newMessage: '+ New Message', selectToView: 'Select a message to view', monitor: 'Monitor', systemData: 'System Data', resetTable: 'Reset Table', debug: 'Debug', db: 'DB', sensitivePoints: 'Sensitive Points', productVersionTable: 'Product Version Table in Updates Tab', lab: 'Lab', allCustomers: 'All Customers', newMessageNotif: 'New message, please click here', colType: 'Type', labTests: 'Tests', labBanking: 'Financial Institutions', colCustomer: 'Customer', adminNewMsg: '- New Message -', dataCollection: 'Data Collection', data: 'Live', statistics: 'Processing', billing: 'Billing', colRunningNo: 'No.', colIp: 'IP Address', colEntered: 'Entry Time', colExited: 'Exit Time', colDuration: 'Duration', durationMin: 'min', durationSec: 'sec', statTotalVisits: 'Total Visits', statUniqueVisitors: 'Unique Visitors', statOnlineNow: 'Online Now', statAvgDuration: 'Avg. Duration', statLongestVisit: 'Longest Visit', statBusiestHour: 'Busiest Hour', statBusiestDay: 'Busiest Day', statNamed: 'Identified', statAnonymous: 'Anonymous', statHourlyTitle: 'Activity by Hour', statDayTitle: 'Activity by Day', statNoData: 'Not enough data yet', statPeriod: 'Measured period', statTotalVisitsDesc: 'Total number of recorded visits (every page load counts)', statUniqueVisitorsDesc: 'Number of distinct IP addresses that visited, counted once each', statOnlineNowDesc: 'Visitors currently on the site who have not exited yet', statAvgDurationDesc: 'Average browsing time of visitors who have already exited', statHourlyTitleDesc: 'Total visits that entered during each hour of the day, summed over the whole period', statDayTitleDesc: 'Total visits that entered on each day of the week, summed over the whole period', statNamedDesc: 'Visitors whose IP address matches a registered user', statAnonymousDesc: 'Visitors with no match to a registered user', statBusiestHourDesc: 'The hour with the most entries', statBusiestDayDesc: 'The day with the most entries', statLongestVisitDesc: 'The longest browsing duration recorded in a single visit', statLegend: 'Legend', statYearlyTitle: 'Yearly Activity', statByMonth: 'By Month', statByWeek: 'By Week', statReturning: 'Returning', statLinked: 'Linked', statCountryTitle: 'Visits by Country', statNoGeoData: 'Unknown', statDurationTitle: 'Browsing Time Distribution', statDur0_5: '0–5 min', statDur5_15: '5–15 min', statDur15_60: '15–60 min', statDur60_120: '60–120 min', statDurOver120: 'Over 2 hours', statWeekOf: 'Week of', statOngoingTitle: 'Ongoing Data Processing', statActivityTab: 'Activity' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Pound', EUR: 'Euro', RUB: 'Ruble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupee' },
     updates: { colDate: 'Date & Time', colProduct: 'Product', colVersion: 'Version', colTitle: 'Title', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Home Budget' },
     reminders: { loginRequired: 'Login required to view reminders', titlePh: 'Reminder title', timePh: 'Time', add: '+ Add', noReminders: 'No reminders' },
@@ -23,7 +23,7 @@ const languages = [
     profile: { fullName: 'Полное имя', email: 'Email', ip: 'IP', language: 'Язык', country: 'Страна', plan: 'Тариф', planStart: 'Начало тарифа', planEnd: 'Конец тарифа', unlimited: 'Без ограничений', comingSoon: 'Скоро', choosePlan: 'Выбрать тариф', close: '✕ Закрыть', loginRequired: 'Необходимо войти для просмотра', login: 'Войти', products: 'Продукты', change: 'Изменить',
       price: 'Цена', changePlan: 'Изменить тариф', planName: 'Название', planFrom: 'С', planTo: 'По', back: 'Назад', currencyLocal: '₽', free: 'Бесплатно',       planNames: { System_Free_Run: 'Тест', User_Trial: 'Пробный', User_VIP_Free: 'VIP', System_Owner: 'Система', User_Monthly: 'Ежемесячно', User_Annual: 'Ежегодно', User_One_Time: 'Разовый', System_Suspended_NonPayment: 'Отключён', User_Cancelled: 'Отменён' } },
     feedback: { customerRelations: 'Связи с клиентами', systemMessage: 'Системное сообщение', respectfully: 'С уважением,', rating: 'Оценка', ratingWebsite: 'Сайт', ratingBudget: 'Управление бюджетом', userMessage: 'Сообщение пользователя', date: 'Дата:', title: 'Тема:', from: 'От:', systemReply: 'Ответ системы' },
-    system: { systemLabel: 'Система', selectAction: 'Выберите действие на правой панели', users: 'Пользователи', buildMessages: 'Журнал сборки', schedule: 'טבלאות ונתונים', pr: 'PR', announcements: 'Объявления', publishedDate: 'Опубликовано:', reset: 'Сбросить', saved: 'Сохранено', records: 'записей', scheduleSubject: 'Тема', schedulePriceUSD: 'Цена\n[$]', schedulePeriod: 'Период\n[мес]', scheduleNotes: 'Заметки', clear: 'Очистить', pause: 'Пауза', resume: 'Продолжить', active: '● Активно', paused: 'На паузе', lines: 'строк', filter: 'Фильтр', refresh: 'Обновить', loading: 'Загрузка...', loadingBuild: 'Загрузка данных сборки...', error: 'Ошибка', noBuildData: 'Нет данных. Запустите Release_KeyClick.bat', networkError: 'Ошибка сети', adminButton: 'Системный вход', generalGroup: 'Общие', colName: 'Имя', colCurrency: 'Валюта', colCreated: 'Создан', colActive: 'Активен', colAppInstalled: 'Приложение', colLicenceType: 'Тип лицензии', colSystemForce: 'Системный режим', distributionDay: 'День X распространения', messages: 'Сообщения', send: 'Отправить', sent: 'Отправлено!', reply: 'Ответить', noMessages: 'Нет сообщений', replySent: 'Ответ отправлен!', ref: 'Реф.', msgNo: '№', replyToRef: 'Ответ на реф.', msgNumber: 'Сообщение №', new: 'Новое', delete: 'Удалить', newMessage: '+ Новое сообщение', selectToView: 'Выберите сообщение', monitor: 'Монитор', systemData: 'Данные системы', resetTable: 'Сброс таблицы', debug: 'Отладка', db: 'БД', sensitivePoints: 'Уязвимые точки', productVersionTable: 'Таблица версий продукта (вкладка обновлений)', lab: 'Лаборатория', allCustomers: 'Все клиенты', newMessageNotif: 'Новое сообщение, нажмите здесь', colType: 'Тип', labTests: 'Тесты', labBanking: 'Финансовые учреждения', colCustomer: 'Клиент' },
+    system: { systemLabel: 'Система', selectAction: 'Выберите действие на правой панели', users: 'Пользователи', buildMessages: 'Журнал сборки', schedule: 'טבלאות ונתונים', pr: 'PR', announcements: 'Объявления', publishedDate: 'Опубликовано:', reset: 'Сбросить', saved: 'Сохранено', records: 'записей', scheduleSubject: 'Тема', schedulePriceUSD: 'Цена\n[$]', schedulePeriod: 'Период\n[мес]', scheduleNotes: 'Заметки', clear: 'Очистить', pause: 'Пауза', resume: 'Продолжить', active: '● Активно', paused: 'На паузе', lines: 'строк', filter: 'Фильтр', refresh: 'Обновить', loading: 'Загрузка...', loadingBuild: 'Загрузка данных сборки...', error: 'Ошибка', noBuildData: 'Нет данных. Запустите Release_KeyClick.bat', networkError: 'Ошибка сети', adminButton: 'Системный вход', generalGroup: 'Общие', colName: 'Имя', colCurrency: 'Валюта', colCreated: 'Создан', colActive: 'Активен', colAppInstalled: 'Приложение', colLicenceType: 'Тип лицензии', colSystemForce: 'Системный режим', distributionDay: 'День X распространения', messages: 'Сообщения', send: 'Отправить', sent: 'Отправлено!', reply: 'Ответить', noMessages: 'Нет сообщений', replySent: 'Ответ отправлен!', ref: 'Реф.', msgNo: '№', replyToRef: 'Ответ на реф.', msgNumber: 'Сообщение №', new: 'Новое', delete: 'Удалить', newMessage: '+ Новое сообщение', selectToView: 'Выберите сообщение', monitor: 'Монитор', systemData: 'Данные системы', resetTable: 'Сброс таблицы', debug: 'Отладка', db: 'БД', sensitivePoints: 'Уязвимые точки', productVersionTable: 'Таблица версий продукта (вкладка обновлений)', lab: 'Лаборатория', allCustomers: 'Все клиенты', newMessageNotif: 'Новое сообщение, нажмите здесь', colType: 'Тип', labTests: 'Тесты', labBanking: 'Финансовые учреждения', colCustomer: 'Клиент', adminNewMsg: '- Новое сообщение -', dataCollection: 'Сбор данных', data: 'Онлайн', statistics: 'Обработка', billing: 'Расчёты', colRunningNo: '№', colIp: 'IP-адрес', colEntered: 'Время входа', colExited: 'Время выхода', colDuration: 'Длительность', durationMin: 'мин', durationSec: 'сек', statTotalVisits: 'Всего визитов', statUniqueVisitors: 'Уникальные посетители', statOnlineNow: 'Онлайн сейчас', statAvgDuration: 'Средняя длительность', statLongestVisit: 'Самый долгий визит', statBusiestHour: 'Самый загруженный час', statBusiestDay: 'Самый загруженный день', statNamed: 'Опознанные', statAnonymous: 'Анонимные', statHourlyTitle: 'Активность по часам', statDayTitle: 'Активность по дням', statNoData: 'Пока недостаточно данных', statPeriod: 'Измеряемый период', statTotalVisitsDesc: 'Общее число зафиксированных визитов (каждая загрузка страницы считается)', statUniqueVisitorsDesc: 'Число различных IP-адресов, посетивших сайт, каждый считается один раз', statOnlineNowDesc: 'Посетители, которые сейчас на сайте и ещё не вышли', statAvgDurationDesc: 'Среднее время просмотра у посетителей, которые уже вышли', statHourlyTitleDesc: 'Общее число визитов в каждый час суток за весь период', statDayTitleDesc: 'Общее число визитов в каждый день недели за весь период', statNamedDesc: 'Посетители, чей IP совпадает с зарегистрированным пользователем', statAnonymousDesc: 'Посетители без совпадения с зарегистрированным пользователем', statBusiestHourDesc: 'Час с наибольшим числом входов', statBusiestDayDesc: 'День с наибольшим числом входов', statLongestVisitDesc: 'Самая долгая продолжительность, зафиксированная за один визит', statLegend: 'Легенда', statYearlyTitle: 'Годовая активность', statByMonth: 'По месяцам', statByWeek: 'По неделям', statReturning: 'Повторные', statLinked: 'Связанные', statCountryTitle: 'Визиты по странам', statNoGeoData: 'Неизвестно', statDurationTitle: 'Распределение времени просмотра', statDur0_5: '0–5 мин', statDur5_15: '5–15 мин', statDur15_60: '15–60 мин', statDur60_120: '60–120 мин', statDurOver120: 'Более 2 часов', statWeekOf: 'Неделя', statOngoingTitle: 'Текущая обработка данных', statActivityTab: 'Активность' },
     currencyNames: { ILS: 'Шекель', USD: 'Доллар', GBP: 'Фунт', EUR: 'Евро', RUB: 'Рубль', JPY: 'Иена', SAR: 'Риял', CNY: 'Юань', INR: 'Рупия' },
     updates: { colDate: 'Дата и время', colProduct: 'Продукт', colVersion: 'Версия', colTitle: 'Заголовок', productKeyClick: 'KeyClick Сайт', productMFinance: 'M Finance Бюджет' },
     reminders: { loginRequired: 'Войдите для просмотра напоминаний', titlePh: 'Название напоминания', timePh: 'Время', add: '+ Добавить', noReminders: 'Нет напоминаний' },
@@ -35,7 +35,7 @@ const languages = [
     profile: { fullName: 'Vollständiger Name', email: 'E-Mail', ip: 'IP', language: 'Sprache', country: 'Land', plan: 'Tarif', planStart: 'Tarif Beginn', planEnd: 'Tarif Ende', unlimited: 'Unbegrenzt', comingSoon: 'Demnächst', choosePlan: 'Tarif wählen', close: '✕ Schließen', loginRequired: 'Anmeldung erforderlich', login: 'Anmelden', products: 'Produkte', change: 'Ändern',
       price: 'Preis', changePlan: 'Tarif ändern', planName: 'Name', planFrom: 'Von', planTo: 'Bis', back: 'Zurück', currencyLocal: '€', free: 'Kostenlos',       planNames: { System_Free_Run: 'Testlauf', User_Trial: 'Testphase', User_VIP_Free: 'VIP', System_Owner: 'System', User_Monthly: 'Monatlich', User_Annual: 'Jährlich', User_One_Time: 'Einmalig', System_Suspended_NonPayment: 'Gesperrt', User_Cancelled: 'Storniert' } },
     feedback: { customerRelations: 'Kundenpflege', systemMessage: 'Systemnachricht', respectfully: 'Mit freundlichen Grüßen,', rating: 'Bewertung', ratingWebsite: 'Website', ratingBudget: 'Haushaltsverwaltung', userMessage: 'Nutzernachricht', date: 'Datum:', title: 'Betreff:', from: 'Von:', systemReply: 'Systemantwort' },
-    system: { systemLabel: 'System', selectAction: 'Aktion in der rechten Leiste wählen', users: 'Benutzer', buildMessages: 'Build-Protokoll', schedule: 'טבלאות ונתונים', pr: 'PR', announcements: 'Ankündigungen', publishedDate: 'Veröffentlicht:', reset: 'Zurücksetzen', saved: 'Gespeichert', records: 'Einträge', scheduleSubject: 'Thema', schedulePriceUSD: 'Preis\n[$]', schedulePeriod: 'Zeitraum\n[Mo]', scheduleNotes: 'Notizen', clear: 'Löschen', pause: 'Pause', resume: 'Fortsetzen', active: '● Aktiv', paused: 'Pausiert', lines: 'Zeilen', filter: 'Filter', refresh: 'Aktualisieren', loading: 'Laden...', loadingBuild: 'Build-Daten laden...', error: 'Fehler', noBuildData: 'Keine Daten. Starten Sie Release_KeyClick.bat', networkError: 'Netzwerkfehler', adminButton: 'Systembereich', generalGroup: 'Allgemein', colName: 'Name', colCurrency: 'Währung', colCreated: 'Erstellt', colActive: 'Aktiv', colAppInstalled: 'App', colLicenceType: 'Lizenztyp', colSystemForce: 'Systemmodus', distributionDay: 'Verbreitungstag X', messages: 'Nachrichten', send: 'Senden', sent: 'Gesendet!', reply: 'Antworten', noMessages: 'Keine Nachrichten', replySent: 'Antwort gesendet!', ref: 'Ref.', msgNo: 'Nr.', replyToRef: 'Antwort auf Ref.', msgNumber: 'Nachricht Nr.', new: 'Neu', delete: 'Löschen', newMessage: '+ Neue Nachricht', selectToView: 'Nachricht auswählen', monitor: 'Monitor', systemData: 'Systemdaten', resetTable: 'Tabelle zurücksetzen', debug: 'Debug', db: 'DB', sensitivePoints: 'Schwachstellen', productVersionTable: 'Produktversionstabelle (Updates)', lab: 'Labor', allCustomers: 'Alle Kunden', newMessageNotif: 'Neue Nachricht, bitte hier klicken', colType: 'Typ', labTests: 'Tests', labBanking: 'Finanzinstitute', colCustomer: 'Kunde' },
+    system: { systemLabel: 'System', selectAction: 'Aktion in der rechten Leiste wählen', users: 'Benutzer', buildMessages: 'Build-Protokoll', schedule: 'טבלאות ונתונים', pr: 'PR', announcements: 'Ankündigungen', publishedDate: 'Veröffentlicht:', reset: 'Zurücksetzen', saved: 'Gespeichert', records: 'Einträge', scheduleSubject: 'Thema', schedulePriceUSD: 'Preis\n[$]', schedulePeriod: 'Zeitraum\n[Mo]', scheduleNotes: 'Notizen', clear: 'Löschen', pause: 'Pause', resume: 'Fortsetzen', active: '● Aktiv', paused: 'Pausiert', lines: 'Zeilen', filter: 'Filter', refresh: 'Aktualisieren', loading: 'Laden...', loadingBuild: 'Build-Daten laden...', error: 'Fehler', noBuildData: 'Keine Daten. Starten Sie Release_KeyClick.bat', networkError: 'Netzwerkfehler', adminButton: 'Systembereich', generalGroup: 'Allgemein', colName: 'Name', colCurrency: 'Währung', colCreated: 'Erstellt', colActive: 'Aktiv', colAppInstalled: 'App', colLicenceType: 'Lizenztyp', colSystemForce: 'Systemmodus', distributionDay: 'Verbreitungstag X', messages: 'Nachrichten', send: 'Senden', sent: 'Gesendet!', reply: 'Antworten', noMessages: 'Keine Nachrichten', replySent: 'Antwort gesendet!', ref: 'Ref.', msgNo: 'Nr.', replyToRef: 'Antwort auf Ref.', msgNumber: 'Nachricht Nr.', new: 'Neu', delete: 'Löschen', newMessage: '+ Neue Nachricht', selectToView: 'Nachricht auswählen', monitor: 'Monitor', systemData: 'Systemdaten', resetTable: 'Tabelle zurücksetzen', debug: 'Debug', db: 'DB', sensitivePoints: 'Schwachstellen', productVersionTable: 'Produktversionstabelle (Updates)', lab: 'Labor', allCustomers: 'Alle Kunden', newMessageNotif: 'Neue Nachricht, bitte hier klicken', colType: 'Typ', labTests: 'Tests', labBanking: 'Finanzinstitute', colCustomer: 'Kunde', adminNewMsg: '- Neue Nachricht -', dataCollection: 'Datenerfassung', data: 'Live', statistics: 'Verarbeitung', billing: 'Abrechnung', colRunningNo: 'Nr.', colIp: 'IP-Adresse', colEntered: 'Eintrittszeit', colExited: 'Austrittszeit', colDuration: 'Dauer', durationMin: 'Min', durationSec: 'Sek', statTotalVisits: 'Besuche gesamt', statUniqueVisitors: 'Eindeutige Besucher', statOnlineNow: 'Jetzt online', statAvgDuration: 'Ø Dauer', statLongestVisit: 'Längster Besuch', statBusiestHour: 'Stärkste Stunde', statBusiestDay: 'Stärkster Tag', statNamed: 'Identifiziert', statAnonymous: 'Anonym', statHourlyTitle: 'Aktivität nach Stunde', statDayTitle: 'Aktivität nach Tag', statNoData: 'Noch nicht genug Daten', statPeriod: 'Gemessener Zeitraum', statTotalVisitsDesc: 'Gesamtzahl der erfassten Besuche (jeder Seitenaufruf zählt)', statUniqueVisitorsDesc: 'Anzahl unterschiedlicher IP-Adressen, die besucht haben, je einmal gezählt', statOnlineNowDesc: 'Besucher, die sich gerade auf der Seite befinden und noch nicht verlassen haben', statAvgDurationDesc: 'Durchschnittliche Verweildauer der Besucher, die bereits gegangen sind', statHourlyTitleDesc: 'Gesamtzahl der Besuche pro Stunde des Tages, über den gesamten Zeitraum summiert', statDayTitleDesc: 'Gesamtzahl der Besuche pro Wochentag, über den gesamten Zeitraum summiert', statNamedDesc: 'Besucher, deren IP-Adresse mit einem registrierten Benutzer übereinstimmt', statAnonymousDesc: 'Besucher ohne Übereinstimmung mit einem registrierten Benutzer', statBusiestHourDesc: 'Die Stunde mit den meisten Eintritten', statBusiestDayDesc: 'Der Tag mit den meisten Eintritten', statLongestVisitDesc: 'Die längste bei einem einzelnen Besuch gemessene Verweildauer', statLegend: 'Legende', statYearlyTitle: 'Jahresaktivität', statByMonth: 'Nach Monat', statByWeek: 'Nach Woche', statReturning: 'Wiederkehrend', statLinked: 'Verknüpft', statCountryTitle: 'Besuche nach Land', statNoGeoData: 'Unbekannt', statDurationTitle: 'Verweildauer-Verteilung', statDur0_5: '0–5 Min', statDur5_15: '5–15 Min', statDur15_60: '15–60 Min', statDur60_120: '60–120 Min', statDurOver120: 'Über 2 Stunden', statWeekOf: 'Woche vom', statOngoingTitle: 'Laufende Datenverarbeitung', statActivityTab: 'Aktivität' },
     currencyNames: { ILS: 'Schekel', USD: 'Dollar', GBP: 'Pfund', EUR: 'Euro', RUB: 'Rubel', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupie' },
     updates: { colDate: 'Datum & Uhrzeit', colProduct: 'Produkt', colVersion: 'Version', colTitle: 'Titel', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Haushalt' },
     reminders: { loginRequired: 'Anmeldung für Erinnerungen erforderlich', titlePh: 'Erinnerungstitel', timePh: 'Uhrzeit', add: '+ Hinzufügen', noReminders: 'Keine Erinnerungen' },
@@ -47,7 +47,7 @@ const languages = [
     profile: { fullName: 'Nom complet', email: 'E-mail', ip: 'IP', language: 'Langue', country: 'Pays', plan: 'Abonnement', planStart: 'Début', planEnd: 'Fin', unlimited: 'Illimité', comingSoon: 'Bientôt', choosePlan: 'Choisir un abonnement', close: '✕ Fermer', loginRequired: 'Connexion requise', login: 'Se connecter', products: 'Produits', change: 'Modifier',
       price: 'Prix', changePlan: "Changer d'abonnement", planName: 'Nom', planFrom: 'De', planTo: 'Au', back: 'Retour', currencyLocal: '€', free: 'Gratuit',       planNames: { System_Free_Run: 'Lancement', User_Trial: 'Essai', User_VIP_Free: 'VIP', System_Owner: 'Système', User_Monthly: 'Mensuel', User_Annual: 'Annuel', User_One_Time: 'Unique', System_Suspended_NonPayment: 'Suspendu', User_Cancelled: 'Annulé' } },
     feedback: { customerRelations: 'Relations clients', systemMessage: 'Message du système', respectfully: 'Cordialement,', rating: 'Évaluation', ratingWebsite: 'Site web', ratingBudget: 'Gestion du budget familial', userMessage: "Message de l'utilisateur", date: 'Date :', title: 'Titre :', from: 'De :', systemReply: 'Réponse du système' },
-    system: { systemLabel: 'Système', selectAction: 'Sélectionner une action dans la barre droite', users: 'Utilisateurs', buildMessages: 'Journal de build', schedule: 'טבלאות ונתונים', pr: 'RP', announcements: 'Annonces', publishedDate: 'Publié le :', reset: 'Réinitialiser', saved: 'Enregistré', records: 'enregistrements', scheduleSubject: 'Sujet', schedulePriceUSD: 'Prix\n[$]', schedulePeriod: 'Période\n[mois]', scheduleNotes: 'Notes', clear: 'Effacer', pause: 'Pause', resume: 'Reprendre', active: '● Actif', paused: 'En pause', lines: 'lignes', filter: 'Filtre', refresh: 'Actualiser', loading: 'Chargement...', loadingBuild: 'Chargement du build...', error: 'Erreur', noBuildData: 'Aucune donnée. Lancez Release_KeyClick.bat', networkError: 'Erreur réseau', adminButton: 'Espace système', generalGroup: 'Général', colName: 'Nom', colCurrency: 'Devise', colCreated: 'Créé', colActive: 'Actif', colAppInstalled: 'Application', colLicenceType: 'Type de licence', colSystemForce: 'Mode système', distributionDay: 'Jour de distribution X', messages: 'Messages', send: 'Envoyer', sent: 'Envoyé !', reply: 'Répondre', noMessages: 'Aucun message', replySent: 'Réponse envoyée !', ref: 'Réf.', msgNo: 'N°', replyToRef: 'Réponse à réf.', msgNumber: 'Message N°', new: 'Nouveau', delete: 'Supprimer', newMessage: '+ Nouveau message', selectToView: 'Sélectionner un message', monitor: 'Moniteur', systemData: 'Données système', resetTable: 'Réinitialiser la table', debug: 'Débogage', db: 'BD', sensitivePoints: 'Points sensibles', productVersionTable: 'Tableau des versions (onglet mises à jour)', lab: 'Laboratoire', allCustomers: 'Tous les clients', newMessageNotif: 'Nouveau message, cliquez ici', colType: 'Type', labTests: 'Tests', labBanking: 'Institutions financières', colCustomer: 'Client' },
+    system: { systemLabel: 'Système', selectAction: 'Sélectionner une action dans la barre droite', users: 'Utilisateurs', buildMessages: 'Journal de build', schedule: 'טבלאות ונתונים', pr: 'RP', announcements: 'Annonces', publishedDate: 'Publié le :', reset: 'Réinitialiser', saved: 'Enregistré', records: 'enregistrements', scheduleSubject: 'Sujet', schedulePriceUSD: 'Prix\n[$]', schedulePeriod: 'Période\n[mois]', scheduleNotes: 'Notes', clear: 'Effacer', pause: 'Pause', resume: 'Reprendre', active: '● Actif', paused: 'En pause', lines: 'lignes', filter: 'Filtre', refresh: 'Actualiser', loading: 'Chargement...', loadingBuild: 'Chargement du build...', error: 'Erreur', noBuildData: 'Aucune donnée. Lancez Release_KeyClick.bat', networkError: 'Erreur réseau', adminButton: 'Espace système', generalGroup: 'Général', colName: 'Nom', colCurrency: 'Devise', colCreated: 'Créé', colActive: 'Actif', colAppInstalled: 'Application', colLicenceType: 'Type de licence', colSystemForce: 'Mode système', distributionDay: 'Jour de distribution X', messages: 'Messages', send: 'Envoyer', sent: 'Envoyé !', reply: 'Répondre', noMessages: 'Aucun message', replySent: 'Réponse envoyée !', ref: 'Réf.', msgNo: 'N°', replyToRef: 'Réponse à réf.', msgNumber: 'Message N°', new: 'Nouveau', delete: 'Supprimer', newMessage: '+ Nouveau message', selectToView: 'Sélectionner un message', monitor: 'Moniteur', systemData: 'Données système', resetTable: 'Réinitialiser la table', debug: 'Débogage', db: 'BD', sensitivePoints: 'Points sensibles', productVersionTable: 'Tableau des versions (onglet mises à jour)', lab: 'Laboratoire', allCustomers: 'Tous les clients', newMessageNotif: 'Nouveau message, cliquez ici', colType: 'Type', labTests: 'Tests', labBanking: 'Institutions financières', colCustomer: 'Client', adminNewMsg: '- Nouveau message -', dataCollection: 'Collecte de données', data: 'En direct', statistics: 'Traitement', billing: 'Facturation', colRunningNo: 'N°', colIp: 'Adresse IP', colEntered: 'Heure d entrée', colExited: 'Heure de sortie', colDuration: 'Durée', durationMin: 'min', durationSec: 'sec', statTotalVisits: 'Total des visites', statUniqueVisitors: 'Visiteurs uniques', statOnlineNow: 'En ligne maintenant', statAvgDuration: 'Durée moyenne', statLongestVisit: 'Visite la plus longue', statBusiestHour: 'Heure la plus active', statBusiestDay: 'Jour le plus actif', statNamed: 'Identifiés', statAnonymous: 'Anonymes', statHourlyTitle: 'Activité par heure', statDayTitle: 'Activité par jour', statNoData: 'Pas encore assez de données', statPeriod: 'Période mesurée', statTotalVisitsDesc: 'Nombre total de visites enregistrées (chaque chargement de page compte)', statUniqueVisitorsDesc: "Nombre d'adresses IP distinctes ayant visité, comptées une seule fois", statOnlineNowDesc: 'Visiteurs actuellement sur le site qui ne sont pas encore sortis', statAvgDurationDesc: 'Durée de navigation moyenne des visiteurs déjà sortis', statHourlyTitleDesc: 'Total des visites entrées à chaque heure de la journée, cumulé sur toute la période', statDayTitleDesc: 'Total des visites entrées chaque jour de la semaine, cumulé sur toute la période', statNamedDesc: "Visiteurs dont l'adresse IP correspond à un utilisateur enregistré", statAnonymousDesc: "Visiteurs sans correspondance avec un utilisateur enregistré", statBusiestHourDesc: "L'heure avec le plus d'entrées", statBusiestDayDesc: "Le jour avec le plus d'entrées", statLongestVisitDesc: 'La durée de navigation la plus longue enregistrée en une seule visite', statLegend: 'Légende', statYearlyTitle: 'Activité annuelle', statByMonth: 'Par mois', statByWeek: 'Par semaine', statReturning: 'Récurrents', statLinked: 'Liés', statCountryTitle: 'Visites par pays', statNoGeoData: 'Inconnu', statDurationTitle: 'Répartition du temps de navigation', statDur0_5: '0–5 min', statDur5_15: '5–15 min', statDur15_60: '15–60 min', statDur60_120: '60–120 min', statDurOver120: 'Plus de 2 heures', statWeekOf: 'Semaine du', statOngoingTitle: 'Traitement continu des données', statActivityTab: 'Activité' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollar', GBP: 'Livre', EUR: 'Euro', RUB: 'Rouble', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Roupie' },
     updates: { colDate: 'Date et heure', colProduct: 'Produit', colVersion: 'Version', colTitle: 'Titre', productKeyClick: 'KeyClick Site web', productMFinance: 'M Finance Budget familial' },
     reminders: { loginRequired: 'Connexion requise pour les rappels', titlePh: 'Titre du rappel', timePh: 'Heure', add: '+ Ajouter', noReminders: 'Aucun rappel' },
@@ -59,7 +59,7 @@ const languages = [
     profile: { fullName: 'שם ומשפחה', email: 'דוא"ל', ip: 'IP', language: 'שפה', country: 'מדינה', plan: 'תכנית', planStart: 'תחילת תכנית', planEnd: 'סיום תכנית', unlimited: 'ללא הגבלה', comingSoon: 'בקרוב', choosePlan: 'בחר תכנית', close: '✕ סגור', loginRequired: 'נדרשת כניסה לצפייה בדף האישי', login: 'כניסה', products: 'מוצרים', change: 'שינוי',
       price: 'מחיר', changePlan: 'שינוי תכנית', planName: 'שם', planFrom: 'מ-', planTo: 'עד-', back: 'חזרה', currencyLocal: '₪', free: 'חינם',       planNames: { System_Free_Run: 'תקופת הרצה', User_Trial: 'תקופת נסיון', User_VIP_Free: 'VIP', System_Owner: 'מערכת', User_Monthly: 'חודשי', User_Annual: 'שנתי', User_One_Time: 'כניסה בודדת', System_Suspended_NonPayment: 'מנותק', User_Cancelled: 'בוטל' } },
     feedback: { customerRelations: 'קשרי לקוחות', systemMessage: 'הודעת המערכת', respectfully: 'בכבוד רב,', rating: 'דירוג', ratingWebsite: 'אתר', ratingBudget: 'ניהול תקציב בית', userMessage: 'דבר המשתמש', date: 'תאריך:', title: 'כותרת:', from: 'מאת:', systemReply: 'תשובת המערכת' },
-    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'טבלאות ונתונים', pr: 'יחסי ציבור', announcements: 'מודעות', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים', lab: 'מעבדה', allCustomers: 'כל הלקוחות', newMessageNotif: 'הודעה חדשה, נא ללחוץ כאן', colType: 'סוג', labTests: 'בדיקות', labBanking: 'מוסדות פיננסיים', colCustomer: 'לקוח' },
+    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'טבלאות ונתונים', pr: 'יחסי ציבור', announcements: 'מודעות', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים', lab: 'מעבדה', allCustomers: 'כל הלקוחות', newMessageNotif: 'הודעה חדשה, נא ללחוץ כאן', colType: 'סוג', labTests: 'בדיקות', labBanking: 'מוסדות פיננסיים', colCustomer: 'לקוח', adminNewMsg: '- הודעה חדשה -', dataCollection: 'איסוף נתונים', data: 'חי', statistics: 'עיבוד', billing: 'סליקה', colRunningNo: 'מספר רץ', colIp: 'כתובת IP', colEntered: 'זמן כניסה', colExited: 'זמן יציאה', colDuration: 'זמן גלישה', durationMin: 'דק', durationSec: 'שנ', statTotalVisits: 'סה״כ ביקורים', statUniqueVisitors: 'מבקרים ייחודיים', statOnlineNow: 'מחוברים כרגע', statAvgDuration: 'משך ממוצע', statLongestVisit: 'הביקור הארוך ביותר', statBusiestHour: 'השעה העמוסה', statBusiestDay: 'היום העמוס', statNamed: 'מזוהים', statAnonymous: 'אנונימיים', statHourlyTitle: 'פעילות לפי שעה', statDayTitle: 'פעילות לפי יום', statNoData: 'עדיין אין מספיק נתונים', statPeriod: 'תקופה נמדדת', statTotalVisitsDesc: 'מספר כל הביקורים שנרשמו (כל כניסה לאתר נספרת)', statUniqueVisitorsDesc: 'מספר כתובות IP שונות שביקרו, ללא כפילויות', statOnlineNowDesc: 'מבקרים שנמצאים באתר כרגע ועדיין לא יצאו', statAvgDurationDesc: 'זמן הגלישה הממוצע של מבקרים שכבר יצאו', statHourlyTitleDesc: 'סה״כ ביקורים שנכנסו בכל שעה ביממה, מצטבר על פני כל התקופה', statDayTitleDesc: 'סה״כ ביקורים שנכנסו בכל יום בשבוע, מצטבר על פני כל התקופה', statNamedDesc: 'מבקרים שכתובת ה-IP שלהם תואמת למשתמש רשום', statAnonymousDesc: 'מבקרים שלא נמצאה התאמה למשתמש רשום', statBusiestHourDesc: 'השעה עם הכי הרבה כניסות', statBusiestDayDesc: 'היום עם הכי הרבה כניסות', statLongestVisitDesc: 'משך הגלישה הארוך ביותר שנמדד בביקור בודד', statLegend: 'מקרא', statYearlyTitle: 'פעילות שנתית', statByMonth: 'לפי חודש', statByWeek: 'לפי שבוע', statReturning: 'חוזרים', statLinked: 'מקושרים', statCountryTitle: 'ביקורים לפי מדינה', statNoGeoData: 'לא ידוע', statDurationTitle: 'התפלגות זמני גלישה', statDur0_5: '0–5 דק׳', statDur5_15: '5–15 דק׳', statDur15_60: '15–60 דק׳', statDur60_120: '60–120 דק׳', statDurOver120: 'מעל שעתיים', statWeekOf: 'שבוע של', statOngoingTitle: 'עיבוד נתונים שוטף', statActivityTab: 'פעילות' },
     currencyNames: { ILS: 'ש"ח', USD: 'דולר', GBP: 'ליש"ט', EUR: 'יורו', RUB: 'רובל', JPY: 'ין', SAR: 'ריאל', CNY: 'יואן', INR: 'רופי' },
     updates: { colDate: 'תאריך ושעה', colProduct: 'מוצר', colVersion: 'גרסה', colTitle: 'כותרת', productKeyClick: 'אתר KeyClick', productMFinance: 'ניהול תקציב בית M Finance' },
     reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' },
@@ -71,7 +71,7 @@ const languages = [
     profile: { fullName: 'Nombre completo', email: 'Correo', ip: 'IP', language: 'Idioma', country: 'País', plan: 'Plan', planStart: 'Inicio del plan', planEnd: 'Fin del plan', unlimited: 'Sin límite', comingSoon: 'Próximamente', choosePlan: 'Elegir plan', close: '✕ Cerrar', loginRequired: 'Se requiere inicio de sesión', login: 'Iniciar sesión', products: 'Productos', change: 'Cambiar',
       price: 'Precio', changePlan: 'Cambiar plan', planName: 'Nombre', planFrom: 'Desde', planTo: 'Hasta', back: 'Volver', currencyLocal: '€', free: 'Gratis',       planNames: { System_Free_Run: 'Ejecución', User_Trial: 'Prueba', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensual', User_Annual: 'Anual', User_One_Time: 'Único', System_Suspended_NonPayment: 'Suspendido', User_Cancelled: 'Cancelado' } },
     feedback: { customerRelations: 'Relaciones con clientes', systemMessage: 'Mensaje del sistema', respectfully: 'Atentamente,', rating: 'Calificación', ratingWebsite: 'Sitio web', ratingBudget: 'Gestión del presupuesto familiar', userMessage: 'Mensaje del usuario', date: 'Fecha:', title: 'Título:', from: 'De:', systemReply: 'Respuesta del sistema' },
-    system: { systemLabel: 'Sistema', selectAction: 'Seleccionar acción de la barra derecha', users: 'Usuarios', buildMessages: 'Registro de build', schedule: 'טבלאות ונתונים', pr: 'RRPP', announcements: 'Anuncios', publishedDate: 'Publicado:', reset: 'Restablecer', saved: 'Guardado', records: 'registros', scheduleSubject: 'Asunto', schedulePriceUSD: 'Precio\n[$]', schedulePeriod: 'Período\n[mes]', scheduleNotes: 'Notas', clear: 'Limpiar', pause: 'Pausar', resume: 'Reanudar', active: '● Activo', paused: 'En pausa', lines: 'líneas', filter: 'Filtro', refresh: 'Actualizar', loading: 'Cargando...', loadingBuild: 'Cargando datos de build...', error: 'Error', noBuildData: 'Sin datos. Ejecute Release_KeyClick.bat', networkError: 'Error de red', adminButton: 'Área del sistema', generalGroup: 'General', colName: 'Nombre', colCurrency: 'Moneda', colCreated: 'Creado', colActive: 'Activo', colAppInstalled: 'Aplicación', colLicenceType: 'Tipo de licencia', colSystemForce: 'Modo sistema', distributionDay: 'Día de distribución X', messages: 'Mensajes', send: 'Enviar', sent: '¡Enviado!', reply: 'Responder', noMessages: 'Sin mensajes', replySent: '¡Respuesta enviada!', ref: 'Ref.', msgNo: 'N°', replyToRef: 'Respuesta a ref.', msgNumber: 'Mensaje N°', new: 'Nuevo', delete: 'Eliminar', newMessage: '+ Nuevo mensaje', selectToView: 'Seleccionar un mensaje', monitor: 'Monitor', systemData: 'Datos del sistema', resetTable: 'Restablecer tabla', debug: 'Depurar', db: 'BD', sensitivePoints: 'Puntos sensibles', productVersionTable: 'Tabla de versiones (pestaña actualizaciones)', lab: 'Laboratorio', allCustomers: 'Todos los clientes', newMessageNotif: 'Nuevo mensaje, haga clic aquí', colType: 'Tipo', labTests: 'Pruebas', labBanking: 'Instituciones financieras', colCustomer: 'Cliente' },
+    system: { systemLabel: 'Sistema', selectAction: 'Seleccionar acción de la barra derecha', users: 'Usuarios', buildMessages: 'Registro de build', schedule: 'טבלאות ונתונים', pr: 'RRPP', announcements: 'Anuncios', publishedDate: 'Publicado:', reset: 'Restablecer', saved: 'Guardado', records: 'registros', scheduleSubject: 'Asunto', schedulePriceUSD: 'Precio\n[$]', schedulePeriod: 'Período\n[mes]', scheduleNotes: 'Notas', clear: 'Limpiar', pause: 'Pausar', resume: 'Reanudar', active: '● Activo', paused: 'En pausa', lines: 'líneas', filter: 'Filtro', refresh: 'Actualizar', loading: 'Cargando...', loadingBuild: 'Cargando datos de build...', error: 'Error', noBuildData: 'Sin datos. Ejecute Release_KeyClick.bat', networkError: 'Error de red', adminButton: 'Área del sistema', generalGroup: 'General', colName: 'Nombre', colCurrency: 'Moneda', colCreated: 'Creado', colActive: 'Activo', colAppInstalled: 'Aplicación', colLicenceType: 'Tipo de licencia', colSystemForce: 'Modo sistema', distributionDay: 'Día de distribución X', messages: 'Mensajes', send: 'Enviar', sent: '¡Enviado!', reply: 'Responder', noMessages: 'Sin mensajes', replySent: '¡Respuesta enviada!', ref: 'Ref.', msgNo: 'N°', replyToRef: 'Respuesta a ref.', msgNumber: 'Mensaje N°', new: 'Nuevo', delete: 'Eliminar', newMessage: '+ Nuevo mensaje', selectToView: 'Seleccionar un mensaje', monitor: 'Monitor', systemData: 'Datos del sistema', resetTable: 'Restablecer tabla', debug: 'Depurar', db: 'BD', sensitivePoints: 'Puntos sensibles', productVersionTable: 'Tabla de versiones (pestaña actualizaciones)', lab: 'Laboratorio', allCustomers: 'Todos los clientes', newMessageNotif: 'Nuevo mensaje, haga clic aquí', colType: 'Tipo', labTests: 'Pruebas', labBanking: 'Instituciones financieras', colCustomer: 'Cliente', adminNewMsg: '- Nuevo mensaje -', dataCollection: 'Recopilación de datos', data: 'En vivo', statistics: 'Procesamiento', billing: 'Facturación', colRunningNo: 'N°', colIp: 'Dirección IP', colEntered: 'Hora de entrada', colExited: 'Hora de salida', colDuration: 'Duración', durationMin: 'min', durationSec: 'seg', statTotalVisits: 'Visitas totales', statUniqueVisitors: 'Visitantes únicos', statOnlineNow: 'En línea ahora', statAvgDuration: 'Duración media', statLongestVisit: 'Visita más larga', statBusiestHour: 'Hora más activa', statBusiestDay: 'Día más activo', statNamed: 'Identificados', statAnonymous: 'Anónimos', statHourlyTitle: 'Actividad por hora', statDayTitle: 'Actividad por día', statNoData: 'Aún no hay suficientes datos', statPeriod: 'Período medido', statTotalVisitsDesc: 'Número total de visitas registradas (cada carga de página cuenta)', statUniqueVisitorsDesc: 'Número de direcciones IP distintas que visitaron, contadas una vez cada una', statOnlineNowDesc: 'Visitantes actualmente en el sitio que aún no han salido', statAvgDurationDesc: 'Duración media de navegación de los visitantes que ya salieron', statHourlyTitleDesc: 'Total de visitas que entraron en cada hora del día, sumado en todo el período', statDayTitleDesc: 'Total de visitas que entraron en cada día de la semana, sumado en todo el período', statNamedDesc: 'Visitantes cuya IP coincide con un usuario registrado', statAnonymousDesc: 'Visitantes sin coincidencia con un usuario registrado', statBusiestHourDesc: 'La hora con más entradas', statBusiestDayDesc: 'El día con más entradas', statLongestVisitDesc: 'La duración de navegación más larga registrada en una sola visita', statLegend: 'Leyenda', statYearlyTitle: 'Actividad anual', statByMonth: 'Por mes', statByWeek: 'Por semana', statReturning: 'Recurrentes', statLinked: 'Vinculados', statCountryTitle: 'Visitas por país', statNoGeoData: 'Desconocido', statDurationTitle: 'Distribución del tiempo de navegación', statDur0_5: '0–5 min', statDur5_15: '5–15 min', statDur15_60: '15–60 min', statDur60_120: '60–120 min', statDurOver120: 'Más de 2 horas', statWeekOf: 'Semana del', statOngoingTitle: 'Procesamiento continuo de datos', statActivityTab: 'Actividad' },
     currencyNames: { ILS: 'Séquel', USD: 'Dólar', GBP: 'Libra', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
     updates: { colDate: 'Fecha y hora', colProduct: 'Producto', colVersion: 'Versión', colTitle: 'Título', productKeyClick: 'KeyClick Sitio web', productMFinance: 'M Finance Presupuesto familiar' },
     reminders: { loginRequired: 'Inicio de sesión requerido', titlePh: 'Título del recordatorio', timePh: 'Hora', add: '+ Agregar', noReminders: 'Sin recordatorios' },
@@ -83,7 +83,7 @@ const languages = [
     profile: { fullName: 'フルネーム', email: 'メール', ip: 'IP', language: '言語', country: '国', plan: 'プラン', planStart: 'プラン開始', planEnd: 'プラン終了', unlimited: '無制限', comingSoon: '近日公開', choosePlan: 'プランを選択', close: '✕ 閉じる', loginRequired: 'ログインが必要です', login: 'ログイン', products: '製品', change: '変更',
       price: '価格', changePlan: 'プラン変更', planName: '名前', planFrom: 'から', planTo: 'まで', back: '戻る', currencyLocal: '¥', free: '無料',       planNames: { System_Free_Run: '試運転', User_Trial: '試用', User_VIP_Free: 'VIP', System_Owner: 'システム', User_Monthly: '月次', User_Annual: '年次', User_One_Time: '単回', System_Suspended_NonPayment: '停止', User_Cancelled: 'キャンセル' } },
     feedback: { customerRelations: 'カスタマーサービス', systemMessage: 'システムメッセージ', respectfully: '敬具,', rating: '評価', ratingWebsite: 'ウェブサイト', ratingBudget: '家計管理', userMessage: 'ユーザーメッセージ', date: '日付:', title: 'タイトル:', from: '差出人:', systemReply: 'システム返信' },
-    system: { systemLabel: 'システム', selectAction: '右サイドバーからアクションを選択', users: 'ユーザー', buildMessages: 'ビルドログ', schedule: 'טבלאות ונתונים', pr: 'PR', announcements: 'お知らせ', publishedDate: '公開日:', reset: 'リセット', saved: '保存済み', records: '件', scheduleSubject: '件名', schedulePriceUSD: '価格\n[$]', schedulePeriod: '期間\n[月]', scheduleNotes: 'メモ', clear: 'クリア', pause: '一時停止', resume: '再開', active: '● アクティブ', paused: '一時停止中', lines: '行', filter: 'フィルター', refresh: '更新', loading: '読み込み中...', loadingBuild: 'ビルドデータ読み込み中...', error: 'エラー', noBuildData: 'データなし。Release_KeyClick.bat を実行', networkError: 'ネットワークエラー', adminButton: 'システム管理', generalGroup: '全般', colName: '名前', colCurrency: '通貨', colCreated: '作成日', colActive: '有効', colAppInstalled: 'アプリ', colLicenceType: 'ライセンス種別', colSystemForce: 'システムモード', distributionDay: '配布日X', messages: 'メッセージ', send: '送信', sent: '送信済み!', reply: '返信', noMessages: 'メッセージなし', replySent: '返信済み!', ref: '参照', msgNo: 'No.', replyToRef: '参照への返信', msgNumber: 'メッセージNo.', new: '新着', delete: '削除', newMessage: '+ 新メッセージ', selectToView: 'メッセージを選択', monitor: 'モニター', systemData: 'システムデータ', resetTable: 'テーブルリセット', debug: 'デバッグ', db: 'DB', sensitivePoints: '重要ポイント', productVersionTable: '更新タブの製品バージョン一覧', lab: 'ラボ', allCustomers: '全顧客', newMessageNotif: '新着メッセージ、こちらをクリック', colType: '種類', labTests: 'テスト', labBanking: '金融機関', colCustomer: '顧客' },
+    system: { systemLabel: 'システム', selectAction: '右サイドバーからアクションを選択', users: 'ユーザー', buildMessages: 'ビルドログ', schedule: 'טבלאות ונתונים', pr: 'PR', announcements: 'お知らせ', publishedDate: '公開日:', reset: 'リセット', saved: '保存済み', records: '件', scheduleSubject: '件名', schedulePriceUSD: '価格\n[$]', schedulePeriod: '期間\n[月]', scheduleNotes: 'メモ', clear: 'クリア', pause: '一時停止', resume: '再開', active: '● アクティブ', paused: '一時停止中', lines: '行', filter: 'フィルター', refresh: '更新', loading: '読み込み中...', loadingBuild: 'ビルドデータ読み込み中...', error: 'エラー', noBuildData: 'データなし。Release_KeyClick.bat を実行', networkError: 'ネットワークエラー', adminButton: 'システム管理', generalGroup: '全般', colName: '名前', colCurrency: '通貨', colCreated: '作成日', colActive: '有効', colAppInstalled: 'アプリ', colLicenceType: 'ライセンス種別', colSystemForce: 'システムモード', distributionDay: '配布日X', messages: 'メッセージ', send: '送信', sent: '送信済み!', reply: '返信', noMessages: 'メッセージなし', replySent: '返信済み!', ref: '参照', msgNo: 'No.', replyToRef: '参照への返信', msgNumber: 'メッセージNo.', new: '新着', delete: '削除', newMessage: '+ 新メッセージ', selectToView: 'メッセージを選択', monitor: 'モニター', systemData: 'システムデータ', resetTable: 'テーブルリセット', debug: 'デバッグ', db: 'DB', sensitivePoints: '重要ポイント', productVersionTable: '更新タブの製品バージョン一覧', lab: 'ラボ', allCustomers: '全顧客', newMessageNotif: '新着メッセージ、こちらをクリック', colType: '種類', labTests: 'テスト', labBanking: '金融機関', colCustomer: '顧客', adminNewMsg: '- 新着メッセージ -', dataCollection: 'データ収集', data: 'ライブ', statistics: '処理', billing: '決済', colRunningNo: '番号', colIp: 'IPアドレス', colEntered: '入室時刻', colExited: '退室時刻', colDuration: '滞在時間', durationMin: '分', durationSec: '秒', statTotalVisits: '総訪問数', statUniqueVisitors: 'ユニーク訪問者', statOnlineNow: '現在オンライン', statAvgDuration: '平均滞在時間', statLongestVisit: '最長の訪問', statBusiestHour: '最も混雑した時間', statBusiestDay: '最も混雑した曜日', statNamed: '識別済み', statAnonymous: '匿名', statHourlyTitle: '時間別アクティビティ', statDayTitle: '曜日別アクティビティ', statNoData: 'まだデータが十分ではありません', statPeriod: '測定期間', statTotalVisitsDesc: '記録された訪問の総数（ページの読み込みごとにカウント）', statUniqueVisitorsDesc: '訪問した異なるIPアドレスの数（重複なし）', statOnlineNowDesc: '現在サイトにいて、まだ退出していない訪問者', statAvgDurationDesc: 'すでに退出した訪問者の平均滞在時間', statHourlyTitleDesc: '全期間を通じて、1日の各時間帯に入室した訪問の合計数', statDayTitleDesc: '全期間を通じて、曜日ごとに入室した訪問の合計数', statNamedDesc: 'IPアドレスが登録ユーザーと一致する訪問者', statAnonymousDesc: '登録ユーザーと一致しない訪問者', statBusiestHourDesc: '最も入室が多かった時間帯', statBusiestDayDesc: '最も入室が多かった曜日', statLongestVisitDesc: '1回の訪問で記録された最長の滞在時間', statLegend: '凡例', statYearlyTitle: '年間アクティビティ', statByMonth: '月別', statByWeek: '週別', statReturning: 'リピーター', statLinked: '紐付け済み', statCountryTitle: '国別訪問数', statNoGeoData: '不明', statDurationTitle: '滞在時間の分布', statDur0_5: '0～5分', statDur5_15: '5～15分', statDur15_60: '15～60分', statDur60_120: '60～120分', statDurOver120: '2時間以上', statWeekOf: '週:', statOngoingTitle: '継続的データ処理', statActivityTab: 'アクティビティ' },
     currencyNames: { ILS: 'シェケル', USD: 'ドル', GBP: 'ポンド', EUR: 'ユーロ', RUB: 'ルーブル', JPY: '円', SAR: 'リヤル', CNY: '元', INR: 'ルピー' },
     updates: { colDate: '日時', colProduct: '製品', colVersion: 'バージョン', colTitle: 'タイトル', productKeyClick: 'KeyClick サイト', productMFinance: 'M Finance 家計管理' },
     reminders: { loginRequired: 'リマインダーを表示するにはログインが必要です', titlePh: 'リマインダーのタイトル', timePh: '時刻', add: '+ 追加', noReminders: 'リマインダーなし' },
@@ -95,7 +95,7 @@ const languages = [
     profile: { fullName: 'الاسم الكامل', email: 'البريد الإلكتروني', ip: 'IP', language: 'اللغة', country: 'الدولة', plan: 'الخطة', planStart: 'بداية الخطة', planEnd: 'نهاية الخطة', unlimited: 'بلا حدود', comingSoon: 'قريباً', choosePlan: 'اختر خطة', close: '✕ إغلاق', loginRequired: 'تسجيل الدخول مطلوب', login: 'دخول', products: 'المنتجات', change: 'تغيير',
       price: 'السعر', changePlan: 'تغيير الخطة', planName: 'الاسم', planFrom: 'من', planTo: 'إلى', back: 'رجوع', currencyLocal: '﷼', free: 'مجاناً',       planNames: { System_Free_Run: 'تشغيل', User_Trial: 'تجريبي', User_VIP_Free: 'VIP', System_Owner: 'النظام', User_Monthly: 'شهري', User_Annual: 'سنوي', User_One_Time: 'مرة واحدة', System_Suspended_NonPayment: 'موقوف', User_Cancelled: 'ملغى' } },
     feedback: { customerRelations: 'خدمة العملاء', systemMessage: 'رسالة النظام', respectfully: 'مع التحية،', rating: 'تقييم', ratingWebsite: 'الموقع', ratingBudget: 'إدارة الميزانية المنزلية', userMessage: 'رسالة المستخدم', date: 'التاريخ:', title: 'الموضوع:', from: 'من:', systemReply: 'رد النظام' },
-    system: { systemLabel: 'النظام', selectAction: 'اختر إجراء من الشريط الأيمن', users: 'المستخدمون', buildMessages: 'سجل البناء', schedule: 'טבלאות ונתונים', pr: 'العلاقات العامة', announcements: 'إعلانات', publishedDate: 'تاريخ النشر:', reset: 'إعادة تعيين', saved: 'تم الحفظ', records: 'سجلات', scheduleSubject: 'الموضوع', schedulePriceUSD: 'السعر\n[$]', schedulePeriod: 'الفترة\n[شهر]', scheduleNotes: 'ملاحظات', clear: 'مسح', pause: 'إيقاف مؤقت', resume: 'استئناف', active: '● نشط', paused: 'متوقف مؤقتاً', lines: 'سطور', filter: 'تصفية', refresh: 'تحديث', loading: 'جارٍ التحميل...', loadingBuild: 'تحميل بيانات البناء...', error: 'خطأ', noBuildData: 'لا بيانات. شغّل Release_KeyClick.bat', networkError: 'خطأ في الشبكة', adminButton: 'النظام', generalGroup: 'عام', colName: 'الاسم', colCurrency: 'العملة', colCreated: 'تاريخ الإنشاء', colActive: 'نشط', colAppInstalled: 'التطبيق', colLicenceType: 'نوع الترخيص', colSystemForce: 'وضع النظام', distributionDay: 'يوم التوزيع X', messages: 'الرسائل', send: 'إرسال', sent: 'تم!', reply: 'رد', noMessages: 'لا رسائل', replySent: 'تم إرسال الرد!', ref: 'مرجع', msgNo: 'رقم', replyToRef: 'رد على المرجع', msgNumber: 'رسالة رقم', new: 'جديد', delete: 'حذف', newMessage: '+ رسالة جديدة', selectToView: 'اختر رسالة للعرض', monitor: 'مراقب', systemData: 'بيانات النظام', resetTable: 'إعادة تعيين الجدول', debug: 'تصحيح', db: 'قاعدة', sensitivePoints: 'نقاط حساسة', productVersionTable: 'جدول الإصدارات في تبويب التحديثات', lab: 'المختبر', allCustomers: 'جميع العملاء', newMessageNotif: 'رسالة جديدة، انقر هنا', colType: 'النوع', labTests: 'اختبارات', labBanking: 'المؤسسات المالية', colCustomer: 'العميل' },
+    system: { systemLabel: 'النظام', selectAction: 'اختر إجراء من الشريط الأيمن', users: 'المستخدمون', buildMessages: 'سجل البناء', schedule: 'טבלאות ונתונים', pr: 'العلاقات العامة', announcements: 'إعلانات', publishedDate: 'تاريخ النشر:', reset: 'إعادة تعيين', saved: 'تم الحفظ', records: 'سجلات', scheduleSubject: 'الموضوع', schedulePriceUSD: 'السعر\n[$]', schedulePeriod: 'الفترة\n[شهر]', scheduleNotes: 'ملاحظات', clear: 'مسح', pause: 'إيقاف مؤقت', resume: 'استئناف', active: '● نشط', paused: 'متوقف مؤقتاً', lines: 'سطور', filter: 'تصفية', refresh: 'تحديث', loading: 'جارٍ التحميل...', loadingBuild: 'تحميل بيانات البناء...', error: 'خطأ', noBuildData: 'لا بيانات. شغّل Release_KeyClick.bat', networkError: 'خطأ في الشبكة', adminButton: 'النظام', generalGroup: 'عام', colName: 'الاسم', colCurrency: 'العملة', colCreated: 'تاريخ الإنشاء', colActive: 'نشط', colAppInstalled: 'التطبيق', colLicenceType: 'نوع الترخيص', colSystemForce: 'وضع النظام', distributionDay: 'يوم التوزيع X', messages: 'الرسائل', send: 'إرسال', sent: 'تم!', reply: 'رد', noMessages: 'لا رسائل', replySent: 'تم إرسال الرد!', ref: 'مرجع', msgNo: 'رقم', replyToRef: 'رد على المرجع', msgNumber: 'رسالة رقم', new: 'جديد', delete: 'حذف', newMessage: '+ رسالة جديدة', selectToView: 'اختر رسالة للعرض', monitor: 'مراقب', systemData: 'بيانات النظام', resetTable: 'إعادة تعيين الجدول', debug: 'تصحيح', db: 'قاعدة', sensitivePoints: 'نقاط حساسة', productVersionTable: 'جدول الإصدارات في تبويب التحديثات', lab: 'المختبر', allCustomers: 'جميع العملاء', newMessageNotif: 'رسالة جديدة، انقر هنا', colType: 'النوع', labTests: 'اختبارات', labBanking: 'المؤسسات المالية', colCustomer: 'العميل', adminNewMsg: '- رسالة جديدة -', dataCollection: 'جمع البيانات', data: 'مباشر', statistics: 'معالجة', billing: 'الفوترة', colRunningNo: 'الرقم', colIp: 'عنوان IP', colEntered: 'وقت الدخول', colExited: 'وقت الخروج', colDuration: 'مدة التصفح', durationMin: 'د', durationSec: 'ث', statTotalVisits: 'إجمالي الزيارات', statUniqueVisitors: 'زوار فريدون', statOnlineNow: 'متصل الآن', statAvgDuration: 'متوسط المدة', statLongestVisit: 'أطول زيارة', statBusiestHour: 'أكثر ساعة ازدحاماً', statBusiestDay: 'أكثر يوم ازدحاماً', statNamed: 'معروفون', statAnonymous: 'مجهولون', statHourlyTitle: 'النشاط حسب الساعة', statDayTitle: 'النشاط حسب اليوم', statNoData: 'لا توجد بيانات كافية بعد', statPeriod: 'الفترة المقاسة', statTotalVisitsDesc: 'إجمالي عدد الزيارات المسجلة (كل تحميل صفحة يُحتسب)', statUniqueVisitorsDesc: 'عدد عناوين IP المختلفة التي زارت الموقع، كل واحد يُحتسب مرة واحدة', statOnlineNowDesc: 'الزوار الموجودون حالياً على الموقع ولم يغادروا بعد', statAvgDurationDesc: 'متوسط مدة التصفح للزوار الذين غادروا بالفعل', statHourlyTitleDesc: 'إجمالي الزيارات التي دخلت في كل ساعة من اليوم، مجمّعة على مدار الفترة كاملة', statDayTitleDesc: 'إجمالي الزيارات التي دخلت في كل يوم من الأسبوع، مجمّعة على مدار الفترة كاملة', statNamedDesc: 'الزوار الذين يتطابق عنوان IP الخاص بهم مع مستخدم مسجل', statAnonymousDesc: 'الزوار الذين لا يوجد تطابق لهم مع مستخدم مسجل', statBusiestHourDesc: 'الساعة التي شهدت أكبر عدد من الدخول', statBusiestDayDesc: 'اليوم الذي شهد أكبر عدد من الدخول', statLongestVisitDesc: 'أطول مدة تصفح سُجلت في زيارة واحدة', statLegend: 'مفتاح الرموز', statYearlyTitle: 'النشاط السنوي', statByMonth: 'حسب الشهر', statByWeek: 'حسب الأسبوع', statReturning: 'عائدون', statLinked: 'مرتبطون', statCountryTitle: 'الزيارات حسب الدولة', statNoGeoData: 'غير معروف', statDurationTitle: 'توزيع مدة التصفح', statDur0_5: '0-5 دقائق', statDur5_15: '5-15 دقيقة', statDur15_60: '15-60 دقيقة', statDur60_120: '60-120 دقيقة', statDurOver120: 'أكثر من ساعتين', statWeekOf: 'أسبوع', statOngoingTitle: 'معالجة البيانات المستمرة', statActivityTab: 'النشاط' },
     currencyNames: { ILS: 'شيكل', USD: 'دولار', GBP: 'جنيه', EUR: 'يورو', RUB: 'روبل', JPY: 'ين', SAR: 'ريال', CNY: 'يوان', INR: 'روبية' },
     updates: { colDate: 'التاريخ والوقت', colProduct: 'المنتج', colVersion: 'الإصدار', colTitle: 'العنوان', productKeyClick: 'KeyClick موقع', productMFinance: 'M Finance ميزانية المنزل' },
     reminders: { loginRequired: 'تسجيل الدخول مطلوب لعرض التذكيرات', titlePh: 'عنوان التذكير', timePh: 'الوقت', add: '+ إضافة', noReminders: 'لا توجد تذكيرات' },
@@ -107,7 +107,7 @@ const languages = [
     profile: { fullName: '全名', email: '邮箱', ip: 'IP', language: '语言', country: '国家', plan: '套餐', planStart: '套餐开始', planEnd: '套餐结束', unlimited: '无限制', comingSoon: '即将推出', choosePlan: '选择套餐', close: '✕ 关闭', loginRequired: '需要登录', login: '登录', products: '产品', change: '更改',
       price: '价格', changePlan: '更改套餐', planName: '名称', planFrom: '从', planTo: '至', back: '返回', currencyLocal: '¥', free: '免费',       planNames: { System_Free_Run: '试运行', User_Trial: '试用', User_VIP_Free: 'VIP', System_Owner: '系统', User_Monthly: '每月', User_Annual: '每年', User_One_Time: '单次', System_Suspended_NonPayment: '停用', User_Cancelled: '已取消' } },
     feedback: { customerRelations: '客户关系', systemMessage: '系统消息', respectfully: '此致敬礼,', rating: '评分', ratingWebsite: '网站', ratingBudget: '家庭预算管理', userMessage: '用户消息', date: '日期:', title: '标题:', from: '发件人:', systemReply: '系统回复' },
-    system: { systemLabel: '系统', selectAction: '从右侧栏选择操作', users: '用户', buildMessages: '构建日志', schedule: 'טבלאות ונתונים', pr: '公关', announcements: '公告', publishedDate: '发布日期:', reset: '重置', saved: '已保存', records: '条记录', scheduleSubject: '主题', schedulePriceUSD: '价格\n[$]', schedulePeriod: '周期\n[月]', scheduleNotes: '备注', clear: '清除', pause: '暂停', resume: '继续', active: '● 活跃', paused: '已暂停', lines: '行', filter: '筛选', refresh: '刷新', loading: '加载中...', loadingBuild: '正在加载构建数据...', error: '错误', noBuildData: '无构建数据。请运行 Release_KeyClick.bat', networkError: '网络错误', adminButton: '系统管理', generalGroup: '常规', colName: '姓名', colCurrency: '货币', colCreated: '创建时间', colActive: '已激活', colAppInstalled: '应用程序', colLicenceType: '许可证类型', colSystemForce: '系统模式', distributionDay: '分发日X', messages: '消息', send: '发送', sent: '已发送!', reply: '回复', noMessages: '无消息', replySent: '回复已发送!', ref: '参考', msgNo: '编号', replyToRef: '回复参考', msgNumber: '消息编号', new: '新', delete: '删除', newMessage: '+ 新消息', selectToView: '选择消息以查看', monitor: '监控', systemData: '系统数据', resetTable: '重置表格', debug: '调试', db: 'DB', sensitivePoints: '敏感点', productVersionTable: '更新标签中的产品版本表', lab: '实验室', allCustomers: '所有客户', newMessageNotif: '新消息，请点击这里', colType: '类型', labTests: '测试', labBanking: '金融机构', colCustomer: '客户' },
+    system: { systemLabel: '系统', selectAction: '从右侧栏选择操作', users: '用户', buildMessages: '构建日志', schedule: 'טבלאות ונתונים', pr: '公关', announcements: '公告', publishedDate: '发布日期:', reset: '重置', saved: '已保存', records: '条记录', scheduleSubject: '主题', schedulePriceUSD: '价格\n[$]', schedulePeriod: '周期\n[月]', scheduleNotes: '备注', clear: '清除', pause: '暂停', resume: '继续', active: '● 活跃', paused: '已暂停', lines: '行', filter: '筛选', refresh: '刷新', loading: '加载中...', loadingBuild: '正在加载构建数据...', error: '错误', noBuildData: '无构建数据。请运行 Release_KeyClick.bat', networkError: '网络错误', adminButton: '系统管理', generalGroup: '常规', colName: '姓名', colCurrency: '货币', colCreated: '创建时间', colActive: '已激活', colAppInstalled: '应用程序', colLicenceType: '许可证类型', colSystemForce: '系统模式', distributionDay: '分发日X', messages: '消息', send: '发送', sent: '已发送!', reply: '回复', noMessages: '无消息', replySent: '回复已发送!', ref: '参考', msgNo: '编号', replyToRef: '回复参考', msgNumber: '消息编号', new: '新', delete: '删除', newMessage: '+ 新消息', selectToView: '选择消息以查看', monitor: '监控', systemData: '系统数据', resetTable: '重置表格', debug: '调试', db: 'DB', sensitivePoints: '敏感点', productVersionTable: '更新标签中的产品版本表', lab: '实验室', allCustomers: '所有客户', newMessageNotif: '新消息，请点击这里', colType: '类型', labTests: '测试', labBanking: '金融机构', colCustomer: '客户', adminNewMsg: '- 新消息 -', dataCollection: '数据采集', data: '实时', statistics: '处理', billing: '结算', colRunningNo: '编号', colIp: 'IP地址', colEntered: '进入时间', colExited: '离开时间', colDuration: '浏览时长', durationMin: '分', durationSec: '秒', statTotalVisits: '总访问量', statUniqueVisitors: '独立访客', statOnlineNow: '当前在线', statAvgDuration: '平均时长', statLongestVisit: '最长访问', statBusiestHour: '最繁忙时段', statBusiestDay: '最繁忙日', statNamed: '已识别', statAnonymous: '匿名', statHourlyTitle: '按小时活动', statDayTitle: '按天活动', statNoData: '数据还不够', statPeriod: '统计周期', statTotalVisitsDesc: '记录的访问总数（每次页面加载都计算在内）', statUniqueVisitorsDesc: '访问过的不同IP地址数量，每个只计一次', statOnlineNowDesc: '当前在网站上尚未离开的访客', statAvgDurationDesc: '已离开访客的平均浏览时长', statHourlyTitleDesc: '整个统计周期内，每个小时进入的访问总数', statDayTitleDesc: '整个统计周期内，每个星期几进入的访问总数', statNamedDesc: 'IP地址与已注册用户匹配的访客', statAnonymousDesc: '未匹配到已注册用户的访客', statBusiestHourDesc: '进入次数最多的小时', statBusiestDayDesc: '进入次数最多的星期', statLongestVisitDesc: '单次访问中记录的最长浏览时长', statLegend: '图例', statYearlyTitle: '年度活动', statByMonth: '按月', statByWeek: '按周', statReturning: '回访', statLinked: '已关联', statCountryTitle: '按国家/地区访问量', statNoGeoData: '未知', statDurationTitle: '浏览时长分布', statDur0_5: '0-5分钟', statDur5_15: '5-15分钟', statDur15_60: '15-60分钟', statDur60_120: '60-120分钟', statDurOver120: '超过2小时', statWeekOf: '周', statOngoingTitle: '持续数据处理', statActivityTab: '活动' },
     currencyNames: { ILS: '谢克尔', USD: '美元', GBP: '英镑', EUR: '欧元', RUB: '卢布', JPY: '日元', SAR: '里亚尔', CNY: '人民币', INR: '卢比' },
     updates: { colDate: '日期与时间', colProduct: '产品', colVersion: '版本', colTitle: '标题', productKeyClick: 'KeyClick 网站', productMFinance: 'M Finance 家庭预算' },
     reminders: { loginRequired: '需要登录才能查看提醒', titlePh: '提醒标题', timePh: '时间', add: '+ 添加', noReminders: '暂无提醒' },
@@ -119,7 +119,7 @@ const languages = [
     profile: { fullName: 'Nome completo', email: 'Email', ip: 'IP', language: 'Lingua', country: 'Paese', plan: 'Piano', planStart: 'Inizio piano', planEnd: 'Fine piano', unlimited: 'Illimitato', comingSoon: 'Prossimamente', choosePlan: 'Scegli piano', close: '✕ Chiudi', loginRequired: 'Accesso richiesto', login: 'Accedi', products: 'Prodotti', change: 'Modifica',
       price: 'Prezzo', changePlan: 'Cambia piano', planName: 'Nome', planFrom: 'Da', planTo: 'A', back: 'Indietro', currencyLocal: '€', free: 'Gratuito',       planNames: { System_Free_Run: 'Lancio', User_Trial: 'Prova', User_VIP_Free: 'VIP', System_Owner: 'Sistema', User_Monthly: 'Mensile', User_Annual: 'Annuale', User_One_Time: 'Singolo', System_Suspended_NonPayment: 'Sospeso', User_Cancelled: 'Annullato' } },
     feedback: { customerRelations: 'Relazioni clienti', systemMessage: 'Messaggio di sistema', respectfully: 'Cordiali saluti,', rating: 'Valutazione', ratingWebsite: 'Sito web', ratingBudget: 'Gestione del budget familiare', userMessage: 'Messaggio utente', date: 'Data:', title: 'Titolo:', from: 'Da:', systemReply: 'Risposta di sistema' },
-    system: { systemLabel: 'Sistema', selectAction: 'Seleziona azione dalla barra destra', users: 'Utenti', buildMessages: 'Registro di build', schedule: 'טבלאות ונתונים', pr: 'RP', announcements: 'Annunci', publishedDate: 'Pubblicato il:', reset: 'Reimposta', saved: 'Salvato', records: 'record', scheduleSubject: 'Oggetto', schedulePriceUSD: 'Prezzo\n[$]', schedulePeriod: 'Periodo\n[mesi]', scheduleNotes: 'Note', clear: 'Cancella', pause: 'Pausa', resume: 'Riprendi', active: '● Attivo', paused: 'In pausa', lines: 'righe', filter: 'Filtra', refresh: 'Aggiorna', loading: 'Caricamento...', loadingBuild: 'Caricamento dati di build...', error: 'Errore', noBuildData: 'Nessun dato. Eseguire Release_KeyClick.bat', networkError: 'Errore di rete', adminButton: 'Area di sistema', generalGroup: 'Generale', colName: 'Nome', colCurrency: 'Valuta', colCreated: 'Creato', colActive: 'Attivo', colAppInstalled: 'App', colLicenceType: 'Tipo di licenza', colSystemForce: 'Modalità sistema', distributionDay: 'Giorno di distribuzione X', messages: 'Messaggi', send: 'Invia', sent: 'Inviato!', reply: 'Rispondi', noMessages: 'Nessun messaggio', replySent: 'Risposta inviata!', ref: 'Rif.', msgNo: 'N°', replyToRef: 'Risposta a rif.', msgNumber: 'Messaggio N°', new: 'Nuovo', delete: 'Elimina', newMessage: '+ Nuovo messaggio', selectToView: 'Seleziona un messaggio', monitor: 'Monitor', systemData: 'Dati di sistema', resetTable: 'Reimposta tabella', debug: 'Debug', db: 'DB', sensitivePoints: 'Punti sensibili', productVersionTable: 'Tabella versioni (scheda aggiornamenti)', lab: 'Laboratorio', allCustomers: 'Tutti i clienti', newMessageNotif: 'Nuovo messaggio, clicca qui', colType: 'Tipo', labTests: 'Test', labBanking: 'Istituti finanziari', colCustomer: 'Cliente' },
+    system: { systemLabel: 'Sistema', selectAction: 'Seleziona azione dalla barra destra', users: 'Utenti', buildMessages: 'Registro di build', schedule: 'טבלאות ונתונים', pr: 'RP', announcements: 'Annunci', publishedDate: 'Pubblicato il:', reset: 'Reimposta', saved: 'Salvato', records: 'record', scheduleSubject: 'Oggetto', schedulePriceUSD: 'Prezzo\n[$]', schedulePeriod: 'Periodo\n[mesi]', scheduleNotes: 'Note', clear: 'Cancella', pause: 'Pausa', resume: 'Riprendi', active: '● Attivo', paused: 'In pausa', lines: 'righe', filter: 'Filtra', refresh: 'Aggiorna', loading: 'Caricamento...', loadingBuild: 'Caricamento dati di build...', error: 'Errore', noBuildData: 'Nessun dato. Eseguire Release_KeyClick.bat', networkError: 'Errore di rete', adminButton: 'Area di sistema', generalGroup: 'Generale', colName: 'Nome', colCurrency: 'Valuta', colCreated: 'Creato', colActive: 'Attivo', colAppInstalled: 'App', colLicenceType: 'Tipo di licenza', colSystemForce: 'Modalità sistema', distributionDay: 'Giorno di distribuzione X', messages: 'Messaggi', send: 'Invia', sent: 'Inviato!', reply: 'Rispondi', noMessages: 'Nessun messaggio', replySent: 'Risposta inviata!', ref: 'Rif.', msgNo: 'N°', replyToRef: 'Risposta a rif.', msgNumber: 'Messaggio N°', new: 'Nuovo', delete: 'Elimina', newMessage: '+ Nuovo messaggio', selectToView: 'Seleziona un messaggio', monitor: 'Monitor', systemData: 'Dati di sistema', resetTable: 'Reimposta tabella', debug: 'Debug', db: 'DB', sensitivePoints: 'Punti sensibili', productVersionTable: 'Tabella versioni (scheda aggiornamenti)', lab: 'Laboratorio', allCustomers: 'Tutti i clienti', newMessageNotif: 'Nuovo messaggio, clicca qui', colType: 'Tipo', labTests: 'Test', labBanking: 'Istituti finanziari', colCustomer: 'Cliente', adminNewMsg: '- Nuovo messaggio -', dataCollection: 'Raccolta dati', data: 'Live', statistics: 'Elaborazione', billing: 'Fatturazione', colRunningNo: 'N°', colIp: 'Indirizzo IP', colEntered: 'Ora di ingresso', colExited: 'Ora di uscita', colDuration: 'Durata', durationMin: 'min', durationSec: 'sec', statTotalVisits: 'Visite totali', statUniqueVisitors: 'Visitatori unici', statOnlineNow: 'Online ora', statAvgDuration: 'Durata media', statLongestVisit: 'Visita più lunga', statBusiestHour: 'Ora di punta', statBusiestDay: 'Giorno di punta', statNamed: 'Identificati', statAnonymous: 'Anonimi', statHourlyTitle: 'Attività per ora', statDayTitle: 'Attività per giorno', statNoData: 'Dati non ancora sufficienti', statPeriod: 'Periodo misurato', statTotalVisitsDesc: 'Numero totale di visite registrate (ogni caricamento di pagina conta)', statUniqueVisitorsDesc: 'Numero di indirizzi IP distinti che hanno visitato, contati una sola volta ciascuno', statOnlineNowDesc: 'Visitatori attualmente sul sito che non sono ancora usciti', statAvgDurationDesc: 'Durata media di navigazione dei visitatori già usciti', statHourlyTitleDesc: "Totale delle visite entrate in ciascuna ora del giorno, sommato sull'intero periodo", statDayTitleDesc: "Totale delle visite entrate in ciascun giorno della settimana, sommato sull'intero periodo", statNamedDesc: 'Visitatori il cui indirizzo IP corrisponde a un utente registrato', statAnonymousDesc: 'Visitatori senza corrispondenza con un utente registrato', statBusiestHourDesc: "L'ora con il maggior numero di ingressi", statBusiestDayDesc: 'Il giorno con il maggior numero di ingressi', statLongestVisitDesc: 'La durata di navigazione più lunga registrata in una singola visita', statLegend: 'Legenda', statYearlyTitle: 'Attività annuale', statByMonth: 'Per mese', statByWeek: 'Per settimana', statReturning: 'Ricorrenti', statLinked: 'Collegati', statCountryTitle: 'Visite per paese', statNoGeoData: 'Sconosciuto', statDurationTitle: 'Distribuzione del tempo di navigazione', statDur0_5: '0–5 min', statDur5_15: '5–15 min', statDur15_60: '15–60 min', statDur60_120: '60–120 min', statDurOver120: 'Oltre 2 ore', statWeekOf: 'Settimana del', statOngoingTitle: 'Elaborazione dati continua', statActivityTab: 'Attività' },
     currencyNames: { ILS: 'Shekel', USD: 'Dollaro', GBP: 'Sterlina', EUR: 'Euro', RUB: 'Rublo', JPY: 'Yen', SAR: 'Riyal', CNY: 'Yuan', INR: 'Rupia' },
     updates: { colDate: 'Data e ora', colProduct: 'Prodotto', colVersion: 'Versione', colTitle: 'Titolo', productKeyClick: 'KeyClick Sito web', productMFinance: 'M Finance Gestione budget' },
     reminders: { loginRequired: 'Accesso richiesto per i promemoria', titlePh: 'Titolo promemoria', timePh: 'Ora', add: '+ Aggiungi', noReminders: 'Nessun promemoria' },
@@ -131,7 +131,7 @@ const languages = [
     profile: { fullName: 'पूरा नाम', email: 'ईमेल', ip: 'IP', language: 'भाषा', country: 'देश', plan: 'योजना', planStart: 'योजना शुरू', planEnd: 'योजना समाप्त', unlimited: 'असीमित', comingSoon: 'जल्द आ रहा है', choosePlan: 'योजना चुनें', close: '✕ बंद करें', loginRequired: 'लॉगिन आवश्यक है', login: 'लॉग इन', products: 'उत्पाद', change: 'बदलें',
       price: 'मूल्य', changePlan: 'योजना बदलें', planName: 'नाम', planFrom: 'से', planTo: 'तक', back: 'वापस', currencyLocal: '₹', free: 'मुफ्त',       planNames: { System_Free_Run: 'परीक्षण रन', User_Trial: 'परीक्षण', User_VIP_Free: 'VIP', System_Owner: 'सिस्टम', User_Monthly: 'मासिक', User_Annual: 'वार्षिक', User_One_Time: 'एकल', System_Suspended_NonPayment: 'निलंबित', User_Cancelled: 'रद्द' } },
     feedback: { customerRelations: 'ग्राहक सेवा', systemMessage: 'सिस्टम संदेश', respectfully: 'सादर,', rating: 'रेटिंग', ratingWebsite: 'वेबसाइट', ratingBudget: 'गृह बजट प्रबंधन', userMessage: 'उपयोगकर्ता संदेश', date: 'तारीख:', title: 'शीर्षक:', from: 'से:', systemReply: 'सिस्टम उत्तर' },
-    system: { systemLabel: 'सिस्टम', selectAction: 'दाहिनी बार से क्रिया चुनें', users: 'उपयोगकर्ता', buildMessages: 'बिल्ड लॉग', schedule: 'טבלאות ונתונים', pr: 'जनसंपर्क', announcements: 'घोषणाएं', publishedDate: 'प्रकाशन तिथि:', reset: 'रीसेट', saved: 'सहेजा', records: 'रिकॉर्ड', scheduleSubject: 'विषय', schedulePriceUSD: 'मूल्य\n[$]', schedulePeriod: 'अवधि\n[माह]', scheduleNotes: 'नोट्स', clear: 'साफ़ करें', pause: 'रोकें', resume: 'जारी रखें', active: '● सक्रिय', paused: 'रुका हुआ', lines: 'पंक्तियाँ', filter: 'फ़िल्टर', refresh: 'ताज़ा करें', loading: 'लोड हो रहा है...', loadingBuild: 'बिल्ड डेटा लोड हो रहा है...', error: 'त्रुटि', noBuildData: 'कोई डेटा नहीं। Release_KeyClick.bat चलाएं', networkError: 'नेटवर्क त्रुटि', adminButton: 'सिस्टम उपयोग', generalGroup: 'सामान्य', colName: 'नाम', colCurrency: 'मुद्रा', colCreated: 'निर्माण तिथि', colActive: 'सक्रिय', colAppInstalled: 'ऐप', colLicenceType: 'लाइसेंस प्रकार', colSystemForce: 'सिस्टम मोड', distributionDay: 'वितरण दिवस X', messages: 'संदेश', send: 'भेजें', sent: 'भेजा!', reply: 'उत्तर', noMessages: 'कोई संदेश नहीं', replySent: 'उत्तर भेजा!', ref: 'संदर्भ', msgNo: 'क्र.', replyToRef: 'संदर्भ का उत्तर', msgNumber: 'संदेश क्र.', new: 'नया', delete: 'हटाएं', newMessage: '+ नया संदेश', selectToView: 'देखने के लिए संदेश चुनें', monitor: 'मॉनिटर', systemData: 'सिस्टम डेटा', resetTable: 'टेबल रीसेट', debug: 'डीबग', db: 'DB', sensitivePoints: 'संवेदनशील बिंदु', productVersionTable: 'अपडेट टैब में संस्करण तालिका', lab: 'लैब', allCustomers: 'सभी ग्राहक', newMessageNotif: 'नया संदेश, यहां क्लिक करें', colType: 'प्रकार', labTests: 'परीक्षण', labBanking: 'वित्तीय संस्थान', colCustomer: 'ग्राहक' },
+    system: { systemLabel: 'सिस्टम', selectAction: 'दाहिनी बार से क्रिया चुनें', users: 'उपयोगकर्ता', buildMessages: 'बिल्ड लॉग', schedule: 'טבלאות ונתונים', pr: 'जनसंपर्क', announcements: 'घोषणाएं', publishedDate: 'प्रकाशन तिथि:', reset: 'रीसेट', saved: 'सहेजा', records: 'रिकॉर्ड', scheduleSubject: 'विषय', schedulePriceUSD: 'मूल्य\n[$]', schedulePeriod: 'अवधि\n[माह]', scheduleNotes: 'नोट्स', clear: 'साफ़ करें', pause: 'रोकें', resume: 'जारी रखें', active: '● सक्रिय', paused: 'रुका हुआ', lines: 'पंक्तियाँ', filter: 'फ़िल्टर', refresh: 'ताज़ा करें', loading: 'लोड हो रहा है...', loadingBuild: 'बिल्ड डेटा लोड हो रहा है...', error: 'त्रुटि', noBuildData: 'कोई डेटा नहीं। Release_KeyClick.bat चलाएं', networkError: 'नेटवर्क त्रुटि', adminButton: 'सिस्टम उपयोग', generalGroup: 'सामान्य', colName: 'नाम', colCurrency: 'मुद्रा', colCreated: 'निर्माण तिथि', colActive: 'सक्रिय', colAppInstalled: 'ऐप', colLicenceType: 'लाइसेंस प्रकार', colSystemForce: 'सिस्टम मोड', distributionDay: 'वितरण दिवस X', messages: 'संदेश', send: 'भेजें', sent: 'भेजा!', reply: 'उत्तर', noMessages: 'कोई संदेश नहीं', replySent: 'उत्तर भेजा!', ref: 'संदर्भ', msgNo: 'क्र.', replyToRef: 'संदर्भ का उत्तर', msgNumber: 'संदेश क्र.', new: 'नया', delete: 'हटाएं', newMessage: '+ नया संदेश', selectToView: 'देखने के लिए संदेश चुनें', monitor: 'मॉनिटर', systemData: 'सिस्टम डेटा', resetTable: 'टेबल रीसेट', debug: 'डीबग', db: 'DB', sensitivePoints: 'संवेदनशील बिंदु', productVersionTable: 'अपडेट टैब में संस्करण तालिका', lab: 'लैब', allCustomers: 'सभी ग्राहक', newMessageNotif: 'नया संदेश, यहां क्लिक करें', colType: 'प्रकार', labTests: 'परीक्षण', labBanking: 'वित्तीय संस्थान', colCustomer: 'ग्राहक', adminNewMsg: '- नया संदेश -', dataCollection: 'डेटा संग्रह', data: 'लाइव', statistics: 'प्रसंस्करण', billing: 'बिलिंग', colRunningNo: 'क्र.', colIp: 'IP पता', colEntered: 'प्रवेश समय', colExited: 'निकास समय', colDuration: 'अवधि', durationMin: 'मिनट', durationSec: 'सेकंड', statTotalVisits: 'कुल विज़िट', statUniqueVisitors: 'अद्वितीय आगंतुक', statOnlineNow: 'अभी ऑनलाइन', statAvgDuration: 'औसत अवधि', statLongestVisit: 'सबसे लंबी विज़िट', statBusiestHour: 'सबसे व्यस्त घंटा', statBusiestDay: 'सबसे व्यस्त दिन', statNamed: 'पहचाने गए', statAnonymous: 'अज्ञात', statHourlyTitle: 'घंटे के अनुसार गतिविधि', statDayTitle: 'दिन के अनुसार गतिविधि', statNoData: 'अभी पर्याप्त डेटा नहीं है', statPeriod: 'मापी गई अवधि', statTotalVisitsDesc: 'दर्ज की गई कुल विज़िट की संख्या (हर पेज लोड गिना जाता है)', statUniqueVisitorsDesc: 'विज़िट करने वाले अलग-अलग IP पतों की संख्या, प्रत्येक को एक बार गिना गया', statOnlineNowDesc: 'वे आगंतुक जो अभी साइट पर हैं और अभी तक बाहर नहीं गए हैं', statAvgDurationDesc: 'उन आगंतुकों की औसत ब्राउज़िंग अवधि जो पहले ही बाहर जा चुके हैं', statHourlyTitleDesc: 'पूरी अवधि में, दिन के हर घंटे में प्रवेश करने वाली विज़िट की कुल संख्या', statDayTitleDesc: 'पूरी अवधि में, सप्ताह के हर दिन प्रवेश करने वाली विज़िट की कुल संख्या', statNamedDesc: 'वे आगंतुक जिनका IP पता किसी पंजीकृत उपयोगकर्ता से मेल खाता है', statAnonymousDesc: 'वे आगंतुक जिनका किसी पंजीकृत उपयोगकर्ता से मेल नहीं मिला', statBusiestHourDesc: 'सबसे अधिक प्रवेश वाला घंटा', statBusiestDayDesc: 'सबसे अधिक प्रवेश वाला दिन', statLongestVisitDesc: 'एक ही विज़िट में दर्ज की गई सबसे लंबी ब्राउज़िंग अवधि', statLegend: 'लीजेंड', statYearlyTitle: 'वार्षिक गतिविधि', statByMonth: 'महीने के अनुसार', statByWeek: 'सप्ताह के अनुसार', statReturning: 'वापस आने वाले', statLinked: 'जुड़े हुए', statCountryTitle: 'देश के अनुसार विज़िट', statNoGeoData: 'अज्ञात', statDurationTitle: 'ब्राउज़िंग समय वितरण', statDur0_5: '0–5 मिनट', statDur5_15: '5–15 मिनट', statDur15_60: '15–60 मिनट', statDur60_120: '60–120 मिनट', statDurOver120: '2 घंटे से अधिक', statWeekOf: 'सप्ताह', statOngoingTitle: 'सतत डेटा प्रसंस्करण', statActivityTab: 'गतिविधि' },
     currencyNames: { ILS: 'शेकेल', USD: 'डॉलर', GBP: 'पाउंड', EUR: 'यूरो', RUB: 'रूबल', JPY: 'येन', SAR: 'रियाल', CNY: 'युआन', INR: 'रुपया' },
     updates: { colDate: 'दिनांक और समय', colProduct: 'उत्पाद', colVersion: 'संस्करण', colTitle: 'शीर्षक', productKeyClick: 'KeyClick वेबसाइट', productMFinance: 'M Finance घरेलू बजट' },
     reminders: { loginRequired: 'अनुस्मारक देखने के लिए लॉगिन आवश्यक है', titlePh: 'अनुस्मारक शीर्षक', timePh: 'समय', add: '+ जोड़ें', noReminders: 'कोई अनुस्मारक नहीं' },
@@ -196,10 +196,23 @@ export default function Home() {
   const debugPausedRef = useRef(false)
   const debugWinRef    = useRef<Window | null>(null)
   const mfChainRef     = useRef(false)
+  const visitIdRef     = useRef<number | null>(null)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
   const [clientIp, setClientIp] = useState('')
   const [hasUnreadMsg, setHasUnreadMsg] = useState(false)
+  const [hasNewCustomerMsg, setHasNewCustomerMsg] = useState(false)
   const lang = languages[langIdx]
+  const isAdminAccount = Current_User_Pointer_to_DB?.M_Finance_license_type === LICENSE_TYPES.System_Owner
+
+  useEffect(() => {
+    const onPageHide = () => {
+      if (visitIdRef.current) {
+        navigator.sendBeacon('/api/visits/heartbeat', JSON.stringify({ id: visitIdRef.current }))
+      }
+    }
+    window.addEventListener('pagehide', onPageHide)
+    return () => window.removeEventListener('pagehide', onPageHide)
+  }, [])
 
   useEffect(() => {
     if (!Current_User_Pointer_to_DB?.id) { setHasUnreadMsg(false); return }
@@ -213,6 +226,19 @@ export default function Home() {
     const interval = setInterval(checkUnread, 300000)
     return () => clearInterval(interval)
   }, [Current_User_Pointer_to_DB?.id, activePage])
+
+  useEffect(() => {
+    if (!isAdminAccount) { setHasNewCustomerMsg(false); return }
+    const checkAdminUnread = () => {
+      fetch('/api/feedback/admin-unread')
+        .then(r => r.json())
+        .then(d => { if (d.hasUnread) setHasNewCustomerMsg(true) })
+        .catch(() => {})
+    }
+    checkAdminUnread()
+    const interval = setInterval(checkAdminUnread, 300000)
+    return () => clearInterval(interval)
+  }, [isAdminAccount, activePage])
 
   useEffect(() => {
     if (!Current_User_Pointer_to_DB) return
@@ -246,8 +272,21 @@ export default function Home() {
     dbg('ipify', 'fetch GET https://api.ipify.org')
     fetch('https://api.ipify.org?format=json')
       .then(r => r.json())
-      .then(d => { dbg('ipify', `ip="${d.ip ?? 'none'}"`) ; if (d.ip) setClientIp(d.ip) })
-      .catch(err => dbg('ipify', `failed err="${String(err)}"`))
+      .then(d => {
+        dbg('ipify', `ip="${d.ip ?? 'none'}"`)
+        if (d.ip) setClientIp(d.ip)
+        fetch('/api/visits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clientIp: d.ip || '' }) })
+          .then(r => r.json())
+          .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
+          .catch(() => {})
+      })
+      .catch(err => {
+        dbg('ipify', `failed err="${String(err)}"`)
+        fetch('/api/visits', { method: 'POST' })
+          .then(r => r.json())
+          .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
+          .catch(() => {})
+      })
     const params = new URLSearchParams(window.location.search)
     if (params.get('installed') === '1') {
       localStorage.setItem('mf_installed', '1')
@@ -498,12 +537,12 @@ export default function Home() {
         {hasUnreadMsg && (
           <>
             <style>{`@keyframes blinkNotif { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }`}</style>
-            <button onClick={() => {
+            <button onClick={async () => {
                 setHasUnreadMsg(false)
-                setActivePage('0')
                 if (Current_User_Pointer_to_DB?.id) {
-                  fetch('/api/feedback/unread', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: Current_User_Pointer_to_DB.id }) }).catch(() => {})
+                  await fetch('/api/feedback/unread', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: Current_User_Pointer_to_DB.id }) }).catch(() => {})
                 }
+                setActivePage('0')
               }}
               style={{ marginLeft: 'auto', background: '#cc0000', color: '#fff', border: 'none', borderRadius: '6px', padding: '8px 18px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', animation: 'blinkNotif 1s infinite', whiteSpace: 'nowrap' }}>
               {lang.system.newMessageNotif}
@@ -622,13 +661,23 @@ export default function Home() {
             }}
             style={{
               background: activePage === 'system' ? '#4a1a6e' : 'none', border: 'none',
-              borderTop: '2px solid #555', color: activePage === 'system' ? '#fff' : '#888',
+              borderTop: '2px solid #555', color: '#ff0000',
               padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
-              fontSize: '11px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
+              fontSize: '15px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
             }}
-            onMouseEnter={e => { if (activePage !== 'system') e.currentTarget.style.color = '#fff' }}
-            onMouseLeave={e => { if (activePage !== 'system') e.currentTarget.style.color = '#888' }}
           >{lang.system.adminButton}</button>
+          {hasNewCustomerMsg && (
+            <button onClick={async () => {
+                setHasNewCustomerMsg(false)
+                await fetch('/api/feedback/admin-unread', { method: 'PATCH' }).catch(() => {})
+              }}
+              style={{
+                background: 'none', border: 'none', borderTop: '1px solid #555',
+                color: '#ff9500', padding: '6px 8px', cursor: 'pointer', textAlign: 'center',
+                fontSize: '12px', fontWeight: 'bold',
+              }}
+            >{lang.system.adminNewMsg}</button>
+          )}
         </aside>
 
       </div>
@@ -650,7 +699,7 @@ type ScheduleRow = { price: string; months: string; fromDate: string; toDate: st
 type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null; is_system?: boolean; is_broadcast?: boolean }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking' | 'data' | 'statistics' | 'billing'>('none')
   const [isScanning, setIsScanning] = useState(false)
   const [weightedRows, setWeightedRows] = useState<{ weight: string; metric: string; explanation: string }[]>([
     { weight: '20', metric: 'לקוח רשום',        explanation: 'נרשם למערכת' },
@@ -896,6 +945,9 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     messages: `${lang.system.pr} - ${lang.system.messages}`,
     tests: `${lang.system.lab} - ${lang.system.labTests}`,
     banking: `${lang.system.lab} - ${lang.system.labBanking}`,
+    data: `${lang.system.dataCollection} - ${lang.system.data}`,
+    statistics: `${lang.system.dataCollection} - ${lang.system.statistics}`,
+    billing: `${lang.system.systemData} - ${lang.system.billing}`,
   }
 
   return (
@@ -995,6 +1047,13 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             </div>
           </div>
         )}
+
+        {view === 'billing' && (
+          <div style={{ color: '#aaa', fontSize: 16, marginTop: 40, textAlign: 'center' }}>{lang.profile.comingSoon}</div>
+        )}
+
+        {view === 'data' && <VisitsTable lang={lang} />}
+        {view === 'statistics' && <ProcessingPage lang={lang} />}
 
         {showResetConfirm && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1561,13 +1620,32 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             </div>
           </div>
 
+          {/* lab */}
+          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
+            <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.lab}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+              <button style={{ ...sysBtnSm, fontSize: '14px' }} onClick={() => setView(view === 'tests' ? 'none' : 'tests')}>{lang.system.labTests}</button>
+              <button style={{ ...sysBtnSm, fontSize: '14px' }} onClick={() => { if (view === 'banking') { setView('none') } else { setView('banking'); fetch('/api/banking/data').then(r => r.json()).then(d => setBankingData(d)).catch(() => {}); fetch('/api/banking/status').then(r => r.json()).then(d => setBankingStatus(d)).catch(() => {}) } }}>{lang.system.labBanking}</button>
+            </div>
+          </div>
+
           {/* systemData */}
           <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
             <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.systemData}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm }} onClick={handleUsers}>{lang.system.users}</button>
               <button style={{ ...sysBtnSm }} onClick={handleSchedule}>{lang.system.schedule}</button>
-              <button style={{ ...sysBtnSm, gridColumn: 'span 2' }} onClick={() => setView(view === 'sensitive' ? 'none' : 'sensitive')}>{lang.system.sensitivePoints}</button>
+              <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'sensitive' ? 'none' : 'sensitive')}>{lang.system.sensitivePoints}</button>
+              <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'billing' ? 'none' : 'billing')}>{lang.system.billing}</button>
+            </div>
+          </div>
+
+          {/* dataCollection */}
+          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
+            <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.dataCollection}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
+              <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'data' ? 'none' : 'data')}>{lang.system.data}</button>
+              <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'statistics' ? 'none' : 'statistics')}>{lang.system.statistics}</button>
             </div>
           </div>
 
@@ -1577,15 +1655,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'pr' ? 'none' : 'pr')}>{lang.system.announcements}</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'messages' ? 'none' : 'messages')}>{lang.system.messages}</button>
-            </div>
-          </div>
-
-          {/* lab */}
-          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
-            <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.lab}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-              <button style={{ ...sysBtnSm, fontSize: '14px' }} onClick={() => setView(view === 'tests' ? 'none' : 'tests')}>{lang.system.labTests}</button>
-              <button style={{ ...sysBtnSm, fontSize: '14px' }} onClick={() => { if (view === 'banking') { setView('none') } else { setView('banking'); fetch('/api/banking/data').then(r => r.json()).then(d => setBankingData(d)).catch(() => {}); fetch('/api/banking/status').then(r => r.json()).then(d => setBankingStatus(d)).catch(() => {}) } }}>{lang.system.labBanking}</button>
             </div>
           </div>
 
@@ -2835,6 +2904,358 @@ function PageHeader({ subtitle, layout = 'row', lang, extra }: { subtitle: strin
         <div className="page-subtitle">{subtitle}</div>
         {extra}
       </div>
+    </div>
+  )
+}
+
+type VisitRecord = { id: number; ip: string | null; user_name: string | null; entered_at: string; last_seen_at: string; country: string | null; region: string | null }
+
+function VisitsTable({ lang }: { lang: typeof languages[0] }) {
+  const [visits, setVisits] = useState<VisitRecord[]>([])
+  const [sortField, setSortField] = useState<'num' | 'ip' | 'entered' | 'exited' | 'duration' | 'name' | null>(null)
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const [paused, setPaused] = useState(false)
+  const pausedRef = useRef(false)
+
+  const reload = () => {
+    if (pausedRef.current) return
+    fetch('/api/visits').then(r => r.json()).then(d => setVisits(d.visits ?? [])).catch(() => {})
+  }
+
+  useEffect(() => {
+    reload()
+  }, [])
+
+  const handleReset = async () => {
+    await fetch('/api/visits', { method: 'DELETE' }).catch(() => {})
+    reload()
+  }
+  const handleRefresh = async () => {
+    let clientIp = ''
+    try {
+      const r = await fetch('https://api.ipify.org?format=json')
+      const d = await r.json()
+      clientIp = d.ip || ''
+    } catch { /* ipify unreachable, fall back to server-side header IP */ }
+    await fetch('/api/visits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clientIp }) }).catch(() => {})
+    reload()
+  }
+  const handleTogglePause = () => {
+    const next = !paused
+    pausedRef.current = next
+    setPaused(next)
+    if (!next) reload()
+  }
+
+  function toggleSort(field: typeof sortField) {
+    if (sortField === field) { setSortDir(d => d === 'asc' ? 'desc' : 'asc') }
+    else { setSortField(field); setSortDir('asc') }
+  }
+
+  const ipHex = (ip: string | null) => {
+    if (!ip) return ''
+    const parts = ip.split('.')
+    return parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2, '0').toUpperCase()).join('') : ''
+  }
+  const fmtDateTime = (iso: string) => {
+    const d = new Date(iso)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+  }
+  const hasExited = (v: VisitRecord) => new Date(v.last_seen_at).getTime() - new Date(v.entered_at).getTime() > 1000
+  const durationMs = (v: VisitRecord) => new Date(v.last_seen_at).getTime() - new Date(v.entered_at).getTime()
+  const fmtDuration = (ms: number) => {
+    const totalSec = Math.floor(ms / 1000)
+    const min = Math.floor(totalSec / 60)
+    const sec = totalSec % 60
+    return `${min} ${lang.system.durationMin} ${sec} ${lang.system.durationSec}`
+  }
+
+  const numbered = visits.map((v, i) => ({ v, num: i + 1 }))
+  const sorted = [...numbered].sort((a, b) => {
+    let cmp = 0
+    if (sortField === 'num') cmp = a.num - b.num
+    else if (sortField === 'ip') cmp = (a.v.ip || '').localeCompare(b.v.ip || '')
+    else if (sortField === 'entered') cmp = new Date(a.v.entered_at).getTime() - new Date(b.v.entered_at).getTime()
+    else if (sortField === 'exited') cmp = new Date(a.v.last_seen_at).getTime() - new Date(b.v.last_seen_at).getTime()
+    else if (sortField === 'duration') cmp = durationMs(a.v) - durationMs(b.v)
+    else if (sortField === 'name') cmp = (a.v.user_name || '').localeCompare(b.v.user_name || '')
+    return sortDir === 'asc' ? cmp : -cmp
+  })
+
+  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #1144aa', textAlign: 'center', cursor: 'pointer', userSelect: 'none' }
+  const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, border: '1px solid #c0c8e0', whiteSpace: 'nowrap', textAlign: 'center' }
+
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'flex-start' }}>
+      <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'rtl' }}>
+        <thead>
+          <tr>
+            <th style={thS} onClick={() => toggleSort('num')}></th>
+            <th style={{ ...thS, minWidth: '160px' }} onClick={() => toggleSort('ip')}>{lang.system.colIp}</th>
+            <th style={{ ...thS, minWidth: '140px' }} onClick={() => toggleSort('entered')}>{lang.system.colEntered}</th>
+            <th style={{ ...thS, minWidth: '140px' }} onClick={() => toggleSort('exited')}>{lang.system.colExited}</th>
+            <th style={thS} onClick={() => toggleSort('duration')}>{lang.system.colDuration}</th>
+            <th style={{ ...thS, minWidth: '160px' }} onClick={() => toggleSort('name')}>{lang.system.colName}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map(({ v, num }, i) => (
+            <tr key={v.id} style={{ background: i % 2 === 0 ? '#fff' : '#f4f6ff' }}>
+              <td style={tdS}>{num}</td>
+              <td style={{ ...tdS, minWidth: '160px', direction: 'ltr' }}>{v.ip || ''}{v.ip && ipHex(v.ip) ? ` (${ipHex(v.ip)})` : ''}</td>
+              <td style={tdS}>{fmtDateTime(v.entered_at)}</td>
+              <td style={tdS}>{hasExited(v) ? fmtDateTime(v.last_seen_at) : ''}</td>
+              <td style={tdS}>{hasExited(v) ? fmtDuration(durationMs(v)) : ''}</td>
+              <td style={{ ...tdS, minWidth: '160px' }}>{v.user_name || ''}</td>
+            </tr>
+          ))}
+          {visits.length === 0 && (
+            <tr><td colSpan={6} style={{ ...tdS, padding: 20, color: '#888' }}>{lang.system.noMessages}</td></tr>
+          )}
+        </tbody>
+      </table>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <button onClick={handleReset} style={{ padding: '6px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{lang.system.reset}</button>
+        <button onClick={handleRefresh} style={{ padding: '6px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{lang.system.refresh}</button>
+        <button onClick={handleTogglePause} style={{ padding: '6px 14px', background: paused ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{paused ? lang.system.resume : lang.system.pause}</button>
+      </div>
+    </div>
+  )
+}
+
+const PROC_CSS = `
+  .kc-proc-card{ animation: kcProcFadeIn 0.5s ease both; }
+  @keyframes kcProcFadeIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+  .kc-proc-pulse-dot{ animation: kcProcPulse 1.6s ease-in-out infinite; }
+  @keyframes kcProcPulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.35; transform:scale(1.7); } }
+  .kc-proc-current-wedge{ animation: kcProcGlow 1.8s ease-in-out infinite; }
+  @keyframes kcProcGlow{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .kc-proc-card, .kc-proc-pulse-dot, .kc-proc-current-wedge{ animation:none !important; }
+  }
+`
+
+const PROC_LOCALE: Record<string, string> = { en: 'en-US', ru: 'ru-RU', de: 'de-DE', fr: 'fr-FR', he: 'he-IL', es: 'es-ES', ja: 'ja-JP', ar: 'ar-SA', zh: 'zh-CN', it: 'it-IT', hi: 'hi-IN' }
+
+function ProcessingPage({ lang }: { lang: typeof languages[0] }) {
+  const [visits, setVisits] = useState<VisitRecord[]>([])
+  const dragScrollRef = useRef<HTMLDivElement>(null)
+  const dragStateRef = useRef<{ startX: number; startScroll: number } | null>(null)
+  const dragScrollRef2 = useRef<HTMLDivElement>(null)
+  const dragStateRef2 = useRef<{ startX: number; startScroll: number } | null>(null)
+
+  const reload = () => {
+    fetch('/api/visits').then(r => r.json()).then(d => setVisits(d.visits ?? [])).catch(() => {})
+  }
+  useEffect(() => { reload() }, [])
+  useEffect(() => {
+    if (dragScrollRef.current) dragScrollRef.current.scrollLeft = dragScrollRef.current.scrollWidth
+    if (dragScrollRef2.current) dragScrollRef2.current.scrollLeft = dragScrollRef2.current.scrollWidth
+  }, [visits])
+
+  const isOpen = (v: VisitRecord) => new Date(v.last_seen_at).getTime() - new Date(v.entered_at).getTime() <= 1000
+  const durationMs = (v: VisitRecord) => new Date(v.last_seen_at).getTime() - new Date(v.entered_at).getTime()
+
+  const total = visits.length
+
+  const weekStartOf = (d: Date) => { const s = new Date(d); s.setHours(0, 0, 0, 0); s.setDate(s.getDate() - s.getDay()); return s }
+  const weekKeyOf = (d: Date) => weekStartOf(d).getTime()
+
+  type Week = { weekStart: Date; entries: number; durSum: number; durCount: number; monthIdx: number }
+  const weeks: Week[] = []
+  if (total > 0) {
+    const minWeek = weekStartOf(new Date(Math.min(...visits.map(v => new Date(v.entered_at).getTime()))))
+    const maxWeek = weekStartOf(new Date())
+    let i = 0
+    for (let cur = new Date(maxWeek); cur.getTime() >= minWeek.getTime(); cur.setDate(cur.getDate() - 7), i++) {
+      weeks.push({ weekStart: new Date(cur), entries: 0, durSum: 0, durCount: 0, monthIdx: Math.floor(i / 4) })
+    }
+    const byWeekKey = new Map<number, Week>()
+    weeks.forEach(w => byWeekKey.set(weekKeyOf(w.weekStart), w))
+    visits.forEach(v => {
+      const w = byWeekKey.get(weekKeyOf(new Date(v.entered_at)))
+      if (!w) return
+      w.entries++
+      if (!isOpen(v)) { w.durSum += durationMs(v) / 60000; w.durCount++ }
+    })
+  }
+  const GRID_ROWS = 4
+  const niceMax = (v: number) => Math.max(GRID_ROWS, Math.ceil(v / GRID_ROWS) * GRID_ROWS)
+  const maxEntries = niceMax(Math.max(1, ...weeks.map(w => w.entries)))
+  const maxAvgDur = niceMax(Math.max(1, ...weeks.map(w => w.durCount ? w.durSum / w.durCount : 0)))
+  const monthCount = weeks.length ? weeks[weeks.length - 1].monthIdx + 1 : 0
+  const monthLabel = (m: number) => {
+    if (!weeks.length) return ''
+    const base = weeks[0].weekStart
+    const d = new Date(base.getFullYear(), base.getMonth() + m, 1)
+    return `${d.getMonth() + 1}/${d.getFullYear()}`
+  }
+
+  const CHART_H = 220
+  const WEEK_W = 26
+  const Y_AXIS_W = 32
+  const MIN_CHART_W = 1100
+  const chartW = Math.max(monthCount * 4 * WEEK_W, MIN_CHART_W)
+  const totalMonthSlots = Math.ceil(chartW / (4 * WEEK_W))
+  const weekX = (i: number) => chartW - WEEK_W - i * WEEK_W
+  const monthDividerX = (m: number) => chartW - m * 4 * WEEK_W
+  const monthLabelX = (m: number) => chartW - (m * 4 * WEEK_W + 2 * WEEK_W)
+  const DEPTH_X = 4
+  const DEPTH_Y = -4
+
+  const shadeColor = (hex: string, amt: number) => {
+    const num = parseInt(hex.slice(1), 16)
+    const r = Math.min(255, Math.max(0, (num >> 16 & 0xff) + amt))
+    const g = Math.min(255, Math.max(0, (num >> 8 & 0xff) + amt))
+    const b = Math.min(255, Math.max(0, (num & 0xff) + amt))
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
+  }
+
+  const PrismBar = ({ x, w, h, chartH, color }: { x: number; w: number; h: number; chartH: number; color: string }) => {
+    if (h <= 0) return null
+    const top = chartH - h
+    return (
+      <g>
+        <rect x={x} y={top} width={w} height={h} fill={color} />
+        <polygon points={`${x},${top} ${x + w},${top} ${x + w + DEPTH_X},${top + DEPTH_Y} ${x + DEPTH_X},${top + DEPTH_Y}`} fill={shadeColor(color, 40)} />
+        <polygon points={`${x + w},${top} ${x + w + DEPTH_X},${top + DEPTH_Y} ${x + w + DEPTH_X},${chartH + DEPTH_Y} ${x + w},${chartH}`} fill={shadeColor(color, -40)} />
+      </g>
+    )
+  }
+
+  const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragScrollRef.current) return
+    dragStateRef.current = { startX: e.clientX, startScroll: dragScrollRef.current.scrollLeft }
+    dragScrollRef.current.setPointerCapture(e.pointerId)
+  }
+  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragStateRef.current || !dragScrollRef.current) return
+    dragScrollRef.current.scrollLeft = dragStateRef.current.startScroll - (e.clientX - dragStateRef.current.startX)
+  }
+  const onDragEnd = () => { dragStateRef.current = null }
+
+  const onDragStart2 = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragScrollRef2.current) return
+    dragStateRef2.current = { startX: e.clientX, startScroll: dragScrollRef2.current.scrollLeft }
+    dragScrollRef2.current.setPointerCapture(e.pointerId)
+  }
+  const onDragMove2 = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragStateRef2.current || !dragScrollRef2.current) return
+    dragScrollRef2.current.scrollLeft = dragStateRef2.current.startScroll - (e.clientX - dragStateRef2.current.startX)
+  }
+  const onDragEnd2 = () => { dragStateRef2.current = null }
+
+  const graphCardS: React.CSSProperties = { background: '#ffffff', borderRadius: 6, padding: 20, boxShadow: '0 2px 10px rgba(0,0,0,0.15)', border: '1px solid #ddd' }
+
+  return (
+    <div style={{ padding: '16px', maxWidth: 1050, marginLeft: 0, marginRight: 'auto' }}>
+      <style>{PROC_CSS}</style>
+      <div style={{ textAlign: 'center', marginBottom: 16 }}>
+        <button onClick={reload} style={{ padding: '6px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{lang.system.refresh}</button>
+      </div>
+      {total === 0 ? (
+        <div style={{ textAlign: 'center', color: '#e02020', marginTop: 60, fontSize: 18 }}>{lang.system.statNoData}</div>
+      ) : (
+        <>
+
+          <div className="kc-proc-card" style={{ ...graphCardS, marginBottom: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+              <svg width={Y_AXIS_W} height={CHART_H + 24} style={{ display: 'block', flexShrink: 0 }}>
+                {Array.from({ length: GRID_ROWS + 1 }).map((_, r) => {
+                  const y = (CHART_H / GRID_ROWS) * r
+                  const val = Math.round(maxEntries * (1 - r / GRID_ROWS))
+                  return <text key={`yl${r}`} x={6} y={y + 4} fontSize={10} fontWeight="bold" fill="#003399" textAnchor="start">{val}</text>
+                })}
+                <line x1={0} y1={0} x2={0} y2={CHART_H} stroke="#003399" strokeWidth={1.5} />
+              </svg>
+              <div
+                ref={dragScrollRef}
+                onPointerDown={onDragStart}
+                onPointerMove={onDragMove}
+                onPointerUp={onDragEnd}
+                onPointerLeave={onDragEnd}
+                style={{ overflowX: 'auto', cursor: 'grab', direction: 'ltr' }}
+              >
+                <svg width={chartW + DEPTH_X} height={CHART_H - DEPTH_Y + 24} style={{ display: 'block' }}>
+                  {Array.from({ length: GRID_ROWS + 1 }).map((_, r) => {
+                    const y = (CHART_H / GRID_ROWS) * r
+                    return <line key={`h${r}`} x1={0} y1={y} x2={chartW} y2={y} stroke="#A9A9A9" strokeWidth={1} />
+                  })}
+                  <line x1={0} y1={CHART_H} x2={chartW} y2={CHART_H} stroke="#003399" strokeWidth={1.5} />
+                  {Array.from({ length: totalMonthSlots * 4 + 1 }).map((_, i) => (
+                    <line key={`vw${i}`} x1={chartW - i * WEEK_W} y1={0} x2={chartW - i * WEEK_W} y2={CHART_H} stroke="#B0B0B0" strokeWidth={1} />
+                  ))}
+                  {Array.from({ length: totalMonthSlots + 1 }).map((_, m) => (
+                    <line key={`v${m}`} x1={monthDividerX(m)} y1={0} x2={monthDividerX(m)} y2={CHART_H} stroke="#003399" strokeWidth={1.5} />
+                  ))}
+                  {weeks.map((w, i) => {
+                    const barH = (w.entries / maxEntries) * (CHART_H - 6)
+                    const x = weekX(i)
+                    return (
+                      <g key={i}>
+                        {w.entries > 0 && <text x={x + WEEK_W / 2} y={CHART_H - barH - 4} fontSize={10} fontWeight="bold" fill="#003399" textAnchor="middle">{w.entries}</text>}
+                        <PrismBar x={x + 5} w={WEEK_W - 10} h={barH} chartH={CHART_H} color="#2E8B57" />
+                      </g>
+                    )
+                  })}
+                  {Array.from({ length: totalMonthSlots }).map((_, m) => (
+                    <text key={`ml${m}`} x={monthLabelX(m)} y={CHART_H + 16} fontSize={11} fontWeight="bold" fill="#003399" textAnchor="middle">{monthLabel(m)}</text>
+                  ))}
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="kc-proc-card" style={graphCardS}>
+            <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+              <svg width={Y_AXIS_W} height={CHART_H + 24} style={{ display: 'block', flexShrink: 0 }}>
+                {Array.from({ length: GRID_ROWS + 1 }).map((_, r) => {
+                  const y = (CHART_H / GRID_ROWS) * r
+                  const val = Math.round(maxAvgDur * (1 - r / GRID_ROWS))
+                  return <text key={`yl${r}`} x={6} y={y + 4} fontSize={10} fontWeight="bold" fill="#003399" textAnchor="start">{val}</text>
+                })}
+                <line x1={0} y1={0} x2={0} y2={CHART_H} stroke="#003399" strokeWidth={1.5} />
+              </svg>
+              <div
+                ref={dragScrollRef2}
+                onPointerDown={onDragStart2}
+                onPointerMove={onDragMove2}
+                onPointerUp={onDragEnd2}
+                onPointerLeave={onDragEnd2}
+                style={{ overflowX: 'auto', cursor: 'grab', direction: 'ltr' }}
+              >
+                <svg width={chartW + DEPTH_X} height={CHART_H - DEPTH_Y + 24} style={{ display: 'block' }}>
+                  {Array.from({ length: GRID_ROWS + 1 }).map((_, r) => {
+                    const y = (CHART_H / GRID_ROWS) * r
+                    return <line key={`h${r}`} x1={0} y1={y} x2={chartW} y2={y} stroke="#A9A9A9" strokeWidth={1} />
+                  })}
+                  <line x1={0} y1={CHART_H} x2={chartW} y2={CHART_H} stroke="#003399" strokeWidth={1.5} />
+                  {Array.from({ length: totalMonthSlots * 4 + 1 }).map((_, i) => (
+                    <line key={`vw${i}`} x1={chartW - i * WEEK_W} y1={0} x2={chartW - i * WEEK_W} y2={CHART_H} stroke="#B0B0B0" strokeWidth={1} />
+                  ))}
+                  {Array.from({ length: totalMonthSlots + 1 }).map((_, m) => (
+                    <line key={`v${m}`} x1={monthDividerX(m)} y1={0} x2={monthDividerX(m)} y2={CHART_H} stroke="#003399" strokeWidth={1.5} />
+                  ))}
+                  {weeks.map((w, i) => {
+                    const avgDur = w.durCount ? w.durSum / w.durCount : 0
+                    const barH = (avgDur / maxAvgDur) * (CHART_H - 6)
+                    const x = weekX(i)
+                    return (
+                      <g key={i}>
+                        {avgDur > 0 && <text x={x + WEEK_W / 2} y={CHART_H - barH - 4} fontSize={10} fontWeight="bold" fill="#003399" textAnchor="middle">{Math.round(avgDur)}</text>}
+                        <PrismBar x={x + 5} w={WEEK_W - 10} h={barH} chartH={CHART_H} color="#4682B4" />
+                      </g>
+                    )
+                  })}
+                  {Array.from({ length: totalMonthSlots }).map((_, m) => (
+                    <text key={`ml${m}`} x={monthLabelX(m)} y={CHART_H + 16} fontSize={11} fontWeight="bold" fill="#003399" textAnchor="middle">{monthLabel(m)}</text>
+                  ))}
+                </svg>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
