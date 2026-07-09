@@ -20,6 +20,10 @@ async function ensureTable() {
       created_at TIMESTAMPTZ DEFAULT now()
     )
   `)
+  await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS is_system BOOLEAN DEFAULT false`)
+  await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS customer_read BOOLEAN DEFAULT false`)
+  await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS deleted_by_customer BOOLEAN DEFAULT false`)
+  await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS deleted_by_admin BOOLEAN DEFAULT false`)
 }
 
 export async function GET(req: NextRequest) {
@@ -30,19 +34,27 @@ export async function GET(req: NextRequest) {
     const sessionId = searchParams.get('sessionId')
     if (userId && sessionId) {
       const result = await pool.query(
-        'SELECT * FROM feedback_messages WHERE user_id=$1 AND session_id=$2 ORDER BY created_at ASC',
+        `SELECT * FROM feedback_messages
+         WHERE ((user_id=$1 AND session_id=$2) OR (is_system=true AND (user_id=$1 OR user_id IS NULL)))
+           AND deleted_by_customer=false
+         ORDER BY created_at ASC`,
         [Number(userId), Number(sessionId)]
       )
       return NextResponse.json({ messages: result.rows })
     }
     if (userId) {
       const result = await pool.query(
-        'SELECT * FROM feedback_messages WHERE user_id=$1 ORDER BY created_at DESC LIMIT 10',
+        `SELECT * FROM feedback_messages
+         WHERE (user_id=$1 OR (is_system=true AND user_id IS NULL))
+           AND deleted_by_customer=false
+         ORDER BY created_at DESC LIMIT 10`,
         [Number(userId)]
       )
       return NextResponse.json({ messages: result.rows })
     }
-    const result = await pool.query(`SELECT fm.*, u.last_ip as sender_ip FROM feedback_messages fm LEFT JOIN users u ON u.id = fm.user_id ORDER BY fm.created_at ASC`)
+    const view = searchParams.get('view')
+    const deletedCol = view === 'feedback' ? 'deleted_by_customer' : 'deleted_by_admin'
+    const result = await pool.query(`SELECT fm.*, u.last_ip as sender_ip FROM feedback_messages fm LEFT JOIN users u ON u.id = fm.user_id WHERE fm.${deletedCol}=false ORDER BY fm.created_at ASC`)
     return NextResponse.json({ messages: result.rows })
   } catch (e) {
     return NextResponse.json({ messages: [], error: String(e) })
@@ -67,8 +79,9 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     await ensureTable()
-    const { id } = await req.json()
-    await pool.query('DELETE FROM feedback_messages WHERE id=$1', [id])
+    const { id, scope } = await req.json()
+    const column = scope === 'system' ? 'deleted_by_admin' : 'deleted_by_customer'
+    await pool.query(`UPDATE feedback_messages SET ${column}=true WHERE id=$1`, [id])
     return NextResponse.json({ ok: true })
   } catch (e) {
     return NextResponse.json({ ok: false, error: String(e) })
@@ -78,13 +91,14 @@ export async function DELETE(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     await ensureTable()
-    const { id, replyText, replyDate, isRead } = await req.json()
+    const { id, replyText, replyDate, isRead, customerRead } = await req.json()
     const updates: string[] = []
     const values: unknown[] = []
     let i = 1
-    if (replyText !== undefined) { updates.push(`reply_text=$${i++}`); values.push(replyText) }
+    if (replyText !== undefined) { updates.push(`reply_text=$${i++}`); values.push(replyText); updates.push(`deleted_by_customer=false`) }
     if (replyDate !== undefined) { updates.push(`reply_date=$${i++}`); values.push(replyDate) }
     if (isRead !== undefined) { updates.push(`is_read=$${i++}`); values.push(isRead) }
+    if (customerRead !== undefined) { updates.push(`customer_read=$${i++}`); values.push(customerRead) }
     if (!updates.length) return NextResponse.json({ ok: false })
     values.push(id)
     await pool.query(`UPDATE feedback_messages SET ${updates.join(',')} WHERE id=$${i}`, values)
