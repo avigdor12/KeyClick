@@ -16,7 +16,7 @@ const languages = [
     updates: { colDate: 'Date & Time', colProduct: 'Product', colVersion: 'Version', colTitle: 'Title', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Home Budget' },
     reminders: { loginRequired: 'Login required to view reminders', titlePh: 'Reminder title', timePh: 'Time', add: '+ Add', noReminders: 'No reminders' },
     guides: { overview: 'Overview', userGuide: 'User Guide', financeOverviewTitle: 'What is M Finance', financeOverviewDesc: 'A short overview of home budget management — accounts, transactions, categories and forecasts, and who it is intended for.', financeGuideTitle: 'Step-by-step usage', financeGuideDesc: 'A written guide with screenshots: installation, connecting accounts, categorization and reports.', financeVideosTitle: 'Short tutorials', financeVideosDesc: 'Short video tutorials for every key feature in home budget management.', siteOverviewTitle: 'What the website offers', siteOverviewDesc: "A short tour of the KeyClick platform — products, services and customer relations.", siteGuideTitle: 'Registration and navigation', siteGuideDesc: 'How to register, log in and find every service on the website.', siteVideosTitle: 'Website demos', siteVideosDesc: "Short recorded demos of the website's main features." },
-    banking: { autoDetectFailed: 'Auto-detect failed — choose manually', detectionError: 'Detection error', loadBanksError: 'Error loading banks', plaidTokenError: 'Plaid token error', bankConnected: 'Bank connected', connectionError: 'Connection error', linkOpened: 'A connection window opened for {name}. After approving, come back and click refresh.', linkCreateError: 'Error creating bank link', refreshing: 'Refreshing...', updated: 'Updated', fetchingData: 'Fetching data...', noAccountsConnected: 'No accounts connected', downloadedFiles: 'Downloaded {count} files', downloadError: 'Download error', connectBankTitle: 'Connect Bank', autoDetect: 'Auto Detect', orManually: 'or manually', unitedStates: 'United States', back: 'Back', selectInstitution: 'Select institution', noInstitutions: 'No institutions', refresh: 'Refresh', downloadFiles: 'Download Files' }, captions: { guidesRight1: 'A cabinet of drawers', guidesRight2: 'with guides and videos', guidesLeft: 'Treasure drawers...', registerRight1: 'A quick registration', registerRight2: 'on the way to a variety of surprises...', personalDefaultRight: 'Basic personal details, from the system', personalDefaultLeft: 'Active plan. Option to change the plan', personalPlanRight: 'Selecting a plan will show the period and price', personalPlanLeft1: 'Click', personalPlanLeft2: 'Update', personalPlanLeft3: "when you're done choosing", feedbackAboveButton: 'Each new form is for one message and one reply. See the New Message button', updatesWord1: 'Software', updatesWord2: 'versions', updatesWord3: "for the project's", updatesWord4: 'components', remindersRight1: 'Reminders service', remindersRight2: 'Calendar of important events', remindersLeft1: 'Dates of the active plan', remindersLeft2: 'Option to add private', remindersLeft3: 'reminder dates' } },
+    banking: { autoDetectFailed: 'Auto-detect failed — choose manually', detectionError: 'Detection error', loadBanksError: 'Error loading banks', plaidTokenError: 'Plaid token error', bankConnected: 'Bank connected', connectionError: 'Connection error', linkOpened: 'A connection window opened for {name}. After approving, come back and click refresh.', linkCreateError: 'Error creating bank link', refreshing: 'Refreshing...', updated: 'Updated', fetchingData: 'Fetching data...', noAccountsConnected: 'No accounts connected', downloadedFiles: 'Downloaded {count} files', downloadError: 'Download error', connectBankTitle: 'Connect Bank', autoDetect: 'Auto Detect', orManually: 'or manually', unitedStates: 'United States', back: 'Back', selectInstitution: 'Select institution', noInstitutions: 'No institutions', refresh: 'Refresh', downloadFiles: 'Download Files', clickToDownload: 'Click to download', decorWorldwide: 'Around the world', decorPrivateLine1: 'Private connection to the bank', decorPrivateLine2: 'Disconnected from home budget management' }, captions: { guidesRight1: 'A cabinet of drawers', guidesRight2: 'with guides and videos', guidesLeft: 'Treasure drawers...', registerRight1: 'A quick registration', registerRight2: 'on the way to a variety of surprises...', personalDefaultRight: 'Basic personal details, from the system', personalDefaultLeft: 'Active plan. Option to change the plan', personalPlanRight: 'Selecting a plan will show the period and price', personalPlanLeft1: 'Click', personalPlanLeft2: 'Update', personalPlanLeft3: "when you're done choosing", feedbackAboveButton: 'Each new form is for one message and one reply. See the New Message button', updatesWord1: 'Software', updatesWord2: 'versions', updatesWord3: "for the project's", updatesWord4: 'components', remindersRight1: 'Reminders service', remindersRight2: 'Calendar of important events', remindersLeft1: 'Dates of the active plan', remindersLeft2: 'Option to add private', remindersLeft3: 'reminder dates' } },
   { code: 'ru', flag: 'רוסיה',   name: 'Русский',  welcome: 'Добро пожаловать',
     menu: ['Отзыв','Обновления','Сообщения','Напоминания','Банковские услуги','Личная страница'],
     card: { title: 'Управление домашним бюджетом', namePh: 'Имя / Фамилия', emailPh: 'Email / Адрес эл. почты', passPh: 'Пароль', confirmPassPh: 'Подтвердите пароль', register: 'Регистрация', login: 'Войти', update: 'Обновить', line1: 'В период запуска', line2: 'Бесплатно', errName: 'Пожалуйста, введите имя', errEmail: 'Введите корректный email', errPassLen: 'Пароль должен содержать не менее 6 символов', errPassMatch: 'Пароли не совпадают', errEmailExists: 'Email уже зарегистрирован', cancel: 'Отмена', install: 'Установить', library: 'Файлы руководства', run: 'Запуск', videos: 'Видео', guide: 'Руководство', ok: 'ОК', msgAlreadyInstalled: 'Уже установлено\nПереустановка не нужна', msgDownloading: 'Загрузка установщика', msgInstallComplete: 'Сохраните и запустите файл\nдля завершения установки', msgDownloadError: 'Ошибка загрузки\nПопробуйте снова', mFinance: 'M Finance', msgExists: 'Пользователь уже зарегистрирован\nс этими данными', msgUpdated: 'Данные обновлены успешно', msgRegistered: 'Регистрация завершена', existingCustomer: 'Существующий клиент', newCustomer: 'Новый клиент', notRecognized: 'Клиент не найден. Нажмите для регистрации', msgSelectPlan: 'Выберите тарифный план в личном кабинете', infoServices: 'Информационные услуги', guidesAndVideos: 'Руководства и видео', siteHeaderPrefix: 'Веб-сайт', theWebsite: 'Сайт' },
@@ -28,7 +28,7 @@ const languages = [
     updates: { colDate: 'Дата и время', colProduct: 'Продукт', colVersion: 'Версия', colTitle: 'Заголовок', productKeyClick: 'KeyClick Сайт', productMFinance: 'M Finance Бюджет' },
     reminders: { loginRequired: 'Войдите для просмотра напоминаний', titlePh: 'Название напоминания', timePh: 'Время', add: '+ Добавить', noReminders: 'Нет напоминаний' },
     guides: { overview: 'Общее описание', userGuide: 'Руководство пользователя', financeOverviewTitle: 'Что такое M Finance', financeOverviewDesc: 'Краткий обзор управления домашним бюджетом — счета, операции, категории и прогнозы, и для кого это подходит.', financeGuideTitle: 'Пошаговое использование', financeGuideDesc: 'Письменное руководство со скриншотами: установка, подключение счетов, категоризация и отчёты.', financeVideosTitle: 'Короткие уроки', financeVideosDesc: 'Короткие видеоуроки по каждой ключевой функции управления домашним бюджетом.', siteOverviewTitle: 'Что предлагает сайт', siteOverviewDesc: 'Краткий обзор платформы KeyClick — продукты, услуги и работа с клиентами.', siteGuideTitle: 'Регистрация и навигация', siteGuideDesc: 'Как зарегистрироваться, войти и найти любую услугу на сайте.', siteVideosTitle: 'Демонстрации сайта', siteVideosDesc: 'Короткие видеозаписи основных функций сайта.' },
-    banking: { autoDetectFailed: 'Автоопределение не удалось — выберите вручную', detectionError: 'Ошибка определения', loadBanksError: 'Ошибка загрузки банков', plaidTokenError: 'Ошибка Plaid Token', bankConnected: 'Банк подключён', connectionError: 'Ошибка подключения', linkOpened: 'Открыто окно подключения к {name}. После подтверждения вернитесь и нажмите обновить.', linkCreateError: 'Ошибка создания ссылки на банк', refreshing: 'Обновление...', updated: 'Обновлено', fetchingData: 'Получение данных...', noAccountsConnected: 'Нет подключённых счетов', downloadedFiles: 'Загружено файлов: {count}', downloadError: 'Ошибка загрузки', connectBankTitle: 'Подключить банк', autoDetect: 'Автоопределение', orManually: 'или вручную', unitedStates: 'США', back: 'Назад', selectInstitution: 'Выберите банк', noInstitutions: 'Нет банков', refresh: 'Обновить', downloadFiles: 'Скачать файлы' }, captions: { guidesRight1: 'Шкаф с ящиками', guidesRight2: 'с руководствами и видео', guidesLeft: 'Ящики сокровищ...', registerRight1: 'Быстрая регистрация', registerRight2: 'на пути к множеству сюрпризов...', personalDefaultRight: 'Основные личные данные из системы', personalDefaultLeft: 'Активный тариф. Возможность сменить тариф', personalPlanRight: 'При выборе тарифа отобразятся срок и цена', personalPlanLeft1: 'Нажмите', personalPlanLeft2: '«Обновить»', personalPlanLeft3: 'по завершении выбора', feedbackAboveButton: 'Каждая новая форма — для одного сообщения и одного ответа. См. кнопку «Новое сообщение»', updatesWord1: 'Версии', updatesWord2: 'программного', updatesWord3: 'обеспечения', updatesWord4: 'проекта', remindersRight1: 'Сервис напоминаний', remindersRight2: 'Календарь важных событий', remindersLeft1: 'Даты активного тарифа', remindersLeft2: 'Возможность добавить личные', remindersLeft3: 'даты напоминаний' } },
+    banking: { autoDetectFailed: 'Автоопределение не удалось — выберите вручную', detectionError: 'Ошибка определения', loadBanksError: 'Ошибка загрузки банков', plaidTokenError: 'Ошибка Plaid Token', bankConnected: 'Банк подключён', connectionError: 'Ошибка подключения', linkOpened: 'Открыто окно подключения к {name}. После подтверждения вернитесь и нажмите обновить.', linkCreateError: 'Ошибка создания ссылки на банк', refreshing: 'Обновление...', updated: 'Обновлено', fetchingData: 'Получение данных...', noAccountsConnected: 'Нет подключённых счетов', downloadedFiles: 'Загружено файлов: {count}', downloadError: 'Ошибка загрузки', connectBankTitle: 'Подключить банк', autoDetect: 'Автоопределение', orManually: 'или вручную', unitedStates: 'США', back: 'Назад', selectInstitution: 'Выберите банк', noInstitutions: 'Нет банков', refresh: 'Обновить', downloadFiles: 'Скачать файлы', clickToDownload: 'Нажмите, чтобы скачать', decorWorldwide: 'Вокруг света', decorPrivateLine1: 'Частное подключение к банку', decorPrivateLine2: 'Не связано с управлением семейным бюджетом' }, captions: { guidesRight1: 'Шкаф с ящиками', guidesRight2: 'с руководствами и видео', guidesLeft: 'Ящики сокровищ...', registerRight1: 'Быстрая регистрация', registerRight2: 'на пути к множеству сюрпризов...', personalDefaultRight: 'Основные личные данные из системы', personalDefaultLeft: 'Активный тариф. Возможность сменить тариф', personalPlanRight: 'При выборе тарифа отобразятся срок и цена', personalPlanLeft1: 'Нажмите', personalPlanLeft2: '«Обновить»', personalPlanLeft3: 'по завершении выбора', feedbackAboveButton: 'Каждая новая форма — для одного сообщения и одного ответа. См. кнопку «Новое сообщение»', updatesWord1: 'Версии', updatesWord2: 'программного', updatesWord3: 'обеспечения', updatesWord4: 'проекта', remindersRight1: 'Сервис напоминаний', remindersRight2: 'Календарь важных событий', remindersLeft1: 'Даты активного тарифа', remindersLeft2: 'Возможность добавить личные', remindersLeft3: 'даты напоминаний' } },
   { code: 'de', flag: 'גרמניה',  name: 'Deutsch',  welcome: 'Willkommen',
     menu: ['Feedback','Updates','Nachrichten','Erinnerungen','Bankdienstleistungen','Persönliche Seite'],
     card: { title: 'Haushaltsverwaltung', namePh: 'Name / Nachname', emailPh: 'E-Mail / E-Mail-Adresse', passPh: 'Passwort', confirmPassPh: 'Passwort bestätigen', register: 'Registrieren', login: 'Anmelden', update: 'Aktualisieren', line1: 'Während der Einführungsphase', line2: 'Kostenlos', errName: 'Bitte geben Sie Ihren Namen ein', errEmail: 'Bitte geben Sie eine gültige E-Mail ein', errPassLen: 'Passwort muss mindestens 6 Zeichen lang sein', errPassMatch: 'Passwörter stimmen nicht überein', errEmailExists: 'E-Mail bereits registriert', cancel: 'Abbrechen', install: 'Installieren', library: 'Anleitungsdateien', run: 'Starten', videos: 'Videos', guide: 'Anleitung', ok: 'OK', msgAlreadyInstalled: 'Bereits installiert\nKeine Neuinstallation nötig', msgDownloading: 'Installationsdatei wird heruntergeladen', msgInstallComplete: 'Datei speichern und ausführen\num die Installation abzuschließen', msgDownloadError: 'Fehler beim Herunterladen\nNochmal versuchen', mFinance: 'M Finance', msgExists: 'Benutzer bereits registriert\nmit diesen Daten', msgUpdated: 'Daten erfolgreich aktualisiert', msgRegistered: 'Registrierung abgeschlossen', existingCustomer: 'Bestehender Kunde', newCustomer: 'Neuer Kunde', notRecognized: 'Kunde nicht gefunden. Klicken zum Registrieren', msgSelectPlan: 'Bitte wähle einen Plan auf deiner persönlichen Seite', infoServices: 'Informationsdienste', guidesAndVideos: 'Anleitungen & Videos', siteHeaderPrefix: 'Die Website von', theWebsite: 'Die Website' },
@@ -40,7 +40,7 @@ const languages = [
     updates: { colDate: 'Datum & Uhrzeit', colProduct: 'Produkt', colVersion: 'Version', colTitle: 'Titel', productKeyClick: 'KeyClick Website', productMFinance: 'M Finance Haushalt' },
     reminders: { loginRequired: 'Anmeldung für Erinnerungen erforderlich', titlePh: 'Erinnerungstitel', timePh: 'Uhrzeit', add: '+ Hinzufügen', noReminders: 'Keine Erinnerungen' },
     guides: { overview: 'Allgemeine Beschreibung', userGuide: 'Benutzerhandbuch', financeOverviewTitle: 'Was ist M Finance', financeOverviewDesc: 'Ein kurzer Überblick über die Haushaltsbudgetverwaltung — Konten, Transaktionen, Kategorien und Prognosen, und für wen es gedacht ist.', financeGuideTitle: 'Schritt-für-Schritt-Anleitung', financeGuideDesc: 'Eine schriftliche Anleitung mit Screenshots: Installation, Kontoverbindung, Kategorisierung und Berichte.', financeVideosTitle: 'Kurze Anleitungen', financeVideosDesc: 'Kurze Video-Tutorials zu jeder wichtigen Funktion der Haushaltsbudgetverwaltung.', siteOverviewTitle: 'Was die Website bietet', siteOverviewDesc: 'Ein kurzer Rundgang durch die KeyClick-Plattform — Produkte, Dienstleistungen und Kundenbeziehungen.', siteGuideTitle: 'Registrierung und Navigation', siteGuideDesc: 'Wie man sich registriert, anmeldet und jeden Dienst auf der Website findet.', siteVideosTitle: 'Website-Demos', siteVideosDesc: 'Kurze aufgezeichnete Demos der wichtigsten Funktionen der Website.' },
-    banking: { autoDetectFailed: 'Automatische Erkennung fehlgeschlagen — manuell wählen', detectionError: 'Erkennungsfehler', loadBanksError: 'Fehler beim Laden der Banken', plaidTokenError: 'Plaid-Token-Fehler', bankConnected: 'Bank verbunden', connectionError: 'Verbindungsfehler', linkOpened: 'Ein Verbindungsfenster für {name} wurde geöffnet. Nach der Bestätigung zurückkehren und aktualisieren klicken.', linkCreateError: 'Fehler beim Erstellen des Bank-Links', refreshing: 'Wird aktualisiert...', updated: 'Aktualisiert', fetchingData: 'Daten werden abgerufen...', noAccountsConnected: 'Keine Konten verbunden', downloadedFiles: '{count} Dateien heruntergeladen', downloadError: 'Download-Fehler', connectBankTitle: 'Bank verbinden', autoDetect: 'Automatische Erkennung', orManually: 'oder manuell', unitedStates: 'USA', back: 'Zurück', selectInstitution: 'Bank auswählen', noInstitutions: 'Keine Banken', refresh: 'Aktualisieren', downloadFiles: 'Dateien herunterladen' }, captions: { guidesRight1: 'Ein Schubladenschrank', guidesRight2: 'mit Anleitungen und Videos', guidesLeft: 'Schatztruhen-Schubladen...', registerRight1: 'Eine kurze Registrierung', registerRight2: 'auf dem Weg zu vielen Überraschungen...', personalDefaultRight: 'Grundlegende persönliche Daten aus dem System', personalDefaultLeft: 'Aktiver Tarif. Möglichkeit, den Tarif zu ändern', personalPlanRight: 'Bei der Tarifwahl werden Zeitraum und Preis angezeigt', personalPlanLeft1: 'Klicken Sie auf', personalPlanLeft2: '„Aktualisieren"', personalPlanLeft3: 'nach Abschluss der Auswahl', feedbackAboveButton: 'Jedes neue Formular ist für eine Nachricht und eine Antwort. Siehe Schaltfläche „Neue Nachricht"', updatesWord1: 'Software-', updatesWord2: 'versionen', updatesWord3: 'der Projekt-', updatesWord4: 'komponenten', remindersRight1: 'Erinnerungsdienst', remindersRight2: 'Kalender wichtiger Ereignisse', remindersLeft1: 'Termine des aktiven Tarifs', remindersLeft2: 'Möglichkeit, private Erinnerungs-', remindersLeft3: 'termine hinzuzufügen' } },
+    banking: { autoDetectFailed: 'Automatische Erkennung fehlgeschlagen — manuell wählen', detectionError: 'Erkennungsfehler', loadBanksError: 'Fehler beim Laden der Banken', plaidTokenError: 'Plaid-Token-Fehler', bankConnected: 'Bank verbunden', connectionError: 'Verbindungsfehler', linkOpened: 'Ein Verbindungsfenster für {name} wurde geöffnet. Nach der Bestätigung zurückkehren und aktualisieren klicken.', linkCreateError: 'Fehler beim Erstellen des Bank-Links', refreshing: 'Wird aktualisiert...', updated: 'Aktualisiert', fetchingData: 'Daten werden abgerufen...', noAccountsConnected: 'Keine Konten verbunden', downloadedFiles: '{count} Dateien heruntergeladen', downloadError: 'Download-Fehler', connectBankTitle: 'Bank verbinden', autoDetect: 'Automatische Erkennung', orManually: 'oder manuell', unitedStates: 'USA', back: 'Zurück', selectInstitution: 'Bank auswählen', noInstitutions: 'Keine Banken', refresh: 'Aktualisieren', downloadFiles: 'Dateien herunterladen', clickToDownload: 'Zum Herunterladen klicken', decorWorldwide: 'Rund um die Welt', decorPrivateLine1: 'Private Verbindung zur Bank', decorPrivateLine2: 'Getrennt von der Haushaltsbudgetverwaltung' }, captions: { guidesRight1: 'Ein Schubladenschrank', guidesRight2: 'mit Anleitungen und Videos', guidesLeft: 'Schatztruhen-Schubladen...', registerRight1: 'Eine kurze Registrierung', registerRight2: 'auf dem Weg zu vielen Überraschungen...', personalDefaultRight: 'Grundlegende persönliche Daten aus dem System', personalDefaultLeft: 'Aktiver Tarif. Möglichkeit, den Tarif zu ändern', personalPlanRight: 'Bei der Tarifwahl werden Zeitraum und Preis angezeigt', personalPlanLeft1: 'Klicken Sie auf', personalPlanLeft2: '„Aktualisieren"', personalPlanLeft3: 'nach Abschluss der Auswahl', feedbackAboveButton: 'Jedes neue Formular ist für eine Nachricht und eine Antwort. Siehe Schaltfläche „Neue Nachricht"', updatesWord1: 'Software-', updatesWord2: 'versionen', updatesWord3: 'der Projekt-', updatesWord4: 'komponenten', remindersRight1: 'Erinnerungsdienst', remindersRight2: 'Kalender wichtiger Ereignisse', remindersLeft1: 'Termine des aktiven Tarifs', remindersLeft2: 'Möglichkeit, private Erinnerungs-', remindersLeft3: 'termine hinzuzufügen' } },
   { code: 'fr', flag: 'צרפת',    name: 'Français', welcome: 'Bienvenue',
     menu: ['Retour','Mises à jour','Messages','Rappels','Services bancaires','Page personnelle'],
     card: { title: 'Gestion du budget familial', namePh: 'Prénom / Nom', emailPh: 'Email / Adresse e-mail', passPh: 'Mot de passe', confirmPassPh: 'Confirmer le mot de passe', register: "S'inscrire", login: 'Se connecter', update: 'Mettre à jour', line1: 'Pendant la période de lancement', line2: 'Gratuit', errName: 'Veuillez entrer votre nom', errEmail: 'Veuillez entrer un email valide', errPassLen: 'Le mot de passe doit contenir au moins 6 caractères', errPassMatch: 'Les mots de passe ne correspondent pas', errEmailExists: 'Email déjà enregistré', cancel: 'Annuler', install: 'Installer', library: 'Fichiers guide', run: 'Lancer', videos: 'Vidéos', guide: 'Guide', ok: 'OK', msgAlreadyInstalled: 'Déjà installé\nPas besoin de réinstaller', msgDownloading: 'Téléchargement du fichier', msgInstallComplete: 'Enregistrez et exécutez le fichier\npour terminer l\'installation', msgDownloadError: 'Erreur de téléchargement\nRéessayer', mFinance: 'M Finance', msgExists: 'Utilisateur déjà enregistré\navec ces informations', msgUpdated: 'Informations mises à jour avec succès', msgRegistered: 'Inscription terminée', existingCustomer: 'Client existant', newCustomer: 'Nouveau client', notRecognized: 'Client non reconnu. Cliquer pour s\'inscrire', msgSelectPlan: 'Veuillez choisir un forfait sur votre page personnelle', infoServices: 'Services d\'information', guidesAndVideos: 'Guides & Vidéos', siteHeaderPrefix: 'Le site Internet de', theWebsite: 'Le Site' },
@@ -52,7 +52,7 @@ const languages = [
     updates: { colDate: 'Date et heure', colProduct: 'Produit', colVersion: 'Version', colTitle: 'Titre', productKeyClick: 'KeyClick Site web', productMFinance: 'M Finance Budget familial' },
     reminders: { loginRequired: 'Connexion requise pour les rappels', titlePh: 'Titre du rappel', timePh: 'Heure', add: '+ Ajouter', noReminders: 'Aucun rappel' },
     guides: { overview: 'Description générale', userGuide: 'Guide utilisateur', financeOverviewTitle: 'Présentation de M Finance', financeOverviewDesc: "Un bref aperçu de la gestion du budget familial — comptes, transactions, catégories et prévisions, et à qui elle est destinée.", financeGuideTitle: 'Utilisation étape par étape', financeGuideDesc: "Un guide écrit avec des captures d'écran : installation, connexion des comptes, catégorisation et rapports.", financeVideosTitle: 'Tutoriels courts', financeVideosDesc: 'De courts tutoriels vidéo pour chaque fonctionnalité clé de la gestion du budget familial.', siteOverviewTitle: 'Ce que propose le site', siteOverviewDesc: 'Un bref tour de la plateforme KeyClick — produits, services et relations clients.', siteGuideTitle: 'Inscription et navigation', siteGuideDesc: 'Comment créer un compte, se connecter et trouver chaque service sur le site.', siteVideosTitle: 'Démonstrations du site', siteVideosDesc: 'De courtes démonstrations filmées des principales fonctionnalités du site.' },
-    banking: { autoDetectFailed: 'Détection automatique échouée — choisir manuellement', detectionError: 'Erreur de détection', loadBanksError: 'Erreur de chargement des banques', plaidTokenError: 'Erreur de jeton Plaid', bankConnected: 'Banque connectée', connectionError: 'Erreur de connexion', linkOpened: 'Une fenêtre de connexion pour {name} a été ouverte. Après approbation, revenez et cliquez sur actualiser.', linkCreateError: 'Erreur lors de la création du lien bancaire', refreshing: 'Actualisation...', updated: 'Mis à jour', fetchingData: 'Récupération des données...', noAccountsConnected: 'Aucun compte connecté', downloadedFiles: '{count} fichiers téléchargés', downloadError: 'Erreur de téléchargement', connectBankTitle: 'Connecter une banque', autoDetect: 'Détection automatique', orManually: 'ou manuellement', unitedStates: 'États-Unis', back: 'Retour', selectInstitution: 'Choisir une banque', noInstitutions: 'Aucune banque', refresh: 'Actualiser', downloadFiles: 'Télécharger les fichiers' }, captions: { guidesRight1: 'Une armoire à tiroirs', guidesRight2: 'avec guides et vidéos', guidesLeft: 'Tiroirs aux trésors...', registerRight1: 'Une inscription rapide', registerRight2: "vers tout un monde de surprises...", personalDefaultRight: "Coordonnées personnelles de base, issues du système", personalDefaultLeft: "Abonnement actif. Possibilité de changer d'abonnement", personalPlanRight: "La sélection d'un abonnement affichera la durée et le prix", personalPlanLeft1: 'Cliquez sur', personalPlanLeft2: '« Mettre à jour »', personalPlanLeft3: 'une fois votre choix terminé', feedbackAboveButton: "Chaque nouveau formulaire correspond à un message et une réponse. Voir le bouton « Nouveau message »", updatesWord1: 'Versions', updatesWord2: 'logicielles', updatesWord3: 'des composants', updatesWord4: 'du projet', remindersRight1: 'Service de rappels', remindersRight2: 'Agenda des événements importants', remindersLeft1: "Dates de l'abonnement actif", remindersLeft2: "Possibilité d'ajouter des dates", remindersLeft3: 'de rappel privées' } },
+    banking: { autoDetectFailed: 'Détection automatique échouée — choisir manuellement', detectionError: 'Erreur de détection', loadBanksError: 'Erreur de chargement des banques', plaidTokenError: 'Erreur de jeton Plaid', bankConnected: 'Banque connectée', connectionError: 'Erreur de connexion', linkOpened: 'Une fenêtre de connexion pour {name} a été ouverte. Après approbation, revenez et cliquez sur actualiser.', linkCreateError: 'Erreur lors de la création du lien bancaire', refreshing: 'Actualisation...', updated: 'Mis à jour', fetchingData: 'Récupération des données...', noAccountsConnected: 'Aucun compte connecté', downloadedFiles: '{count} fichiers téléchargés', downloadError: 'Erreur de téléchargement', connectBankTitle: 'Connecter une banque', autoDetect: 'Détection automatique', orManually: 'ou manuellement', unitedStates: 'États-Unis', back: 'Retour', selectInstitution: 'Choisir une banque', noInstitutions: 'Aucune banque', refresh: 'Actualiser', downloadFiles: 'Télécharger les fichiers', clickToDownload: 'Cliquez pour télécharger', decorWorldwide: 'Autour du monde', decorPrivateLine1: 'Connexion privée à la banque', decorPrivateLine2: 'Déconnecté de la gestion du budget familial' }, captions: { guidesRight1: 'Une armoire à tiroirs', guidesRight2: 'avec guides et vidéos', guidesLeft: 'Tiroirs aux trésors...', registerRight1: 'Une inscription rapide', registerRight2: "vers tout un monde de surprises...", personalDefaultRight: "Coordonnées personnelles de base, issues du système", personalDefaultLeft: "Abonnement actif. Possibilité de changer d'abonnement", personalPlanRight: "La sélection d'un abonnement affichera la durée et le prix", personalPlanLeft1: 'Cliquez sur', personalPlanLeft2: '« Mettre à jour »', personalPlanLeft3: 'une fois votre choix terminé', feedbackAboveButton: "Chaque nouveau formulaire correspond à un message et une réponse. Voir le bouton « Nouveau message »", updatesWord1: 'Versions', updatesWord2: 'logicielles', updatesWord3: 'des composants', updatesWord4: 'du projet', remindersRight1: 'Service de rappels', remindersRight2: 'Agenda des événements importants', remindersLeft1: "Dates de l'abonnement actif", remindersLeft2: "Possibilité d'ajouter des dates", remindersLeft3: 'de rappel privées' } },
   { code: 'he', flag: 'ישראל',   name: 'עברית',    welcome: 'ברוכים הבאים',
     menu: ['משוב','עדכונים','הודעות','תזכורות','שרותים בנקאיים','דף אישי'],
     card: { title: 'ניהול תקציב בית', namePh: 'שם / שם משפחה', emailPh: 'Email / כתובת מייל', passPh: 'סיסמא', confirmPassPh: 'אימות סיסמא', register: 'הרשמה', login: 'כניסה', update: 'עדכון', line1: 'בתקופת ההרצה', line2: 'חינם', errName: 'נא להזין שם', errEmail: 'נא להזין כתובת מייל תקינה', errPassLen: 'סיסמה חייבת להכיל לפחות 6 תווים', errPassMatch: 'הסיסמאות אינן תואמות', errEmailExists: 'אימייל כבר קיים במערכת', cancel: 'בטל', install: 'התקנה', library: 'קובצי הדרכה', run: 'הפעלה', videos: 'סרטונים', guide: 'הדרכה', ok: 'לחץ', msgAlreadyInstalled: 'כבר מותקן\nאין צורך בהתקנה', msgDownloading: 'הורד קובץ התקנה', msgInstallComplete: 'שמור והפעל את הקובץ\nלהשלמת ההתקנה', msgDownloadError: 'שגיאה בהורדה\nנסה שוב', mFinance: 'M Finance', msgExists: 'המשתמש עם הפרטים שהקשת\nכבר רשום במערכת', msgUpdated: 'הפרטים עודכנו בהצלחה', msgRegistered: 'הרשמה הושלמה', existingCustomer: 'לקוח קיים', newCustomer: 'לקוח חדש', notRecognized: 'לקוח לא מוכר. לחץ להרשמה', msgSelectPlan: 'בחר תכנית בדף האישי', infoServices: 'שרותי מידע', guidesAndVideos: 'מדריכים וסרטונים', siteHeaderPrefix: 'אתר האינטרנט של', theWebsite: 'האתר' },
@@ -64,7 +64,7 @@ const languages = [
     updates: { colDate: 'תאריך ושעה', colProduct: 'מוצר', colVersion: 'גרסה', colTitle: 'כותרת', productKeyClick: 'אתר KeyClick', productMFinance: 'ניהול תקציב בית M Finance' },
     reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' },
     guides: { overview: 'תיאור כללי', userGuide: 'מדריך למשתמש', financeOverviewTitle: 'מה זה M Finance', financeOverviewDesc: 'סקירה קצרה של ניהול תקציב הבית — חשבונות, תנועות, קטגוריות ותחזיות, ולמי זה מיועד.', financeGuideTitle: 'שימוש שלב-אחר-שלב', financeGuideDesc: 'מדריך כתוב עם צילומי מסך: התקנה, חיבור חשבונות, סיווגים ודוחות.', financeVideosTitle: 'הדרכות קצרות', financeVideosDesc: 'סרטוני וידאו קצרים לכל תכונה עיקרית בניהול משק הבית.', siteOverviewTitle: 'מה מציע האתר', siteOverviewDesc: 'סיור קצר על פלטפורמת KeyClick — המוצרים, השירותים וקשרי הלקוחות.', siteGuideTitle: 'הרשמה וניווט', siteGuideDesc: 'איך נרשמים, מתחברים ומוצאים כל שירות באתר.', siteVideosTitle: 'הדגמות האתר', siteVideosDesc: 'הדגמות מצולמות קצרות של תכונות האתר המרכזיות.' },
-    banking: { autoDetectFailed: 'לא זוהה אוטומטית — בחר ידנית', detectionError: 'שגיאה בזיהוי', loadBanksError: 'שגיאה בטעינת בנקים', plaidTokenError: 'שגיאה ביצירת Plaid Token', bankConnected: 'הבנק חובר בהצלחה', connectionError: 'שגיאה בחיבור', linkOpened: 'נפתח חלון חיבור ל-{name}. לאחר האישור חזור ולחץ רענן.', linkCreateError: 'שגיאה ביצירת קישור לבנק', refreshing: 'מרענן...', updated: 'עודכן', fetchingData: 'שולף נתונים...', noAccountsConnected: 'אין חשבונות מחוברים', downloadedFiles: 'הורדו {count} קבצים', downloadError: 'שגיאה בהורדה', connectBankTitle: 'חיבור לבנק', autoDetect: 'זיהוי אוטומטי', orManually: 'או בחר ידנית', unitedStates: 'ארצות הברית', back: 'חזור', selectInstitution: 'בחר מוסד פיננסי', noInstitutions: 'אין מוסדות', refresh: 'רענן', downloadFiles: 'הורד קבצים' }, captions: { guidesRight1: 'ארונית מגירות עם', guidesRight2: 'מדריכים וסרטונים', guidesLeft: 'מגירות מטמון...', registerRight1: 'הרשמה קצרה', registerRight2: '…בדרך אל מגוון ההפתעות', personalDefaultRight: 'פרטים אישיים בסיסיים, מתוך המערכת', personalDefaultLeft: 'תכנית פעילה. אפשרות שינוי התכנית', personalPlanRight: 'בבחירת התכנית תוצג התקופה והמחיר', personalPlanLeft1: 'יש ללחוץ', personalPlanLeft2: 'על עדכון', personalPlanLeft3: 'בסיום הבחירה', feedbackAboveButton: 'טופס חדש להודעה אחת ותשובה אחת. ראה כפתור להודעה חדשה', updatesWord1: 'גרסאות', updatesWord2: 'תוכנה', updatesWord3: 'למרכיבי', updatesWord4: 'הפרויקט', remindersRight1: 'שרות תזכורות', remindersRight2: 'יומן ארועים חשובים', remindersLeft1: 'תאריכי התכנית הפעילה', remindersLeft2: 'אפשרות הוספת תאריכי', remindersLeft3: 'תזכורות פרטיים' } },
+    banking: { autoDetectFailed: 'לא זוהה אוטומטית — בחר ידנית', detectionError: 'שגיאה בזיהוי', loadBanksError: 'שגיאה בטעינת בנקים', plaidTokenError: 'שגיאה ביצירת Plaid Token', bankConnected: 'הבנק חובר בהצלחה', connectionError: 'שגיאה בחיבור', linkOpened: 'נפתח חלון חיבור ל-{name}. לאחר האישור חזור ולחץ רענן.', linkCreateError: 'שגיאה ביצירת קישור לבנק', refreshing: 'מרענן...', updated: 'עודכן', fetchingData: 'שולף נתונים...', noAccountsConnected: 'אין חשבונות מחוברים', downloadedFiles: 'הורדו {count} קבצים', downloadError: 'שגיאה בהורדה', connectBankTitle: 'חיבור לבנק', autoDetect: 'זיהוי אוטומטי', orManually: 'או בחר ידנית', unitedStates: 'ארצות הברית', back: 'חזור', selectInstitution: 'בחר מוסד פיננסי', noInstitutions: 'אין מוסדות', refresh: 'רענן', downloadFiles: 'הורד קבצים', clickToDownload: 'לחץ להורדה', decorWorldwide: 'מסביב לעולם', decorPrivateLine1: 'התחברות פרטית לבנק', decorPrivateLine2: 'מנותק מניהול תקציב בית' }, captions: { guidesRight1: 'ארונית מגירות עם', guidesRight2: 'מדריכים וסרטונים', guidesLeft: 'מגירות מטמון...', registerRight1: 'הרשמה קצרה', registerRight2: '…בדרך אל מגוון ההפתעות', personalDefaultRight: 'פרטים אישיים בסיסיים, מתוך המערכת', personalDefaultLeft: 'תכנית פעילה. אפשרות שינוי התכנית', personalPlanRight: 'בבחירת התכנית תוצג התקופה והמחיר', personalPlanLeft1: 'יש ללחוץ', personalPlanLeft2: 'על עדכון', personalPlanLeft3: 'בסיום הבחירה', feedbackAboveButton: 'טופס חדש להודעה אחת ותשובה אחת. ראה כפתור להודעה חדשה', updatesWord1: 'גרסאות', updatesWord2: 'תוכנה', updatesWord3: 'למרכיבי', updatesWord4: 'הפרויקט', remindersRight1: 'שרות תזכורות', remindersRight2: 'יומן ארועים חשובים', remindersLeft1: 'תאריכי התכנית הפעילה', remindersLeft2: 'אפשרות הוספת תאריכי', remindersLeft3: 'תזכורות פרטיים' } },
   { code: 'es', flag: 'ספרד',    name: 'Español',  welcome: 'Bienvenido',
     menu: ['Comentarios','Actualizaciones','Mensajes','Recordatorios','Servicios bancarios','Página personal'],
     card: { title: 'Gestión del presupuesto familiar', namePh: 'Nombre / Apellido', emailPh: 'Email / Dirección de correo', passPh: 'Contraseña', confirmPassPh: 'Confirmar contraseña', register: 'Registrarse', login: 'Iniciar sesión', update: 'Actualizar', line1: 'Durante el período de lanzamiento', line2: 'Gratis', errName: 'Por favor ingrese su nombre', errEmail: 'Por favor ingrese un email válido', errPassLen: 'La contraseña debe tener al menos 6 caracteres', errPassMatch: 'Las contraseñas no coinciden', errEmailExists: 'El correo ya está registrado', cancel: 'Cancelar', install: 'Instalar', library: 'Archivos de guía', run: 'Ejecutar', videos: 'Videos', guide: 'Guía', ok: 'OK', msgAlreadyInstalled: 'Ya instalado\nNo es necesario reinstalar', msgDownloading: 'Descargando archivo de instalación', msgInstallComplete: 'Guarda y ejecuta el archivo\npara completar la instalación', msgDownloadError: 'Error de descarga\nInténtalo de nuevo', mFinance: 'M Finance', msgExists: 'El usuario ya está registrado\ncon estos datos', msgUpdated: 'Datos actualizados correctamente', msgRegistered: 'Registro completado', existingCustomer: 'Cliente existente', newCustomer: 'Cliente nuevo', notRecognized: 'Cliente no encontrado. Haga clic para registrarse', msgSelectPlan: 'Por favor selecciona un plan en tu página personal', infoServices: 'Servicios de información', guidesAndVideos: 'Guías y Videos', siteHeaderPrefix: 'El sitio web de', theWebsite: 'El Sitio' },
@@ -76,7 +76,7 @@ const languages = [
     updates: { colDate: 'Fecha y hora', colProduct: 'Producto', colVersion: 'Versión', colTitle: 'Título', productKeyClick: 'KeyClick Sitio web', productMFinance: 'M Finance Presupuesto familiar' },
     reminders: { loginRequired: 'Inicio de sesión requerido', titlePh: 'Título del recordatorio', timePh: 'Hora', add: '+ Agregar', noReminders: 'Sin recordatorios' },
     guides: { overview: 'Descripción general', userGuide: 'Guía del usuario', financeOverviewTitle: 'Qué es M Finance', financeOverviewDesc: 'Una breve descripción de la gestión del presupuesto familiar — cuentas, transacciones, categorías y previsiones, y a quién está dirigido.', financeGuideTitle: 'Uso paso a paso', financeGuideDesc: 'Una guía escrita con capturas de pantalla: instalación, conexión de cuentas, categorización e informes.', financeVideosTitle: 'Tutoriales cortos', financeVideosDesc: 'Breves videotutoriales de cada función clave en la gestión del presupuesto familiar.', siteOverviewTitle: 'Qué ofrece el sitio', siteOverviewDesc: 'Un breve recorrido por la plataforma KeyClick — productos, servicios y relación con los clientes.', siteGuideTitle: 'Registro y navegación', siteGuideDesc: 'Cómo registrarse, iniciar sesión y encontrar cada servicio en el sitio.', siteVideosTitle: 'Demostraciones del sitio', siteVideosDesc: 'Breves demostraciones grabadas de las principales funciones del sitio.' },
-    banking: { autoDetectFailed: 'Detección automática fallida — elija manualmente', detectionError: 'Error de detección', loadBanksError: 'Error al cargar los bancos', plaidTokenError: 'Error de token de Plaid', bankConnected: 'Banco conectado', connectionError: 'Error de conexión', linkOpened: 'Se abrió una ventana de conexión para {name}. Después de aprobar, vuelva y haga clic en actualizar.', linkCreateError: 'Error al crear el enlace bancario', refreshing: 'Actualizando...', updated: 'Actualizado', fetchingData: 'Obteniendo datos...', noAccountsConnected: 'No hay cuentas conectadas', downloadedFiles: '{count} archivos descargados', downloadError: 'Error de descarga', connectBankTitle: 'Conectar banco', autoDetect: 'Detección automática', orManually: 'o manualmente', unitedStates: 'Estados Unidos', back: 'Volver', selectInstitution: 'Seleccionar banco', noInstitutions: 'No hay bancos', refresh: 'Actualizar', downloadFiles: 'Descargar archivos' }, captions: { guidesRight1: 'Un armario de cajones', guidesRight2: 'con guías y vídeos', guidesLeft: 'Cajones del tesoro...', registerRight1: 'Un registro rápido', registerRight2: 'hacia un mundo de sorpresas...', personalDefaultRight: 'Datos personales básicos, del sistema', personalDefaultLeft: 'Plan activo. Posibilidad de cambiar de plan', personalPlanRight: 'Al elegir el plan se mostrará el período y el precio', personalPlanLeft1: 'Haga clic en', personalPlanLeft2: '«Actualizar»', personalPlanLeft3: 'al terminar de elegir', feedbackAboveButton: 'Cada formulario nuevo es para un mensaje y una respuesta. Vea el botón «Nuevo mensaje»', updatesWord1: 'Versiones', updatesWord2: 'de software', updatesWord3: 'de los componentes', updatesWord4: 'del proyecto', remindersRight1: 'Servicio de recordatorios', remindersRight2: 'Calendario de eventos importantes', remindersLeft1: 'Fechas del plan activo', remindersLeft2: 'Posibilidad de añadir fechas', remindersLeft3: 'de recordatorio privadas' } },
+    banking: { autoDetectFailed: 'Detección automática fallida — elija manualmente', detectionError: 'Error de detección', loadBanksError: 'Error al cargar los bancos', plaidTokenError: 'Error de token de Plaid', bankConnected: 'Banco conectado', connectionError: 'Error de conexión', linkOpened: 'Se abrió una ventana de conexión para {name}. Después de aprobar, vuelva y haga clic en actualizar.', linkCreateError: 'Error al crear el enlace bancario', refreshing: 'Actualizando...', updated: 'Actualizado', fetchingData: 'Obteniendo datos...', noAccountsConnected: 'No hay cuentas conectadas', downloadedFiles: '{count} archivos descargados', downloadError: 'Error de descarga', connectBankTitle: 'Conectar banco', autoDetect: 'Detección automática', orManually: 'o manualmente', unitedStates: 'Estados Unidos', back: 'Volver', selectInstitution: 'Seleccionar banco', noInstitutions: 'No hay bancos', refresh: 'Actualizar', downloadFiles: 'Descargar archivos', clickToDownload: 'Haga clic para descargar', decorWorldwide: 'Alrededor del mundo', decorPrivateLine1: 'Conexión privada al banco', decorPrivateLine2: 'Desconectado de la gestión del presupuesto familiar' }, captions: { guidesRight1: 'Un armario de cajones', guidesRight2: 'con guías y vídeos', guidesLeft: 'Cajones del tesoro...', registerRight1: 'Un registro rápido', registerRight2: 'hacia un mundo de sorpresas...', personalDefaultRight: 'Datos personales básicos, del sistema', personalDefaultLeft: 'Plan activo. Posibilidad de cambiar de plan', personalPlanRight: 'Al elegir el plan se mostrará el período y el precio', personalPlanLeft1: 'Haga clic en', personalPlanLeft2: '«Actualizar»', personalPlanLeft3: 'al terminar de elegir', feedbackAboveButton: 'Cada formulario nuevo es para un mensaje y una respuesta. Vea el botón «Nuevo mensaje»', updatesWord1: 'Versiones', updatesWord2: 'de software', updatesWord3: 'de los componentes', updatesWord4: 'del proyecto', remindersRight1: 'Servicio de recordatorios', remindersRight2: 'Calendario de eventos importantes', remindersLeft1: 'Fechas del plan activo', remindersLeft2: 'Posibilidad de añadir fechas', remindersLeft3: 'de recordatorio privadas' } },
   { code: 'ja', flag: 'יפן',     name: '日本語',    welcome: 'ようこそ',
     menu: ['フィードバック','更新','メッセージ','リマインダー','銀行サービス','個人ページ'],
     card: { title: '家計管理', namePh: '名前 / 苗字', emailPh: 'メール / メールアドレス', passPh: 'パスワード', confirmPassPh: 'パスワードの確認', register: '登録', login: 'ログイン', update: '更新', line1: 'ローンチ期間中', line2: '無料', errName: '名前を入力してください', errEmail: '有効なメールアドレスを入力してください', errPassLen: 'パスワードは6文字以上必要です', errPassMatch: 'パスワードが一致しません', errEmailExists: 'このメールアドレスはすでに登録されています', cancel: 'キャンセル', install: 'インストール', library: 'ガイドファイル', run: '起動', videos: 'ビデオ', guide: 'ガイド', ok: 'OK', msgAlreadyInstalled: 'インストール済み\n再インストール不要', msgDownloading: 'インストールファイルをダウンロード中', msgInstallComplete: 'ファイルを保存して実行\nインストールを完了', msgDownloadError: 'ダウンロードエラー\n再試行', mFinance: 'M Finance', msgExists: 'このメールは\nすでに登録されています', msgUpdated: '情報が正常に更新されました', msgRegistered: '登録が完了しました', existingCustomer: '既存のお客様', newCustomer: '新規のお客様', notRecognized: 'お客様が見つかりません。登録するにはクリック', msgSelectPlan: '個人ページでプランを選択してください', infoServices: '情報サービス', guidesAndVideos: 'ガイドと動画', siteHeaderPrefix: '公式サイト：', theWebsite: '本サイト' },
@@ -88,7 +88,7 @@ const languages = [
     updates: { colDate: '日時', colProduct: '製品', colVersion: 'バージョン', colTitle: 'タイトル', productKeyClick: 'KeyClick サイト', productMFinance: 'M Finance 家計管理' },
     reminders: { loginRequired: 'リマインダーを表示するにはログインが必要です', titlePh: 'リマインダーのタイトル', timePh: '時刻', add: '+ 追加', noReminders: 'リマインダーなし' },
     guides: { overview: '概要', userGuide: 'ユーザーガイド', financeOverviewTitle: 'M Financeとは', financeOverviewDesc: '家計管理の簡単な概要 — 口座、取引、カテゴリ、予測、対象となる方について。', financeGuideTitle: '使い方ステップガイド', financeGuideDesc: 'スクリーンショット付きの説明書：インストール、口座の連携、分類とレポート。', financeVideosTitle: '短いチュートリアル', financeVideosDesc: '家計管理の主要機能ごとの短い動画チュートリアル。', siteOverviewTitle: 'サイトが提供するもの', siteOverviewDesc: 'KeyClickプラットフォームの簡単な紹介 — 製品、サービス、カスタマーリレーション。', siteGuideTitle: '登録とナビゲーション', siteGuideDesc: '登録方法、ログイン方法、サイト内の各サービスの見つけ方。', siteVideosTitle: 'サイトのデモ', siteVideosDesc: 'サイトの主要機能を短く撮影したデモ。' },
-    banking: { autoDetectFailed: '自動検出に失敗しました。手動で選択してください', detectionError: '検出エラー', loadBanksError: '銀行の読み込みエラー', plaidTokenError: 'Plaidトークンエラー', bankConnected: '銀行が接続されました', connectionError: '接続エラー', linkOpened: '{name}への接続ウィンドウが開きました。承認後、戻って更新をクリックしてください。', linkCreateError: '銀行リンクの作成エラー', refreshing: '更新中...', updated: '更新しました', fetchingData: 'データを取得中...', noAccountsConnected: '接続された口座がありません', downloadedFiles: '{count}件のファイルをダウンロードしました', downloadError: 'ダウンロードエラー', connectBankTitle: '銀行を接続', autoDetect: '自動検出', orManually: 'または手動で', unitedStates: 'アメリカ合衆国', back: '戻る', selectInstitution: '銀行を選択', noInstitutions: '銀行がありません', refresh: '更新', downloadFiles: 'ファイルをダウンロード' }, captions: { guidesRight1: 'ガイドと動画が', guidesRight2: '詰まった引き出し棚', guidesLeft: '宝物の引き出し...', registerRight1: '簡単な登録で', registerRight2: '様々なサプライズへ...', personalDefaultRight: 'システムからの基本的な個人情報', personalDefaultLeft: '有効なプラン。プラン変更も可能', personalPlanRight: 'プランを選択すると期間と料金が表示されます', personalPlanLeft1: '選択が終わったら', personalPlanLeft2: '「更新」を', personalPlanLeft3: 'クリックしてください', feedbackAboveButton: '新規フォームは1件のメッセージと1件の返信専用です。「新規メッセージ」ボタンをご覧ください', updatesWord1: 'プロジェクト', updatesWord2: '構成要素の', updatesWord3: 'ソフトウェア', updatesWord4: 'バージョン', remindersRight1: 'リマインダーサービス', remindersRight2: '重要な予定のカレンダー', remindersLeft1: '有効なプランの日付', remindersLeft2: '個人的なリマインダーの', remindersLeft3: '日付を追加可能' } },
+    banking: { autoDetectFailed: '自動検出に失敗しました。手動で選択してください', detectionError: '検出エラー', loadBanksError: '銀行の読み込みエラー', plaidTokenError: 'Plaidトークンエラー', bankConnected: '銀行が接続されました', connectionError: '接続エラー', linkOpened: '{name}への接続ウィンドウが開きました。承認後、戻って更新をクリックしてください。', linkCreateError: '銀行リンクの作成エラー', refreshing: '更新中...', updated: '更新しました', fetchingData: 'データを取得中...', noAccountsConnected: '接続された口座がありません', downloadedFiles: '{count}件のファイルをダウンロードしました', downloadError: 'ダウンロードエラー', connectBankTitle: '銀行を接続', autoDetect: '自動検出', orManually: 'または手動で', unitedStates: 'アメリカ合衆国', back: '戻る', selectInstitution: '銀行を選択', noInstitutions: '銀行がありません', refresh: '更新', downloadFiles: 'ファイルをダウンロード', clickToDownload: 'クリックしてダウンロード', decorWorldwide: '世界中を', decorPrivateLine1: '銀行への個人的な接続', decorPrivateLine2: '家計管理とは切り離されています' }, captions: { guidesRight1: 'ガイドと動画が', guidesRight2: '詰まった引き出し棚', guidesLeft: '宝物の引き出し...', registerRight1: '簡単な登録で', registerRight2: '様々なサプライズへ...', personalDefaultRight: 'システムからの基本的な個人情報', personalDefaultLeft: '有効なプラン。プラン変更も可能', personalPlanRight: 'プランを選択すると期間と料金が表示されます', personalPlanLeft1: '選択が終わったら', personalPlanLeft2: '「更新」を', personalPlanLeft3: 'クリックしてください', feedbackAboveButton: '新規フォームは1件のメッセージと1件の返信専用です。「新規メッセージ」ボタンをご覧ください', updatesWord1: 'プロジェクト', updatesWord2: '構成要素の', updatesWord3: 'ソフトウェア', updatesWord4: 'バージョン', remindersRight1: 'リマインダーサービス', remindersRight2: '重要な予定のカレンダー', remindersLeft1: '有効なプランの日付', remindersLeft2: '個人的なリマインダーの', remindersLeft3: '日付を追加可能' } },
   { code: 'ar', flag: 'סעודיה',  name: 'العربية',  welcome: 'أهلاً وسهلاً',
     menu: ['ملاحظات','تحديثات','رسائل','تذكيرات','خدمات مصرفية','الصفحة الشخصية'],
     card: { title: 'إدارة الميزانية المنزلية', namePh: 'الاسم / اسم العائلة', emailPh: 'البريد الإلكتروني', passPh: 'كلمة المرور', confirmPassPh: 'تأكيد كلمة المرور', register: 'تسجيل', login: 'دخول', update: 'تحديث', line1: 'خلال فترة الإطلاق', line2: 'مجاناً', errName: 'الرجاء إدخال اسمك', errEmail: 'الرجاء إدخال بريد إلكتروني صحيح', errPassLen: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل', errPassMatch: 'كلمتا المرور غير متطابقتين', errEmailExists: 'البريد الإلكتروني مسجل بالفعل', cancel: 'إلغاء', install: 'تثبيت', library: 'ملفات الدليل', run: 'تشغيل', videos: 'مقاطع', guide: 'دليل', ok: 'حسناً', msgAlreadyInstalled: 'مثبت بالفعل\nلا حاجة لإعادة التثبيت', msgDownloading: 'جارٍ تنزيل ملف التثبيت', msgInstallComplete: 'احفظ الملف وشغّله\nلإكمال التثبيت', msgDownloadError: 'خطأ في التنزيل\nحاول مرة أخرى', mFinance: 'M Finance', msgExists: 'المستخدم مسجل بالفعل\nبهذه البيانات', msgUpdated: 'تم تحديث البيانات بنجاح', msgRegistered: 'اكتمل التسجيل', existingCustomer: 'عميل موجود', newCustomer: 'عميل جديد', notRecognized: 'العميل غير معروف. انقر للتسجيل', msgSelectPlan: 'يرجى اختيار خطة في صفحتك الشخصية', infoServices: 'خدمات المعلومات', guidesAndVideos: 'أدلة ومقاطع فيديو', siteHeaderPrefix: 'الموقع الإلكتروني لـ', theWebsite: 'الموقع' },
@@ -100,7 +100,7 @@ const languages = [
     updates: { colDate: 'التاريخ والوقت', colProduct: 'المنتج', colVersion: 'الإصدار', colTitle: 'العنوان', productKeyClick: 'KeyClick موقع', productMFinance: 'M Finance ميزانية المنزل' },
     reminders: { loginRequired: 'تسجيل الدخول مطلوب لعرض التذكيرات', titlePh: 'عنوان التذكير', timePh: 'الوقت', add: '+ إضافة', noReminders: 'لا توجد تذكيرات' },
     guides: { overview: 'وصف عام', userGuide: 'دليل المستخدم', financeOverviewTitle: 'ما هو M Finance', financeOverviewDesc: 'نظرة عامة موجزة على إدارة ميزانية المنزل — الحسابات، المعاملات، الفئات والتوقعات، ولمن هذا مخصص.', financeGuideTitle: 'الاستخدام خطوة بخطوة', financeGuideDesc: 'دليل مكتوب مع لقطات شاشة: التثبيت، ربط الحسابات، التصنيف والتقارير.', financeVideosTitle: 'شروحات قصيرة', financeVideosDesc: 'مقاطع فيديو تعليمية قصيرة لكل ميزة أساسية في إدارة ميزانية المنزل.', siteOverviewTitle: 'ما الذي يقدمه الموقع', siteOverviewDesc: 'جولة قصيرة في منصة KeyClick — المنتجات والخدمات وخدمة العملاء.', siteGuideTitle: 'التسجيل والتنقل', siteGuideDesc: 'كيفية التسجيل وتسجيل الدخول والعثور على كل خدمة في الموقع.', siteVideosTitle: 'عروض توضيحية للموقع', siteVideosDesc: 'عروض توضيحية مصورة قصيرة لأهم ميزات الموقع.' },
-    banking: { autoDetectFailed: 'فشل الاكتشاف التلقائي — اختر يدويًا', detectionError: 'خطأ في الاكتشاف', loadBanksError: 'خطأ في تحميل البنوك', plaidTokenError: 'خطأ في رمز Plaid', bankConnected: 'تم ربط البنك بنجاح', connectionError: 'خطأ في الاتصال', linkOpened: 'تم فتح نافذة الاتصال بـ {name}. بعد الموافقة، ارجع واضغط تحديث.', linkCreateError: 'خطأ في إنشاء رابط البنك', refreshing: 'جارٍ التحديث...', updated: 'تم التحديث', fetchingData: 'جارٍ جلب البيانات...', noAccountsConnected: 'لا توجد حسابات متصلة', downloadedFiles: 'تم تنزيل {count} ملفات', downloadError: 'خطأ في التنزيل', connectBankTitle: 'ربط بنك', autoDetect: 'اكتشاف تلقائي', orManually: 'أو يدويًا', unitedStates: 'الولايات المتحدة', back: 'رجوع', selectInstitution: 'اختر مؤسسة مالية', noInstitutions: 'لا توجد مؤسسات', refresh: 'تحديث', downloadFiles: 'تنزيل الملفات' }, captions: { guidesRight1: 'خزانة أدراج مع', guidesRight2: 'أدلة ومقاطع فيديو', guidesLeft: 'أدراج الكنوز...', registerRight1: 'تسجيل سريع', registerRight2: '…في الطريق إلى مجموعة من المفاجآت', personalDefaultRight: 'بيانات شخصية أساسية، من النظام', personalDefaultLeft: 'خطة نشطة. إمكانية تغيير الخطة', personalPlanRight: 'عند اختيار الخطة ستظهر المدة والسعر', personalPlanLeft1: 'يجب الضغط', personalPlanLeft2: 'على تحديث', personalPlanLeft3: 'عند الانتهاء من الاختيار', feedbackAboveButton: 'كل نموذج جديد مخصص لرسالة واحدة ورد واحد. انظر زر رسالة جديدة', updatesWord1: 'إصدارات', updatesWord2: 'البرمجيات', updatesWord3: 'لمكونات', updatesWord4: 'المشروع', remindersRight1: 'خدمة التذكيرات', remindersRight2: 'تقويم الأحداث المهمة', remindersLeft1: 'تواريخ الخطة النشطة', remindersLeft2: 'إمكانية إضافة تواريخ', remindersLeft3: 'تذكير خاصة' } },
+    banking: { autoDetectFailed: 'فشل الاكتشاف التلقائي — اختر يدويًا', detectionError: 'خطأ في الاكتشاف', loadBanksError: 'خطأ في تحميل البنوك', plaidTokenError: 'خطأ في رمز Plaid', bankConnected: 'تم ربط البنك بنجاح', connectionError: 'خطأ في الاتصال', linkOpened: 'تم فتح نافذة الاتصال بـ {name}. بعد الموافقة، ارجع واضغط تحديث.', linkCreateError: 'خطأ في إنشاء رابط البنك', refreshing: 'جارٍ التحديث...', updated: 'تم التحديث', fetchingData: 'جارٍ جلب البيانات...', noAccountsConnected: 'لا توجد حسابات متصلة', downloadedFiles: 'تم تنزيل {count} ملفات', downloadError: 'خطأ في التنزيل', connectBankTitle: 'ربط بنك', autoDetect: 'اكتشاف تلقائي', orManually: 'أو يدويًا', unitedStates: 'الولايات المتحدة', back: 'رجوع', selectInstitution: 'اختر مؤسسة مالية', noInstitutions: 'لا توجد مؤسسات', refresh: 'تحديث', downloadFiles: 'تنزيل الملفات', clickToDownload: 'انقر للتنزيل', decorWorldwide: 'حول العالم', decorPrivateLine1: 'اتصال خاص بالبنك', decorPrivateLine2: 'منفصل عن إدارة ميزانية المنزل' }, captions: { guidesRight1: 'خزانة أدراج مع', guidesRight2: 'أدلة ومقاطع فيديو', guidesLeft: 'أدراج الكنوز...', registerRight1: 'تسجيل سريع', registerRight2: '…في الطريق إلى مجموعة من المفاجآت', personalDefaultRight: 'بيانات شخصية أساسية، من النظام', personalDefaultLeft: 'خطة نشطة. إمكانية تغيير الخطة', personalPlanRight: 'عند اختيار الخطة ستظهر المدة والسعر', personalPlanLeft1: 'يجب الضغط', personalPlanLeft2: 'على تحديث', personalPlanLeft3: 'عند الانتهاء من الاختيار', feedbackAboveButton: 'كل نموذج جديد مخصص لرسالة واحدة ورد واحد. انظر زر رسالة جديدة', updatesWord1: 'إصدارات', updatesWord2: 'البرمجيات', updatesWord3: 'لمكونات', updatesWord4: 'المشروع', remindersRight1: 'خدمة التذكيرات', remindersRight2: 'تقويم الأحداث المهمة', remindersLeft1: 'تواريخ الخطة النشطة', remindersLeft2: 'إمكانية إضافة تواريخ', remindersLeft3: 'تذكير خاصة' } },
   { code: 'zh', flag: 'סין',     name: '中文',      welcome: '欢迎',
     menu: ['反馈','更新','消息','提醒','银行服务','个人页面'],
     card: { title: '家庭预算管理', namePh: '名字 / 姓氏', emailPh: '邮箱 / 电子邮件地址', passPh: '密码', confirmPassPh: '确认密码', register: '注册', login: '登录', update: '更新', line1: '在发布期间', line2: '免费', errName: '请输入您的姓名', errEmail: '请输入有效的电子邮件地址', errPassLen: '密码必须至少包含6个字符', errPassMatch: '密码不匹配', errEmailExists: '该邮箱已注册', cancel: '取消', install: '安装', library: '指南文件', run: '运行', videos: '视频', guide: '指南', ok: '确定', msgAlreadyInstalled: '已安装\n无需重新安装', msgDownloading: '正在下载安装文件', msgInstallComplete: '保存并运行文件\n以完成安装', msgDownloadError: '下载错误\n请重试', mFinance: 'M Finance', msgExists: '该用户已注册\n使用这些信息', msgUpdated: '信息更新成功', msgRegistered: '注册完成', existingCustomer: '现有客户', newCustomer: '新客户', notRecognized: '未找到客户。点击注册', msgSelectPlan: '请在个人页面选择套餐', infoServices: '信息服务', guidesAndVideos: '指南与视频', siteHeaderPrefix: '官方网站：', theWebsite: '网站' },
@@ -112,7 +112,7 @@ const languages = [
     updates: { colDate: '日期与时间', colProduct: '产品', colVersion: '版本', colTitle: '标题', productKeyClick: 'KeyClick 网站', productMFinance: 'M Finance 家庭预算' },
     reminders: { loginRequired: '需要登录才能查看提醒', titlePh: '提醒标题', timePh: '时间', add: '+ 添加', noReminders: '暂无提醒' },
     guides: { overview: '概述', userGuide: '用户指南', financeOverviewTitle: '什么是 M Finance', financeOverviewDesc: '家庭预算管理简介 — 账户、交易、分类和预测，以及适用对象。', financeGuideTitle: '分步使用说明', financeGuideDesc: '附截图的图文指南：安装、连接账户、分类和报表。', financeVideosTitle: '简短教程', financeVideosDesc: '家庭预算管理每项主要功能的简短视频教程。', siteOverviewTitle: '网站提供的内容', siteOverviewDesc: 'KeyClick 平台简介 — 产品、服务与客户关系。', siteGuideTitle: '注册与导航', siteGuideDesc: '如何注册、登录并在网站上找到每项服务。', siteVideosTitle: '网站演示', siteVideosDesc: '网站主要功能的简短录制演示。' },
-    banking: { autoDetectFailed: '自动检测失败 — 请手动选择', detectionError: '检测错误', loadBanksError: '加载银行时出错', plaidTokenError: 'Plaid 令牌错误', bankConnected: '银行已连接', connectionError: '连接错误', linkOpened: '已打开与{name}的连接窗口。批准后请返回并点击刷新。', linkCreateError: '创建银行链接时出错', refreshing: '正在刷新...', updated: '已更新', fetchingData: '正在获取数据...', noAccountsConnected: '没有已连接的账户', downloadedFiles: '已下载 {count} 个文件', downloadError: '下载错误', connectBankTitle: '连接银行', autoDetect: '自动检测', orManually: '或手动选择', unitedStates: '美国', back: '返回', selectInstitution: '选择银行', noInstitutions: '没有银行', refresh: '刷新', downloadFiles: '下载文件' }, captions: { guidesRight1: '装满指南和视频', guidesRight2: '的抽屉柜', guidesLeft: '百宝抽屉...', registerRight1: '简短注册', registerRight2: '开启多样惊喜之旅...', personalDefaultRight: '来自系统的基本个人资料', personalDefaultLeft: '当前有效方案。可更改方案', personalPlanRight: '选择方案后将显示期限和价格', personalPlanLeft1: '选择完成后', personalPlanLeft2: '请点击', personalPlanLeft3: '「更新」', feedbackAboveButton: '每份新表单对应一条留言和一条回复。请查看「新留言」按钮', updatesWord1: '项目', updatesWord2: '组件', updatesWord3: '软件', updatesWord4: '版本', remindersRight1: '提醒服务', remindersRight2: '重要事项日历', remindersLeft1: '当前方案的日期', remindersLeft2: '可添加个人', remindersLeft3: '提醒日期' } },
+    banking: { autoDetectFailed: '自动检测失败 — 请手动选择', detectionError: '检测错误', loadBanksError: '加载银行时出错', plaidTokenError: 'Plaid 令牌错误', bankConnected: '银行已连接', connectionError: '连接错误', linkOpened: '已打开与{name}的连接窗口。批准后请返回并点击刷新。', linkCreateError: '创建银行链接时出错', refreshing: '正在刷新...', updated: '已更新', fetchingData: '正在获取数据...', noAccountsConnected: '没有已连接的账户', downloadedFiles: '已下载 {count} 个文件', downloadError: '下载错误', connectBankTitle: '连接银行', autoDetect: '自动检测', orManually: '或手动选择', unitedStates: '美国', back: '返回', selectInstitution: '选择银行', noInstitutions: '没有银行', refresh: '刷新', downloadFiles: '下载文件', clickToDownload: '点击下载', decorWorldwide: '环游世界', decorPrivateLine1: '与银行的私人连接', decorPrivateLine2: '与家庭预算管理无关' }, captions: { guidesRight1: '装满指南和视频', guidesRight2: '的抽屉柜', guidesLeft: '百宝抽屉...', registerRight1: '简短注册', registerRight2: '开启多样惊喜之旅...', personalDefaultRight: '来自系统的基本个人资料', personalDefaultLeft: '当前有效方案。可更改方案', personalPlanRight: '选择方案后将显示期限和价格', personalPlanLeft1: '选择完成后', personalPlanLeft2: '请点击', personalPlanLeft3: '「更新」', feedbackAboveButton: '每份新表单对应一条留言和一条回复。请查看「新留言」按钮', updatesWord1: '项目', updatesWord2: '组件', updatesWord3: '软件', updatesWord4: '版本', remindersRight1: '提醒服务', remindersRight2: '重要事项日历', remindersLeft1: '当前方案的日期', remindersLeft2: '可添加个人', remindersLeft3: '提醒日期' } },
   { code: 'it', flag: 'איטליה',  name: 'Italiano', welcome: 'Benvenuto',
     menu: ['Feedback','Aggiornamenti','Messaggi','Promemoria','Servizi bancari','Pagina personale'],
     card: { title: 'Gestione del budget familiare', namePh: 'Nome / Cognome', emailPh: 'Email / Indirizzo email', passPh: 'Password', confirmPassPh: 'Conferma password', register: 'Registrati', login: 'Accedi', update: 'Aggiorna', line1: 'Durante il periodo di lancio', line2: 'Gratis', errName: 'Inserisci il tuo nome', errEmail: 'Inserisci un indirizzo email valido', errPassLen: 'La password deve contenere almeno 6 caratteri', errPassMatch: 'Le password non corrispondono', errEmailExists: 'Email già registrata', cancel: 'Annulla', install: 'Installa', library: 'File guida', run: 'Avvia', videos: 'Video', guide: 'Guida', ok: 'OK', msgAlreadyInstalled: 'Già installato\nNessuna reinstallazione necessaria', msgDownloading: 'Download del file di installazione', msgInstallComplete: 'Salva ed esegui il file\nper completare l\'installazione', msgDownloadError: 'Errore di download\nRiprova', mFinance: 'M Finance', msgExists: 'Utente già registrato\ncon questi dati', msgUpdated: 'Dati aggiornati con successo', msgRegistered: 'Registrazione completata', existingCustomer: 'Cliente esistente', newCustomer: 'Nuovo cliente', notRecognized: 'Cliente non trovato. Clicca per registrarti', msgSelectPlan: 'Seleziona un piano nella tua pagina personale', infoServices: 'Servizi informativi', guidesAndVideos: 'Guide e Video', siteHeaderPrefix: 'Il sito web di', theWebsite: 'Il Sito' },
@@ -124,7 +124,7 @@ const languages = [
     updates: { colDate: 'Data e ora', colProduct: 'Prodotto', colVersion: 'Versione', colTitle: 'Titolo', productKeyClick: 'KeyClick Sito web', productMFinance: 'M Finance Gestione budget' },
     reminders: { loginRequired: 'Accesso richiesto per i promemoria', titlePh: 'Titolo promemoria', timePh: 'Ora', add: '+ Aggiungi', noReminders: 'Nessun promemoria' },
     guides: { overview: 'Descrizione generale', userGuide: 'Guida utente', financeOverviewTitle: 'Panoramica di M Finance', financeOverviewDesc: 'Una breve panoramica della gestione del bilancio familiare — conti, transazioni, categorie e previsioni, e a chi è destinata.', financeGuideTitle: 'Utilizzo passo dopo passo', financeGuideDesc: "Una guida scritta con screenshot: installazione, collegamento dei conti, categorizzazione e report.", financeVideosTitle: 'Brevi tutorial', financeVideosDesc: 'Brevi video tutorial per ogni funzione principale della gestione del bilancio familiare.', siteOverviewTitle: 'Cosa offre il sito', siteOverviewDesc: 'Un breve tour della piattaforma KeyClick — prodotti, servizi e relazioni con i clienti.', siteGuideTitle: 'Registrazione e navigazione', siteGuideDesc: 'Come registrarsi, accedere e trovare ogni servizio sul sito.', siteVideosTitle: 'Demo del sito', siteVideosDesc: 'Brevi demo registrate delle principali funzionalità del sito.' },
-    banking: { autoDetectFailed: 'Rilevamento automatico fallito — scegli manualmente', detectionError: 'Errore di rilevamento', loadBanksError: 'Errore nel caricamento delle banche', plaidTokenError: 'Errore token Plaid', bankConnected: 'Banca collegata', connectionError: 'Errore di connessione', linkOpened: 'È stata aperta una finestra di collegamento per {name}. Dopo aver approvato, torna e clicca su aggiorna.', linkCreateError: 'Errore nella creazione del collegamento bancario', refreshing: 'Aggiornamento...', updated: 'Aggiornato', fetchingData: 'Recupero dati...', noAccountsConnected: 'Nessun conto collegato', downloadedFiles: '{count} file scaricati', downloadError: 'Errore di download', connectBankTitle: 'Collega banca', autoDetect: 'Rilevamento automatico', orManually: 'o manualmente', unitedStates: 'Stati Uniti', back: 'Indietro', selectInstitution: 'Seleziona banca', noInstitutions: 'Nessuna banca', refresh: 'Aggiorna', downloadFiles: 'Scarica file' }, captions: { guidesRight1: 'Un armadio a cassetti', guidesRight2: 'con guide e video', guidesLeft: 'Cassetti del tesoro...', registerRight1: 'Una registrazione rapida', registerRight2: 'verso tante sorprese...', personalDefaultRight: 'Dati personali di base, dal sistema', personalDefaultLeft: 'Piano attivo. Possibilità di cambiare piano', personalPlanRight: 'Selezionando il piano verranno mostrati il periodo e il prezzo', personalPlanLeft1: 'Fare clic su', personalPlanLeft2: '«Aggiorna»', personalPlanLeft3: 'al termine della scelta', feedbackAboveButton: 'Ogni nuovo modulo è per un messaggio e una risposta. Vedi il pulsante «Nuovo messaggio»', updatesWord1: 'Versioni', updatesWord2: 'software', updatesWord3: 'dei componenti', updatesWord4: 'del progetto', remindersRight1: 'Servizio promemoria', remindersRight2: 'Calendario degli eventi importanti', remindersLeft1: 'Date del piano attivo', remindersLeft2: 'Possibilità di aggiungere date', remindersLeft3: 'di promemoria privati' } },
+    banking: { autoDetectFailed: 'Rilevamento automatico fallito — scegli manualmente', detectionError: 'Errore di rilevamento', loadBanksError: 'Errore nel caricamento delle banche', plaidTokenError: 'Errore token Plaid', bankConnected: 'Banca collegata', connectionError: 'Errore di connessione', linkOpened: 'È stata aperta una finestra di collegamento per {name}. Dopo aver approvato, torna e clicca su aggiorna.', linkCreateError: 'Errore nella creazione del collegamento bancario', refreshing: 'Aggiornamento...', updated: 'Aggiornato', fetchingData: 'Recupero dati...', noAccountsConnected: 'Nessun conto collegato', downloadedFiles: '{count} file scaricati', downloadError: 'Errore di download', connectBankTitle: 'Collega banca', autoDetect: 'Rilevamento automatico', orManually: 'o manualmente', unitedStates: 'Stati Uniti', back: 'Indietro', selectInstitution: 'Seleziona banca', noInstitutions: 'Nessuna banca', refresh: 'Aggiorna', downloadFiles: 'Scarica file', clickToDownload: 'Clicca per scaricare', decorWorldwide: 'In giro per il mondo', decorPrivateLine1: 'Connessione privata alla banca', decorPrivateLine2: 'Scollegato dalla gestione del budget domestico' }, captions: { guidesRight1: 'Un armadio a cassetti', guidesRight2: 'con guide e video', guidesLeft: 'Cassetti del tesoro...', registerRight1: 'Una registrazione rapida', registerRight2: 'verso tante sorprese...', personalDefaultRight: 'Dati personali di base, dal sistema', personalDefaultLeft: 'Piano attivo. Possibilità di cambiare piano', personalPlanRight: 'Selezionando il piano verranno mostrati il periodo e il prezzo', personalPlanLeft1: 'Fare clic su', personalPlanLeft2: '«Aggiorna»', personalPlanLeft3: 'al termine della scelta', feedbackAboveButton: 'Ogni nuovo modulo è per un messaggio e una risposta. Vedi il pulsante «Nuovo messaggio»', updatesWord1: 'Versioni', updatesWord2: 'software', updatesWord3: 'dei componenti', updatesWord4: 'del progetto', remindersRight1: 'Servizio promemoria', remindersRight2: 'Calendario degli eventi importanti', remindersLeft1: 'Date del piano attivo', remindersLeft2: 'Possibilità di aggiungere date', remindersLeft3: 'di promemoria privati' } },
   { code: 'hi', flag: 'הודו',    name: 'हिंदी',     welcome: 'स्वागत है',
     menu: ['फीडबैक','अपडेट','संदेश','अनुस्मारक','बैंकिंग सेवाएं','व्यक्तिगत पृष्ठ'],
     card: { title: 'घरेलू बजट प्रबंधन', namePh: 'नाम / उपनाम', emailPh: 'ईमेल / ईमेल पता', passPh: 'पासवर्ड', confirmPassPh: 'पासवर्ड की पुष्टि करें', register: 'पंजीकरण', login: 'लॉग इन', update: 'अपडेट', line1: 'लॉन्च अवधि के दौरान', line2: 'मुफ्त', errName: 'कृपया अपना नाम दर्ज करें', errEmail: 'कृपया एक मान्य ईमेल दर्ज करें', errPassLen: 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए', errPassMatch: 'पासवर्ड मेल नहीं खाते', errEmailExists: 'ईमेल पहले से पंजीकृत है', cancel: 'रद्द करें', install: 'इंस्टॉल करें', library: 'गाइड फ़ाइलें', run: 'चलाएं', videos: 'वीडियो', guide: 'मार्गदर्शिका', ok: 'ठीक है', msgAlreadyInstalled: 'पहले से इंस्टॉल है\nपुनः इंस्टॉल की आवश्यकता नहीं', msgDownloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है', msgInstallComplete: 'फ़ाइल सहेजें और चलाएं\nइंस्टॉलेशन पूरा करने के लिए', msgDownloadError: 'डाउनलोड त्रुटि\nपुनः प्रयास करें', mFinance: 'M Finance', msgExists: 'यह उपयोगकर्ता पहले से पंजीकृत है\nइन विवरणों के साथ', msgUpdated: 'विवरण सफलतापूर्वक अपडेट किए गए', msgRegistered: 'पंजीकरण पूरा हो गया', existingCustomer: 'मौजूदा ग्राहक', newCustomer: 'नया ग्राहक', notRecognized: 'ग्राहक नहीं मिला। पंजीकरण के लिए क्लिक करें', msgSelectPlan: 'कृपया अपने व्यक्तिगत पृष्ठ पर एक योजना चुनें', infoServices: 'सूचना सेवाएं', guidesAndVideos: 'गाइड और वीडियो', siteHeaderPrefix: 'आधिकारिक वेबसाइट:', theWebsite: 'वेबसाइट' },
@@ -136,7 +136,7 @@ const languages = [
     updates: { colDate: 'दिनांक और समय', colProduct: 'उत्पाद', colVersion: 'संस्करण', colTitle: 'शीर्षक', productKeyClick: 'KeyClick वेबसाइट', productMFinance: 'M Finance घरेलू बजट' },
     reminders: { loginRequired: 'अनुस्मारक देखने के लिए लॉगिन आवश्यक है', titlePh: 'अनुस्मारक शीर्षक', timePh: 'समय', add: '+ जोड़ें', noReminders: 'कोई अनुस्मारक नहीं' },
     guides: { overview: 'सामान्य विवरण', userGuide: 'उपयोगकर्ता गाइड', financeOverviewTitle: 'M Finance क्या है', financeOverviewDesc: 'घरेलू बजट प्रबंधन का संक्षिप्त विवरण — खाते, लेन-देन, श्रेणियां और पूर्वानुमान, और यह किसके लिए है।', financeGuideTitle: 'चरण-दर-चरण उपयोग', financeGuideDesc: 'स्क्रीनशॉट के साथ लिखित गाइड: इंस्टॉलेशन, खाते जोड़ना, वर्गीकरण और रिपोर्ट।', financeVideosTitle: 'संक्षिप्त ट्यूटोरियल', financeVideosDesc: 'घरेलू बजट प्रबंधन की हर मुख्य विशेषता के लिए संक्षिप्त वीडियो ट्यूटोरियल।', siteOverviewTitle: 'वेबसाइट क्या प्रदान करती है', siteOverviewDesc: 'KeyClick प्लेटफ़ॉर्म का संक्षिप्त भ्रमण — उत्पाद, सेवाएं और ग्राहक संबंध।', siteGuideTitle: 'पंजीकरण और नेविगेशन', siteGuideDesc: 'कैसे पंजीकरण करें, लॉगिन करें और वेबसाइट पर हर सेवा खोजें।', siteVideosTitle: 'वेबसाइट डेमो', siteVideosDesc: 'वेबसाइट की मुख्य विशेषताओं के संक्षिप्त रिकॉर्ड किए गए डेमो।' },
-    banking: { autoDetectFailed: 'स्वचालित पहचान विफल — मैन्युअल रूप से चुनें', detectionError: 'पहचान त्रुटि', loadBanksError: 'बैंक लोड करने में त्रुटि', plaidTokenError: 'Plaid टोकन त्रुटि', bankConnected: 'बैंक सफलतापूर्वक जुड़ा', connectionError: 'कनेक्शन त्रुटि', linkOpened: '{name} के लिए कनेक्शन विंडो खुली। स्वीकृति के बाद वापस आकर रिफ्रेश पर क्लिक करें।', linkCreateError: 'बैंक लिंक बनाने में त्रुटि', refreshing: 'रीफ्रेश हो रहा है...', updated: 'अपडेट हो गया', fetchingData: 'डेटा प्राप्त हो रहा है...', noAccountsConnected: 'कोई खाता कनेक्ट नहीं है', downloadedFiles: '{count} फ़ाइलें डाउनलोड हुईं', downloadError: 'डाउनलोड त्रुटि', connectBankTitle: 'बैंक कनेक्ट करें', autoDetect: 'स्वचालित पहचान', orManually: 'या मैन्युअल रूप से', unitedStates: 'संयुक्त राज्य अमेरिका', back: 'वापस', selectInstitution: 'बैंक चुनें', noInstitutions: 'कोई बैंक नहीं', refresh: 'रीफ्रेश', downloadFiles: 'फ़ाइलें डाउनलोड करें' }, captions: { guidesRight1: 'गाइड और वीडियो वाली', guidesRight2: 'दराजों की अलमारी', guidesLeft: 'खज़ाने की दराजें...', registerRight1: 'एक संक्षिप्त पंजीकरण', registerRight2: 'कई आश्चर्यों की ओर...', personalDefaultRight: 'सिस्टम से बुनियादी व्यक्तिगत विवरण', personalDefaultLeft: 'सक्रिय योजना। योजना बदलने का विकल्प', personalPlanRight: 'योजना चुनने पर अवधि और मूल्य दिखाई देगा', personalPlanLeft1: 'चयन पूरा होने पर', personalPlanLeft2: "'अपडेट' पर", personalPlanLeft3: 'क्लिक करें', feedbackAboveButton: "हर नया फॉर्म एक संदेश और एक उत्तर के लिए है। 'नया संदेश' बटन देखें", updatesWord1: 'परियोजना के', updatesWord2: 'घटकों के', updatesWord3: 'सॉफ़्टवेयर', updatesWord4: 'संस्करण', remindersRight1: 'रिमाइंडर सेवा', remindersRight2: 'महत्वपूर्ण घटनाओं की डायरी', remindersLeft1: 'सक्रिय योजना की तिथियां', remindersLeft2: 'निजी रिमाइंडर तिथियां', remindersLeft3: 'जोड़ने का विकल्प' } },
+    banking: { autoDetectFailed: 'स्वचालित पहचान विफल — मैन्युअल रूप से चुनें', detectionError: 'पहचान त्रुटि', loadBanksError: 'बैंक लोड करने में त्रुटि', plaidTokenError: 'Plaid टोकन त्रुटि', bankConnected: 'बैंक सफलतापूर्वक जुड़ा', connectionError: 'कनेक्शन त्रुटि', linkOpened: '{name} के लिए कनेक्शन विंडो खुली। स्वीकृति के बाद वापस आकर रिफ्रेश पर क्लिक करें।', linkCreateError: 'बैंक लिंक बनाने में त्रुटि', refreshing: 'रीफ्रेश हो रहा है...', updated: 'अपडेट हो गया', fetchingData: 'डेटा प्राप्त हो रहा है...', noAccountsConnected: 'कोई खाता कनेक्ट नहीं है', downloadedFiles: '{count} फ़ाइलें डाउनलोड हुईं', downloadError: 'डाउनलोड त्रुटि', connectBankTitle: 'बैंक कनेक्ट करें', autoDetect: 'स्वचालित पहचान', orManually: 'या मैन्युअल रूप से', unitedStates: 'संयुक्त राज्य अमेरिका', back: 'वापस', selectInstitution: 'बैंक चुनें', noInstitutions: 'कोई बैंक नहीं', refresh: 'रीफ्रेश', downloadFiles: 'फ़ाइलें डाउनलोड करें', clickToDownload: 'डाउनलोड करने के लिए क्लिक करें', decorWorldwide: 'दुनिया भर में', decorPrivateLine1: 'बैंक से निजी कनेक्शन', decorPrivateLine2: 'घरेलू बजट प्रबंधन से डिस्कनेक्ट' }, captions: { guidesRight1: 'गाइड और वीडियो वाली', guidesRight2: 'दराजों की अलमारी', guidesLeft: 'खज़ाने की दराजें...', registerRight1: 'एक संक्षिप्त पंजीकरण', registerRight2: 'कई आश्चर्यों की ओर...', personalDefaultRight: 'सिस्टम से बुनियादी व्यक्तिगत विवरण', personalDefaultLeft: 'सक्रिय योजना। योजना बदलने का विकल्प', personalPlanRight: 'योजना चुनने पर अवधि और मूल्य दिखाई देगा', personalPlanLeft1: 'चयन पूरा होने पर', personalPlanLeft2: "'अपडेट' पर", personalPlanLeft3: 'क्लिक करें', feedbackAboveButton: "हर नया फॉर्म एक संदेश और एक उत्तर के लिए है। 'नया संदेश' बटन देखें", updatesWord1: 'परियोजना के', updatesWord2: 'घटकों के', updatesWord3: 'सॉफ़्टवेयर', updatesWord4: 'संस्करण', remindersRight1: 'रिमाइंडर सेवा', remindersRight2: 'महत्वपूर्ण घटनाओं की डायरी', remindersLeft1: 'सक्रिय योजना की तिथियां', remindersLeft2: 'निजी रिमाइंडर तिथियां', remindersLeft3: 'जोड़ने का विकल्प' } },
 ]
 
 const GRANITE_BG: React.CSSProperties = {
@@ -4091,6 +4091,39 @@ function downloadCSV(content: string, filename: string) {
   URL.revokeObjectURL(url)
 }
 
+function BankingLayout({ loading, selectedCountry, hasConnections, onSelectCountry, onDownload, onRefresh, b, children }: {
+  loading: boolean; selectedCountry: string; hasConnections: boolean
+  onSelectCountry: (country: string) => void; onDownload: () => void; onRefresh: () => void
+  b: typeof languages[0]['banking']
+  children: React.ReactNode
+}) {
+  const asideBtn: React.CSSProperties = {
+    background: 'none', border: '1px solid #cc9900', borderRadius: 4,
+    color: '#fff', padding: '7px 4px', cursor: 'pointer',
+    fontSize: 20, fontWeight: 'bold', textAlign: 'center', lineHeight: 1.3,
+  }
+  const contentRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (contentRef.current) contentRef.current.scrollLeft = contentRef.current.scrollWidth
+  })
+  return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', overflow: 'hidden' }}>
+      <div ref={contentRef} style={{ position: 'relative', flex: 1, overflow: 'auto', padding: '14px 18px', ...GRANITE_BG, direction: 'rtl', boxSizing: 'border-box' }}>
+        {children}
+      </div>
+
+      {/* סרגל בקרה */}
+      <aside style={{ width: '110px', height: '50%', alignSelf: 'center', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: '10px 2px 10px 0', borderRadius: '10px 0 0 10px', overflow: 'hidden', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'stretch', gap: 20, padding: '14px 6px', width: '100%', height: '100%', boxSizing: 'border-box' }}>
+          <button style={asideBtn} disabled={loading} onClick={() => onSelectCountry(selectedCountry)}>{b.selectInstitution}</button>
+          <button style={asideBtn} disabled={loading} onClick={onDownload}>{b.downloadFiles}</button>
+          {hasConnections && <button style={asideBtn} disabled={loading} onClick={onRefresh}>רענן</button>}
+        </div>
+      </aside>
+    </div>
+  )
+}
+
 function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof languages[0] }) {
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   const [connections, setConnections] = useState<BankConnection[]>([])
@@ -4098,8 +4131,10 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   const [txs, setTxs]                 = useState<BankTx[]>([])
   const [selAccount, setSelAccount]   = useState<BankAccount | null>(null)
   const [institutions, setInstitutions] = useState<{ id: string; name: string; logo?: string }[]>([])
-  const [step, setStep]               = useState<'main' | 'region' | 'institutions' | 'txs'>('main')
+  const [step, setStep]               = useState<'main' | 'institutions' | 'download' | 'txs'>('main')
   const [selectedCountry, setSelectedCountry] = useState('DE')
+  const [selectedInstitutionName, setSelectedInstitutionName] = useState('')
+  const [selectedInstitutionCountry, setSelectedInstitutionCountry] = useState('')
   const [loading, setLoading]         = useState(false)
   const [msg, setMsg]                 = useState('')
   const [msgIsError, setMsgIsError]   = useState(false)
@@ -4121,9 +4156,15 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
     } catch { /* ignore */ } finally { setLoading(false) }
   }
 
-  function handleConnectBank() {
-    setMsg('')
-    setStep('region')
+  async function loadInstitutions(country: string) {
+    setSelectedCountry(country)
+    setLoading(true); setMsg('')
+    try {
+      const inst = await fetch(`/api/banking/nordigen/institutions?country=${country}`).then(r => r.json())
+      setInstitutions(Array.isArray(inst) ? inst : [])
+      setStep('institutions')
+    } catch { setError(b.loadBanksError) }
+    finally { setLoading(false) }
   }
 
   async function handleAutoDetect() {
@@ -4134,11 +4175,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         body: JSON.stringify({ language: lang.code }),
       }).then(r => r.json())
       if (dp.provider === 'nordigen') {
-        const country = dp.country ?? 'DE'
-        setSelectedCountry(country)
-        const inst = await fetch(`/api/banking/nordigen/institutions?country=${country}`).then(r => r.json())
-        setInstitutions(Array.isArray(inst) ? inst : [])
-        setStep('institutions')
+        await loadInstitutions(dp.country ?? 'DE')
       } else if (dp.provider === 'plaid') {
         await handleSelectRegion('plaid')
       } else {
@@ -4150,13 +4187,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
 
   async function handleSelectRegion(region: 'nordigen' | 'plaid') {
     if (region === 'nordigen') {
-      setLoading(true); setMsg('')
-      try {
-        const inst = await fetch(`/api/banking/nordigen/institutions?country=${selectedCountry}`).then(r => r.json())
-        setInstitutions(Array.isArray(inst) ? inst : [])
-        setStep('institutions')
-      } catch { setError(b.loadBanksError) }
-      finally { setLoading(false) }
+      await loadInstitutions(selectedCountry)
     } else {
       if (!user) return
       setLoading(true); setMsg('')
@@ -4198,21 +4229,10 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
     }
   }
 
-  async function handleSelectInstitution(instId: string, instName: string) {
+  function handleSelectInstitution(instId: string, instName: string, countryFile?: string) {
     if (!user) return
-    setLoading(true); setMsg('')
-    try {
-      const r = await fetch('/api/banking/nordigen/connect', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ institutionId: instId, userId: user.id }),
-      })
-      const d = await r.json()
-      if (d.link) {
-        window.open(d.link, '_blank', 'width=600,height=700')
-        setInfo(b.linkOpened.replace('{name}', instName))
-        setStep('main')
-      } else { setError(b.linkCreateError) }
-    } catch { setError(b.connectionError) } finally { setLoading(false) }
+    setSelectedInstitutionName(instName)
+    if (countryFile) setSelectedInstitutionCountry(countryFile)
   }
 
   async function handleRefresh() {
@@ -4290,67 +4310,323 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
 
   const hasConnections = connections.length > 0
 
-  const EU_CODES = ['DE','FR','GB','IT','ES','NL','BE','AT','CH','SE','NO','DK','FI','PL','PT','IE']
-  let countryNames: Intl.DisplayNames | null = null
-  try { countryNames = new Intl.DisplayNames([lang.code], { type: 'region' }) } catch { countryNames = null }
-  const EU_COUNTRIES = EU_CODES.map(code => ({ code, name: countryNames?.of(code) ?? code }))
-  const unitedStatesName = countryNames?.of('US') ?? b.unitedStates
+  const BROWN = '#6b4423'
 
-  if (step === 'region') return (
-    <div style={{ width: '100%', height: '100%', ...GRANITE_BG, padding: '12px 14px', direction: dir as 'rtl' | 'ltr' }}>
-      <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 7, alignItems: 'flex-end' }}>
-        <button onClick={() => setStep('main')} style={{ background: 'none', border: 'none', color: '#003399', cursor: 'pointer', fontSize: 18, padding: 0, alignSelf: 'flex-end' }}>← {b.back}</button>
-        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{b.connectBankTitle}</div>
+  type FlagCountry = { file: string; iso?: string }
 
-        <button onClick={handleAutoDetect} disabled={loading}
-          style={{ background: '#eef2ff', border: '1px solid #99aadd', borderRadius: 6, padding: '6px 14px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, color: '#003399', fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
-          🔍 {b.autoDetect}
-        </button>
+  const ALL_COUNTRIES: FlagCountry[] = [
+    { file: 'בריטניה', iso: 'GB' },
+    { file: 'גרמניה', iso: 'DE' },
+    { file: 'צרפת', iso: 'FR' },
+    { file: 'ספרד', iso: 'ES' },
+    { file: 'איטליה', iso: 'IT' },
+    { file: 'רוסיה', iso: 'RU' },
+    { file: 'ארצות-הברית' },
+    { file: 'יפן' },
+    { file: 'סין' },
+    { file: 'הודו' },
+    { file: 'ישראל' },
+    { file: 'סעודיה' },
+  ]
 
-        <span style={{ color: '#aaa', fontSize: 18 }}>— {b.orManually} —</span>
+  function handleCountryClick(c: FlagCountry) {
+    if (c.iso) loadInstitutions(c.iso)
+    else if (c.file === 'ארצות-הברית') handleSelectRegion('plaid')
+    else setError('לא נתמך כרגע')
+  }
 
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
-          <button onClick={() => handleSelectRegion('nordigen')} disabled={loading}
-            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
-          <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}
-            style={{ padding: '5px 8px', borderRadius: 5, border: '1px solid #ccc', fontSize: 18, direction: 'ltr' }}>
-            {EU_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-          </select>
-          <span style={{ fontSize: 18, color: '#333' }}>🇪🇺</span>
-        </div>
+  const COUNTRY_ISO: Record<string, string> = {
+    'בריטניה': 'GB', 'גרמניה': 'DE', 'צרפת': 'FR', 'ספרד': 'ES', 'איטליה': 'IT', 'רוסיה': 'RU',
+    'ארצות-הברית': 'US', 'יפן': 'JP', 'סין': 'CN', 'הודו': 'IN', 'ישראל': 'IL', 'סעודיה': 'SA',
+  }
+  function countryName(file: string): string {
+    const iso = COUNTRY_ISO[file]
+    if (!iso) return file.replace('-', ' ')
+    try { return new Intl.DisplayNames([lang.code], { type: 'region' }).of(iso) ?? file.replace('-', ' ') }
+    catch { return file.replace('-', ' ') }
+  }
 
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
-          <button onClick={() => handleSelectRegion('plaid')} disabled={loading}
-            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
-          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {unitedStatesName}</span>
-        </div>
+  const BANKS: Record<string, string[]> = {
+    'בריטניה': ['Barclays', 'HSBC', 'Lloyds', 'NatWest', 'Santander UK'],
+    'רוסיה': ['Sberbank', 'VTB', 'Gazprombank', 'Alfa-Bank'],
+    'ארצות-הברית': ['Chase', 'Bank of America', 'Wells Fargo', 'Citibank', 'Goldman Sachs', 'Morgan Stanley'],
+    'גרמניה': ['Deutsche Bank', 'Commerzbank', 'DZ Bank', 'KfW'],
+    'צרפת': ['BNP Paribas', 'Société Générale', 'Crédit Agricole', 'La Banque Postale', 'Crédit Mutuel'],
+    'ספרד': ['Santander', 'BBVA', 'CaixaBank', 'Bankinter'],
+    'איטליה': ['UniCredit', 'Intesa Sanpaolo', 'Banco BPM', 'BPER Banca'],
+    'יפן': ['MUFG', 'Mizuho', 'SMBC', 'Japan Post Bank'],
+    'סין': ['ICBC', 'Bank of China', 'CCB', 'ABC', 'Bank of Communications'],
+    'הודו': ['SBI', 'HDFC', 'ICICI', 'Axis Bank', 'Kotak Mahindra'],
+    'ישראל': ['בנק הפועלים', 'בנק לאומי', 'בנק דיסקונט', 'בנק מזרחי', 'הבנק הבינלאומי', 'יהב', 'ברקליס', 'ירושלים', 'ישראכרט', 'קאל', 'מקס', 'אמריקן אקספרס'],
+    'סעודיה': ['Al Rajhi Bank', 'SNB', 'Riyad Bank', 'Banque Saudi Fransi'],
+  }
 
-        {msg && <div style={{ color: msgIsError ? '#cc0000' : '#006600', fontSize: 18 }}>{msg}</div>}
-        {loading && <div style={{ color: '#aaa', fontSize: 18 }}>...</div>}
-      </div>
-    </div>
-  )
+  const ISRAEL_BANK_LATIN: Record<string, string> = {
+    'בנק הפועלים': 'Bank Hapoalim', 'בנק לאומי': 'Bank Leumi', 'בנק דיסקונט': 'Discount Bank',
+    'בנק מזרחי': 'Mizrahi Bank', 'הבנק הבינלאומי': 'The International Bank', 'יהב': 'Bank Yahav',
+    'ברקליס': 'Barclays', 'ירושלים': 'Bank of Jerusalem', 'ישראכרט': 'Isracard',
+    'קאל': 'Cal', 'מקס': 'Max', 'אמריקן אקספרס': 'American Express',
+  }
+  function bankName(bank: string): string {
+    return lang.code === 'he' ? bank : (ISRAEL_BANK_LATIN[bank] ?? bank)
+  }
+
+  function BankLabels({ file, bottomStart, left }: { file: string; bottomStart: number; left: number }) {
+    return (
+      <>
+        {BANKS[file].map((bank, i) => (
+          <button key={`${file}-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, file)} disabled={loading}
+            style={{ position: 'absolute', bottom: bottomStart + i * 46 - 6, left: left + 24, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+            {bankName(bank)}
+          </button>
+        ))}
+      </>
+    )
+  }
+
+  function Ticks({ file, bottomStart, left }: { file: string; bottomStart: number; left: number }) {
+    return (
+      <>
+        {BANKS[file].map((_, i) => (
+          <div key={`${file}-tick-${i}`} style={{ position: 'absolute', bottom: bottomStart + i * 46, left, width: 20, height: 2, background: BROWN }} />
+        ))}
+      </>
+    )
+  }
 
   if (step === 'institutions') return (
-    <div style={{ width: '100%', height: '100%', ...GRANITE_BG, overflowY: 'auto', padding: 24, direction: dir as 'rtl' | 'ltr' }}>
-      <button onClick={() => setStep('main')} style={{ marginBottom: 16, background: '#eee', border: '1px solid #ccc', borderRadius: 6, padding: '6px 14px', cursor: 'pointer', fontSize: 13 }}>← {b.back}</button>
-      <div style={{ fontWeight: 'bold', fontSize: 16, color: '#003399', marginBottom: 12 }}>{b.selectInstitution}</div>
-      {institutions.map(inst => (
-        <div key={inst.id} onClick={() => handleSelectInstitution(inst.id, inst.name)}
-          style={{ padding: '10px 14px', borderBottom: '1px solid #ddd', cursor: 'pointer', fontSize: 14, color: '#222' }}>
-          {inst.name}
+    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections}
+      onSelectCountry={loadInstitutions} onDownload={() => setStep('download')} onRefresh={handleRefresh} b={b}>
+      <PageHeader subtitle={lang.menu[4]} lang={lang} extra={
+        <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px' }}>
+          {b.selectInstitution}
         </div>
-      ))}
-      {institutions.length === 0 && !loading && <div style={{ color: '#aaa', fontSize: 13 }}>{b.noInstitutions}</div>}
-    </div>
+      } />
+      <div style={{ position: 'absolute', top: 50, right: 10, fontFamily: handFont(lang.code), color: 'red', fontSize: 40, fontWeight: 'bold', zIndex: 2, transform: 'rotate(-15deg)' }}>
+        {b.decorWorldwide}
+      </div>
+      <div style={{ position: 'relative', height: '100%', minHeight: 60, minWidth: 1550 }}>
+        {/* ארצות הברית - פינה שמאלית, ראשונה */}
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'ארצות-הברית')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/ארצות-הברית.png`} alt="ארצות הברית" width={28} height={28} />
+          {countryName('ארצות-הברית')}
+        </button>
+
+        {/* קו מארצות הברית - נעצר במוסד האחרון של בריטניה */}
+        <div style={{ position: 'absolute', top: 66, left: 99, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="ארצות-הברית" bottomStart={10} left={99} />
+        <BankLabels file="ארצות-הברית" bottomStart={10} left={99} />
+
+        {/* בריטניה - אחרי ארצות הברית */}
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'בריטניה')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 170, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/בריטניה.png`} alt="בריטניה" width={28} height={28} />
+          {countryName('בריטניה')}
+        </button>
+
+        {/* קו קצר מבריטניה, נשאר למעלה */}
+        <div style={{ position: 'absolute', top: 66, left: 212, height: 218, width: 2, background: BROWN }} />
+        {BANKS['בריטניה'].map((_, i) => (
+          <div key={`gb-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 212, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['בריטניה'].map((bank, i) => (
+          <button key={`gb-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'בריטניה')} disabled={loading}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 236, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+            {bankName(bank)}
+          </button>
+        ))}
+
+        {/* רוסיה - אחרי בריטניה */}
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'רוסיה')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 320, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/רוסיה.png`} alt="רוסיה" width={28} height={28} />
+          {countryName('רוסיה')}
+        </button>
+
+        {/* קו מרוסיה - ממורכז מתחת לתווית, נעצר אחרי המוסד האחרון של רוסיה עצמה */}
+        <div style={{ position: 'absolute', top: 66, left: 360, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="רוסיה" bottomStart={10} left={360} />
+        <BankLabels file="רוסיה" bottomStart={10} left={360} />
+
+        {/* עמודה 2: גרמניה → צרפת → ספרד */}
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'גרמניה')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 390, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/גרמניה.png`} alt="גרמניה" width={28} height={28} />
+          {countryName('גרמניה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 428, height: 184, width: 2, background: BROWN }} />
+        {BANKS['גרמניה'].map((_, i) => (
+          <div key={`de-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 428, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['גרמניה'].map((bank, i) => (
+          <button key={`de-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'גרמניה')} disabled={loading}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 452, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+            {bankName(bank)}
+          </button>
+        ))}
+
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'צרפת')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 520, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/צרפת.png`} alt="צרפת" width={28} height={28} />
+          {countryName('צרפת')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 549, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="צרפת" bottomStart={10} left={549} />
+        <BankLabels file="צרפת" bottomStart={10} left={549} />
+
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'ישראל')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 690, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/ישראל.png`} alt="ישראל" width={28} height={28} />
+          {countryName('ישראל')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 723, height: 554, width: 2, background: BROWN }} />
+        {BANKS['ישראל'].map((_, i) => (
+          <div key={`il-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 723, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['ישראל'].map((bank, i) => (
+          <button key={`il-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'ישראל')} disabled={loading}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 747, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+            {bankName(bank)}
+          </button>
+        ))}
+
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'ספרד')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 820, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/ספרד.png`} alt="ספרד" width={28} height={28} />
+          {countryName('ספרד')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 849, bottom: 536, width: 2, background: BROWN }} />
+        <Ticks file="ספרד" bottomStart={546} left={849} />
+        <BankLabels file="ספרד" bottomStart={546} left={849} />
+
+        {/* עמודה 3: איטליה → יפן → סין */}
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'איטליה')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 950, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/יפן.png`} alt="יפן" width={28} height={28} />
+          {countryName('יפן')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 976, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="יפן" bottomStart={10} left={976} />
+        <BankLabels file="יפן" bottomStart={10} left={976} />
+
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'סעודיה')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 1040, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/סעודיה.png`} alt="סעודיה" width={28} height={28} />
+          {countryName('סעודיה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1078, height: 184, width: 2, background: BROWN }} />
+        {BANKS['סעודיה'].map((_, i) => (
+          <div key={`sa-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 1078, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['סעודיה'].map((bank, i) => (
+          <button key={`sa-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank)} disabled={loading}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 1102, background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+            {bankName(bank)}
+          </button>
+        ))}
+
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'סין')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 1170, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/סין.png`} alt="סין" width={28} height={28} />
+          {countryName('סין')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1196, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="סין" bottomStart={10} left={1196} />
+        <BankLabels file="סין" bottomStart={10} left={1196} />
+
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'איטליה')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 1250, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/איטליה.png`} alt="איטליה" width={28} height={28} />
+          {countryName('איטליה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1288, height: 184, width: 2, background: BROWN }} />
+        {BANKS['איטליה'].map((_, i) => (
+          <div key={`it-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 1288, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['איטליה'].map((bank, i) => (
+          <button key={`it-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank)} disabled={loading}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 1312, background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+            {bankName(bank)}
+          </button>
+        ))}
+
+        {/* עמודה 4: הודו */}
+        <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'הודו')!)} disabled={loading}
+          style={{ position: 'absolute', top: 0, left: 1380, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          <Image src={`/flags/הודו.png`} alt="הודו" width={28} height={28} />
+          {countryName('הודו')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1409, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="הודו" bottomStart={10} left={1409} />
+        <BankLabels file="הודו" bottomStart={10} left={1409} />
+      </div>
+
+      {/* רשת מוסדות */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10, marginTop: 24 }}>
+        {institutions.map(inst => (
+          <div key={inst.id} onClick={() => handleSelectInstitution(inst.id, inst.name)}
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+              background: '#fff', border: '1px solid #ddd', borderRadius: 10, padding: '14px 8px',
+              cursor: 'pointer', textAlign: 'center', minHeight: 90, boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+              transition: 'transform 0.12s, box-shadow 0.12s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 10px rgba(0,51,153,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'none' }}>
+            {inst.logo ? (
+              <img src={inst.logo} alt={inst.name} style={{ width: 36, height: 36, objectFit: 'contain' }} />
+            ) : (
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#eef2ff', color: '#003399', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 15 }}>
+                {inst.name.slice(0, 1)}
+              </div>
+            )}
+            <span style={{ fontSize: 12, color: '#222', lineHeight: 1.3 }}>{inst.name}</span>
+          </div>
+        ))}
+      </div>
+      {loading && <div style={{ color: '#aaa', fontSize: 14, marginTop: 20 }}>...</div>}
+      {msg && <div style={{ color: msgIsError ? '#cc0000' : '#006600', fontSize: 14, marginTop: 14 }}>{msg}</div>}
+    </BankingLayout>
   )
 
-  return (
-    <div style={{ width: '100%', height: '100%', ...GRANITE_BG, overflowY: 'auto', padding: '12px 14px', direction: 'rtl' }}>
-      <PageHeader subtitle={lang.menu[4]} lang={lang} />
+  if (step === 'download') return (
+    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections}
+      onSelectCountry={loadInstitutions} onDownload={() => setStep('download')} onRefresh={handleRefresh} b={b}>
+      <PageHeader subtitle={lang.menu[4]} lang={lang} extra={
+        <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px' }}>
+          {b.downloadFiles}
+        </div>
+      } />
+      <div style={{ position: 'absolute', top: 90, right: 10, fontFamily: handFont(lang.code), color: 'red', fontSize: 30, fontWeight: 'bold', zIndex: 2, transform: 'rotate(-15deg)', textAlign: 'center', lineHeight: 1.6 }}>
+        {b.decorPrivateLine1}<br />{b.decorPrivateLine2}
+      </div>
+      {selectedInstitutionName && selectedInstitutionCountry && (
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 180 }}>
+        <div style={{ transform: 'scale(1.5)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap' }}>
+            <Image src={`/flags/${selectedInstitutionCountry}.png`} alt={selectedInstitutionCountry} width={28} height={28} />
+            {countryName(selectedInstitutionCountry)}
+          </div>
+          {(() => {
+            const halfCount = Math.ceil(BANKS[selectedInstitutionCountry].length / 2)
+            const topIndex = halfCount - 1
+            return (
+              <div style={{ position: 'relative', width: 40, height: halfCount * 46 + 20, marginTop: -4 }}>
+                <div style={{ position: 'absolute', top: 0, left: 14, width: 2, height: halfCount * 46 + 10, background: BROWN }} />
+                {Array.from({ length: halfCount }).map((_, i) => (
+                  <div key={i} style={{ position: 'absolute', bottom: 10 + i * 46, left: 14, width: 20, height: 2, background: BROWN }} />
+                ))}
+                <div style={{ position: 'absolute', bottom: 10 + topIndex * 46 - 6, left: 38, background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+                  {bankName(selectedInstitutionName)}
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+        </div>
+      )}
       <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
-        <div style={{ fontSize: 18, fontWeight: 'bold', color: '#003399' }}>{lang.menu[4]}</div>
-
         {/* חשבונות מחוברים */}
         {hasConnections && (
           <div style={{ fontSize: 14, color: '#333' }}>
@@ -4362,46 +4638,25 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
                 ))}
               </div>
             ))}
-            <button onClick={handleRefresh} disabled={loading} style={{ background: 'none', border: '1px solid #999', borderRadius: 5, padding: '3px 10px', cursor: 'pointer', fontSize: 14, color: '#555' }}>
-              ↻ {b.refresh}
-            </button>
           </div>
         )}
 
-        {/* Connect bank */}
-        <button onClick={handleAutoDetect} disabled={loading}
-          style={{ background: '#eef2ff', border: '1px solid #99aadd', borderRadius: 6, padding: '6px 14px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, color: '#003399', fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
-          🔍 {b.autoDetect}
-        </button>
-
-        <span style={{ color: '#aaa', fontSize: 16 }}>— {b.orManually} —</span>
-
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
-          <button onClick={() => handleSelectRegion('nordigen')} disabled={loading}
-            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
-          <select value={selectedCountry} onChange={e => setSelectedCountry(e.target.value)}
-            style={{ padding: '5px 8px', borderRadius: 5, border: '1px solid #ccc', fontSize: 18, direction: 'ltr' }}>
-            {EU_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-          </select>
-          <span style={{ fontSize: 18, color: '#333' }}>🇪🇺</span>
-        </div>
-
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', direction: dir as 'rtl' | 'ltr' }}>
-          <button onClick={() => handleSelectRegion('plaid')} disabled={loading}
-            style={{ background: '#003399', color: '#FFD700', border: 'none', borderRadius: 5, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>►</button>
-          <span style={{ fontSize: 18, color: '#333' }}>🇺🇸 {unitedStatesName}</span>
-        </div>
-
-        {/* Download files */}
         <button onClick={handleDownloadAll} disabled={loading}
-          style={{ background: '#006600', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 18px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 18, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
-          ⬇ {b.downloadFiles}
+          style={{ background: '#006600', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 16, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
+          {b.clickToDownload}
         </button>
 
         {msg && <div style={{ color: msgIsError ? '#cc0000' : '#006600', fontSize: 16, fontWeight: 'bold' }}>{msg}</div>}
         {loading && <div style={{ color: '#aaa', fontSize: 16 }}>...</div>}
       </div>
-    </div>
+    </BankingLayout>
+  )
+
+  return (
+    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections}
+      onSelectCountry={loadInstitutions} onDownload={() => setStep('download')} onRefresh={handleRefresh} b={b}>
+      <PageHeader subtitle={lang.menu[4]} lang={lang} />
+    </BankingLayout>
   )
 
 }
