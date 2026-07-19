@@ -59,7 +59,7 @@ const languages = [
     profile: { fullName: 'שם ומשפחה', email: 'דוא"ל', ip: 'IP', language: 'שפה', country: 'מדינה', plan: 'תכנית', planStart: 'תחילת תכנית', planEnd: 'סיום תכנית', unlimited: 'ללא הגבלה', comingSoon: 'בקרוב', choosePlan: 'בחר תכנית', close: '✕ סגור', loginRequired: 'נדרשת כניסה לצפייה בדף האישי', login: 'כניסה', products: 'מוצרים', change: 'שינוי',
       price: 'מחיר', changePlan: 'שינוי תכנית', planName: 'שם', planFrom: 'מ-', planTo: 'עד-', back: 'חזרה', currencyLocal: '₪', free: 'חינם',       planNames: { System_Free_Run: 'תקופת הרצה', User_Trial: 'תקופת נסיון', User_VIP_Free: 'VIP', System_Owner: 'מערכת', User_Monthly: 'חודשי', User_Annual: 'שנתי', User_One_Time: 'כניסה בודדת', System_Suspended_NonPayment: 'מנותק', User_Cancelled: 'בוטל' } },
     feedback: { customerRelations: 'קשרי לקוחות', systemMessage: 'הודעת המערכת', respectfully: 'בכבוד רב,', rating: 'דירוג', ratingWebsite: 'אתר', ratingBudget: 'ניהול תקציב בית', userMessage: 'דבר המשתמש', date: 'תאריך:', title: 'כותרת:', from: 'מאת:', systemReply: 'תשובת המערכת' },
-    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'טבלאות ונתונים', pr: 'יחסי ציבור', announcements: 'מודעות', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים', lab: 'מעבדה', allCustomers: 'כל הלקוחות', newMessageNotif: 'הודעה חדשה, נא ללחוץ כאן', colType: 'סוג', labTests: 'בדיקות', labBanking: 'מוסדות פיננסיים', colCustomer: 'לקוח', adminNewMsg: '- הודעה חדשה -', dataCollection: 'איסוף נתונים', data: 'חי', statistics: 'עיבוד', billing: 'סליקה', colRunningNo: 'מספר רץ', colIp: 'כתובת IP', colEntered: 'זמן כניסה', colExited: 'זמן יציאה', colDuration: 'זמן גלישה', durationMin: 'דק', durationSec: 'שנ', statTotalVisits: 'סה״כ ביקורים', statUniqueVisitors: 'מבקרים ייחודיים', statOnlineNow: 'מחוברים כרגע', statAvgDuration: 'משך ממוצע', statLongestVisit: 'הביקור הארוך ביותר', statBusiestHour: 'השעה העמוסה', statBusiestDay: 'היום העמוס', statNamed: 'מזוהים', statAnonymous: 'אנונימיים', statHourlyTitle: 'פעילות לפי שעה', statDayTitle: 'פעילות לפי יום', statNoData: 'עדיין אין מספיק נתונים', statPeriod: 'תקופה נמדדת', statTotalVisitsDesc: 'מספר כל הביקורים שנרשמו (כל כניסה לאתר נספרת)', statUniqueVisitorsDesc: 'מספר כתובות IP שונות שביקרו, ללא כפילויות', statOnlineNowDesc: 'מבקרים שנמצאים באתר כרגע ועדיין לא יצאו', statAvgDurationDesc: 'זמן הגלישה הממוצע של מבקרים שכבר יצאו', statHourlyTitleDesc: 'סה״כ ביקורים שנכנסו בכל שעה ביממה, מצטבר על פני כל התקופה', statDayTitleDesc: 'סה״כ ביקורים שנכנסו בכל יום בשבוע, מצטבר על פני כל התקופה', statNamedDesc: 'מבקרים שכתובת ה-IP שלהם תואמת למשתמש רשום', statAnonymousDesc: 'מבקרים שלא נמצאה התאמה למשתמש רשום', statBusiestHourDesc: 'השעה עם הכי הרבה כניסות', statBusiestDayDesc: 'היום עם הכי הרבה כניסות', statLongestVisitDesc: 'משך הגלישה הארוך ביותר שנמדד בביקור בודד', statLegend: 'מקרא', statYearlyTitle: 'פעילות שנתית', statByMonth: 'לפי חודש', statByWeek: 'לפי שבוע', statReturning: 'חוזרים', statLinked: 'מקושרים', statCountryTitle: 'ביקורים לפי מדינה', statNoGeoData: 'לא ידוע', statDurationTitle: 'התפלגות זמני גלישה', statDur0_5: '0–5 דק׳', statDur5_15: '5–15 דק׳', statDur15_60: '15–60 דק׳', statDur60_120: '60–120 דק׳', statDurOver120: 'מעל שעתיים', statWeekOf: 'שבוע של', statOngoingTitle: 'עיבוד נתונים שוטף', statActivityTab: 'פעילות', runStatusRunning: 'בפעולה', runStatusStopped: 'עצירה', dataCollectionLegend: 'איסוף נתונים', collectionStart: 'התחלה', collectionEnd: 'סיום', endToggleActive: 'עד כאן', endToggleInactive: 'ללא סיום', runToggleActive: 'איסוף הנתונים בפעולה', runToggleInactive: 'איסוף הנתונים לא פעיל', legendUnregistered: 'לא רשומים', legendRegistered: 'רשומים', graphEntriesTitle: 'כמות הנכנסים לאתר', graphDurationTitle: 'זמן גלישה באתר' },
+    system: { systemLabel: 'מערכת', selectAction: 'בחר פעולה מהסרגל הימני', users: 'משתמשים', buildMessages: 'הודעות בניית מערכת', schedule: 'טבלאות ונתונים', pr: 'יחסי ציבור', announcements: 'מודעות', publishedDate: 'פורסם בתאריך:', reset: 'איפוס', saved: 'נשמר', records: 'רשומות', scheduleSubject: 'נושא', schedulePriceUSD: 'מחיר\n[$]', schedulePeriod: 'תקופה\n[ח׳]', scheduleNotes: 'הערות', clear: 'נקה', pause: 'עצור', resume: 'המשך', active: '● פעיל', paused: 'מושהה', lines: 'שורות', filter: 'סינון', refresh: 'רענן', loading: 'טוען...', loadingBuild: 'טוען נתוני בנייה...', error: 'שגיאה', noBuildData: 'אין נתוני בנייה. הרץ את Release_KeyClick.bat', networkError: 'שגיאת רשת', adminButton: 'בשימוש המערכת', generalGroup: 'כללי', colName: 'שם', colCurrency: 'מטבע', colCreated: 'תאריך הצטרפות', colActive: 'פעיל', colAppInstalled: 'אפליקציה', colLicenceType: 'סוג רישיון', colSystemForce: 'כפיית מערכת', distributionDay: 'יום ה-X ההפצה', messages: 'הודעות', send: 'שלח', sent: 'נשלח!', reply: 'תשובה', noMessages: 'אין הודעות', replySent: 'תשובה נשלחה!', ref: 'סימוכין', msgNo: 'מס.', replyToRef: 'מענה לסימוכין', msgNumber: 'הודעה מס.', new: 'חדש', delete: 'מחיקה', newMessage: '+ הודעה חדשה', selectToView: 'בחר הודעה לצפייה', monitor: 'מוניטור', systemData: 'נתוני מערכת', resetTable: 'איפוס טבלה', debug: 'ניפוי', db: 'בסיס נתונים', sensitivePoints: 'נקודות רגישות', productVersionTable: 'טבלת גרסאות מוצר שבלשונית עדכונים', lab: 'מעבדה', allCustomers: 'כל הלקוחות', newMessageNotif: 'הודעה חדשה, נא ללחוץ כאן', colType: 'סוג', labTests: 'בדיקות', labBanking: 'רשימות סוכנים', financialInstitutions: 'מוסדות פיננסיים', colCustomer: 'לקוח', adminNewMsg: '- הודעה חדשה -', dataCollection: 'איסוף נתונים', data: 'חי', statistics: 'עיבוד', billing: 'סליקה', colRunningNo: 'מספר רץ', colIp: 'כתובת IP', colEntered: 'זמן כניסה', colExited: 'זמן יציאה', colDuration: 'זמן גלישה', durationMin: 'דק', durationSec: 'שנ', statTotalVisits: 'סה״כ ביקורים', statUniqueVisitors: 'מבקרים ייחודיים', statOnlineNow: 'מחוברים כרגע', statAvgDuration: 'משך ממוצע', statLongestVisit: 'הביקור הארוך ביותר', statBusiestHour: 'השעה העמוסה', statBusiestDay: 'היום העמוס', statNamed: 'מזוהים', statAnonymous: 'אנונימיים', statHourlyTitle: 'פעילות לפי שעה', statDayTitle: 'פעילות לפי יום', statNoData: 'עדיין אין מספיק נתונים', statPeriod: 'תקופה נמדדת', statTotalVisitsDesc: 'מספר כל הביקורים שנרשמו (כל כניסה לאתר נספרת)', statUniqueVisitorsDesc: 'מספר כתובות IP שונות שביקרו, ללא כפילויות', statOnlineNowDesc: 'מבקרים שנמצאים באתר כרגע ועדיין לא יצאו', statAvgDurationDesc: 'זמן הגלישה הממוצע של מבקרים שכבר יצאו', statHourlyTitleDesc: 'סה״כ ביקורים שנכנסו בכל שעה ביממה, מצטבר על פני כל התקופה', statDayTitleDesc: 'סה״כ ביקורים שנכנסו בכל יום בשבוע, מצטבר על פני כל התקופה', statNamedDesc: 'מבקרים שכתובת ה-IP שלהם תואמת למשתמש רשום', statAnonymousDesc: 'מבקרים שלא נמצאה התאמה למשתמש רשום', statBusiestHourDesc: 'השעה עם הכי הרבה כניסות', statBusiestDayDesc: 'היום עם הכי הרבה כניסות', statLongestVisitDesc: 'משך הגלישה הארוך ביותר שנמדד בביקור בודד', statLegend: 'מקרא', statYearlyTitle: 'פעילות שנתית', statByMonth: 'לפי חודש', statByWeek: 'לפי שבוע', statReturning: 'חוזרים', statLinked: 'מקושרים', statCountryTitle: 'ביקורים לפי מדינה', statNoGeoData: 'לא ידוע', statDurationTitle: 'התפלגות זמני גלישה', statDur0_5: '0–5 דק׳', statDur5_15: '5–15 דק׳', statDur15_60: '15–60 דק׳', statDur60_120: '60–120 דק׳', statDurOver120: 'מעל שעתיים', statWeekOf: 'שבוע של', statOngoingTitle: 'עיבוד נתונים שוטף', statActivityTab: 'פעילות', runStatusRunning: 'בפעולה', runStatusStopped: 'עצירה', dataCollectionLegend: 'איסוף נתונים', collectionStart: 'התחלה', collectionEnd: 'סיום', endToggleActive: 'עד כאן', endToggleInactive: 'ללא סיום', runToggleActive: 'איסוף הנתונים בפעולה', runToggleInactive: 'איסוף הנתונים לא פעיל', legendUnregistered: 'לא רשומים', legendRegistered: 'רשומים', graphEntriesTitle: 'כמות הנכנסים לאתר', graphDurationTitle: 'זמן גלישה באתר' },
     currencyNames: { ILS: 'ש"ח', USD: 'דולר', GBP: 'ליש"ט', EUR: 'יורו', RUB: 'רובל', JPY: 'ין', SAR: 'ריאל', CNY: 'יואן', INR: 'רופי' },
     updates: { colDate: 'תאריך ושעה', colProduct: 'מוצר', colVersion: 'גרסה', colTitle: 'כותרת', productKeyClick: 'אתר KeyClick', productMFinance: 'ניהול תקציב בית M Finance' },
     reminders: { loginRequired: 'נדרשת כניסה לצפייה בתזכורות', titlePh: 'כותרת תזכורת', timePh: 'שעה', add: '+ הוסף', noReminders: 'אין תזכורות' },
@@ -699,7 +699,7 @@ type ScheduleRow = { price: string; months: string; fromDate: string; toDate: st
 type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null; is_system?: boolean; is_broadcast?: boolean }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking' | 'data' | 'statistics' | 'billing'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking' | 'data' | 'statistics' | 'billing' | 'institutions'>('none')
   const [visits, setVisits] = useState<VisitRecord[]>([])
   const reloadVisits = () => {
     onDbg('reloadVisits', 'fetch GET /api/visits')
@@ -998,6 +998,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     data: `${lang.system.dataCollection} - ${lang.system.data}`,
     statistics: `${lang.system.dataCollection} - ${lang.system.statistics}`,
     billing: `${lang.system.systemData} - ${lang.system.billing}`,
+    institutions: `${lang.system.systemData} - ${lang.system.financialInstitutions}`,
   }
 
   return (
@@ -1104,6 +1105,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 
         {view === 'data' && <VisitsTable lang={lang} visits={visits} reload={reloadVisits} samplingConfig={samplingConfig} onUpdateSamplingConfig={updateSamplingConfig} onDbg={onDbg} />}
         {view === 'statistics' && <ProcessingPage lang={lang} visits={visits} reload={reloadVisits} onDbg={onDbg} samplingConfig={samplingConfig} />}
+        {view === 'institutions' && <InstitutionsAdminPanel lang={lang} />}
 
         {showResetConfirm && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1687,6 +1689,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <button style={{ ...sysBtnSm }} onClick={handleSchedule}>{lang.system.schedule}</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'sensitive' ? 'none' : 'sensitive')}>{lang.system.sensitivePoints}</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'billing' ? 'none' : 'billing')}>{lang.system.billing}</button>
+              <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'institutions' ? 'none' : 'institutions')}>{lang.system.financialInstitutions}</button>
             </div>
           </div>
 
@@ -1712,6 +1715,334 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
       </aside>
 
     </div>
+    </div>
+  )
+}
+
+function InstitutionsAdminPanel({ lang }: { lang: typeof languages[0] }) {
+  const [institutions, setInstitutions] = useState<FinancialInstitutionRecord[]>([])
+  const [loading, setLoading] = useState(false)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [enableClicked, setEnableClicked] = useState(false)
+  const [simClicked, setSimClicked] = useState(false)
+  const BROWN = '#6b4423'
+
+  useEffect(() => {
+    setLoading(true)
+    fetch('/api/banking/institutions').then(r => r.json()).then(d => {
+      const list: FinancialInstitutionRecord[] = d.institutions ?? []
+      setInstitutions(list)
+      if (list.length > 0) {
+        setEnableClicked(list.every(i => i.system_enable_flag))
+        setSimClicked(list.every(i => i.system_simulation_mode))
+      }
+    }).catch(() => {}).finally(() => setLoading(false))
+  }, [])
+
+  async function bulkAction(body: object) {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/banking/institutions', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const d = await res.json()
+      setInstitutions(d.institutions ?? [])
+    } finally { setLoading(false) }
+  }
+
+  const COUNTRY_ISO: Record<string, string> = {
+    'בריטניה': 'GB', 'גרמניה': 'DE', 'צרפת': 'FR', 'ספרד': 'ES', 'איטליה': 'IT', 'רוסיה': 'RU',
+    'ארצות-הברית': 'US', 'יפן': 'JP', 'סין': 'CN', 'הודו': 'IN', 'ישראל': 'IL', 'סעודיה': 'SA',
+  }
+  function countryName(file: string): string {
+    const iso = COUNTRY_ISO[file]
+    if (!iso) return file.replace('-', ' ')
+    try { return new Intl.DisplayNames([lang.code], { type: 'region' }).of(iso) ?? file.replace('-', ' ') }
+    catch { return file.replace('-', ' ') }
+  }
+  const BANKS: Record<string, string[]> = {
+    'בריטניה': ['Barclays', 'HSBC', 'Lloyds', 'NatWest', 'Santander UK'],
+    'רוסיה': ['Sberbank', 'VTB', 'Gazprombank', 'Alfa-Bank'],
+    'ארצות-הברית': ['Chase', 'Bank of America', 'Wells Fargo', 'Citibank', 'Goldman Sachs', 'Morgan Stanley'],
+    'גרמניה': ['Deutsche Bank', 'Commerzbank', 'DZ Bank', 'KfW'],
+    'צרפת': ['BNP Paribas', 'Société Générale', 'Crédit Agricole', 'La Banque Postale', 'Crédit Mutuel'],
+    'ספרד': ['Santander', 'BBVA', 'CaixaBank', 'Bankinter'],
+    'איטליה': ['UniCredit', 'Intesa Sanpaolo', 'Banco BPM', 'BPER Banca'],
+    'יפן': ['MUFG', 'Mizuho', 'SMBC', 'Japan Post Bank'],
+    'סין': ['ICBC', 'Bank of China', 'CCB', 'ABC', 'Bank of Communications'],
+    'הודו': ['SBI', 'HDFC', 'ICICI', 'Axis Bank', 'Kotak Mahindra'],
+    'ישראל': ['בנק הפועלים', 'בנק לאומי', 'בנק דיסקונט', 'בנק מזרחי', 'הבנק הבינלאומי', 'יהב', 'ברקליס', 'ירושלים', 'ישראכרט', 'קאל', 'מקס', 'אמריקן אקספרס'],
+    'סעודיה': ['Al Rajhi Bank', 'SNB', 'Riyad Bank', 'Banque Saudi Fransi'],
+  }
+  const ISRAEL_BANK_LATIN: Record<string, string> = {
+    'בנק הפועלים': 'Bank Hapoalim', 'בנק לאומי': 'Bank Leumi', 'בנק דיסקונט': 'Discount Bank',
+    'בנק מזרחי': 'Mizrahi Bank', 'הבנק הבינלאומי': 'The International Bank', 'יהב': 'Bank Yahav',
+    'ברקליס': 'Barclays', 'ירושלים': 'Bank of Jerusalem', 'ישראכרט': 'Isracard',
+    'קאל': 'Cal', 'מקס': 'Max', 'אמריקן אקספרס': 'American Express',
+  }
+  function bankName(bank: string): string {
+    return lang.code === 'he' ? bank : (ISRAEL_BANK_LATIN[bank] ?? bank)
+  }
+  function findInst(file: string, bank: string): FinancialInstitutionRecord | undefined {
+    const iso = COUNTRY_ISO[file]
+    const englishName = ISRAEL_BANK_LATIN[bank] ?? bank
+    return institutions.find(i => i.country_code === iso && i.institution_name === englishName)
+  }
+
+  async function toggleFlag(instId: number, key: 'system_enable_flag' | 'system_simulation_mode', current: boolean) {
+    const res = await fetch('/api/banking/institutions', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ institution_record_id: instId, [key]: !current }),
+    })
+    const d = await res.json()
+    if (d.institution) {
+      setInstitutions(prev => prev.map(i => i.institution_record_id === d.institution.institution_record_id ? d.institution : i))
+    }
+  }
+
+  const FIELD_LABELS: [keyof FinancialInstitutionRecord, string][] = [
+    ['country_name', 'Country'], ['country_code', 'Country Code'],
+    ['institution_name', 'Institution'], ['institution_code', 'Institution Code'],
+    ['provider_name', 'Provider'], ['provider_code', 'Provider Code'],
+    ['institution_available', 'Available'], ['system_enable_flag', 'System Enabled'],
+    ['system_simulation_mode', 'Simulation Mode'], ['institution_registration_date', 'Registered'],
+  ]
+
+  function InstitutionButton({ file, bank }: { file: string; bank: string }) {
+    const inst = findInst(file, bank)
+    const isOpen = !!inst && selectedId === inst.institution_record_id
+    const avail = !!inst?.institution_code
+    const sim = !!inst?.system_simulation_mode
+    const dot = (on: boolean, color: string) => (
+      <span style={{ width: 5, height: 5, borderRadius: '50%', display: 'block', background: on ? color : 'rgba(255,255,255,0.15)' }} />
+    )
+    return (
+      <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 0 }}>
+        <button onClick={() => setSelectedId(isOpen ? null : (inst?.institution_record_id ?? null))}
+          style={{ background: BROWN, color: '#fff', border: '1px solid #543319', borderRadius: 5, padding: '3px 8px', cursor: 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+          {bankName(bank)}
+        </button>
+        <span style={{ display: 'inline-flex', flexDirection: 'column', gap: 1, verticalAlign: 'middle' }}>
+          {dot(!avail, '#ee2222')}
+          {dot(sim, '#eebb00')}
+          {dot(avail, '#22cc44')}
+        </span>
+        {isOpen && inst && (
+          <div style={{ position: 'absolute', top: 0, insetInlineStart: '100%', marginInlineStart: 8, zIndex: 40, background: '#555', border: '1px solid #cc9900', borderRadius: 8, padding: 14, minWidth: 260, boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}>
+            <div style={{ color: '#FFD700', fontWeight: 'bold', fontSize: 15, marginBottom: 10, borderBottom: '1px solid #777', paddingBottom: 6 }}>
+              {inst.institution_name}
+            </div>
+            <table style={{ color: '#fff', fontSize: 13, borderCollapse: 'collapse' }}>
+              <tbody>
+                {FIELD_LABELS.map(([key, label]) => (
+                  <tr key={key}>
+                    <td style={{ padding: '3px 10px 3px 0', color: '#ccc', verticalAlign: 'top' }}>{label}</td>
+                    <td style={{ padding: '3px 0', fontWeight: 'bold' }}>
+                      {key === 'institution_available' ? (
+                        <span style={{ color: inst.institution_code ? '#22cc44' : '#ee6666' }}>{inst.institution_code ? 'Yes' : 'No'}</span>
+                      ) : typeof inst[key] === 'boolean' ? (
+                        <button onClick={() => toggleFlag(inst.institution_record_id, key as 'system_enable_flag' | 'system_simulation_mode', inst[key] as boolean)}
+                          style={{ background: inst[key] ? '#22aa44' : '#aa2222', color: '#fff', border: 'none', borderRadius: 4, padding: '2px 10px', fontSize: 12, fontWeight: 'bold', cursor: 'pointer' }}>
+                          {inst[key] ? 'Yes' : 'No'}
+                        </button>
+                      ) : String(inst[key] ?? '-')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button onClick={() => setSelectedId(null)}
+              style={{ marginTop: 12, background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, padding: '4px 14px', cursor: 'pointer', fontWeight: 'bold' }}>
+              ✕
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  function Ticks({ file, bottomStart, left }: { file: string; bottomStart: number; left: number }) {
+    return (
+      <>
+        {BANKS[file].map((_, i) => (
+          <div key={`${file}-tick-${i}`} style={{ position: 'absolute', bottom: bottomStart + i * 46, left, width: 20, height: 2, background: BROWN }} />
+        ))}
+      </>
+    )
+  }
+  function BankLabels({ file, bottomStart, left }: { file: string; bottomStart: number; left: number }) {
+    return (
+      <>
+        {BANKS[file].map((bank, i) => (
+          <div key={`${file}-bank-${i}`} style={{ position: 'absolute', bottom: bottomStart + i * 46 - 6, left: left + 24 }}>
+            <InstitutionButton file={file} bank={bank} />
+          </div>
+        ))}
+      </>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 20, width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <fieldset style={{ border: `2px solid ${BROWN}`, borderRadius: '8px', padding: '10px 14px 14px', display: 'inline-block' }}>
+        <legend style={{ padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>כל המוסדות הפיננסיים</legend>
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+          <button onClick={() => { bulkAction({ bulk: true, system_enable_flag: !enableClicked }); setEnableClicked(!enableClicked) }}
+            style={{ background: enableClicked ? '#22aa44' : '#003399', color: '#ffffff', border: enableClicked ? '1px solid #1a8535' : '1px solid #002266', borderRadius: 6, padding: '8px 20px', fontSize: 13, fontWeight: 'bold', letterSpacing: '0.03em', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+            System Enable: {enableClicked ? 'ON' : 'OFF'}
+          </button>
+          <button onClick={() => { bulkAction({ bulk: true, system_simulation_mode: !simClicked }); setSimClicked(!simClicked) }}
+            style={{ background: simClicked ? '#ccaa00' : '#003399', color: simClicked ? '#2a1f00' : '#ffffff', border: simClicked ? '1px solid #a68700' : '1px solid #002266', borderRadius: 6, padding: '8px 20px', fontSize: 13, fontWeight: 'bold', letterSpacing: '0.03em', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+            Simulation Mode: {simClicked ? 'ON' : 'OFF'}
+          </button>
+          <button onClick={() => { bulkAction({ reset: true }); setEnableClicked(true); setSimClicked(false) }}
+            style={{ background: '#aa2222', color: '#ffffff', border: '1px solid #841a1a', borderRadius: 6, padding: '8px 20px', fontSize: 13, fontWeight: 'bold', letterSpacing: '0.03em', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+            Reset
+          </button>
+        </div>
+      </fieldset>
+      </div>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+      <div style={{ position: 'relative', height: 640, minWidth: 1550, flex: '1 1 auto', overflow: 'auto' }}>
+        {loading && <div style={{ color: '#aaa', fontSize: 14 }}>...</div>}
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/ארצות-הברית.png`} alt="ארצות הברית" width={28} height={28} />
+          {countryName('ארצות-הברית')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 99, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="ארצות-הברית" bottomStart={10} left={99} />
+        <BankLabels file="ארצות-הברית" bottomStart={10} left={99} />
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 170, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/בריטניה.png`} alt="בריטניה" width={28} height={28} />
+          {countryName('בריטניה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 212, height: 218, width: 2, background: BROWN }} />
+        {BANKS['בריטניה'].map((_, i) => (
+          <div key={`gb-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 212, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['בריטניה'].map((bank, i) => (
+          <div key={`gb-bank-${i}`} style={{ position: 'absolute', top: 84 + i * 46, left: 236 }}>
+            <InstitutionButton file="בריטניה" bank={bank} />
+          </div>
+        ))}
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 320, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/רוסיה.png`} alt="רוסיה" width={28} height={28} />
+          {countryName('רוסיה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 360, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="רוסיה" bottomStart={10} left={360} />
+        <BankLabels file="רוסיה" bottomStart={10} left={360} />
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 372, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/גרמניה.png`} alt="גרמניה" width={28} height={28} />
+          {countryName('גרמניה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 410, height: 184, width: 2, background: BROWN }} />
+        {BANKS['גרמניה'].map((_, i) => (
+          <div key={`de-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 410, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['גרמניה'].map((bank, i) => (
+          <div key={`de-bank-${i}`} style={{ position: 'absolute', top: 84 + i * 46, left: 434 }}>
+            <InstitutionButton file="גרמניה" bank={bank} />
+          </div>
+        ))}
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 520, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/צרפת.png`} alt="צרפת" width={28} height={28} />
+          {countryName('צרפת')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 549, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="צרפת" bottomStart={10} left={549} />
+        <BankLabels file="צרפת" bottomStart={10} left={549} />
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 690, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/ישראל.png`} alt="ישראל" width={28} height={28} />
+          {countryName('ישראל')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 723, height: 554, width: 2, background: BROWN }} />
+        {BANKS['ישראל'].map((_, i) => (
+          <div key={`il-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 723, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['ישראל'].map((bank, i) => (
+          <div key={`il-bank-${i}`} style={{ position: 'absolute', top: 84 + i * 46, left: 747 }}>
+            <InstitutionButton file="ישראל" bank={bank} />
+          </div>
+        ))}
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 820, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/ספרד.png`} alt="ספרד" width={28} height={28} />
+          {countryName('ספרד')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 849, height: 184, width: 2, background: BROWN }} />
+        {BANKS['ספרד'].map((_, i) => (
+          <div key={`es-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 849, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['ספרד'].map((bank, i) => (
+          <div key={`es-bank-${i}`} style={{ position: 'absolute', top: 84 + i * 46, left: 873 }}>
+            <InstitutionButton file="ספרד" bank={bank} />
+          </div>
+        ))}
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 950, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/יפן.png`} alt="יפן" width={28} height={28} />
+          {countryName('יפן')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 976, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="יפן" bottomStart={10} left={976} />
+        <BankLabels file="יפן" bottomStart={10} left={976} />
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 1005, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/סעודיה.png`} alt="סעודיה" width={28} height={28} />
+          {countryName('סעודיה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1033, height: 184, width: 2, background: BROWN }} />
+        {BANKS['סעודיה'].map((_, i) => (
+          <div key={`sa-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 1033, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['סעודיה'].map((bank, i) => (
+          <div key={`sa-bank-${i}`} style={{ position: 'absolute', top: 84 + i * 46, left: 1057 }}>
+            <InstitutionButton file="סעודיה" bank={bank} />
+          </div>
+        ))}
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 1170, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/סין.png`} alt="סין" width={28} height={28} />
+          {countryName('סין')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1196, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="סין" bottomStart={10} left={1196} />
+        <BankLabels file="סין" bottomStart={10} left={1196} />
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 1250, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/איטליה.png`} alt="איטליה" width={28} height={28} />
+          {countryName('איטליה')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1288, height: 184, width: 2, background: BROWN }} />
+        {BANKS['איטליה'].map((_, i) => (
+          <div key={`it-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 1288, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['איטליה'].map((bank, i) => (
+          <div key={`it-bank-${i}`} style={{ position: 'absolute', top: 84 + i * 46, left: 1312 }}>
+            <InstitutionButton file="איטליה" bank={bank} />
+          </div>
+        ))}
+
+        <button disabled style={{ position: 'absolute', top: 0, left: 1380, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1, cursor: 'default' }}>
+          <Image src={`/flags/הודו.png`} alt="הודו" width={28} height={28} />
+          {countryName('הודו')}
+        </button>
+        <div style={{ position: 'absolute', top: 66, left: 1409, bottom: 0, width: 2, background: BROWN }} />
+        <Ticks file="הודו" bottomStart={10} left={1409} />
+        <BankLabels file="הודו" bottomStart={10} left={1409} />
+      </div>
+      </div>
     </div>
   )
 }
@@ -3909,6 +4240,13 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
 type BankConnection = { id: number; provider: string; institution_name: string; status: string; created_at: string }
 type BankAccount    = { id: number; connection_id: number; iban: string; name: string; currency: string; account_type: string; balance: number }
 type BankTx         = { id: number; date: string; description: string; amount: number; currency: string; category: string }
+type FinancialInstitutionRecord = {
+  institution_record_id: number; country_name: string; country_code: string
+  institution_name: string; institution_code: string | null
+  provider_name: string | null; provider_code: string | null
+  institution_available: boolean; system_enable_flag: boolean; system_simulation_mode: boolean
+  institution_registration_date: string | null
+}
 
 function BankingConnectPanel({ userId }: { userId: number | undefined }) {
   const [connections, setConnections] = useState<BankConnection[]>([])
@@ -4138,12 +4476,30 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   const [loading, setLoading]         = useState(false)
   const [msg, setMsg]                 = useState('')
   const [msgIsError, setMsgIsError]   = useState(false)
+  const [dbInstitutions, setDbInstitutions] = useState<FinancialInstitutionRecord[]>([])
   const b = lang.banking
 
   const setError = (text: string) => { setMsg(text); setMsgIsError(true) }
   const setInfo  = (text: string) => { setMsg(text); setMsgIsError(false) }
 
   useEffect(() => { if (user) loadConnections() }, [user])
+  useEffect(() => {
+    fetch('/api/banking/institutions').then(r => r.json()).then(d => setDbInstitutions(d.institutions ?? [])).catch(() => {})
+  }, [])
+
+  function findDbInstitution(file: string, bank: string): FinancialInstitutionRecord | undefined {
+    const iso = COUNTRY_ISO[file]
+    const englishName = ISRAEL_BANK_LATIN[bank] ?? bank
+    return dbInstitutions.find(i => i.country_code === iso && i.institution_name === englishName)
+  }
+
+  function instFrame(file: string, bank: string): { border: string; disabled: boolean } {
+    const inst = findDbInstitution(file, bank)
+    if (!inst?.system_enable_flag) return { border: '2px solid transparent', disabled: true }
+    if (inst.institution_code) return { border: '2px solid #22aa44', disabled: false }
+    if (inst.system_simulation_mode) return { border: '2px solid #ccaa00', disabled: false }
+    return { border: '2px solid transparent', disabled: true }
+  }
 
   async function loadConnections() {
     if (!user) return
@@ -4374,12 +4730,12 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   function BankLabels({ file, bottomStart, left }: { file: string; bottomStart: number; left: number }) {
     return (
       <>
-        {BANKS[file].map((bank, i) => (
-          <button key={`${file}-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, file)} disabled={loading}
-            style={{ position: 'absolute', bottom: bottomStart + i * 46 - 6, left: left + 24, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+        {BANKS[file].map((bank, i) => { const f = instFrame(file, bank); return (
+          <button key={`${file}-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, file)} disabled={loading || f.disabled}
+            style={{ position: 'absolute', bottom: bottomStart + i * 46 - 6, left: left + 24, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: f.border, borderRadius: 5, padding: '3px 8px', cursor: (loading || f.disabled) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', opacity: f.disabled ? 0.55 : 1 }}>
             {bankName(bank)}
           </button>
-        ))}
+        )})}
       </>
     )
   }
@@ -4402,7 +4758,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
           {b.selectInstitution}
         </div>
       } />
-      <div style={{ position: 'absolute', top: 50, right: 10, fontFamily: handFont(lang.code), color: 'red', fontSize: 40, fontWeight: 'bold', zIndex: 2, transform: 'rotate(-15deg)' }}>
+      <div style={{ position: 'absolute', top: 50, right: 10, fontFamily: handFont(lang.code), color: 'red', fontSize: 40, fontWeight: 'bold', zIndex: 2, transform: 'rotate(-15deg)', pointerEvents: 'none' }}>
         {b.decorWorldwide}
       </div>
       <div style={{ position: 'relative', height: '100%', minHeight: 60, minWidth: 1550 }}>
@@ -4430,12 +4786,12 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         {BANKS['בריטניה'].map((_, i) => (
           <div key={`gb-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 212, width: 20, height: 2, background: BROWN }} />
         ))}
-        {BANKS['בריטניה'].map((bank, i) => (
-          <button key={`gb-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'בריטניה')} disabled={loading}
-            style={{ position: 'absolute', top: 84 + i * 46, left: 236, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+        {BANKS['בריטניה'].map((bank, i) => { const f = instFrame('בריטניה', bank); return (
+          <button key={`gb-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'בריטניה')} disabled={loading || f.disabled}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 236, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: f.border, borderRadius: 5, padding: '3px 8px', cursor: (loading || f.disabled) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', opacity: f.disabled ? 0.55 : 1 }}>
             {bankName(bank)}
           </button>
-        ))}
+        )})}
 
         {/* רוסיה - אחרי בריטניה */}
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'רוסיה')!)} disabled={loading}
@@ -4451,20 +4807,20 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
 
         {/* עמודה 2: גרמניה → צרפת → ספרד */}
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'גרמניה')!)} disabled={loading}
-          style={{ position: 'absolute', top: 0, left: 390, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          style={{ position: 'absolute', top: 0, left: 372, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
           <Image src={`/flags/גרמניה.png`} alt="גרמניה" width={28} height={28} />
           {countryName('גרמניה')}
         </button>
-        <div style={{ position: 'absolute', top: 66, left: 428, height: 184, width: 2, background: BROWN }} />
+        <div style={{ position: 'absolute', top: 66, left: 410, height: 184, width: 2, background: BROWN }} />
         {BANKS['גרמניה'].map((_, i) => (
-          <div key={`de-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 428, width: 20, height: 2, background: BROWN }} />
+          <div key={`de-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 410, width: 20, height: 2, background: BROWN }} />
         ))}
-        {BANKS['גרמניה'].map((bank, i) => (
-          <button key={`de-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'גרמניה')} disabled={loading}
-            style={{ position: 'absolute', top: 84 + i * 46, left: 452, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+        {BANKS['גרמניה'].map((bank, i) => { const f = instFrame('גרמניה', bank); return (
+          <button key={`de-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'גרמניה')} disabled={loading || f.disabled}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 434, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: f.border, borderRadius: 5, padding: '3px 8px', cursor: (loading || f.disabled) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', opacity: f.disabled ? 0.55 : 1 }}>
             {bankName(bank)}
           </button>
-        ))}
+        )})}
 
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'צרפת')!)} disabled={loading}
           style={{ position: 'absolute', top: 0, left: 520, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
@@ -4484,12 +4840,12 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         {BANKS['ישראל'].map((_, i) => (
           <div key={`il-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 723, width: 20, height: 2, background: BROWN }} />
         ))}
-        {BANKS['ישראל'].map((bank, i) => (
-          <button key={`il-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'ישראל')} disabled={loading}
-            style={{ position: 'absolute', top: 84 + i * 46, left: 747, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+        {BANKS['ישראל'].map((bank, i) => { const f = instFrame('ישראל', bank); return (
+          <button key={`il-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'ישראל')} disabled={loading || f.disabled}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 747, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: f.border, borderRadius: 5, padding: '3px 8px', cursor: (loading || f.disabled) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', opacity: f.disabled ? 0.55 : 1 }}>
             {bankName(bank)}
           </button>
-        ))}
+        )})}
 
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'ספרד')!)} disabled={loading}
           style={{ position: 'absolute', top: 0, left: 820, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
@@ -4511,20 +4867,20 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         <BankLabels file="יפן" bottomStart={10} left={976} />
 
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'סעודיה')!)} disabled={loading}
-          style={{ position: 'absolute', top: 0, left: 1040, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
+          style={{ position: 'absolute', top: 0, left: 1005, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
           <Image src={`/flags/סעודיה.png`} alt="סעודיה" width={28} height={28} />
           {countryName('סעודיה')}
         </button>
-        <div style={{ position: 'absolute', top: 66, left: 1078, height: 184, width: 2, background: BROWN }} />
+        <div style={{ position: 'absolute', top: 66, left: 1033, height: 184, width: 2, background: BROWN }} />
         {BANKS['סעודיה'].map((_, i) => (
-          <div key={`sa-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 1078, width: 20, height: 2, background: BROWN }} />
+          <div key={`sa-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 1033, width: 20, height: 2, background: BROWN }} />
         ))}
-        {BANKS['סעודיה'].map((bank, i) => (
-          <button key={`sa-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank)} disabled={loading}
-            style={{ position: 'absolute', top: 84 + i * 46, left: 1102, background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+        {BANKS['סעודיה'].map((bank, i) => { const f = instFrame('סעודיה', bank); return (
+          <button key={`sa-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'סעודיה')} disabled={loading || f.disabled}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 1057, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: f.border, borderRadius: 5, padding: '3px 8px', cursor: (loading || f.disabled) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', opacity: f.disabled ? 0.55 : 1 }}>
             {bankName(bank)}
           </button>
-        ))}
+        )})}
 
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'סין')!)} disabled={loading}
           style={{ position: 'absolute', top: 0, left: 1170, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap', zIndex: 1 }}>
@@ -4544,12 +4900,12 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         {BANKS['איטליה'].map((_, i) => (
           <div key={`it-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 1288, width: 20, height: 2, background: BROWN }} />
         ))}
-        {BANKS['איטליה'].map((bank, i) => (
-          <button key={`it-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank)} disabled={loading}
-            style={{ position: 'absolute', top: 84 + i * 46, left: 1312, background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+        {BANKS['איטליה'].map((bank, i) => { const f = instFrame('איטליה', bank); return (
+          <button key={`it-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'איטליה')} disabled={loading || f.disabled}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 1312, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: f.border, borderRadius: 5, padding: '3px 8px', cursor: (loading || f.disabled) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', opacity: f.disabled ? 0.55 : 1 }}>
             {bankName(bank)}
           </button>
-        ))}
+        )})}
 
         {/* עמודה 4: הודו */}
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'הודו')!)} disabled={loading}
