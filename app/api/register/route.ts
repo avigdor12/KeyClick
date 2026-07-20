@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs'
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 export async function POST(req: NextRequest) {
-  const { name, email, password, language, clientIp } = await req.json()
+  const { name, email, password, language, clientIp, mfContext } = await req.json()
 
   if (password && password.length < 6) {
     return NextResponse.json({ error: 'סיסמה חייבת להכיל לפחות 6 תווים' }, { status: 400 })
@@ -42,10 +42,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, status: 'exists' })
   }
 
+  if (mfContext && ip) {
+    const ipCollision = await pool.query('SELECT id FROM users WHERE last_ip=$1', [ip])
+    if (ipCollision.rows.length > 0) {
+      return NextResponse.json({ error: 'במחשב זה קיים כבר משתמש אחר רשום' }, { status: 409 })
+    }
+  }
+
+  await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS ip_registration VARCHAR(50)')
+
   const hash = password ? await bcrypt.hash(password, 10) : null
   await pool.query(
-    'INSERT INTO users (name, email, password_hash, language, license_type, last_ip) VALUES ($1,$2,$3,$4,$5,$6)',
-    [name || null, email || null, hash, language || 'English', 'תקופת הרצה', ip]
+    'INSERT INTO users (name, email, password_hash, language, license_type, last_ip, ip_registration) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+    [name || null, email || null, hash, language || 'English', 'תקופת הרצה', ip, mfContext ? ip : null]
   )
 
   return NextResponse.json({ success: true, status: 'created' })

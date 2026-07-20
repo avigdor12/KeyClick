@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
 
   const result = await pool.query(
-    'SELECT id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", password_hash FROM users WHERE email = $1',
+    'SELECT id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", password_hash, ip_registration FROM users WHERE email = $1',
     [email]
   )
   const user = result.rows[0]
@@ -25,6 +25,10 @@ export async function POST(req: NextRequest) {
                ?? (req as NextRequest & { ip?: string }).ip
   const isLoopback = !rawIp || rawIp === '::1' || rawIp === '127.0.0.1'
   const ip = isLoopback ? (clientIp || rawIp || 'localhost') : rawIp
+
+  if (user.ip_registration && ip && user.ip_registration !== ip) {
+    return NextResponse.json({ error: 'פרטי הלקוח רשומים במחשב אחר' }, { status: 409 })
+  }
 
   await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(user.id)])
   await pool.query('UPDATE users SET last_ip=$1 WHERE id=$2', [ip, user.id])

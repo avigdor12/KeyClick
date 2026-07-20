@@ -145,7 +145,7 @@ const GRANITE_BG: React.CSSProperties = {
   backgroundSize: '180px 180px',
 }
 
-type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null }
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; ip_registration?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null }
 
 const _txCache = new Map<string, string>()
 async function _txChunk(chunk: string, lc: string): Promise<string> {
@@ -293,9 +293,13 @@ export default function Home() {
       setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgInstallComplete })
       window.history.replaceState({}, '', window.location.pathname)
       dbg('installCallback', 'installed=1 detected => mf_installed saved')
-      fetch('/api/current-user', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field: 'is_m_finance_installed', value: true }) })
+      fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: Current_User_Pointer_to_DB?.email, clientIp }) })
         .then(r => r.json())
-        .then(d => { if (d.ok && d.user) set_Current_User_Pointer_to_DB(d.user); dbg('installCallback', `DB updated ok=${d.ok}`) })
+        .then(d => {
+          dbg('installCallback', `DB updated ok=${d.ok}`)
+          return fetch('/api/current-user').then(r2 => r2.json())
+        })
+        .then(d2 => { if (d2.user) set_Current_User_Pointer_to_DB(d2.user) })
         .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
       handleRun()
     }
@@ -1337,7 +1341,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                     <th colSpan={6} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
-                    {['ID', 'דרוג משוקלל 0-10', lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.system.colCurrency, 'IP', 'Last IP'].map(h => (
+                    {['ID', 'דרוג משוקלל 0-10', lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.system.colCurrency, 'IP Registration', 'Last IP'].map(h => (
                       <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
                     ))}
                     {[lang.system.colActive, lang.system.colAppInstalled, lang.profile.planFrom, lang.profile.planTo, lang.system.colLicenceType, lang.system.colSystemForce].map(h => (
@@ -1371,7 +1375,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           </td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}></td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                             {usersEditMode
@@ -5276,7 +5280,7 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     const res = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: savedName || null, email: savedEmail || null, password: savedPass || null, language: lang.name, clientIp }),
+      body: JSON.stringify({ name: savedName || null, email: savedEmail || null, password: savedPass || null, language: lang.name, clientIp, mfContext: true }),
     })
     const data = await res.json()
     onDbg('handleUpdate', `res.status=${res.status} res.ok=${res.ok} updated=${data.updated}`)
