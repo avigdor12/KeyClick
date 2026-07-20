@@ -1,0 +1,25 @@
+{
+  "institutionName": "ישראכרט בע\"מ",
+  "cardLabel": "קורפוריט - זהב",
+  "last4Digits": "9214",
+  "cardholderName": "יוסי כהן",
+  "billingMonth": "יולי 2026",
+  "recordShape": "CreditRecord",
+  "note": "נתוני סימולציה בלבד — מספרים ותיאורים בדויים, לא עסקאות אמיתיות.",
+  "monthlyTotal": 4131.63,
+  "records": [
+    { "purchaseDate": "2026-07-08", "merchantName": "קפה גרג",              "transactionAmount": 32.00,   "transactionCurrency": "₪", "chargeAmount": 32.00,   "chargeCurrency": "₪", "voucherNumber": "745821", "additionalDetail": "" },
+    { "purchaseDate": "2026-07-05", "merchantName": "סופר יודה ראשל\"צ",     "transactionAmount": 412.30,  "transactionCurrency": "₪", "chargeAmount": 412.30,  "chargeCurrency": "₪", "voucherNumber": "745690", "additionalDetail": "" },
+    { "purchaseDate": "2026-07-03", "merchantName": "דלק פז תחנה",          "transactionAmount": 310.00,  "transactionCurrency": "₪", "chargeAmount": 310.00,  "chargeCurrency": "₪", "voucherNumber": "745588", "additionalDetail": "" },
+    { "purchaseDate": "2026-07-01", "merchantName": "נטפליקס",              "transactionAmount": 55.00,   "transactionCurrency": "₪", "chargeAmount": 55.00,   "chargeCurrency": "₪", "voucherNumber": "745502", "additionalDetail": "הוראת קבע" },
+    { "purchaseDate": "2026-06-28", "merchantName": "איקאה נתניה",          "transactionAmount": 3600.00, "transactionCurrency": "₪", "chargeAmount": 600.00,  "chargeCurrency": "₪", "voucherNumber": "745411", "additionalDetail": "תשלום 1 מתוך 6" },
+    { "purchaseDate": "2026-06-25", "merchantName": "פארם עינב",            "transactionAmount": 89.90,   "transactionCurrency": "₪", "chargeAmount": 89.90,   "chargeCurrency": "₪", "voucherNumber": "745322", "additionalDetail": "" },
+    { "purchaseDate": "2026-06-20", "merchantName": "Booking.com",          "transactionAmount": 1850.00, "transactionCurrency": "₪", "chargeAmount": 1850.00, "chargeCurrency": "₪", "voucherNumber": "745210", "additionalDetail": "" },
+    { "purchaseDate": "2026-06-18", "merchantName": "AliExpress",           "transactionAmount": 45.00,   "transactionCurrency": "$", "chargeAmount": 162.50,  "chargeCurrency": "₪", "voucherNumber": "745188", "additionalDetail": "" },
+    { "purchaseDate": "2026-06-15", "merchantName": "מכבי טבעי",            "transactionAmount": 890.00,  "transactionCurrency": "₪", "chargeAmount": 148.33,  "chargeCurrency": "₪", "voucherNumber": "745092", "additionalDetail": "תשלום 3 מתוך 6" },
+    { "purchaseDate": "2026-06-12", "merchantName": "דמי כרטיס/הנפקה",       "transactionAmount": 19.90,   "transactionCurrency": "₪", "chargeAmount": 0.00,    "chargeCurrency": "₪", "voucherNumber": "744988", "additionalDetail": "הנחה 19.90₪" },
+    { "purchaseDate": "2026-06-10", "merchantName": "קפה גרג",              "transactionAmount": 28.00,   "transactionCurrency": "₪", "chargeAmount": 28.00,   "chargeCurrency": "₪", "voucherNumber": "744902", "additionalDetail": "" },
+    { "purchaseDate": "2026-06-05", "merchantName": "סופר יודה ראשל\"צ",     "transactionAmount": 388.60,  "transactionCurrency": "₪", "chargeAmount": 388.60,  "chargeCurrency": "₪", "voucherNumber": "744811", "additionalDetail": "" },
+    { "purchaseDate": "2026-06-01", "merchantName": "נטפליקס",              "transactionAmount": 55.00,   "transactionCurrency": "₪", "chargeAmount": 55.00,   "chargeCurrency": "₪", "voucherNumber": "744720", "additionalDetail": "הוראת קבע" }
+  ]
+}

@@ -4401,36 +4401,93 @@ function BankingConnectPanel({ userId }: { userId: number | undefined }) {
   )
 }
 
-function generateYahavCSV(institutionName: string, accountNumber: string, accountType: string, transactions: BankTx[], balance: number): string {
+type CheckingRecord = {
+  date: string; valueDate: string; reference: string; description: string
+  debit: number; credit: number; runningBalance: number
+}
+type CreditRecord = {
+  purchaseDate: string; merchantName: string
+  transactionAmount: number; transactionCurrency: string
+  chargeAmount: number; chargeCurrency: string
+  voucherNumber: string; additionalDetail: string
+}
+
+function csvEscape(value: string): string {
+  return value.replace(/"/g, '""')
+}
+
+function generateCheckingCSV(institutionName: string, accountNumber: string, records: CheckingRecord[]): string {
   const reportDate = new Date().toLocaleDateString('he-IL') + ' ' + new Date().toLocaleTimeString('he-IL')
-  const accTypeLabel = accountType === 'credit' ? 'כרטיס אשראי' : 'תנועות בחשבון עו"ש'
   const rows: string[] = [
-    institutionName,
-    accTypeLabel,
+    csvEscape(institutionName),
+    'תנועות בחשבון עו"ש',
+    'תנועות עו"ש',
     '',
-    `,"${accountNumber}"`,
-    `,"${reportDate}"`,
+    `חשבון,"${accountNumber}"`,
+    `מועד הפקת הדוח,"${reportDate}"`,
     '',
+    'תאריך,תאריך ערך,אסמכתא,תיאור פעולה,חובה,זכות,יתרה משוערכת',
   ]
-  for (const tx of transactions) {
-    const debit  = tx.amount < 0 ? Math.abs(tx.amount).toFixed(2) : '0'
-    const credit = tx.amount > 0 ? tx.amount.toFixed(2) : '0'
-    rows.push(`"${tx.date}","${tx.date}","","${tx.description}",${debit},${credit},${balance.toFixed(2)}`)
+  for (const r of records) {
+    const debit  = r.debit  ? r.debit.toFixed(2)  : ''
+    const credit = r.credit ? r.credit.toFixed(2) : ''
+    rows.push(`"${csvEscape(r.date)}","${csvEscape(r.valueDate)}","${csvEscape(r.reference)}","${csvEscape(r.description)}",${debit},${credit},${r.runningBalance.toFixed(2)}`)
   }
   return rows.join('\r\n')
 }
 
+function generateCreditCSV(institutionName: string, cardLabel: string, last4Digits: string, cardholderName: string, billingMonth: string, records: CreditRecord[], monthlyTotal: number): string {
+  const rows: string[] = [
+    csvEscape(institutionName),
+    'פירוט עסקאות',
+    billingMonth,
+    '',
+    `${csvEscape(cardLabel)} - ${last4Digits}`,
+    `על שם ${csvEscape(cardholderName)}`,
+    '',
+    'עסקאות למועד חיוב',
+    'תאריך רכישה,שם בית עסק,סכום עסקה,מטבע עסקה,סכום חיוב,מטבע חיוב,מס\' שובר,פירוט נוסף',
+  ]
+  for (const r of records) {
+    rows.push(`"${csvEscape(r.purchaseDate)}","${csvEscape(r.merchantName)}",${r.transactionAmount.toFixed(2)},${r.transactionCurrency},${r.chargeAmount.toFixed(2)},${r.chargeCurrency},"${csvEscape(r.voucherNumber)}","${csvEscape(r.additionalDetail)}"`)
+  }
+  rows.push(`סה"כ לחיוב החודש בכרטיס בש"ח,,,,${monthlyTotal.toFixed(2)},,,`)
+  return rows.join('\r\n')
+}
+
+function buildDownloadFileName(institutionName: string, accountOrCardNumber: string): string {
+  const now = new Date()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const dateTime = `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()}.${pad(now.getHours())}.${pad(now.getMinutes())}`
+  const safeName = institutionName.replace(/[^a-zA-Z0-9א-ת]/g, '_')
+  return `${safeName}_${accountOrCardNumber}_${dateTime}.csv`
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function downloadCSV(content: string, filename: string) {
+async function downloadCSV(content: string, filename: string) {
   const blob = new Blob(['﻿' + content], { type: 'text/csv;charset=utf-8;' })
+  const picker = (window as unknown as { showSaveFilePicker?: (opts: unknown) => Promise<{ createWritable: () => Promise<{ write: (b: Blob) => Promise<void>; close: () => Promise<void> }> }> }).showSaveFilePicker
+  if (picker) {
+    try {
+      const handle = await picker({ suggestedName: filename, types: [{ description: 'CSV', accept: { 'text/csv': ['.csv'] } }] })
+      const writable = await handle.createWritable()
+      await writable.write(blob)
+      await writable.close()
+      return
+    } catch (e) {
+      if ((e as { name?: string })?.name === 'AbortError') throw e
+      // showSaveFilePicker unsupported/failed for another reason — fall back below
+    }
+  }
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url; a.download = filename; a.click()
   URL.revokeObjectURL(url)
+  await new Promise(res => setTimeout(res, 300))
 }
 
-function BankingLayout({ loading, selectedCountry, hasConnections, onSelectCountry, onDownload, onRefresh, b, children }: {
-  loading: boolean; selectedCountry: string; hasConnections: boolean
+function BankingLayout({ loading, selectedCountry, hasConnections, hasSelection, showDownloadArrow, onSelectCountry, onDownload, onRefresh, b, children }: {
+  loading: boolean; selectedCountry: string; hasConnections: boolean; hasSelection: boolean; showDownloadArrow: boolean
   onSelectCountry: (country: string) => void; onDownload: () => void; onRefresh: () => void
   b: typeof languages[0]['banking']
   children: React.ReactNode
@@ -4451,10 +4508,18 @@ function BankingLayout({ loading, selectedCountry, hasConnections, onSelectCount
       </div>
 
       {/* סרגל בקרה */}
-      <aside style={{ width: '110px', height: '50%', alignSelf: 'center', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: '10px 2px 10px 0', borderRadius: '10px 0 0 10px', overflow: 'hidden', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
+      <aside style={{ width: '110px', height: '50%', alignSelf: 'center', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: '10px 2px 10px 0', borderRadius: '10px 0 0 10px', overflow: 'visible', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'stretch', gap: 20, padding: '14px 6px', width: '100%', height: '100%', boxSizing: 'border-box' }}>
           <button style={asideBtn} disabled={loading} onClick={() => onSelectCountry(selectedCountry)}>{b.selectInstitution}</button>
-          <button style={asideBtn} disabled={loading} onClick={onDownload}>{b.downloadFiles}</button>
+          <div style={{ position: 'relative', width: '100%' }}>
+            <button style={{ ...asideBtn, opacity: (loading || !hasSelection) ? 0.5 : 1 }} disabled={loading || !hasSelection} onClick={onDownload}>{b.downloadFiles}</button>
+            {showDownloadArrow && !loading && (
+              <div style={{ position: 'absolute', right: '100%', top: '50%', transform: 'translateY(-50%)', display: 'flex', flexDirection: 'row', alignItems: 'center', pointerEvents: 'none', zIndex: 10 }}>
+                <div style={{ width: 39, height: 12, background: 'red' }} />
+                <div style={{ width: 0, height: 0, borderTop: '24px solid transparent', borderBottom: '24px solid transparent', borderLeft: '33px solid red' }} />
+              </div>
+            )}
+          </div>
           {hasConnections && <button style={asideBtn} disabled={loading} onClick={onRefresh}>רענן</button>}
         </div>
       </aside>
@@ -4473,6 +4538,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   const [selectedCountry, setSelectedCountry] = useState('DE')
   const [selectedInstitutionName, setSelectedInstitutionName] = useState('')
   const [selectedInstitutionCountry, setSelectedInstitutionCountry] = useState('')
+  const [filesDownloaded, setFilesDownloaded] = useState(false)
   const [loading, setLoading]         = useState(false)
   const [msg, setMsg]                 = useState('')
   const [msgIsError, setMsgIsError]   = useState(false)
@@ -4588,6 +4654,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   function handleSelectInstitution(instId: string, instName: string, countryFile?: string) {
     if (!user) return
     setSelectedInstitutionName(instName)
+    setFilesDownloaded(false)
     if (countryFile) setSelectedInstitutionCountry(countryFile)
   }
 
@@ -4650,17 +4717,42 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
       let count = 0
       for (const acc of accs) {
         const conn = conns.find(c => c.id === acc.connection_id)
+        const institutionName = conn?.institution_name ?? acc.name
         const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}`).then(r2 => r2.json())
         const txList: BankTx[] = tr.transactions ?? []
-        const csv = generateYahavCSV(conn?.institution_name ?? acc.name, acc.iban || acc.name, acc.account_type, txList, acc.balance)
-        const date = new Date().toISOString().slice(0, 10)
-        const safeName = (conn?.institution_name ?? acc.name).replace(/[^a-zA-Z0-9א-ת]/g, '_')
-        downloadCSV(csv, `banking_${safeName}_${acc.iban || acc.id}_${date}.csv`)
+        let csv: string
+        if (acc.account_type === 'credit') {
+          const records: CreditRecord[] = txList.map(tx => ({
+            purchaseDate: tx.date, merchantName: tx.description,
+            transactionAmount: Math.abs(tx.amount), transactionCurrency: tx.currency || '₪',
+            chargeAmount: Math.abs(tx.amount), chargeCurrency: tx.currency || '₪',
+            voucherNumber: String(tx.id), additionalDetail: tx.category ?? '',
+          }))
+          const monthlyTotal = records.reduce((sum, r) => sum + r.chargeAmount, 0)
+          csv = generateCreditCSV(institutionName, acc.name, acc.iban || '', '', '', records, monthlyTotal)
+        } else {
+          let running = acc.balance
+          const records: CheckingRecord[] = txList.map((tx, i) => {
+            if (i > 0) {
+              const prev = txList[i - 1]
+              running = running - (prev.amount > 0 ? prev.amount : 0) + (prev.amount < 0 ? Math.abs(prev.amount) : 0)
+            }
+            return {
+              date: tx.date, valueDate: tx.date, reference: String(tx.id), description: tx.description,
+              debit: tx.amount < 0 ? Math.abs(tx.amount) : 0, credit: tx.amount > 0 ? tx.amount : 0,
+              runningBalance: running,
+            }
+          })
+          csv = generateCheckingCSV(institutionName, acc.iban || acc.name, records)
+        }
+        await downloadCSV(csv, buildDownloadFileName(institutionName, acc.iban || String(acc.id)))
         count++
-        await new Promise(res => setTimeout(res, 300))
       }
       setInfo(b.downloadedFiles.replace('{count}', String(count)))
-    } catch { setError(b.downloadError) }
+      setFilesDownloaded(true)
+    } catch (e) {
+      if ((e as { name?: string })?.name !== 'AbortError') setError(b.downloadError)
+    }
     finally { setLoading(false) }
   }
 
@@ -4751,7 +4843,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
   }
 
   if (step === 'institutions') return (
-    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections}
+    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections} hasSelection={!!selectedInstitutionName} showDownloadArrow={!!selectedInstitutionName}
       onSelectCountry={loadInstitutions} onDownload={() => setStep('download')} onRefresh={handleRefresh} b={b}>
       <PageHeader subtitle={lang.menu[4]} lang={lang} extra={
         <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px' }}>
@@ -4852,9 +4944,16 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
           <Image src={`/flags/ספרד.png`} alt="ספרד" width={28} height={28} />
           {countryName('ספרד')}
         </button>
-        <div style={{ position: 'absolute', top: 66, left: 849, bottom: 536, width: 2, background: BROWN }} />
-        <Ticks file="ספרד" bottomStart={546} left={849} />
-        <BankLabels file="ספרד" bottomStart={546} left={849} />
+        <div style={{ position: 'absolute', top: 66, left: 849, height: 184, width: 2, background: BROWN }} />
+        {BANKS['ספרד'].map((_, i) => (
+          <div key={`es-tick-${i}`} style={{ position: 'absolute', top: 90 + i * 46, left: 849, width: 20, height: 2, background: BROWN }} />
+        ))}
+        {BANKS['ספרד'].map((bank, i) => { const f = instFrame('ספרד', bank); return (
+          <button key={`es-bank-${i}`} onClick={() => handleSelectInstitution(bank, bank, 'ספרד')} disabled={loading || f.disabled}
+            style={{ position: 'absolute', top: 84 + i * 46, left: 873, background: bank === selectedInstitutionName ? '#cc0000' : BROWN, color: '#fff', border: f.border, borderRadius: 5, padding: '3px 8px', cursor: (loading || f.disabled) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)', opacity: f.disabled ? 0.55 : 1 }}>
+            {bankName(bank)}
+          </button>
+        )})}
 
         {/* עמודה 3: איטליה → יפן → סין */}
         <button onClick={() => handleCountryClick(ALL_COUNTRIES.find(c => c.file === 'איטליה')!)} disabled={loading}
@@ -4946,8 +5045,38 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
     </BankingLayout>
   )
 
+  const selectedInstDbRecord = selectedInstitutionName && selectedInstitutionCountry
+    ? findDbInstitution(selectedInstitutionCountry, selectedInstitutionName)
+    : undefined
+  const isSimulationSelected = !!selectedInstDbRecord?.system_simulation_mode && !selectedInstDbRecord?.institution_code
+
+  async function handleConnectSelected() {
+    if (!selectedInstDbRecord?.provider_code) return
+    if (selectedInstDbRecord.provider_code === 'plaid') await handleSelectRegion('plaid')
+    else await handleSelectRegion('nordigen')
+  }
+
+  async function handleSimulationDownload() {
+    setLoading(true); setInfo(b.fetchingData)
+    try {
+      const checking = await fetch('/simulation/yahav-checking.json').then(r => r.json())
+      const checkingCsv = generateCheckingCSV(checking.institutionName, checking.accountNumber, checking.records)
+      await downloadCSV(checkingCsv, buildDownloadFileName(bankName(selectedInstitutionName), checking.accountNumber))
+
+      const credit = await fetch('/simulation/isracard-credit.json').then(r => r.json())
+      const creditCsv = generateCreditCSV(credit.institutionName, credit.cardLabel, credit.last4Digits, credit.cardholderName, credit.billingMonth, credit.records, credit.monthlyTotal)
+      await downloadCSV(creditCsv, buildDownloadFileName(credit.institutionName, credit.last4Digits))
+
+      setInfo(b.downloadedFiles.replace('{count}', '2'))
+      setFilesDownloaded(true)
+    } catch (e) {
+      if ((e as { name?: string })?.name !== 'AbortError') setError(b.downloadError)
+    }
+    finally { setLoading(false) }
+  }
+
   if (step === 'download') return (
-    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections}
+    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections} hasSelection={!!selectedInstitutionName} showDownloadArrow={false}
       onSelectCountry={loadInstitutions} onDownload={() => setStep('download')} onRefresh={handleRefresh} b={b}>
       <PageHeader subtitle={lang.menu[4]} lang={lang} extra={
         <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px' }}>
@@ -4973,8 +5102,41 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
                 {Array.from({ length: halfCount }).map((_, i) => (
                   <div key={i} style={{ position: 'absolute', bottom: 10 + i * 46, left: 14, width: 20, height: 2, background: BROWN }} />
                 ))}
-                <div style={{ position: 'absolute', bottom: 10 + topIndex * 46 - 6, left: 38, background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
-                  {bankName(selectedInstitutionName)}
+                <div style={{ position: 'absolute', bottom: 10 + topIndex * 46 - 6, left: 38, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', gap: 10 }}>
+                  <div style={{ background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+                    {bankName(selectedInstitutionName)}
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    {!(isSimulationSelected || hasConnections) && (
+                      <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' }}>
+                        <div style={{ width: 8, height: 26, background: 'red' }} />
+                        <div style={{ width: 0, height: 0, borderLeft: '16px solid transparent', borderRight: '16px solid transparent', borderTop: '22px solid red' }} />
+                      </div>
+                    )}
+                    <button onClick={handleConnectSelected} disabled={loading || isSimulationSelected}
+                      style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: 5, padding: '3px 10px', cursor: (loading || isSimulationSelected) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', opacity: (loading || isSimulationSelected) ? 0.5 : 1 }}>
+                      לחץ להתחברות
+                    </button>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    {(isSimulationSelected || hasConnections) && !filesDownloaded && (
+                      <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' }}>
+                        <div style={{ width: 8, height: 26, background: 'red' }} />
+                        <div style={{ width: 0, height: 0, borderLeft: '16px solid transparent', borderRight: '16px solid transparent', borderTop: '22px solid red' }} />
+                      </div>
+                    )}
+                    <button onClick={isSimulationSelected ? handleSimulationDownload : handleDownloadAll}
+                      disabled={loading || (!isSimulationSelected && !hasConnections)}
+                      style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: 5, padding: '3px 10px', cursor: (loading || (!isSimulationSelected && !hasConnections)) ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', opacity: (loading || (!isSimulationSelected && !hasConnections)) ? 0.5 : 1 }}>
+                      {b.clickToDownload}
+                    </button>
+                    {(msg || loading) && (
+                      <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', marginTop: 6, whiteSpace: 'nowrap' }}>
+                        {msg && <div style={{ color: msgIsError ? '#cc0000' : '#006600', fontSize: 13, fontWeight: 'bold' }}>{msg}</div>}
+                        {loading && <div style={{ color: '#aaa', fontSize: 13 }}>...</div>}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )
@@ -4982,34 +5144,23 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
         </div>
         </div>
       )}
-      <div style={{ display: 'inline-flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end' }}>
-        {/* חשבונות מחוברים */}
-        {hasConnections && (
-          <div style={{ fontSize: 14, color: '#333' }}>
-            {connections.map(conn => (
-              <div key={conn.id} style={{ marginBottom: 4 }}>
-                <span style={{ fontWeight: 'bold', color: '#003399' }}>{conn.institution_name}</span>
-                {accounts.filter(a => a.connection_id === conn.id).map(acc => (
-                  <span key={acc.id} style={{ marginRight: 8, color: '#555' }}> {acc.name} {acc.balance} {acc.currency}</span>
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <button onClick={handleDownloadAll} disabled={loading}
-          style={{ background: '#006600', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: 16, fontWeight: 'bold', opacity: loading ? 0.7 : 1 }}>
-          {b.clickToDownload}
-        </button>
-
-        {msg && <div style={{ color: msgIsError ? '#cc0000' : '#006600', fontSize: 16, fontWeight: 'bold' }}>{msg}</div>}
-        {loading && <div style={{ color: '#aaa', fontSize: 16 }}>...</div>}
-      </div>
+      {hasConnections && (
+        <div style={{ fontSize: 14, color: '#333', marginTop: 16 }}>
+          {connections.map(conn => (
+            <div key={conn.id} style={{ marginBottom: 4 }}>
+              <span style={{ fontWeight: 'bold', color: '#003399' }}>{conn.institution_name}</span>
+              {accounts.filter(a => a.connection_id === conn.id).map(acc => (
+                <span key={acc.id} style={{ marginRight: 8, color: '#555' }}> {acc.name} {acc.balance} {acc.currency}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
     </BankingLayout>
   )
 
   return (
-    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections}
+    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections} hasSelection={!!selectedInstitutionName} showDownloadArrow={!!selectedInstitutionName}
       onSelectCountry={loadInstitutions} onDownload={() => setStep('download')} onRefresh={handleRefresh} b={b}>
       <PageHeader subtitle={lang.menu[4]} lang={lang} />
     </BankingLayout>

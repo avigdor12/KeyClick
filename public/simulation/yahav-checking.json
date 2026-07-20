@@ -1,0 +1,29 @@
+{
+  "institutionName": "בנק יהב לעובדי המדינה בע\"מ",
+  "accountNumber": "04-136-099001",
+  "recordShape": "CheckingRecord",
+  "note": "נתוני סימולציה בלבד — מספרים ותיאורים בדויים, לא תנועות אמיתיות.",
+  "startingBalance": 44108.15,
+  "records": [
+    { "date": "2026-07-14", "valueDate": "2026-07-14", "reference": "9010344", "description": "משכורת חודשית",              "debit": 0,       "credit": 13850.00, "runningBalance": 56200.00 },
+    { "date": "2026-07-12", "valueDate": "2026-07-12", "reference": "9010298", "description": "סופר-פארם ראשל\"צ",            "debit": 143.20,  "credit": 0,        "runningBalance": 42350.00 },
+    { "date": "2026-07-10", "valueDate": "2026-07-10", "reference": "9010251", "description": "ישראכרט בע\"מ",                "debit": 2114.60, "credit": 0,        "runningBalance": 42493.20 },
+    { "date": "2026-07-08", "valueDate": "2026-07-07", "reference": "9010177", "description": "חברת חשמל לישראל",            "debit": 412.80,  "credit": 0,        "runningBalance": 44607.80 },
+    { "date": "2026-07-05", "valueDate": "2026-07-05", "reference": "9010102", "description": "ארנונה עיריית ראשל\"צ",        "debit": 890.00,  "credit": 0,        "runningBalance": 45020.60 },
+    { "date": "2026-07-01", "valueDate": "2026-07-01", "reference": "9009988", "description": "הו\"ק/ביטוח לאומי",            "debit": 1204.30, "credit": 0,        "runningBalance": 45910.60 },
+    { "date": "2026-06-28", "valueDate": "2026-06-28", "reference": "9009855", "description": "פנסיה/מבטחים מוסד לבי",        "debit": 0,       "credit": 4820.00,  "runningBalance": 47114.90 },
+    { "date": "2026-06-25", "valueDate": "2026-06-25", "reference": "9009740", "description": "רמי לוי שיווק השיקמה",         "debit": 356.45,  "credit": 0,        "runningBalance": 42294.90 },
+    { "date": "2026-06-22", "valueDate": "2026-06-21", "reference": "9009602", "description": "קניה/Amazon.com/2B",           "debit": 512.10,  "credit": 0,        "runningBalance": 42651.35 },
+    { "date": "2026-06-18", "valueDate": "2026-06-18", "reference": "9009488", "description": "פז חברת נפט בע\"מ",            "debit": 289.90,  "credit": 0,        "runningBalance": 43163.45 },
+    { "date": "2026-06-15", "valueDate": "2026-06-15", "reference": "9009321", "description": "ע.רשל\"צ-מסים",                "debit": 731.20,  "credit": 0,        "runningBalance": 43453.35 },
+    { "date": "2026-06-14", "valueDate": "2026-06-14", "reference": "9009288", "description": "משכורת חודשית",              "debit": 0,       "credit": 13850.00, "runningBalance": 44184.55 },
+    { "date": "2026-06-10", "valueDate": "2026-06-10", "reference": "9009145", "description": "כרטיסי אשראי לי",              "debit": 1897.40, "credit": 0,        "runningBalance": 30334.55 },
+    { "date": "2026-06-05", "valueDate": "2026-06-05", "reference": "9008977", "description": "מכבי שירותי בריאות",           "debit": 1156.80, "credit": 0,        "runningBalance": 32231.95 },
+    { "date": "2026-06-01", "valueDate": "2026-06-01", "reference": "9008820", "description": "הו\"ק/נציגות בית משות",        "debit": 385.00,  "credit": 0,        "runningBalance": 33388.75 },
+    { "date": "2026-05-28", "valueDate": "2026-05-28", "reference": "9008690", "description": "פנסיה/קרן מקפת מרכז ל",        "debit": 0,       "credit": 3940.00,  "runningBalance": 33773.75 },
+    { "date": "2026-05-24", "valueDate": "2026-05-24", "reference": "9008551", "description": "שופרסל דיל ראשל\"צ",           "debit": 421.60,  "credit": 0,        "runningBalance": 29833.75 },
+    { "date": "2026-05-20", "valueDate": "2026-05-19", "reference": "9008412", "description": "קניה/LocalBank/2B",            "debit": 5001.00, "credit": 0,        "runningBalance": 30255.35 },
+    { "date": "2026-05-20", "valueDate": "2026-05-19", "reference": "9008411", "description": "מכירה/LocalBank/2B",           "debit": 0,       "credit": 4998.20,  "runningBalance": 35256.35 },
+    { "date": "2026-05-14", "valueDate": "2026-05-14", "reference": "9008260", "description": "משכורת חודשית",              "debit": 0,       "credit": 13850.00, "runningBalance": 30258.15 }
+  ]
+}
