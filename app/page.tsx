@@ -848,7 +848,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     { weight: '5',  metric: 'מתעניין',          explanation: 'מרבה להתכתב (יותר מ 3 לחודש)' },
   ])
   const [activeMfBtnTest, setActiveMfBtnTest] = useState<string | null>(null)
-  const [newFolderNameTest, setNewFolderNameTest] = useState('')
   const [usersEditMode, setUsersEditMode] = useState(false)
   const [pendingUserEdits, setPendingUserEdits] = useState<Record<string, Record<string, unknown>>>({})
   const [debugOpen, setDebugOpen] = useState(false)
@@ -1364,20 +1363,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 
         {view === 'tests' && (
           <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-            <fieldset style={{ margin: '8px 6px', border: '1px solid #003399', borderRadius: '6px', padding: '10px 12px', height: 'fit-content' }}>
-              <legend style={{ color: 'red', fontSize: '20px', fontWeight: 'bold', padding: '0 6px', direction: 'rtl' }}>צור תיקייה בתיקיית download</legend>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-                  <span style={{ color: '#003399', fontSize: '16px', fontWeight: 'bold' }}>שם</span>
-                  <input value={newFolderNameTest} onChange={e => setNewFolderNameTest(e.target.value)}
-                    style={{ background: '#fff', border: '1px solid #555', borderRadius: '4px', color: '#000', padding: '6px 8px', fontSize: '16px' }} />
-                </div>
-                <button onClick={async () => {
-                    await fetch('/api/test-create-folder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newFolderNameTest }) })
-                  }}
-                  style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: '4px', padding: '8px 14px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', width: '50%', alignSelf: 'flex-end' }}>לחץ ליצירה</button>
-              </div>
-            </fieldset>
             <div style={{ margin: '8px 6px', border: '1px solid #666', borderRadius: '8px', padding: '6px 4px 8px', width: '140px', background: '#1a1a1a' }}>
               <div style={{ color: '#FFD700', fontSize: '15px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #444', paddingBottom: '5px', marginBottom: '6px', fontFamily: handFont(lang.code) }}>
                 {lang.card.title}
