@@ -4541,12 +4541,13 @@ function generateCreditCSV(institutionName: string, cardLabel: string, last4Digi
   return rows.join('\r\n')
 }
 
-function buildDownloadFileName(institutionName: string, accountOrCardNumber: string): string {
+function buildDownloadFileName(institutionName: string, accountOrCardNumber: string, fileType: 'bank' | 'credit'): string {
   const now = new Date()
   const pad = (n: number) => String(n).padStart(2, '0')
   const dateTime = `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()}.${pad(now.getHours())}.${pad(now.getMinutes())}`
   const safeName = institutionName.replace(/[^a-zA-Z0-9א-ת]/g, '_')
-  return `${safeName}_${accountOrCardNumber}_${dateTime}.csv`
+  const prefix = fileType === 'credit' ? 'MF_credit' : 'MF_bank'
+  return `${prefix}_${safeName}_${accountOrCardNumber}_${dateTime}.csv`
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -4831,7 +4832,7 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
           })
           csv = generateCheckingCSV(institutionName, acc.iban || acc.name, records)
         }
-        await downloadCSV(csv, buildDownloadFileName(institutionName, acc.iban || String(acc.id)))
+        await downloadCSV(csv, buildDownloadFileName(institutionName, acc.iban || String(acc.id), acc.account_type === 'credit' ? 'credit' : 'bank'))
         count++
       }
       setInfo(b.downloadedFiles.replace('{count}', String(count)))
@@ -5147,11 +5148,11 @@ function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof lan
     try {
       const checking = await fetch('/simulation/yahav-checking.json').then(r => r.json())
       const checkingCsv = generateCheckingCSV(checking.institutionName, checking.accountNumber, checking.records)
-      await downloadCSV(checkingCsv, buildDownloadFileName(bankName(selectedInstitutionName), checking.accountNumber))
+      await downloadCSV(checkingCsv, buildDownloadFileName(bankName(selectedInstitutionName), checking.accountNumber, 'bank'))
 
       const credit = await fetch('/simulation/isracard-credit.json').then(r => r.json())
       const creditCsv = generateCreditCSV(credit.institutionName, credit.cardLabel, credit.last4Digits, credit.cardholderName, credit.billingMonth, credit.records, credit.monthlyTotal)
-      await downloadCSV(creditCsv, buildDownloadFileName(credit.institutionName, credit.last4Digits))
+      await downloadCSV(creditCsv, buildDownloadFileName(credit.institutionName, credit.last4Digits, 'credit'))
 
       setInfo(b.downloadedFiles.replace('{count}', '2'))
       setFilesDownloaded(true)
