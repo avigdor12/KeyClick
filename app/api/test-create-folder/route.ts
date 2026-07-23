@@ -6,7 +6,8 @@ import os from 'os'
 export async function POST(req: NextRequest) {
   const { name } = await req.json()
   if (!name) return NextResponse.json({ error: 'חסר שם' }, { status: 400 })
-  const scriptPath = path.join(process.cwd(), 'scripts', 'create_folder.bat')
+  const scriptName = process.platform === 'win32' ? 'create_folder.bat' : 'create_folder.sh'
+  const scriptPath = path.join(process.cwd(), 'scripts', scriptName)
   const targetPath = path.join(os.homedir(), 'Downloads', name)
 
   return new Promise<Response>((resolve) => {

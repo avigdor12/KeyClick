@@ -1373,7 +1373,9 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                     style={{ background: '#fff', border: '1px solid #555', borderRadius: '4px', color: '#000', padding: '6px 8px', fontSize: '16px' }} />
                 </div>
                 <button onClick={async () => {
-                    await fetch('/api/test-create-folder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newFolderNameTest }) })
+                    const res = await fetch('/api/test-create-folder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newFolderNameTest }) })
+                    const data = await res.json()
+                    alert(data.path ? `נוצרה תיקייה: ${data.path}` : `שגיאה: ${data.error}`)
                   }}
                   style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: '4px', padding: '8px 14px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', width: '50%', alignSelf: 'flex-end' }}>לחץ ליצירה</button>
               </div>
