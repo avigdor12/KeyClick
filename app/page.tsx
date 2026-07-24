@@ -184,6 +184,7 @@ async function translateFromHe(text: string, toLang: string): Promise<string> {
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
+  const [bankingDirect, setBankingDirect] = useState(false)
   const [systemMessage, setSystemMessage] = useState('')
   const [prText, setPrText] = useState('')
   const [prDate, setPrDate] = useState('')
@@ -307,6 +308,7 @@ export default function Home() {
     if (bankingParam === 'success' || bankingParam === 'direct') {
       window.history.replaceState({}, '', window.location.pathname)
       setActivePage('4')
+      if (bankingParam === 'direct') setBankingDirect(true)
     } else if (bankingParam === 'error') {
       window.history.replaceState({}, '', window.location.pathname)
       setActivePage('4')
@@ -563,7 +565,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onClose={() => setActivePage(null)} onLogin={(user) => {
+            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} onClose={() => setActivePage(null)} onLogin={(user) => {
               set_Current_User_Pointer_to_DB(user)
               if (mfChainRef.current) {
                 mfChainRef.current = false
@@ -4318,7 +4320,7 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
@@ -4327,7 +4329,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
-  if (page === '4')           return <BankingPage user={user} lang={lang} />
+  if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   if (page === 'guides')      return <GuidesPage lang={lang} />
   return (
@@ -4631,14 +4633,14 @@ function BankingLayout({ loading, selectedCountry, hasConnections, hasSelection,
   )
 }
 
-function BankingPage({ user, lang }: { user: UserRecord | null; lang: typeof languages[0] }) {
+function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | null; lang: typeof languages[0]; directInstitutions?: boolean }) {
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   const [connections, setConnections] = useState<BankConnection[]>([])
   const [accounts, setAccounts]       = useState<BankAccount[]>([])
   const [txs, setTxs]                 = useState<BankTx[]>([])
   const [selAccount, setSelAccount]   = useState<BankAccount | null>(null)
   const [institutions, setInstitutions] = useState<{ id: string; name: string; logo?: string }[]>([])
-  const [step, setStep]               = useState<'main' | 'institutions' | 'download' | 'txs'>('main')
+  const [step, setStep]               = useState<'main' | 'institutions' | 'download' | 'txs'>(directInstitutions ? 'institutions' : 'main')
   const [selectedCountry, setSelectedCountry] = useState('DE')
   const [selectedInstitutionName, setSelectedInstitutionName] = useState('')
   const [selectedInstitutionCountry, setSelectedInstitutionCountry] = useState('')
