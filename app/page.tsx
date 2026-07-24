@@ -304,7 +304,7 @@ export default function Home() {
       handleRun()
     }
     const bankingParam = params.get('banking')
-    if (bankingParam === 'success') {
+    if (bankingParam === 'success' || bankingParam === 'direct') {
       window.history.replaceState({}, '', window.location.pathname)
       setActivePage('4')
     } else if (bankingParam === 'error') {
