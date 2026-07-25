@@ -4534,8 +4534,8 @@ function generateCheckingCSV(institutionName: string, accountNumber: string, rec
     'תאריך,תאריך ערך,אסמכתא,תיאור פעולה,חובה,זכות,יתרה משוערכת',
   ]
   for (const r of records) {
-    const debit  = r.debit  ? r.debit.toFixed(2)  : ''
-    const credit = r.credit ? r.credit.toFixed(2) : ''
+    const debit  = r.debit  ? r.debit.toFixed(2)  : '0.00'
+    const credit = r.credit ? r.credit.toFixed(2) : '0.00'
     rows.push(`"${csvEscape(r.date)}","${csvEscape(r.valueDate)}","${csvEscape(r.reference)}","${csvEscape(r.description)}",${debit},${credit},${r.runningBalance.toFixed(2)}`)
   }
   return rows.join('\r\n')
