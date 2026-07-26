@@ -4820,7 +4820,10 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
   }
 
   async function handleLoadToApp() {
-    // TODO: אין עדיין API אמיתי מול M_Finance - זה שלד זמני עד שהחיבור המקומי ייבנה
+    const importToken = Date.now().toString()
+    logMsg(`שולח התראה לאפליקציה (token=${importToken})`)
+    window.location.href = `mfinance://import?token=${importToken}`
+    // TODO: אין עדיין API אמיתי מול M_Finance מעבר לשליחת ההתראה - זה שלד זמני עד שהחיבור המקומי ייבנה
     setLoading(true)
     logMsg(b.loadingDataMsg)
     try {
