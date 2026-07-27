@@ -23,6 +23,27 @@ function makeId(date: string, seq: number): string {
   return `ID_${mm}_${dd}_${yy}_${String(seq).padStart(6, '0')}`
 }
 
+type ExportRecord = {
+  record_id: string
+  source: number
+  is_credit_card: boolean
+  format_info: string
+  institution_name: string
+  account_number: string
+  credit_card_number: string
+  transaction_date: string
+  value_date: string
+  description: string
+  debit_amount: number
+  credit_amount: number
+  balance: number
+  currency: string
+  category: string
+  notes: string
+  num_of_months: number
+  category_tag: string
+}
+
 // Stateless: builds M_Finance-format records directly from a live Nordigen call using
 // the access token held in the browser's encrypted session blob. No DB read/write.
 export async function GET(req: NextRequest) {
@@ -39,7 +60,7 @@ export async function GET(req: NextRequest) {
   if (session.provider !== 'nordigen') return NextResponse.json({ count: 0, records: [] })
 
   let seq = 0
-  const records = []
+  const records: ExportRecord[] = []
   for (const acc of session.accounts) {
     const isCreditCard = acc.account_type === 'credit'
     const res = await fetch(`${NORDIGEN_BASE}/accounts/${acc.external_id}/transactions/`, {

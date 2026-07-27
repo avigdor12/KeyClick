@@ -394,6 +394,28 @@ export default function Home() {
       dbg('session', `Current_User=${Current_User_Pointer_to_DB?.id ?? 0}  email="${Current_User_Pointer_to_DB?.email ?? 'none'}"  IP="${Current_User_Pointer_to_DB?.last_ip ?? 'none'}"`)
       dbg('session', `license="${Current_User_Pointer_to_DB?.M_Finance_license_type ?? 'none'}"  active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
       dbg('lang', `idx=${langIdx} code=${languages[langIdx].code} name=${languages[langIdx].name}`)
+      type SimExportRecord = {
+        record_id: string; source: number; is_credit_card: boolean; format_info: string
+        institution_name: string; account_number: string; credit_card_number: string
+        transaction_date: string; value_date: string; description: string
+        debit_amount: number; credit_amount: number; balance: number; currency: string
+        category: string; notes: string; num_of_months: number; category_tag: string
+      }
+      const n2 = (v: number) => v.toFixed(2)
+      ;(async () => {
+        try {
+          const bank = await fetch('/simulation/keyclick-export-checking.json').then(r => r.json())
+          dbg('════════ BANK ════════', '')
+          ;(bank.records ?? []).forEach((r: SimExportRecord) =>
+            dbg('BANK', `${r.transaction_date}   ${r.description}   ${n2(r.debit_amount)}   ${n2(r.credit_amount)}   ${n2(r.balance)}`))
+        } catch (e) { dbg('BANK', `fetch failed err="${String(e)}"`) }
+        try {
+          const credit = await fetch('/simulation/keyclick-export-credit.json').then(r => r.json())
+          dbg('════════ CREDIT ════════', '')
+          ;(credit.records ?? []).forEach((r: SimExportRecord) =>
+            dbg('CREDIT', `${r.transaction_date}   ${r.description}   ${n2(r.debit_amount)}`))
+        } catch (e) { dbg('CREDIT', `fetch failed err="${String(e)}"`) }
+      })()
     } else {
       debugPausedRef.current = false
       setDebugPaused(false)
@@ -4332,7 +4354,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
-  if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} />
+  if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   if (page === 'guides')      return <GuidesPage lang={lang} />
   return (
@@ -4642,7 +4664,7 @@ function BankingLayout({ loading, selectedCountry, hasConnections, hasSelection,
   )
 }
 
-function BankingPage({ user, lang, directInstitutions, pendingBankSession, onConsumeBankSession }: { user: UserRecord | null; lang: typeof languages[0]; directInstitutions?: boolean; pendingBankSession?: string | null; onConsumeBankSession?: () => void }) {
+function BankingPage({ user, lang, directInstitutions, pendingBankSession, onConsumeBankSession, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; directInstitutions?: boolean; pendingBankSession?: string | null; onConsumeBankSession?: () => void; onDbg?: (func: string, msg: string) => void }) {
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   const [connections, setConnections] = useState<BankConnection[]>([])
   const [accounts, setAccounts]       = useState<BankAccount[]>([])
@@ -4695,6 +4717,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   async function decodeBankSession(blob: string) {
+    onDbg?.('decodeBankSession', `blob.length=${blob.length} fetch POST /api/banking/session/decode`)
     setLoading(true)
     try {
       const r = await fetch('/api/banking/session/decode', {
@@ -4702,11 +4725,14 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
         body: JSON.stringify({ bsession: blob }),
       })
       const d = await r.json()
+      onDbg?.('decodeBankSession', `res.status=${r.status} res.ok=${r.ok} connections=${(d.connections ?? []).length} accounts=${(d.accounts ?? []).length}`)
+      ;(d.connections ?? []).forEach((c: BankConnection) => onDbg?.('decodeBankSession', `connection id=${c.id} provider=${c.provider} institution="${c.institution_name}" status=${c.status}`))
+      ;(d.accounts ?? []).forEach((a: BankAccount) => onDbg?.('decodeBankSession', `account id=${a.id} iban="${a.iban}" name="${a.name}" type=${a.account_type} currency=${a.currency} balance=${a.balance}`))
       if (!r.ok) return
       setConnections(d.connections ?? [])
       setAccounts(d.accounts ?? [])
       setBsession(blob)
-    } catch { /* ignore */ } finally { setLoading(false) }
+    } catch (e) { onDbg?.('decodeBankSession', `failed err="${String(e)}"`) } finally { setLoading(false) }
   }
 
   async function loadInstitutions(country: string) {
@@ -4788,6 +4814,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   function handleSelectInstitution(instId: string, instName: string, countryFile?: string) {
+    onDbg?.('handleSelectInstitution', `instId="${instId}" instName="${instName}" countryFile="${countryFile ?? ''}" user=${!!user}`)
     if (!user) return
     setSelectedInstitutionName(instName)
     setFilesDownloaded(false)
@@ -4799,6 +4826,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   function handleSimConnect() {
+    onDbg?.('handleSimConnect', `institution="${bankName(selectedInstitutionName)}" isSimulationSelected=${isSimulationSelected}`)
     logMsg(b.connectingToInstitution.replace('{name}', bankName(selectedInstitutionName)))
     setInfo(b.connectedStatus)
     logMsg(b.connectDoneMsg.replace('{name}', bankName(selectedInstitutionName)))
@@ -4807,12 +4835,14 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   async function handleDisconnectSelected() {
+    onDbg?.('handleDisconnectSelected', `institution="${bankName(selectedInstitutionName)}" isSimulationSelected=${isSimulationSelected}`)
     setLoading(true)
     logMsg(b.disconnectingFromInstitution.replace('{name}', bankName(selectedInstitutionName)))
     if (isSimulationSelected) {
       setSimConnected(false)
     } else {
       const conn = connections.find(c => c.institution_name === bankName(selectedInstitutionName))
+      onDbg?.('handleDisconnectSelected', `found_connection=${!!conn} connection_id=${conn?.id ?? 'none'}`)
       if (conn) {
         // Nothing is persisted server-side to revoke — the session lives only in this tab.
         setConnections([]); setAccounts([]); setBsession(null)
@@ -4825,6 +4855,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   async function handleReadData() {
+    onDbg?.('handleReadData', `institution="${bankName(selectedInstitutionName)}" bsession.present=${!!bsession}`)
     setLoading(true)
     logMsg(b.readingDataMsg)
     await handleRefresh()
@@ -4835,8 +4866,16 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
   async function handleLoadToApp() {
     const importToken = Date.now().toString()
+    onDbg?.('handleLoadToApp', `token=${importToken} bsession.present=${!!bsession} bsession.length=${bsession?.length ?? 0} isSimulationSelected=${isSimulationSelected}`)
     logMsg(`שולח התראה לאפליקציה (token=${importToken})`)
-    window.location.href = `mfinance://import?token=${importToken}`
+    // iframe נסתר (לא window.location.href ישיר) — מונע ניווט/beforeunload בדף הראשי
+    // אם הפרוטוקול mfinance:// לא רשום בדפדפן הבדיקה הנוכחי (M_Finance לא מותקן/רץ)
+    onDbg?.('handleLoadToApp', `launch mfinance://import?token=${importToken} via hidden iframe`)
+    const importFrame = document.createElement('iframe')
+    importFrame.style.display = 'none'
+    importFrame.src = `mfinance://import?token=${importToken}`
+    document.body.appendChild(importFrame)
+    setTimeout(() => document.body.removeChild(importFrame), 1000)
     // TODO: אין עדיין API אמיתי מול M_Finance מעבר לשליחת ההתראה - זה שלד זמני עד שהחיבור המקומי ייבנה
     setLoading(true)
     logMsg(b.loadingDataMsg)
@@ -4844,14 +4883,22 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
       if (isSimulationSelected) {
         const checking = await fetch('/simulation/yahav-checking.json').then(r => r.json())
         const credit = await fetch('/simulation/isracard-credit.json').then(r => r.json())
+        onDbg?.('handleLoadToApp', `sim checking.records=${(checking.records ?? []).length} credit.records=${(credit.records ?? []).length}`)
+        ;(checking.records ?? []).forEach((r: CheckingRecord) => onDbg?.('handleLoadToApp', `sim checking date=${r.date} desc="${r.description}" debit=${r.debit} credit=${r.credit} balance=${r.runningBalance}`))
+        ;(credit.records ?? []).forEach((r: CreditRecord) => onDbg?.('handleLoadToApp', `sim credit date=${r.purchaseDate} desc="${r.merchantName}" amount=${r.transactionAmount} charge=${r.chargeAmount}`))
         logMsg(b.accountStatementMsg.replace('{id}', checking.accountNumber).replace('{period}', periodLabel((checking.records ?? []).map((r: CheckingRecord) => r.date))))
         logMsg(b.creditStatementMsg.replace('{id}', credit.last4Digits).replace('{period}', periodLabel((credit.records ?? []).map((r: CreditRecord) => r.purchaseDate))))
         logMsg(b.totalFilesMsg.replace('{count}', '2'))
       } else if (user) {
         const accs: BankAccount[] = accounts
+        onDbg?.('handleLoadToApp', `accounts=${accs.length} ids="${accs.map(a => a.id).join(',')}"`)
         for (const acc of accs) {
           const idLabel = acc.iban || acc.name
-          const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}&bsession=${encodeURIComponent(bsession ?? '')}`).then(r2 => r2.json())
+          const url = `/api/banking/transactions?accountId=${acc.id}&bsession=${encodeURIComponent(bsession ?? '')}`
+          onDbg?.('handleLoadToApp', `fetch GET url="${url}"`)
+          const tr = await fetch(url).then(r2 => r2.json())
+          onDbg?.('handleLoadToApp', `account_id=${acc.id} type=${acc.account_type} transactions=${(tr.transactions ?? []).length}`)
+          ;(tr.transactions ?? []).forEach((tx: BankTx) => onDbg?.('handleLoadToApp', `tx id=${tx.id} date=${tx.date} desc="${tx.description}" amount=${tx.amount} currency=${tx.currency}`))
           const period = periodLabel(((tr.transactions ?? []) as BankTx[]).map(tx => tx.date))
           logMsg((acc.account_type === 'credit' ? b.creditStatementMsg : b.accountStatementMsg).replace('{id}', idLabel).replace('{period}', period))
         }
@@ -4860,7 +4907,8 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
       setInfo(b.doneStatus)
       logMsg(b.dataLoadedDoneMsg)
       setFilesDownloaded(true)
-    } catch {
+    } catch (e) {
+      onDbg?.('handleLoadToApp', `failed err="${String(e)}"`)
       setError(b.downloadError)
       logMsg(b.loadDataErrorMsg)
     } finally {
@@ -4882,12 +4930,14 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   async function handleViewTxs(account: BankAccount) {
+    onDbg?.('handleViewTxs', `account_id=${account.id} iban="${account.iban}" type=${account.account_type}`)
     setSelAccount(account); setStep('txs'); setLoading(true); setTxs([])
     try {
       const r = await fetch(`/api/banking/transactions?accountId=${account.id}&bsession=${encodeURIComponent(bsession ?? '')}`)
       const d = await r.json()
+      onDbg?.('handleViewTxs', `res.status=${r.status} transactions=${(d.transactions ?? []).length}`)
       setTxs(d.transactions ?? [])
-    } catch { /* ignore */ } finally { setLoading(false) }
+    } catch (e) { onDbg?.('handleViewTxs', `failed err="${String(e)}"`) } finally { setLoading(false) }
   }
 
   const S = {
@@ -4911,6 +4961,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   )
 
   async function handleDownloadAll() {
+    onDbg?.('handleDownloadAll', `user=${!!user} accounts=${accounts.length} bsession.present=${!!bsession}`)
     if (!user) return
     setLoading(true); setInfo(b.fetchingData)
     logMsg(b.downloadingFilesMsg)
@@ -4924,6 +4975,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
         const institutionName = conn?.institution_name ?? acc.name
         const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}&bsession=${encodeURIComponent(bsession ?? '')}`).then(r2 => r2.json())
         const txList: BankTx[] = tr.transactions ?? []
+        onDbg?.('handleDownloadAll', `account_id=${acc.id} institution="${institutionName}" type=${acc.account_type} transactions=${txList.length}`)
         let csv: string
         if (acc.account_type === 'credit') {
           const records: CreditRecord[] = txList.map(tx => ({
@@ -4952,7 +5004,9 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
         const fileName = buildDownloadFileName(institutionName, acc.iban || String(acc.id), acc.account_type === 'credit' ? 'credit' : 'bank')
         const fileNameLtr = ltr(fileName)
         const period = periodLabel(txList.map(tx => tx.date))
+        onDbg?.('handleDownloadAll', `fileName="${fileName}" csv.length=${csv.length} => downloadCSV()`)
         await downloadCSV(csv, fileName)
+        onDbg?.('handleDownloadAll', `downloadCSV done fileName="${fileName}"`)
         logMsg(b.fileDownloadedForPeriodMsg.replace('{file}', fileNameLtr).replace('{period}', period), fileNameLtr)
         count++
       }
@@ -5266,6 +5320,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   async function handleSimulationDownload() {
+    onDbg?.('handleSimulationDownload', `institution="${bankName(selectedInstitutionName)}"`)
     setLoading(true); setInfo(b.fetchingData)
     try {
       const checking = await fetch('/simulation/yahav-checking.json').then(r => r.json())
@@ -5273,7 +5328,9 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
       const checkingFileName = buildDownloadFileName(bankName(selectedInstitutionName), checking.accountNumber, 'bank')
       const checkingFileNameLtr = ltr(checkingFileName)
       const checkingPeriod = periodLabel((checking.records ?? []).map((r: CheckingRecord) => r.date))
+      onDbg?.('handleSimulationDownload', `fileName="${checkingFileName}" records=${(checking.records ?? []).length} => downloadCSV()`)
       await downloadCSV(checkingCsv, checkingFileName)
+      onDbg?.('handleSimulationDownload', `downloadCSV done fileName="${checkingFileName}"`)
       logMsg(b.fileDownloadedForPeriodMsg.replace('{file}', checkingFileNameLtr).replace('{period}', checkingPeriod), checkingFileNameLtr)
 
       const credit = await fetch('/simulation/isracard-credit.json').then(r => r.json())
@@ -5281,13 +5338,16 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
       const creditFileName = buildDownloadFileName(credit.institutionName, credit.last4Digits, 'credit')
       const creditFileNameLtr = ltr(creditFileName)
       const creditPeriod = periodLabel((credit.records ?? []).map((r: CreditRecord) => r.purchaseDate))
+      onDbg?.('handleSimulationDownload', `fileName="${creditFileName}" records=${(credit.records ?? []).length} => downloadCSV()`)
       await downloadCSV(creditCsv, creditFileName)
+      onDbg?.('handleSimulationDownload', `downloadCSV done fileName="${creditFileName}"`)
       logMsg(b.fileDownloadedForPeriodMsg.replace('{file}', creditFileNameLtr).replace('{period}', creditPeriod), creditFileNameLtr)
 
       setInfo(b.downloadedFiles.replace('{count}', '2'))
       logMsg(b.totalFilesMsg.replace('{count}', '2'))
       setFilesDownloaded(true)
     } catch (e) {
+      onDbg?.('handleSimulationDownload', `err.name="${(e as { name?: string })?.name ?? ''}" err="${String(e)}"`)
       if ((e as { name?: string })?.name !== 'AbortError') { setError(b.downloadError); logMsg(b.downloadFilesErrorMsg) }
     }
     finally { setLoading(false) }
@@ -5396,7 +5456,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
                         <div style={{ width: 0, height: 0, borderLeft: '16px solid transparent', borderRight: '16px solid transparent', borderTop: '22px solid red' }} />
                       </div>
                     )}
-                    <button onClick={() => { logMsg(b.waitingForSelection); setShowDownloadTypeDialog(true) }}
+                    <button onClick={() => { onDbg?.('downloadTypeDialog', 'opened'); logMsg(b.waitingForSelection); setShowDownloadTypeDialog(true) }}
                       disabled={loading || !dataRead || filesDownloaded}
                       style={seqBtn(loading || !dataRead || filesDownloaded)}>
                       {seqBtnLines(b.clickToDownload)}
@@ -5450,11 +5510,11 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
           <div style={{ background: '#fff', borderRadius: 10, padding: '24px 30px', minWidth: 300, textAlign: 'center', boxShadow: '0 8px 30px rgba(0,0,0,0.4)' }}>
             <div style={{ fontSize: 17, fontWeight: 'bold', color: '#003399', marginBottom: 20 }}>{b.chooseDownloadType}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <button onClick={() => { logMsg(b.selectedDownloadFilesMsg); setShowDownloadTypeDialog(false); isSimulationSelected ? handleSimulationDownload() : handleDownloadAll() }}
+              <button onClick={() => { onDbg?.('downloadTypeDialog', 'choice="downloadFilesToComputer"'); logMsg(b.selectedDownloadFilesMsg); setShowDownloadTypeDialog(false); isSimulationSelected ? handleSimulationDownload() : handleDownloadAll() }}
                 style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 16px', fontSize: 14, fontWeight: 'bold', cursor: 'pointer' }}>
                 {b.downloadFilesToComputer}
               </button>
-              <button onClick={() => { logMsg(b.selectedLoadDataMsg); setShowDownloadTypeDialog(false); handleLoadToApp() }}
+              <button onClick={() => { onDbg?.('downloadTypeDialog', 'choice="loadDataBtn"'); logMsg(b.selectedLoadDataMsg); setShowDownloadTypeDialog(false); handleLoadToApp() }}
                 style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 16px', fontSize: 14, fontWeight: 'bold', cursor: 'pointer' }}>
                 {b.loadDataBtn}
               </button>
