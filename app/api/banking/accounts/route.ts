@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserConnections, getAccountsByConnection, updateConnectionStatus } from '@/lib/banking-db'
 
-export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get('userId')
-  if (!userId) return NextResponse.json({ error: 'missing userId' }, { status: 400 })
-
-  const connections = await getUserConnections(parseInt(userId))
-  const accounts = (await Promise.all(connections.map(c => getAccountsByConnection(c.id)))).flat()
-  return NextResponse.json({ connections, accounts })
+// Stateless by design: no bank connection/account data is persisted server-side anymore
+// (see lib/banking-session.ts). This endpoint has nothing to look up — every real
+// connection/account list lives only in the browser's decoded session state.
+export async function GET(_req: NextRequest) {
+  return NextResponse.json({ connections: [], accounts: [] })
 }
 
-export async function DELETE(req: NextRequest) {
-  const { connectionId } = await req.json()
-  if (!connectionId) return NextResponse.json({ error: 'missing connectionId' }, { status: 400 })
-  await updateConnectionStatus(connectionId, 'revoked')
+export async function DELETE(_req: NextRequest) {
+  // Nothing is stored server-side to revoke; disconnect is handled client-side.
   return NextResponse.json({ ok: true })
 }

@@ -185,6 +185,7 @@ export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
   const [bankingDirect, setBankingDirect] = useState(false)
+  const [pendingBankSession, setPendingBankSession] = useState<string | null>(null)
   const [systemMessage, setSystemMessage] = useState('')
   const [prText, setPrText] = useState('')
   const [prDate, setPrDate] = useState('')
@@ -306,6 +307,8 @@ export default function Home() {
     }
     const bankingParam = params.get('banking')
     if (bankingParam === 'success' || bankingParam === 'direct') {
+      const bsessionParam = params.get('bsession')
+      if (bsessionParam) setPendingBankSession(bsessionParam)
       window.history.replaceState({}, '', window.location.pathname)
       setActivePage('4')
       if (bankingParam === 'direct') setBankingDirect(true)
@@ -565,7 +568,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} onClose={() => setActivePage(null)} onLogin={(user) => {
+            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
               set_Current_User_Pointer_to_DB(user)
               if (mfChainRef.current) {
                 mfChainRef.current = false
@@ -4320,7 +4323,7 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
@@ -4329,7 +4332,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
-  if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} />
+  if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   if (page === 'guides')      return <GuidesPage lang={lang} />
   return (
@@ -4342,9 +4345,9 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   )
 }
 
-type BankConnection = { id: number; provider: string; institution_name: string; status: string; created_at: string }
-type BankAccount    = { id: number; connection_id: number; iban: string; name: string; currency: string; account_type: string; balance: number }
-type BankTx         = { id: number; date: string; description: string; amount: number; currency: string; category: string }
+type BankConnection = { id: string; provider: string; institution_name: string; status: string; created_at: string }
+type BankAccount    = { id: string; connection_id: string; iban: string; name: string; currency: string; account_type: string; balance: number }
+type BankTx         = { id: string; date: string; description: string; amount: number; currency: string; category: string }
 type FinancialInstitutionRecord = {
   institution_record_id: number; country_name: string; country_code: string
   institution_name: string; institution_code: string | null
@@ -4412,7 +4415,7 @@ function BankingConnectPanel({ userId, lang }: { userId: number | undefined; lan
     } catch { setMsg(lang.system.error) } finally { setLoading(false) }
   }
 
-  async function handleDisconnect(connectionId: number) {
+  async function handleDisconnect(connectionId: string) {
     setLoading(true)
     try {
       await fetch('/api/banking/accounts', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ connectionId }) })
@@ -4639,10 +4642,11 @@ function BankingLayout({ loading, selectedCountry, hasConnections, hasSelection,
   )
 }
 
-function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | null; lang: typeof languages[0]; directInstitutions?: boolean }) {
+function BankingPage({ user, lang, directInstitutions, pendingBankSession, onConsumeBankSession }: { user: UserRecord | null; lang: typeof languages[0]; directInstitutions?: boolean; pendingBankSession?: string | null; onConsumeBankSession?: () => void }) {
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   const [connections, setConnections] = useState<BankConnection[]>([])
   const [accounts, setAccounts]       = useState<BankAccount[]>([])
+  const [bsession, setBsession]       = useState<string | null>(null)
   const [txs, setTxs]                 = useState<BankTx[]>([])
   const [selAccount, setSelAccount]   = useState<BankAccount | null>(null)
   const [institutions, setInstitutions] = useState<{ id: string; name: string; logo?: string }[]>([])
@@ -4667,7 +4671,11 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
   const setError = (text: string) => { setMsg(text); setMsgIsError(true) }
   const setInfo  = (text: string) => { setMsg(text); setMsgIsError(false) }
 
-  useEffect(() => { if (user) loadConnections() }, [user])
+  useEffect(() => {
+    if (!pendingBankSession) return
+    decodeBankSession(pendingBankSession)
+    onConsumeBankSession?.()
+  }, [pendingBankSession])
   useEffect(() => {
     fetch('/api/banking/institutions').then(r => r.json()).then(d => setDbInstitutions(d.institutions ?? [])).catch(() => {})
   }, [])
@@ -4686,14 +4694,18 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
     return { border: '2px solid transparent', disabled: true }
   }
 
-  async function loadConnections() {
-    if (!user) return
+  async function decodeBankSession(blob: string) {
     setLoading(true)
     try {
-      const r = await fetch(`/api/banking/accounts?userId=${user.id}`)
+      const r = await fetch('/api/banking/session/decode', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bsession: blob }),
+      })
       const d = await r.json()
+      if (!r.ok) return
       setConnections(d.connections ?? [])
       setAccounts(d.accounts ?? [])
+      setBsession(blob)
     } catch { /* ignore */ } finally { setLoading(false) }
   }
 
@@ -4746,9 +4758,14 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
               try {
                 const res = await fetch('/api/banking/plaid/exchange', {
                   method: 'POST', headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ publicToken, userId: user.id, institutionName: metadata?.institution?.name ?? 'Bank' }),
+                  body: JSON.stringify({ publicToken, institutionName: metadata?.institution?.name ?? 'Bank' }),
                 }).then(r => r.json())
-                if (res.ok) { setInfo(b.bankConnected); await loadConnections() }
+                if (res.ok) {
+                  setConnections(res.connections ?? [])
+                  setAccounts(res.accounts ?? [])
+                  setBsession(res.bsession ?? null)
+                  setInfo(b.bankConnected)
+                }
                 else { setError(b.connectionError) }
               } catch { setError(b.connectionError) }
               finally { setLoading(false) }
@@ -4797,11 +4814,8 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
     } else {
       const conn = connections.find(c => c.institution_name === bankName(selectedInstitutionName))
       if (conn) {
-        await fetch('/api/banking/accounts', {
-          method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ connectionId: conn.id }),
-        }).catch(() => {})
-        await loadConnections()
+        // Nothing is persisted server-side to revoke — the session lives only in this tab.
+        setConnections([]); setAccounts([]); setBsession(null)
       }
     }
     logMsg(b.disconnectDoneMsg)
@@ -4834,12 +4848,10 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
         logMsg(b.creditStatementMsg.replace('{id}', credit.last4Digits).replace('{period}', periodLabel((credit.records ?? []).map((r: CreditRecord) => r.purchaseDate))))
         logMsg(b.totalFilesMsg.replace('{count}', '2'))
       } else if (user) {
-        const r = await fetch(`/api/banking/accounts?userId=${user.id}`)
-        const d = await r.json()
-        const accs: BankAccount[] = d.accounts ?? []
+        const accs: BankAccount[] = accounts
         for (const acc of accs) {
           const idLabel = acc.iban || acc.name
-          const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}`).then(r2 => r2.json())
+          const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}&bsession=${encodeURIComponent(bsession ?? '')}`).then(r2 => r2.json())
           const period = periodLabel(((tr.transactions ?? []) as BankTx[]).map(tx => tx.date))
           logMsg((acc.account_type === 'credit' ? b.creditStatementMsg : b.accountStatementMsg).replace('{id}', idLabel).replace('{period}', period))
         }
@@ -4859,26 +4871,20 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
 
   async function handleRefresh() {
     setLoading(true); setInfo(b.refreshing)
-    await loadConnections()
+    if (bsession) await decodeBankSession(bsession)
     setInfo(b.updated)
     setTimeout(() => setMsg(''), 2000)
   }
 
-  async function handleDisconnect(connectionId: number) {
-    setLoading(true)
-    try {
-      await fetch('/api/banking/accounts', {
-        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ connectionId }),
-      })
-      await loadConnections()
-    } catch { /* ignore */ } finally { setLoading(false) }
+  function handleDisconnect(_connectionId: string) {
+    // Nothing is persisted server-side to revoke — the session lives only in this tab.
+    setConnections([]); setAccounts([]); setBsession(null)
   }
 
   async function handleViewTxs(account: BankAccount) {
     setSelAccount(account); setStep('txs'); setLoading(true); setTxs([])
     try {
-      const r = await fetch(`/api/banking/transactions?accountId=${account.id}`)
+      const r = await fetch(`/api/banking/transactions?accountId=${account.id}&bsession=${encodeURIComponent(bsession ?? '')}`)
       const d = await r.json()
       setTxs(d.transactions ?? [])
     } catch { /* ignore */ } finally { setLoading(false) }
@@ -4909,16 +4915,14 @@ function BankingPage({ user, lang, directInstitutions }: { user: UserRecord | nu
     setLoading(true); setInfo(b.fetchingData)
     logMsg(b.downloadingFilesMsg)
     try {
-      const r = await fetch(`/api/banking/accounts?userId=${user.id}`)
-      const d = await r.json()
-      const conns: BankConnection[] = d.connections ?? []
-      const accs: BankAccount[]     = d.accounts ?? []
+      const conns: BankConnection[] = connections
+      const accs: BankAccount[]     = accounts
       if (accs.length === 0) { setError(b.noAccountsConnected); return }
       let count = 0
       for (const acc of accs) {
         const conn = conns.find(c => c.id === acc.connection_id)
         const institutionName = conn?.institution_name ?? acc.name
-        const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}`).then(r2 => r2.json())
+        const tr = await fetch(`/api/banking/transactions?accountId=${acc.id}&bsession=${encodeURIComponent(bsession ?? '')}`).then(r2 => r2.json())
         const txList: BankTx[] = tr.transactions ?? []
         let csv: string
         if (acc.account_type === 'credit') {

@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { initBankingTables, saveConnection, saveAccount } from '@/lib/banking-db'
+import { encodeSession } from '@/lib/banking-session'
 
 const IL_BASE = process.env.IL_PROVIDER_BASE_URL ?? ''
 
+// Placeholder provider, not wired to a real integration yet (no IL_PROVIDER_BASE_URL
+// configured). Kept in the same stateless pattern as Nordigen/Plaid for consistency —
+// no DB persistence.
 export async function GET(req: NextRequest) {
   const ref = req.nextUrl.searchParams.get('ref')
   if (!ref) return NextResponse.redirect(new URL('/?banking=error', req.url))
@@ -17,22 +20,25 @@ export async function GET(req: NextRequest) {
   const details = await detailsRes.json()
   if (!detailsRes.ok) return NextResponse.redirect(new URL('/?banking=error', req.url))
 
-  await initBankingTables()
-  const connectionId = await saveConnection(
-    details.userId ?? 'unknown', 'il',
-    details.institutionId ?? ref, details.institutionName ?? '',
-    details.accessToken ?? '', details.refreshToken ?? '',
-    new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-  )
+  const accounts = (details.accounts ?? []).map((acc: { id: string; iban?: string; accountNumber?: string; name?: string; currency?: string; type?: string; balance?: number }) => ({
+    external_id: acc.id,
+    iban: acc.iban ?? acc.accountNumber ?? '',
+    name: acc.name ?? '',
+    currency: acc.currency ?? 'ILS',
+    account_type: acc.type ?? 'checking',
+    balance: acc.balance ?? 0,
+  }))
 
-  for (const acc of details.accounts ?? []) {
-    await saveAccount(
-      connectionId, acc.id,
-      acc.iban ?? acc.accountNumber ?? '',
-      acc.name ?? '', acc.currency ?? 'ILS',
-      acc.type ?? 'checking', acc.balance ?? 0
-    )
-  }
+  const bsession = encodeSession({
+    provider: 'il',
+    institution_id: details.institutionId ?? ref,
+    institution_name: details.institutionName ?? '',
+    access_token: details.accessToken ?? '',
+    refresh_token: details.refreshToken ?? '',
+    accounts,
+  })
 
-  return NextResponse.redirect(new URL('/?banking=success', req.url))
+  const redirectUrl = new URL('/?banking=success', req.url)
+  redirectUrl.searchParams.set('bsession', bsession)
+  return NextResponse.redirect(redirectUrl)
 }

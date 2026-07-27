@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { initBankingTables, saveConnection, saveAccount } from '@/lib/banking-db'
+import { encodeSession } from '@/lib/banking-session'
 
 const NORDIGEN_BASE = 'https://bankaccountdata.gocardless.com/api/v2'
 
@@ -24,24 +24,16 @@ export async function GET(req: NextRequest) {
   const reqData = await reqRes.json()
   if (!reqRes.ok || !reqData.accounts?.length) return NextResponse.redirect(new URL('/?banking=error', req.url))
 
-  const userId = parseInt(reqData.reference?.split('_')[1] ?? '0')
-  if (!userId) return NextResponse.redirect(new URL('/?banking=error', req.url))
-
   const instRes = await fetch(`${NORDIGEN_BASE}/institutions/${reqData.institution_id}/`, {
     headers: { Authorization: `Bearer ${tokenData.access}` },
   })
   const instData = await instRes.json()
   const institutionName = instData.name ?? reqData.institution_id
 
-  await initBankingTables()
-  const connectionId = await saveConnection(
-    userId, 'nordigen',
-    reqData.institution_id, institutionName,
-    tokenData.access, tokenData.refresh,
-    new Date(Date.now() + 24 * 60 * 60 * 1000)
-  )
-
-  for (const accountId of reqData.accounts) {
+  // No DB persistence: account details/balances are fetched live and handed straight
+  // to the browser inside an encrypted session blob. Nothing is written to Neon.
+  const accounts = []
+  for (const accountId of reqData.accounts as string[]) {
     const [detailRes, balRes] = await Promise.all([
       fetch(`${NORDIGEN_BASE}/accounts/${accountId}/details/`, { headers: { Authorization: `Bearer ${tokenData.access}` } }),
       fetch(`${NORDIGEN_BASE}/accounts/${accountId}/balances/`, { headers: { Authorization: `Bearer ${tokenData.access}` } }),
@@ -50,8 +42,26 @@ export async function GET(req: NextRequest) {
     const bal = await balRes.json()
     const acc = detail.account ?? {}
     const balance = parseFloat(bal.balances?.[0]?.balanceAmount?.amount ?? '0')
-    await saveAccount(connectionId, accountId, acc.iban ?? '', acc.name ?? '', acc.currency ?? '', acc.cashAccountType ?? '', balance)
+    accounts.push({
+      external_id: accountId,
+      iban: acc.iban ?? '',
+      name: acc.name ?? '',
+      currency: acc.currency ?? '',
+      account_type: acc.cashAccountType ?? '',
+      balance,
+    })
   }
 
-  return NextResponse.redirect(new URL('/?banking=success', req.url))
+  const bsession = encodeSession({
+    provider: 'nordigen',
+    institution_id: reqData.institution_id,
+    institution_name: institutionName,
+    access_token: tokenData.access,
+    refresh_token: tokenData.refresh,
+    accounts,
+  })
+
+  const redirectUrl = new URL('/?banking=success', req.url)
+  redirectUrl.searchParams.set('bsession', bsession)
+  return NextResponse.redirect(redirectUrl)
 }

@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { initBankingTables, saveConnection, saveAccount } from '@/lib/banking-db'
+import { encodeSession } from '@/lib/banking-session'
 
 const PLAID_BASE = 'https://sandbox.plaid.com'
 
+// Stateless: the exchanged access token + account list are handed straight back to the
+// browser inside an encrypted session blob. Nothing is written to Neon.
 export async function POST(req: NextRequest) {
-  const { publicToken, userId, institutionName } = await req.json()
-  if (!publicToken || !userId) return NextResponse.json({ error: 'missing params' }, { status: 400 })
+  const { publicToken, institutionName } = await req.json()
+  if (!publicToken) return NextResponse.json({ error: 'missing params' }, { status: 400 })
 
   const exchangeRes = await fetch(`${PLAID_BASE}/item/public_token/exchange`, {
     method: 'POST',
@@ -32,21 +34,30 @@ export async function POST(req: NextRequest) {
   })
   const accountsData = await accountsRes.json()
 
-  await initBankingTables()
-  const connectionId = await saveConnection(
-    userId, 'plaid',
-    accountsData.item?.institution_id ?? '', institutionName ?? '',
-    accessToken, '', new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-  )
+  const institutionId = accountsData.item?.institution_id ?? ''
+  const accounts = (accountsData.accounts ?? []).map((acc: { account_id: string; mask?: string; name?: string; balances?: { iso_currency_code?: string; current?: number }; type?: string }) => ({
+    external_id: acc.account_id,
+    iban: acc.mask ? `****${acc.mask}` : '',
+    name: acc.name ?? '',
+    currency: acc.balances?.iso_currency_code ?? 'USD',
+    account_type: acc.type ?? '',
+    balance: acc.balances?.current ?? 0,
+  }))
 
-  for (const acc of accountsData.accounts ?? []) {
-    await saveAccount(
-      connectionId, acc.account_id,
-      acc.mask ? `****${acc.mask}` : '',
-      acc.name ?? '', acc.balances?.iso_currency_code ?? 'USD',
-      acc.type ?? '', acc.balances?.current ?? 0
-    )
-  }
+  const bsession = encodeSession({
+    provider: 'plaid',
+    institution_id: institutionId,
+    institution_name: institutionName ?? '',
+    access_token: accessToken,
+    accounts,
+  })
 
-  return NextResponse.json({ ok: true, connectionId })
+  return NextResponse.json({
+    ok: true,
+    bsession,
+    connections: [{ id: institutionId, provider: 'plaid', institution_name: institutionName ?? '', status: 'active', created_at: new Date().toISOString() }],
+    accounts: accounts.map((a: { external_id: string; iban: string; name: string; currency: string; account_type: string; balance: number }) => ({
+      id: a.external_id, connection_id: institutionId, iban: a.iban, name: a.name, currency: a.currency, account_type: a.account_type, balance: a.balance,
+    })),
+  })
 }

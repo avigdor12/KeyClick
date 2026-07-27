@@ -1,40 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getConnection, getTransactionsByAccount, saveTransaction } from '@/lib/banking-db'
-import { Pool } from 'pg'
+import { decodeSession } from '@/lib/banking-session'
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const NORDIGEN_BASE = 'https://bankaccountdata.gocardless.com/api/v2'
 
+type NordigenTx = {
+  transactionId?: string
+  internalTransactionId?: string
+  bookingDate?: string
+  valueDate?: string
+  remittanceInformationUnstructured?: string
+  creditorName?: string
+  transactionAmount?: { amount?: string; currency?: string }
+}
+
+// Stateless: the encrypted session blob (holding the OAuth access token) is decoded
+// per-request and Nordigen is called live. Nothing is read from or written to a DB.
 export async function GET(req: NextRequest) {
+  const bsession = req.nextUrl.searchParams.get('bsession')
   const accountId = req.nextUrl.searchParams.get('accountId')
-  if (!accountId) return NextResponse.json({ error: 'missing accountId' }, { status: 400 })
+  if (!bsession || !accountId) return NextResponse.json({ error: 'missing bsession/accountId' }, { status: 400 })
 
-  const accRes = await pool.query('SELECT * FROM bank_accounts WHERE id=$1', [parseInt(accountId)])
-  const account = accRes.rows[0]
-  if (!account) return NextResponse.json({ error: 'account not found' }, { status: 404 })
-
-  const connection = await getConnection(account.connection_id)
-  if (!connection) return NextResponse.json({ error: 'connection not found' }, { status: 404 })
-
-  if (connection.provider === 'nordigen') {
-    const res = await fetch(`${NORDIGEN_BASE}/accounts/${account.external_id}/transactions/`, {
-      headers: { Authorization: `Bearer ${connection.access_token}` },
-    })
-    const data = await res.json()
-    const txs = data.transactions?.booked ?? []
-    for (const tx of txs) {
-      await saveTransaction(
-        account.id,
-        tx.transactionId ?? tx.internalTransactionId ?? String(Date.now()),
-        tx.bookingDate ?? '',
-        tx.remittanceInformationUnstructured ?? tx.creditorName ?? '',
-        parseFloat(tx.transactionAmount?.amount ?? '0'),
-        tx.transactionAmount?.currency ?? '',
-        ''
-      )
-    }
+  let session
+  try {
+    session = decodeSession(bsession)
+  } catch {
+    return NextResponse.json({ error: 'invalid session' }, { status: 400 })
   }
 
-  const transactions = await getTransactionsByAccount(account.id)
-  return NextResponse.json(transactions)
+  if (session.provider !== 'nordigen') {
+    return NextResponse.json({ transactions: [] })
+  }
+
+  const res = await fetch(`${NORDIGEN_BASE}/accounts/${accountId}/transactions/`, {
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  })
+  const data = await res.json()
+  const booked: NordigenTx[] = data.transactions?.booked ?? []
+
+  const transactions = booked.map((tx, i) => ({
+    id: tx.transactionId ?? tx.internalTransactionId ?? String(i),
+    date: tx.bookingDate ?? '',
+    description: tx.remittanceInformationUnstructured ?? tx.creditorName ?? '',
+    amount: parseFloat(tx.transactionAmount?.amount ?? '0'),
+    currency: tx.transactionAmount?.currency ?? '',
+    category: '',
+  }))
+
+  return NextResponse.json({ transactions })
 }
