@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
         record_id:           makeId(txDate, seq++),
         source:              isCreditCard ? CREDIT_DIRECT : BANK_DIRECT,
         is_credit_card:      isCreditCard,
-        format_info:         'OpenBanking',
+        format_info:         'CSV',
         institution_name:    session.institution_name,
         account_number:      acc.iban,
         credit_card_number:  isCreditCard ? acc.iban : '',
