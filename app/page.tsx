@@ -4875,7 +4875,8 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
     importFrame.style.display = 'none'
     importFrame.src = `mfinance://import?token=${importToken}`
     document.body.appendChild(importFrame)
-    setTimeout(() => { document.body.removeChild(importFrame); window.focus() }, 1000)
+    window.focus() // מיד, לא ב-setTimeout - כדי להישאר בתוך חלון-הזמן ש"קשור" ללחיצת המשתמש
+    setTimeout(() => document.body.removeChild(importFrame), 1000)
     // TODO: אין עדיין API אמיתי מול M_Finance מעבר לשליחת ההתראה - זה שלד זמני עד שהחיבור המקומי ייבנה
     setLoading(true)
     logMsg(b.loadingDataMsg)
