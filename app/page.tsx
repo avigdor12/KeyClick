@@ -5481,7 +5481,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
                         <div style={{ width: 0, height: 0, borderLeft: '16px solid transparent', borderRight: '16px solid transparent', borderTop: '22px solid red' }} />
                       </div>
                     )}
-                    <button onClick={() => { logMsg(b.closingWindowMsg); window.location.href = 'mfinance://'; window.close() }} disabled={!disconnected}
+                    <button onClick={() => { logMsg(b.closingWindowMsg); window.close() }} disabled={!disconnected}
                       style={seqBtn(!disconnected)}>
                       {seqBtnLines(b.clickToClose)}
                     </button>
