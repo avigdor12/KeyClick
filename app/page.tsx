@@ -4680,6 +4680,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   const [dataRead, setDataRead] = useState(false)
   const [simConnected, setSimConnected] = useState(false)
   const [disconnected, setDisconnected] = useState(false)
+  const [closeClicked, setCloseClicked] = useState(false)
   const [showDownloadTypeDialog, setShowDownloadTypeDialog] = useState(false)
   const [sysLog, setSysLog] = useState<{ time: string; text: string; highlight?: string }[]>([])
   const logMsg = (text: string, highlight?: string) => setSysLog(prev => [...prev, { time: new Date().toLocaleTimeString('he-IL'), text, highlight }])
@@ -5476,14 +5477,14 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
                     </button>
                   </div>
                   <div style={{ position: 'relative' }}>
-                    {disconnected && (
+                    {disconnected && !closeClicked && (
                       <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' }}>
                         <div style={{ width: 8, height: 26, background: 'red' }} />
                         <div style={{ width: 0, height: 0, borderLeft: '16px solid transparent', borderRight: '16px solid transparent', borderTop: '22px solid red' }} />
                       </div>
                     )}
-                    <button onClick={() => { logMsg(b.closingWindowMsg); window.location.href = 'mfinance://'; window.close() }} disabled={!disconnected}
-                      style={seqBtn(!disconnected)}>
+                    <button onClick={() => { setCloseClicked(true); logMsg(b.closingWindowMsg); window.location.href = 'mfinance://'; window.close() }} disabled={!disconnected || closeClicked}
+                      style={seqBtn(!disconnected || closeClicked)}>
                       {seqBtnLines(b.clickToClose)}
                     </button>
                   </div>
