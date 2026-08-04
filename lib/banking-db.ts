@@ -55,16 +55,40 @@ const FINANCIAL_INSTITUTION_SEED: InstitutionSeed[] = [
     banks: ['SBI', 'HDFC', 'ICICI', 'Axis Bank', 'Kotak Mahindra'] },
   { countryName: 'Israel', countryCode: 'IL', providerName: null, providerCode: null,
     banks: ['Bank Hapoalim', 'Bank Leumi', 'Discount Bank', 'Mizrahi Bank', 'The International Bank', 'Bank Yahav',
-             'Barclays', 'Bank of Jerusalem', 'Isracard', 'Cal', 'Max', 'American Express'] },
+             'Bank Massad', 'Barclays', 'Bank of Jerusalem', 'Isracard', 'Cal', 'Max', 'American Express'] },
   { countryName: 'Saudi Arabia', countryCode: 'SA', providerName: null, providerCode: null,
     banks: ['Al Rajhi Bank', 'SNB', 'Riyad Bank', 'Banque Saudi Fransi'] },
 ]
 
 async function seedFinancialInstitutionsIfEmpty() {
   const { rows } = await pool.query('SELECT COUNT(*) FROM financial_institutions')
-  if (parseInt(rows[0].count, 10) > 0) return
+  if (parseInt(rows[0].count, 10) > 0) {
+    await seedMissingInstitutions()
+    return
+  }
   for (const c of FINANCIAL_INSTITUTION_SEED) {
     for (const bank of c.banks) {
+      await pool.query(
+        `INSERT INTO financial_institutions
+           (country_name, country_code, institution_name, institution_code,
+            provider_name, provider_code, institution_available, system_enable_flag, system_simulation_mode)
+         VALUES ($1,$2,$3,NULL,$4,$5,false,true,false)`,
+        [c.countryName, c.countryCode, bank, c.providerName, c.providerCode]
+      )
+    }
+  }
+}
+
+// the table only gets fully seeded once (when empty) - this catches banks added
+// to FINANCIAL_INSTITUTION_SEED afterward, so they don't require a fresh table to appear
+async function seedMissingInstitutions() {
+  for (const c of FINANCIAL_INSTITUTION_SEED) {
+    for (const bank of c.banks) {
+      const existing = await pool.query(
+        'SELECT 1 FROM financial_institutions WHERE country_code=$1 AND institution_name=$2',
+        [c.countryCode, bank]
+      )
+      if (existing.rows.length > 0) continue
       await pool.query(
         `INSERT INTO financial_institutions
            (country_name, country_code, institution_name, institution_code,

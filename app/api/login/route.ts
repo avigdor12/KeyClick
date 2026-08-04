@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'פרטי הלקוח רשומים במחשב אחר' }, { status: 409 })
   }
 
-  await pool.query("UPDATE system_DB_Records SET value=$1 WHERE key='Current_User'", [String(user.id)])
   await pool.query('UPDATE users SET last_ip=$1 WHERE id=$2', [ip, user.id])
 
   const { password_hash, ...userWithoutPass } = user
