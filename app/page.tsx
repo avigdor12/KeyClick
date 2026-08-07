@@ -4394,7 +4394,7 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
 }
 
 function buildGuideNavButtons(lang: typeof languages[0]) {
-  const mFinanceTitle = lang.card.title.replace(/ /g, ' ')
+  const mFinanceTitle = lang.code === 'he' ? lang.card.title.replace(/ /g, ' ') : lang.card.title
   return [
     { label: `1 ${lang.card.theWebsite} - ${lang.guides.overview}`, page: 'guides-site-overview' },
     { label: `2 ${lang.card.theWebsite} - ${lang.guides.userGuide}`, page: 'guides-site-guide' },
@@ -4793,11 +4793,13 @@ async function downloadCSV(content: string, filename: string) {
   await new Promise(res => setTimeout(res, 300))
 }
 
-function BankingLayout({ loading, selectedCountry, hasConnections, hasSelection, showDownloadArrow, showSelectArrow, onSelectCountry, onDownload, onRefresh, b, children }: {
+function BankingLayout({ loading, selectedCountry, hasConnections, hasSelection, showDownloadArrow, showSelectArrow, onSelectCountry, onDownload, onRefresh, b, children, controlBarOffset, hideControlBar }: {
   loading: boolean; selectedCountry: string; hasConnections: boolean; hasSelection: boolean; showDownloadArrow: boolean; showSelectArrow?: boolean
   onSelectCountry: (country: string) => void; onDownload: () => void; onRefresh: () => void
   b: typeof languages[0]['banking']
   children: React.ReactNode
+  controlBarOffset?: number
+  hideControlBar?: boolean
 }) {
   const asideBtn: React.CSSProperties = {
     background: 'none', border: '1px solid #cc9900', borderRadius: 4,
@@ -4815,28 +4817,30 @@ function BankingLayout({ loading, selectedCountry, hasConnections, hasSelection,
       </div>
 
       {/* סרגל בקרה */}
-      <aside style={{ width: '110px', alignSelf: 'center', background: '#2a2a2a', border: '2px solid #FFD700', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: '10px 2px 10px 0', borderRadius: '12px', overflow: 'visible', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'stretch', gap: 16, padding: '18px 6px', width: '100%', boxSizing: 'border-box' }}>
-          <div style={{ position: 'relative', width: '100%' }}>
-            <button style={asideBtn} disabled={loading} onClick={() => onSelectCountry(selectedCountry)}>{b.selectInstitution}</button>
-            {showSelectArrow && !loading && (
-              <div style={{ position: 'absolute', right: '100%', top: '50%', transform: 'translateY(-50%)', display: 'flex', flexDirection: 'row', alignItems: 'center', pointerEvents: 'none', zIndex: 10 }}>
-                <div style={{ width: 39, height: 12, background: 'red' }} />
-                <div style={{ width: 0, height: 0, borderTop: '24px solid transparent', borderBottom: '24px solid transparent', borderLeft: '33px solid red' }} />
-              </div>
-            )}
+      {!hideControlBar && (
+        <aside style={{ width: '110px', alignSelf: 'center', background: '#2a2a2a', border: '2px solid #FFD700', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: `${10 - (controlBarOffset ?? 0)}px 2px 10px 0`, borderRadius: '12px', overflow: 'visible', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'stretch', gap: 16, padding: '18px 6px', width: '100%', boxSizing: 'border-box' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
+              <button style={asideBtn} disabled={loading} onClick={() => onSelectCountry(selectedCountry)}>{b.selectInstitution}</button>
+              {showSelectArrow && !loading && (
+                <div style={{ position: 'absolute', right: '100%', top: '50%', transform: 'translateY(-50%)', display: 'flex', flexDirection: 'row', alignItems: 'center', pointerEvents: 'none', zIndex: 10 }}>
+                  <div style={{ width: 39, height: 12, background: 'red' }} />
+                  <div style={{ width: 0, height: 0, borderTop: '24px solid transparent', borderBottom: '24px solid transparent', borderLeft: '33px solid red' }} />
+                </div>
+              )}
+            </div>
+            <div style={{ position: 'relative', width: '100%' }}>
+              <button style={{ ...asideBtn, opacity: (loading || !hasSelection) ? 0.5 : 1 }} disabled={loading || !hasSelection} onClick={onDownload}>{b.downloadFiles}</button>
+              {showDownloadArrow && !loading && (
+                <div style={{ position: 'absolute', right: '100%', top: '50%', transform: 'translateY(-50%)', display: 'flex', flexDirection: 'row', alignItems: 'center', pointerEvents: 'none', zIndex: 10 }}>
+                  <div style={{ width: 39, height: 12, background: 'red' }} />
+                  <div style={{ width: 0, height: 0, borderTop: '24px solid transparent', borderBottom: '24px solid transparent', borderLeft: '33px solid red' }} />
+                </div>
+              )}
+            </div>
           </div>
-          <div style={{ position: 'relative', width: '100%' }}>
-            <button style={{ ...asideBtn, opacity: (loading || !hasSelection) ? 0.5 : 1 }} disabled={loading || !hasSelection} onClick={onDownload}>{b.downloadFiles}</button>
-            {showDownloadArrow && !loading && (
-              <div style={{ position: 'absolute', right: '100%', top: '50%', transform: 'translateY(-50%)', display: 'flex', flexDirection: 'row', alignItems: 'center', pointerEvents: 'none', zIndex: 10 }}>
-                <div style={{ width: 39, height: 12, background: 'red' }} />
-                <div style={{ width: 0, height: 0, borderTop: '24px solid transparent', borderBottom: '24px solid transparent', borderLeft: '33px solid red' }} />
-              </div>
-            )}
-          </div>
-        </div>
-      </aside>
+        </aside>
+      )}
     </div>
   )
 }
@@ -5533,18 +5537,21 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
   }
 
   if (step === 'download') return (
-    <BankingLayout loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections} hasSelection={!!selectedInstitutionName} showDownloadArrow={false}
+    <BankingLayout controlBarOffset={189} hideControlBar loading={loading} selectedCountry={selectedCountry} hasConnections={hasConnections} hasSelection={!!selectedInstitutionName} showDownloadArrow={false}
       onSelectCountry={loadInstitutions} onDownload={() => setStep('download')} onRefresh={handleRefresh} b={b}>
-      <PageHeader subtitle={lang.menu[4]} lang={lang} extra={
-        <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px' }}>
-          {b.downloadFiles}
-        </div>
-      } />
+      <div className="banking-download-header" style={{ marginTop: -42 }}>
+        <style>{'.banking-download-header .page-header-block{flex-wrap:nowrap;align-items:flex-start}'}</style>
+        <PageHeader subtitle={lang.menu[4]} lang={lang} extra={
+          <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px' }}>
+            {b.downloadFiles}
+          </div>
+        } />
+      </div>
       <div style={{ position: 'absolute', top: 90, right: 10, fontFamily: handFont(lang.code), color: 'red', fontSize: 30, fontWeight: 'bold', zIndex: 2, transform: 'rotate(-15deg)', textAlign: 'center', lineHeight: 1.6 }}>
         {b.decorPrivateLine1}<br />{b.decorPrivateLine2}
       </div>
       {selectedInstitutionName && (
-        <div style={{ position: 'absolute', left: 942, top: 545, width: 654, background: 'transparent', border: '1px solid #003399', borderRadius: 8, padding: '14px 20px', direction: dir, textAlign: dir === 'rtl' ? 'right' : 'left', zIndex: 5 }}>
+        <div style={{ position: 'absolute', left: 875, top: 431, width: 597, background: 'transparent', border: '1px solid #003399', borderRadius: 8, padding: '14px 20px', direction: dir, textAlign: dir === 'rtl' ? 'right' : 'left', zIndex: 5 }}>
           <div style={{ color: '#003399', fontWeight: 'bold', fontSize: 20, marginBottom: 8 }}>{b.instructionsTitle}</div>
           <div style={{ color: 'red', fontSize: 18, fontWeight: 'bold', lineHeight: 1.8 }}>
             <div>1. {b.instructionsLine1}</div>
@@ -5555,7 +5562,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
         </div>
       )}
       {selectedInstitutionName && (
-        <div style={{ position: 'absolute', left: 170, top: 276, width: 550, height: 500, background: '#000', color: '#fff', fontSize: 18, fontWeight: 'bold', borderRadius: 8, padding: '10px 12px', overflowY: 'auto', boxShadow: '0 4px 14px rgba(0,0,0,0.4)', direction: 'rtl' }}>
+        <div style={{ position: 'absolute', left: 94, top: 200, width: 474, height: 424, background: '#000', color: '#fff', fontSize: 18, fontWeight: 'bold', borderRadius: 8, padding: '10px 12px', overflowY: 'auto', boxShadow: '0 4px 14px rgba(0,0,0,0.4)', direction: 'rtl' }}>
           <div style={{ color: '#FFD700', fontWeight: 'bold', marginBottom: 6, borderBottom: '1px solid #444', paddingBottom: 6 }}>{b.systemMessagesTitle}</div>
           {sysLog.length === 0
             ? <div style={{ color: '#888' }}>{b.noMessagesYet}</div>
@@ -5576,7 +5583,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
         </div>
       )}
       {selectedInstitutionName && selectedInstitutionCountry && (
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 180 }}>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 85 }}>
         <div style={{ transform: 'scale(1.5)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: BROWN, color: '#fff', borderRadius: 6, padding: '6px 12px', fontSize: 14, fontWeight: 'bold', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', whiteSpace: 'nowrap' }}>
             <Image src={`/flags/${selectedInstitutionCountry}.png`} alt={selectedInstitutionCountry} width={28} height={28} />
@@ -5587,7 +5594,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
             const topIndex = halfCount - 1
             const connectDone = isSimulationSelected ? simConnected : hasConnections
             const seqBtn = (dis: boolean): React.CSSProperties => ({
-              background: '#003399', color: '#FFD700', border: '2px solid red', borderRadius: 5, width: 90, height: 90,
+              background: '#003399', color: '#FFD700', border: '2px solid red', borderRadius: 5, padding: '4px 6px', minWidth: 72,
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
               cursor: dis ? 'not-allowed' : 'pointer', fontSize: 16, fontWeight: 500, whiteSpace: 'normal', lineHeight: 1.3,
               fontFamily: 'var(--font-assistant), "Assistant", Arial, sans-serif', letterSpacing: 0.3,
@@ -5600,7 +5607,7 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
                 {Array.from({ length: halfCount }).map((_, i) => (
                   <div key={i} style={{ position: 'absolute', bottom: 10 + i * 46, left: 19, width: 20, height: 2, background: BROWN }} />
                 ))}
-                <div style={{ position: 'absolute', bottom: topIndex * 46 - 34, left: 43, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', gap: 0 }}>
+                <div style={{ position: 'absolute', bottom: topIndex * 46 - 16, left: 43, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', gap: 0 }}>
                   <div style={{ background: BROWN, color: '#fff', border: 'none', borderRadius: 5, padding: '3px 8px', fontSize: 11, fontWeight: 'bold', whiteSpace: 'nowrap', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
                     {bankName(selectedInstitutionName)}
                   </div>
