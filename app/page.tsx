@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { LICENSE_TYPES } from '@/lib/license-types'
@@ -206,6 +206,33 @@ export default function Home() {
   const [hasNewCustomerMsg, setHasNewCustomerMsg] = useState(false)
   const lang = languages[langIdx]
   const isAdminAccount = Current_User_Pointer_to_DB?.M_Finance_license_type === LICENSE_TYPES.System_Owner
+
+  const sidebarOuterRef   = useRef<HTMLElement>(null)
+  const sidebarContentRef = useRef<HTMLDivElement>(null)
+  const [sidebarScale, setSidebarScale] = useState(1)
+  const [sidebarBoxHeight, setSidebarBoxHeight] = useState<number | undefined>(undefined)
+  const [sidebarAvailable, setSidebarAvailable] = useState<number | undefined>(undefined)
+  const MIN_SIDEBAR_SCALE = 0.55
+
+  useLayoutEffect(() => {
+    const outer = sidebarOuterRef.current
+    const content = sidebarContentRef.current
+    if (!outer || !content) return
+    const recompute = () => {
+      const available = outer.clientHeight
+      setSidebarAvailable(available)
+      const natural = content.offsetHeight
+      if (!available || !natural) return
+      const nextScale = Math.max(MIN_SIDEBAR_SCALE, Math.min(1, available / natural))
+      setSidebarScale(nextScale)
+      setSidebarBoxHeight(natural * nextScale)
+    }
+    recompute()
+    const ro = new ResizeObserver(recompute)
+    ro.observe(outer)
+    window.addEventListener('resize', recompute)
+    return () => { ro.disconnect(); window.removeEventListener('resize', recompute) }
+  }, [lang, activePage, isLoggedInExplicit, hasNewCustomerMsg])
 
   useEffect(() => {
     const onPageHide = () => {
@@ -622,7 +649,9 @@ export default function Home() {
         </main>
 
         {/* RIGHT — Sidebar */}
-        <aside style={{ width: '140px', background: '#1a1a1a', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0 }}>
+        <aside ref={sidebarOuterRef} style={{ width: '140px', background: '#1a1a1a', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0, overflowY: 'auto' }}>
+        <div style={{ width: '100%', height: sidebarBoxHeight, position: 'relative', flexShrink: 0 }}>
+        <div ref={sidebarContentRef} style={{ width: '100%', minHeight: sidebarAvailable, transform: `scale(${sidebarScale})`, transformOrigin: 'top center', position: 'absolute', top: 0, left: 0, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '4px 6px 8px', borderBottom: '1px solid #333' }}>
             <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '23px', color: '#FFD700', fontWeight: 'bold', textAlign: 'center' }}>KeyClick</div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '44px', marginTop: '6px' }}>
@@ -708,7 +737,7 @@ export default function Home() {
           </div>
 
           {/* 5. שרותים בנקאיים */}
-          <div className={isLoggedInExplicit ? 'mf-luxury-btn' : ''} style={{ position: 'relative', display: 'block', margin: '6px auto', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'hidden' }}>
+          <div className={isLoggedInExplicit ? 'mf-luxury-btn' : ''} style={{ position: 'relative', display: 'block', margin: '6px auto', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
             {!isLoggedInExplicit && (
               <div style={{ position: 'absolute', top: '4px', left: '-22px', width: '90px', transform: 'rotate(-45deg)', background: '#c0392b', color: '#fff', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', padding: '1px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.5)', zIndex: 5, pointerEvents: 'none' }}>{lang.card.locked}</div>
             )}
@@ -748,6 +777,8 @@ export default function Home() {
               }}
             >{lang.system.adminNewMsg}</button>
           )}
+        </div>
+        </div>
         </aside>
 
       </div>
@@ -4558,8 +4589,83 @@ const SITE_GUIDE_SECTIONS: Record<string, GuideSection[]> = {
 }
 
 function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string }[]; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
-  const cabinetWidth = 'min(1040px,92vw)'
+  const isColLayout = true
+  const cabinetWidth = isColLayout ? 'min(1040px,100%)' : 'min(1040px,92vw)'
   const isRTL = lang.code === 'he' || lang.code === 'ar'
+
+  const leftPanelBox = navButtons && (
+    <div style={{ position: 'relative', border: '2px solid #FFD700', borderRadius: 8, padding: '18px 10px 10px', background: '#1a1a1a' }}>
+      <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 8px', fontFamily: 'var(--font-dancing), Georgia, serif', fontStyle: 'italic', fontSize: 18, color: '#FFD700', whiteSpace: 'nowrap' }}>KeyClick</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {navButtons.slice(0, 3).map(n => {
+          const [prefix, category] = n.label.split(' - ')
+          return (
+            <button key={n.page} onClick={() => onNavigate?.(n.page)} style={{
+              width: '140px',
+              background: n.page === pageId ? 'linear-gradient(to bottom, #8b1e1e, #4a0d0d)' : 'linear-gradient(to bottom, #0d0d2b, #001a4a)',
+              border: '2px solid #FFD700', borderRadius: '10px',
+              color: '#FFD700', padding: '10px 14px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold',
+              textAlign: 'center', whiteSpace: 'normal', boxShadow: '0 3px 8px rgba(0,0,0,.35)',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+            >{prefix}<br/>{category}</button>
+          )
+        })}
+      </div>
+    </div>
+  )
+
+  const rightPanelBox = navButtons && (
+    <div style={{ position: 'relative', border: '2px solid #FFD700', borderRadius: 8, padding: '18px 10px 10px', background: '#1a1a1a' }}>
+      <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 8px', fontWeight: 'bold', fontSize: 14, color: '#FFD700', whiteSpace: 'nowrap' }}>M Finance</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {navButtons.slice(3, 6).map(n => {
+          const [prefix, category] = n.label.split(' - ')
+          return (
+            <button key={n.page} onClick={() => onNavigate?.(n.page)} style={{
+              width: '140px',
+              background: n.page === pageId ? 'linear-gradient(to bottom, #8b1e1e, #4a0d0d)' : 'linear-gradient(to bottom, #0d0d2b, #001a4a)',
+              border: '2px solid #FFD700', borderRadius: '10px',
+              color: '#FFD700', padding: '10px 14px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold',
+              textAlign: 'center', whiteSpace: 'normal', boxShadow: '0 3px 8px rgba(0,0,0,.35)',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+            >{prefix}<br/>{category}</button>
+          )
+        })}
+      </div>
+    </div>
+  )
+
+  const furnitureBox = (
+    <div className="furniture" style={{ flex: 1, width: isColLayout ? undefined : '100%', minWidth: isColLayout ? 0 : undefined, minHeight: 0 }}>
+      <div className="cap" style={{ width: `calc(${cabinetWidth} + 20px)`, maxWidth: isColLayout ? '100%' : undefined }}>
+        <span className="brandplate" style={navButtons ? { background: 'linear-gradient(180deg, #8b1e1e, #4a0d0d)' } : undefined}>{drawerLabel}</span>
+      </div>
+      <div className="cabinet" style={{ width: cabinetWidth, maxWidth: isColLayout ? '100%' : undefined, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, ...(isColLayout ? {} : { maxHeight: 'calc(100vh - 320px)' }) }}>
+        <div className="tray-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
+          <div className="tray-row" style={sections && sections.length > 0 ? { justifyContent: 'center' } : undefined}><strong style={sections && sections.length > 0 ? { fontSize: 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
+          {sections && sections.length > 0 ? (
+            <div style={{ marginTop: 6, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
+              {sections.map((s, i) => (
+                <div key={i} style={{ marginTop: i === 0 ? 0 : 20 }}>
+                  {s.heading && (
+                    <div style={{ fontWeight: 700, fontSize: 17, color: '#131a4a', borderBottom: '2px solid #d4af37', paddingBottom: 3, marginBottom: 6, display: 'inline-block' }}>{s.heading}</div>
+                  )}
+                  <p className="tray-desc" style={{ maxWidth: 'none', whiteSpace: 'pre-line', color: '#20264a', fontSize: 16, fontWeight: 500, lineHeight: 1.7 }}>{s.body}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="tray-desc" style={{ maxWidth: 'none', flex: 1, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>{contentDesc}</p>
+          )}
+        </div>
+      </div>
+      <div className="feet" style={{ width: `calc(${cabinetWidth} - 34px)`, maxWidth: isColLayout ? '100%' : undefined }}><div className="foot" /><div className="foot" /></div>
+    </div>
+  )
 
   return (
     <div className="guides-page" dir="rtl" style={{ gap: 10, paddingBottom: 24 }}>
@@ -4568,86 +4674,37 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
         <PageHeader subtitle={`${lang.card.guidesAndVideos} - ${category}`} layout="row" lang={lang} />
       </div>
 
-      {navButtons && (
+      {navButtons && !isColLayout && (
         <div style={{ position: 'absolute', top: 83, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
           {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
         </div>
       )}
 
-      {navButtons && (
-        <div style={{ position: 'absolute', top: 300, left: 62, zIndex: 5 }}>
-          <div style={{ position: 'relative', border: '2px solid #FFD700', borderRadius: 8, padding: '18px 10px 10px', background: '#1a1a1a' }}>
-            <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 8px', fontFamily: 'var(--font-dancing), Georgia, serif', fontStyle: 'italic', fontSize: 18, color: '#FFD700', whiteSpace: 'nowrap' }}>KeyClick</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {navButtons.slice(0, 3).map(n => {
-                const [prefix, category] = n.label.split(' - ')
-                return (
-                  <button key={n.page} onClick={() => onNavigate?.(n.page)} style={{
-                    width: '140px',
-                    background: n.page === pageId ? 'linear-gradient(to bottom, #8b1e1e, #4a0d0d)' : 'linear-gradient(to bottom, #0d0d2b, #001a4a)',
-                    border: '2px solid #FFD700', borderRadius: '10px',
-                    color: '#FFD700', padding: '10px 14px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold',
-                    textAlign: 'center', whiteSpace: 'normal', boxShadow: '0 3px 8px rgba(0,0,0,.35)',
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-                  >{prefix}<br/>{category}</button>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-      {navButtons && (
-        <div style={{ position: 'absolute', top: 300, right: 62, zIndex: 5 }}>
-          <div style={{ position: 'relative', border: '2px solid #FFD700', borderRadius: 8, padding: '18px 10px 10px', background: '#1a1a1a' }}>
-            <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 8px', fontWeight: 'bold', fontSize: 14, color: '#FFD700', whiteSpace: 'nowrap' }}>M Finance</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {navButtons.slice(3, 6).map(n => {
-                const [prefix, category] = n.label.split(' - ')
-                return (
-                  <button key={n.page} onClick={() => onNavigate?.(n.page)} style={{
-                    width: '140px',
-                    background: n.page === pageId ? 'linear-gradient(to bottom, #8b1e1e, #4a0d0d)' : 'linear-gradient(to bottom, #0d0d2b, #001a4a)',
-                    border: '2px solid #FFD700', borderRadius: '10px',
-                    color: '#FFD700', padding: '10px 14px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold',
-                    textAlign: 'center', whiteSpace: 'normal', boxShadow: '0 3px 8px rgba(0,0,0,.35)',
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-                  >{prefix}<br/>{category}</button>
-                )
-              })}
-            </div>
+      {navButtons && isColLayout && (
+        <div dir="ltr" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', paddingInline: 24 }}>
+          <div style={{ zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+            {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
           </div>
         </div>
       )}
 
-      <div className="furniture" style={{ flex: 1, width: '100%', minHeight: 0 }}>
-        <div className="cap" style={{ width: `calc(${cabinetWidth} + 20px)` }}>
-          <span className="brandplate" style={navButtons ? { background: 'linear-gradient(180deg, #8b1e1e, #4a0d0d)' } : undefined}>{drawerLabel}</span>
+      {isColLayout ? (
+        <div dir="ltr" style={{ display: 'flex', flex: 1, width: '100%', minHeight: 0, alignItems: 'stretch', justifyContent: 'center', gap: 12 }}>
+          {leftPanelBox && <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center' }}>{leftPanelBox}</div>}
+          {furnitureBox}
+          {rightPanelBox && <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center' }}>{rightPanelBox}</div>}
         </div>
-        <div className="cabinet" style={{ width: cabinetWidth, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, maxHeight: 'calc(100vh - 320px)' }}>
-          <div className="tray-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
-            <div className="tray-row" style={sections && sections.length > 0 ? { justifyContent: 'center' } : undefined}><strong style={sections && sections.length > 0 ? { fontSize: 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
-            {sections && sections.length > 0 ? (
-              <div style={{ marginTop: 6, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
-                {sections.map((s, i) => (
-                  <div key={i} style={{ marginTop: i === 0 ? 0 : 20 }}>
-                    {s.heading && (
-                      <div style={{ fontWeight: 700, fontSize: 17, color: '#131a4a', borderBottom: '2px solid #d4af37', paddingBottom: 3, marginBottom: 6, display: 'inline-block' }}>{s.heading}</div>
-                    )}
-                    <p className="tray-desc" style={{ maxWidth: 'none', whiteSpace: 'pre-line', color: '#20264a', fontSize: 16, fontWeight: 500, lineHeight: 1.7 }}>{s.body}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="tray-desc" style={{ maxWidth: 'none', flex: 1, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>{contentDesc}</p>
-            )}
-          </div>
-        </div>
-        <div className="feet" style={{ width: `calc(${cabinetWidth} - 34px)` }}><div className="foot" /><div className="foot" /></div>
-      </div>
+      ) : (
+        <>
+          {navButtons && (
+            <div style={{ position: 'absolute', top: 300, left: 62, zIndex: 5 }}>{leftPanelBox}</div>
+          )}
+          {navButtons && (
+            <div style={{ position: 'absolute', top: 300, right: 62, zIndex: 5 }}>{rightPanelBox}</div>
+          )}
+          {furnitureBox}
+        </>
+      )}
     </div>
   )
 }
