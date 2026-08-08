@@ -4588,7 +4588,7 @@ const SITE_GUIDE_SECTIONS: Record<string, GuideSection[]> = {
   ],
 }
 
-function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string }[]; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
+function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string }[]; imageSrc?: string; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
   const isColLayout = true
   const cabinetWidth = isColLayout ? 'min(1040px,100%)' : 'min(1040px,92vw)'
   const isRTL = lang.code === 'he' || lang.code === 'ar'
@@ -4657,6 +4657,11 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
                   <p className="tray-desc" style={{ maxWidth: 'none', whiteSpace: 'pre-line', color: '#20264a', fontSize: 16, fontWeight: 500, lineHeight: 1.7 }}>{s.body}</p>
                 </div>
               ))}
+              {imageSrc && (
+                <div style={{ marginTop: 20, textAlign: 'center' }}>
+                  <Image src={imageSrc} alt={contentTitle} width={2080} height={2046} style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }} />
+                </div>
+              )}
             </div>
           ) : (
             <p className="tray-desc" style={{ maxWidth: 'none', flex: 1, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>{contentDesc}</p>
@@ -4839,7 +4844,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-fin-guide')     return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`5 ${lang.card.title} - ${lang.guides.userGuide}`} contentTitle={lang.guides.financeGuideTitle} contentDesc={lang.guides.financeGuideDesc} pageId='guides-fin-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
+  if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} imageSrc="/guides/site-structure-diagram.png" pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-guide')    return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`2 ${lang.card.theWebsite} - ${lang.guides.userGuide}`} contentTitle={SITE_GUIDE_TITLES[lang.code] ?? lang.guides.siteGuideTitle} contentDesc={lang.guides.siteGuideDesc} sections={SITE_GUIDE_SECTIONS[lang.code]} pageId='guides-site-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-videos')   return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`3 ${lang.card.theWebsite} - ${lang.card.videos}`} contentTitle={lang.guides.siteVideosTitle} contentDesc={lang.guides.siteVideosDesc} pageId='guides-site-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   return (
