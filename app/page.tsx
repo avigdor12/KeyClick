@@ -4373,6 +4373,22 @@ const SITE_GUIDE_TITLES: Record<string, string> = {
   hi: 'KeyClick वेबसाइट – उपयोगकर्ता गाइड',
 }
 
+const FINANCE_OVERVIEW_TITLES: Record<string, string> = {
+  he: 'ניהול תקציב בית M_Finance – תיאור כללי',
+}
+
+const FINANCE_OVERVIEW_SECTIONS: Record<string, GuideSection[]> = {
+  he: [
+    { heading: '', body: 'פרויקט ניהול תקציב בית M Finance, הנו אחד מהפתרונות הדיגיטאליים של פרויקט M Solution, ונקרא בשם הכולל והמותג KeyClick. מערכת ניהול תקציב בית משמשת כאפליקציה אשר מרכזת את כל התנועות הכספיות של הלקוח – הוצאות והכנסות מהבנק ומכרטיסי האשראי – למקום אחד ומציגה אותן בצורה מאורגנת וברורה. מעבר לתיעוד העבר, המערכת מספקת גם כלים אינטראקטיביים לתכנון עתידי, תרשימים גרפיים בחתכים שונים.' },
+    { heading: 'עוגת תקציב חיה', body: '"עוגת תקציב חיה" - הדובדבן שבקצפת. עוגה אשר הפרוסות שלה מציגות את ההוצאות מונחות על עוגת ההכנסות. מנגנון חכם ואינטראקטיבי מאפשר ללקוח באופן ידני לשנות את ערכי העוגה ולהגיע למאזן רצוי.' },
+    { heading: 'כרטיסי אשראי', body: 'לחיובי כרטיסי האשראי יש התנהגות שונה מתנועת בנק רגילה - פריסה לתשלומים, ופער בין מועד הרכישה למועד החיוב בפועל. המערכת מטפלת בכך בנפרד, ומשלבת את התוצאה בחזרה לתמונה הכוללת בצורה מדויקת.' },
+    { heading: 'מטרה והיקף', body: 'ניהול תקציב בית מאפשרת לקבל החלטות על בסיס נתונים אמיתיים במקום להסתמך על זיכרון או הערכה כללית. הלקוח מקבל תמונה מלאה ומדויקת לאורך זמן.\nמטרת המערכת היא לצמצם את העבודה הידנית הכרוכה במעקב אחרי הכספים ולתת ללקוח כלי לקבלת החלטות מבוססות נתונים, במקום החלטות מבוססות תחושה. היקף כולל תיעוד מלא של העבר (מה כבר קרה), ניתוח של המצב הנוכחי (איך מתחלקות ההוצאות) והסתכלות קדימה (מה צפוי בחודשים הבאים). המערכת אינה עוסקת בביצוע פעולות בנקאיות בפועל (העברות, תשלומים), העיסוק הנו אך ורק באיסוף, ארגון והצגה של המידע הכספי החודשי והשנתי.' },
+    { heading: 'השאיפה', body: 'השאיפה היא שניהול תקציב בית תאפשר לייבא דפי חשבון מבנקים וכרטיסי אשראי ממוסדות חובקות עולם - כולל בעתיד חיבור ישיר ואוטומטי לחשבון הבנק, לא רק ייבוא ידני של קבצים - לסווג פעולות, לעקוב אחר הוצאות/הכנסות לאורך זמן ולתכנן קדימה. כלי אחיד שמשלב את כולם לתמונה חודשית/שנתית אחת, זיהוי אוטומטי של פורמט הנתונים, סווג כל עסקה והצגתה. הניתוח המקיף מתבצע בממשק פשוט וב-11 שפות.' },
+    { heading: 'התקנה ועדכונים', body: 'ההתקנה והעדכונים מתבצעים דרך אתר KeyClick באופן שקוף ללקוח, כך שהוא תמיד עובד עם הגרסה העדכנית ביותר בלי לבצע פעולה יזומה.' },
+    { heading: 'ארכיטקטורה - שכבות המערכת', body: 'המערכת בנויה בשלוש שכבות:\n\n1. שכבת ממשק (UI Layer)\n•    פקודות ובחירות מפקדי מערכת הבקרה\n•    דו שיח אדם-מכונה\n•    גישה לתיקיות ושליפת קבצים\n•    זיהוי סוגי קבצים\n•    בניית ממשק (API) אחיד\n•    ניהול בסיס נתונים\n•    יצירת סביבת בדיקה\n\n2. שכבת לוגיקה (Logic Layer)\n•    קריאת נתונים, מניעת כפילויות\n•    מיפוי פורמטים של מוסדות\n•    מנוע סיווג\n•    כללי סיווג מקומיים\n•    בניית תצוגות\n•    מפעל טבלאות\n\n3. שכבת נתונים (Data Layer)\n•    הגדרות, רשומות, רשימות גלובליות\n•    טעינה/שמירה XML\n•    קובץ מסד הנתונים\n•    זיכרון סיווגים' },
+  ],
+}
+
 const SITE_OVERVIEW_SECTIONS: Record<string, GuideSection[]> = {
   he: [
     { heading: '', body: 'KeyClick משמש חזית שיווקית לטכנולוגיה חכמה. המהווה שער כניסה לאוסף כלים דיגיטליים המיועדים לשרת את הציבור הרחב בתחומים מגוונים של החיים היומיומיים, מתוך רצון להנגשה לפתרונות טכנולוגיים איכותיים — שבדרך כלל דורשים ידע טכני מוקדם — לכל אדם, ללא תלות ברמת ההיכרות שלו עם מחשבים.\nהפרויקט בנוי מאתר אינטרנט מודרני ומקצועי, בעל ביצועים גבוהים ו-SEO מיטבי. ניהול רישיונות, משתמשים וסליקה. יכולת שילוב מלאה עם אפליקציות בשפות תכנות שונות, גמישות מלאה לפיתוח עתידי ופלטפורמה לגישה לחשבונות בנק. האתר נמצא כל הזמן בהתהוות מתמדת.\nהרעיון המרכזי מאחורי KeyClick הוא הפשטות. כניסה חופשית לאתר, גלישה, קריאה בחומרי העזר וצפייה בסרטונים ללא עלות.' },
@@ -4841,7 +4857,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   if (page === 'guides')      return <GuidesPage lang={lang} onNavigate={onNavigate} />
-  if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
+  if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={FINANCE_OVERVIEW_TITLES[lang.code] ?? lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} sections={FINANCE_OVERVIEW_SECTIONS[lang.code]} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-fin-guide')     return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`5 ${lang.card.title} - ${lang.guides.userGuide}`} contentTitle={lang.guides.financeGuideTitle} contentDesc={lang.guides.financeGuideDesc} pageId='guides-fin-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} imageSrc={`/guides/site-structure-diagram-${lang.code}.png`} pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
