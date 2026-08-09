@@ -4386,6 +4386,8 @@ const FINANCE_OVERVIEW_SECTIONS: Record<string, GuideSection[]> = {
     { heading: 'השאיפה', body: 'השאיפה היא שניהול תקציב בית תאפשר לייבא דפי חשבון מבנקים וכרטיסי אשראי ממוסדות חובקות עולם - כולל בעתיד חיבור ישיר ואוטומטי לחשבון הבנק, לא רק ייבוא ידני של קבצים - לסווג פעולות, לעקוב אחר הוצאות/הכנסות לאורך זמן ולתכנן קדימה. כלי אחיד שמשלב את כולם לתמונה חודשית/שנתית אחת, זיהוי אוטומטי של פורמט הנתונים, סווג כל עסקה והצגתה. הניתוח המקיף מתבצע בממשק פשוט וב-11 שפות.' },
     { heading: 'התקנה ועדכונים', body: 'ההתקנה והעדכונים מתבצעים דרך אתר KeyClick באופן שקוף ללקוח, כך שהוא תמיד עובד עם הגרסה העדכנית ביותר בלי לבצע פעולה יזומה.' },
     { heading: 'ארכיטקטורה - שכבות המערכת', body: 'המערכת בנויה בשלוש שכבות:\n\n1. שכבת ממשק (UI Layer)\n•    פקודות ובחירות מפקדי מערכת הבקרה\n•    דו שיח אדם-מכונה\n•    גישה לתיקיות ושליפת קבצים\n•    זיהוי סוגי קבצים\n•    בניית ממשק (API) אחיד\n•    ניהול בסיס נתונים\n•    יצירת סביבת בדיקה\n\n2. שכבת לוגיקה (Logic Layer)\n•    קריאת נתונים, מניעת כפילויות\n•    מיפוי פורמטים של מוסדות\n•    מנוע סיווג\n•    כללי סיווג מקומיים\n•    בניית תצוגות\n•    מפעל טבלאות\n\n3. שכבת נתונים (Data Layer)\n•    הגדרות, רשומות, רשימות גלובליות\n•    טעינה/שמירה XML\n•    קובץ מסד הנתונים\n•    זיכרון סיווגים' },
+    { heading: 'פאנל הבקרה - העבר לשמאל או ימין', body: 'פאנל הבקרה הראשי מוצג קבוע מימין לתצוגה. בלחיצה על בורר בתחתית הפאנל, פאנל הבקרה עובר לשמאל התצוגה, על פי העדפת הלקוח.' },
+    { heading: 'בינה מלאכותית', body: 'האלגוריתמים החכמים באפליקציה משתמשים בבינה מלאכותית. נורית AI בתחתית הפאנל מציגה את זמינות הבינה המלאכותית.' },
   ],
 }
 
@@ -4604,7 +4606,7 @@ const SITE_GUIDE_SECTIONS: Record<string, GuideSection[]> = {
   ],
 }
 
-function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string }[]; imageSrc?: string; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
+function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, imageWidth, imageHeight, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string }[]; imageSrc?: string; imageWidth?: number; imageHeight?: number; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
   const isColLayout = true
   const cabinetWidth = isColLayout ? 'min(1040px,100%)' : 'min(1040px,92vw)'
   const isRTL = lang.code === 'he' || lang.code === 'ar'
@@ -4675,7 +4677,7 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
               ))}
               {imageSrc && (
                 <div style={{ marginTop: 20, textAlign: 'center' }}>
-                  <Image src={imageSrc} alt={contentTitle} width={2080} height={2046} style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }} />
+                  <Image src={imageSrc} alt={contentTitle} width={imageWidth ?? 2080} height={imageHeight ?? 2046} style={{ maxWidth: '100%', height: 'auto', borderRadius: 8 }} />
                 </div>
               )}
             </div>
@@ -4857,7 +4859,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   if (page === 'guides')      return <GuidesPage lang={lang} onNavigate={onNavigate} />
-  if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={FINANCE_OVERVIEW_TITLES[lang.code] ?? lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} sections={FINANCE_OVERVIEW_SECTIONS[lang.code]} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
+  if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={FINANCE_OVERVIEW_TITLES[lang.code] ?? lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} sections={FINANCE_OVERVIEW_SECTIONS[lang.code]} imageSrc="/guides/mfinance-structure-diagram.png" imageWidth={2092} imageHeight={2184} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-fin-guide')     return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`5 ${lang.card.title} - ${lang.guides.userGuide}`} contentTitle={lang.guides.financeGuideTitle} contentDesc={lang.guides.financeGuideDesc} pageId='guides-fin-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} imageSrc={`/guides/site-structure-diagram-${lang.code}.png`} pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
