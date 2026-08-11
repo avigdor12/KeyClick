@@ -5139,7 +5139,7 @@ const SITE_GUIDE_SECTIONS: Record<string, GuideSection[]> = {
   ],
 }
 
-function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, imageWidth, imageHeight, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string; image?: { src: string; width: number; height: number } }[]; imageSrc?: string; imageWidth?: number; imageHeight?: number; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
+function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, imageWidth, imageHeight, videoSrc, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string; image?: { src: string; width: number; height: number } }[]; imageSrc?: string; imageWidth?: number; imageHeight?: number; videoSrc?: string; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
   const isColLayout = true
   const cabinetWidth = isColLayout ? 'min(1040px,100%)' : 'min(1040px,92vw)'
   const isRTL = lang.code === 'he' || lang.code === 'ar'
@@ -5197,8 +5197,20 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
       </div>
       <div className="cabinet" style={{ width: cabinetWidth, maxWidth: isColLayout ? '100%' : undefined, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, ...(isColLayout ? {} : { maxHeight: 'calc(100vh - 320px)' }) }}>
         <div className="tray-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
-          <div className="tray-row" style={sections && sections.length > 0 ? { justifyContent: 'center' } : undefined}><strong style={sections && sections.length > 0 ? { fontSize: 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
-          {sections && sections.length > 0 ? (
+          {!videoSrc && (
+            <div className="tray-row" style={(sections && sections.length > 0) ? { justifyContent: 'center' } : undefined}><strong style={(sections && sections.length > 0) ? { fontSize: 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
+          )}
+          {videoSrc ? (
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <iframe
+                src={videoSrc}
+                title={contentTitle}
+                scrolling="no"
+                style={{ width: '100%', height: '100%', border: '2px solid #FFD700', borderRadius: 8, background: 'red', overflow: 'hidden' }}
+                allow="autoplay"
+              />
+            </div>
+          ) : sections && sections.length > 0 ? (
             <div style={{ marginTop: 6, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
               {sections.map((s, i) => (
                 <div key={i} style={{ marginTop: i === 0 ? 0 : 20 }}>
@@ -5241,10 +5253,8 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
       )}
 
       {navButtons && isColLayout && (
-        <div dir="ltr" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', paddingInline: 24 }}>
-          <div style={{ zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-            {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
-          </div>
+        <div dir="ltr" style={{ position: 'absolute', top: 68, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+          {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
         </div>
       )}
 
@@ -5401,7 +5411,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} imageSrc={`/guides/site-structure-diagram-${lang.code}.png`} pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-guide')    return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`2 ${lang.card.theWebsite} - ${lang.guides.userGuide}`} contentTitle={SITE_GUIDE_TITLES[lang.code] ?? lang.guides.siteGuideTitle} contentDesc={lang.guides.siteGuideDesc} sections={SITE_GUIDE_SECTIONS[lang.code]} pageId='guides-site-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-site-videos')   return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`3 ${lang.card.theWebsite} - ${lang.card.videos}`} contentTitle={lang.guides.siteVideosTitle} contentDesc={lang.guides.siteVideosDesc} pageId='guides-site-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
+  if (page === 'guides-site-videos')   return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`3 ${lang.card.theWebsite} - ${lang.card.videos}`} contentTitle={lang.guides.siteVideosTitle} contentDesc={lang.guides.siteVideosDesc} videoSrc={lang.code === 'he' ? '/guides-video/site-intro.html?v=999xyz' : undefined} pageId='guides-site-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ textAlign: 'center', color: '#555' }}>
