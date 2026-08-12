@@ -5139,6 +5139,116 @@ const SITE_GUIDE_SECTIONS: Record<string, GuideSection[]> = {
   ],
 }
 
+function GuidesMusicBar() {
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const filesRef = useRef<string[]>([])
+  const queueRef = useRef<string[]>([])
+  const indexRef = useRef(-1)
+  const enabledRef = useRef(true)
+  const [musicEnabled, setMusicEnabled] = useState(true)
+  const [trackName, setTrackName] = useState('')
+
+  useEffect(() => {
+    const saved = localStorage.getItem('guidesMusicEnabled')
+    if (saved !== null) setMusicEnabled(saved === '1')
+  }, [])
+
+  useEffect(() => { enabledRef.current = musicEnabled }, [musicEnabled])
+
+  function toggleMusicEnabled() {
+    setMusicEnabled(v => {
+      const next = !v
+      localStorage.setItem('guidesMusicEnabled', next ? '1' : '0')
+      return next
+    })
+  }
+
+  function shuffle(arr: string[]) {
+    const a = arr.slice()
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[a[i], a[j]] = [a[j], a[i]]
+    }
+    return a
+  }
+
+  function loadTrack(file: string) {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.src = '/music/' + encodeURIComponent(file)
+    setTrackName(file.replace(/\.[^.]+$/, ''))
+  }
+
+  function nextTrack() {
+    if (!filesRef.current.length) return
+    indexRef.current += 1
+    if (indexRef.current >= queueRef.current.length) {
+      queueRef.current = shuffle(filesRef.current)
+      indexRef.current = 0
+    }
+    loadTrack(queueRef.current[indexRef.current])
+  }
+
+  useEffect(() => {
+    let cancelled = false
+    if (audioRef.current) audioRef.current.volume = 0.7
+    fetch('/api/guides-music-list').then(r => r.json()).then(d => {
+      if (cancelled) return
+      const files: string[] = Array.isArray(d.files) ? d.files : []
+      filesRef.current = files
+      if (files.length) {
+        queueRef.current = shuffle(files)
+        indexRef.current = 0
+        loadTrack(queueRef.current[0])
+      }
+    }).catch(() => {})
+
+    const audio = audioRef.current
+    const onEnded = () => nextTrack()
+    audio?.addEventListener('ended', onEnded)
+
+    const poll = setInterval(() => {
+      const a = audioRef.current
+      if (!a) return
+      const shouldPlay = enabledRef.current && !!(window as any).videoPlaying
+      if (shouldPlay && a.paused) a.play().catch(() => {})
+      else if (!shouldPlay && !a.paused) a.pause()
+    }, 300)
+
+    return () => {
+      cancelled = true
+      clearInterval(poll)
+      audio?.removeEventListener('ended', onEnded)
+      audioRef.current?.pause()
+      ;(window as any).videoPlaying = false
+    }
+  }, [])
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 12px', background: '#3E2712', borderRadius: 8, direction: 'ltr' }}>
+      <div
+        onClick={toggleMusicEnabled}
+        title="הפעלת מוסיקה"
+        style={{ position: 'relative', width: 34, height: 18, borderRadius: 9, background: musicEnabled ? '#1a7a54' : '#5C3A1E', border: '1px solid #8A5A32', cursor: 'pointer', flexShrink: 0 }}
+      >
+        <div style={{ position: 'absolute', top: 1, left: musicEnabled ? 17 : 1, width: 14, height: 14, borderRadius: '50%', background: '#F1E9D8', transition: 'left .15s' }} />
+      </div>
+      <div
+        onClick={nextTrack}
+        title="רצועה הבאה"
+        style={{ width: 26, height: 26, borderRadius: '50%', background: '#5C3A1E', border: '1px solid #8A5A32', color: '#F1E9D8', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 12, flexShrink: 0 }}
+      >⏭</div>
+      <input
+        type="range" min={0} max={100} defaultValue={70}
+        onChange={e => { if (audioRef.current) audioRef.current.volume = Number(e.target.value) / 100 }}
+        style={{ width: 60, height: 4, accentColor: '#8A5A32', cursor: 'pointer', flexShrink: 0 }}
+      />
+      <span style={{ color: '#F1E9D8', fontSize: 10, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', opacity: .85 }}>{trackName}</span>
+      <audio ref={audioRef} style={{ display: 'none' }} />
+    </div>
+  )
+}
+
 function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, imageWidth, imageHeight, videoSrc, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string; image?: { src: string; width: number; height: number } }[]; imageSrc?: string; imageWidth?: number; imageHeight?: number; videoSrc?: string; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
   const isColLayout = true
   const cabinetWidth = isColLayout ? 'min(1040px,100%)' : 'min(1040px,92vw)'
@@ -5201,14 +5311,17 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
             <div className="tray-row" style={(sections && sections.length > 0) ? { justifyContent: 'center' } : undefined}><strong style={(sections && sections.length > 0) ? { fontSize: 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
           )}
           {videoSrc ? (
-            <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-              <iframe
-                src={videoSrc}
-                title={contentTitle}
-                scrolling="no"
-                style={{ width: '100%', height: '100%', border: '2px solid #FFD700', borderRadius: 8, background: 'red', overflow: 'hidden' }}
-                allow="autoplay"
-              />
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                <iframe
+                  src={videoSrc}
+                  title={contentTitle}
+                  scrolling="no"
+                  style={{ width: '100%', height: '100%', border: '2px solid #FFD700', borderRadius: 8, background: 'red', overflow: 'hidden' }}
+                  allow="autoplay"
+                />
+              </div>
+              <GuidesMusicBar />
             </div>
           ) : sections && sections.length > 0 ? (
             <div style={{ marginTop: 6, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
@@ -5408,10 +5521,10 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === 'guides')      return <GuidesPage lang={lang} onNavigate={onNavigate} />
   if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={FINANCE_OVERVIEW_TITLES[lang.code] ?? lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} sections={FINANCE_OVERVIEW_SECTIONS[lang.code]} imageSrc="/guides/mfinance-structure-diagram.png" imageWidth={2092} imageHeight={2184} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-fin-guide')     return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`5 ${lang.card.title} - ${lang.guides.userGuide}`} contentTitle={FINANCE_GUIDE_TITLES[lang.code] ?? lang.guides.financeGuideTitle} contentDesc={lang.guides.financeGuideDesc} sections={FINANCE_GUIDE_SECTIONS[lang.code]} pageId='guides-fin-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} videoSrc={`/guides-video/finance-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=4`} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
+  if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} videoSrc={`/guides-video/finance-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=8`} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} imageSrc={`/guides/site-structure-diagram-${lang.code}.png`} pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   if (page === 'guides-site-guide')    return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`2 ${lang.card.theWebsite} - ${lang.guides.userGuide}`} contentTitle={SITE_GUIDE_TITLES[lang.code] ?? lang.guides.siteGuideTitle} contentDesc={lang.guides.siteGuideDesc} sections={SITE_GUIDE_SECTIONS[lang.code]} pageId='guides-site-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-site-videos')   return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`3 ${lang.card.theWebsite} - ${lang.card.videos}`} contentTitle={lang.guides.siteVideosTitle} contentDesc={lang.guides.siteVideosDesc} videoSrc={`/guides-video/site-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=999xyz6`} pageId='guides-site-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
+  if (page === 'guides-site-videos')   return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`3 ${lang.card.theWebsite} - ${lang.card.videos}`} contentTitle={lang.guides.siteVideosTitle} contentDesc={lang.guides.siteVideosDesc} videoSrc={`/guides-video/site-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=999xyza`} pageId='guides-site-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ textAlign: 'center', color: '#555' }}>

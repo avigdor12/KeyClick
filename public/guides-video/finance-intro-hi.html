@@ -107,7 +107,6 @@
     <div class="ctrl-btn" id="btnPlay" title="चलाएं">▶</div>
     <div class="ctrl-btn" id="btnFwd" title="आगे">›</div>
   </div>
-  <audio id="bgMusic" preload="auto"></audio>
 
 <script>
   const TOTAL = 13;
@@ -118,11 +117,8 @@
   const fill = document.getElementById('fill');
   const slides = Array.from(document.querySelectorAll('.slide'));
   const SW = 1280.0, SH = 720.0;
-  const bgMusic = document.getElementById('bgMusic');
   const subtitleText = document.getElementById('subtitleText');
   const slideNum = document.getElementById('slideNum');
-  bgMusic.volume = 0.4;
-  bgMusic.play().catch(() => {}); // may be blocked until a user gesture; retried on first click below
 
   let isEmbedded = false;
   try { isEmbedded = window.self !== window.top; } catch (e) { isEmbedded = true; }
@@ -149,6 +145,11 @@
   }
 
   let current = 0, playing = true, elapsed = 0, lastTs = null;
+  function setPlaying(v) {
+    playing = v;
+    try { window.parent.videoPlaying = v; } catch (e) {}
+  }
+  setPlaying(true);
   let estDuration = DURATION;
   let ended = false;
 
@@ -214,7 +215,7 @@
 
   function advance() {
     if (current === TOTAL - 1) {
-      playing = false;
+      setPlaying(false);
       ended = true;
       return;
     }
@@ -231,7 +232,7 @@
 
   function goTo(i) {
     current = (i + TOTAL) % TOTAL;
-    playing = true;
+    setPlaying(true);
     startSlide();
   }
 
@@ -258,20 +259,18 @@
     startSlide();
   }
 
-  document.getElementById('btnStart').addEventListener('click', () => { goTo(0); bgMusic.currentTime = 0; bgMusic.play().catch(() => {}); });
-  document.getElementById('btnBack').addEventListener('click', () => { goTo(current - 1); bgMusic.play().catch(() => {}); });
+  document.getElementById('btnStart').addEventListener('click', () => { goTo(0); });
+  document.getElementById('btnBack').addEventListener('click', () => { goTo(current - 1); });
   document.getElementById('btnStop').addEventListener('click', () => {
-    playing = false;
-    bgMusic.pause();
+    setPlaying(false);
     if (crawlAnim) crawlAnim.pause();
   });
   document.getElementById('btnPlay').addEventListener('click', () => {
-    if (ended) { goTo(0); bgMusic.currentTime = 0; return; }
-    playing = true;
-    bgMusic.play().catch(() => {});
+    if (ended) { goTo(0); return; }
+    setPlaying(true);
     if (crawlAnim) crawlAnim.play();
   });
-  document.getElementById('btnFwd').addEventListener('click', () => { goTo(current + 1); bgMusic.play().catch(() => {}); });
+  document.getElementById('btnFwd').addEventListener('click', () => { goTo(current + 1); });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') goTo(current + 1);
