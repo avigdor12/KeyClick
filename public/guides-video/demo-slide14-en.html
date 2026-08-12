@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>Slide 14 - English demo</title>
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#E9DFC9; overflow:hidden; }
+  * { box-sizing: border-box; }
+  .viewport { position:relative; width:100vw; height:100vh; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(ellipse at center, #F1E9D8 0%, #DFD2B4 100%); padding-bottom:40px; }
+  .stage { position:relative; width:1280px; height:720px; overflow:hidden;
+    background:#FFFFFF;
+    box-shadow: 0 0 0 16px #F6EFDD, 0 0 0 22px #8A5A32, 0 0 0 24px #5C3A1E, 0 22px 60px rgba(0,0,0,.5);
+    border-radius: 2px;
+  }
+  .note { position:absolute; left:406px; top:498px; width:519px; text-align:center; font:bold 11px 'Segoe UI',sans-serif; color:#b00; z-index:9; }
+  .slide-num {
+    position:absolute; left:16px; top:16px; z-index:6000;
+    width:76px; height:76px; border-radius:50%;
+    background:linear-gradient(135deg,#0F4C33,#1a7a54);
+    border:4px solid #F1E9D8;
+    display:flex; align-items:center; justify-content:center;
+    color:#F1E9D8; font-family:'Segoe UI',sans-serif; font-weight:700; font-size:34px;
+    box-shadow:0 3px 10px rgba(0,0,0,.35);
+  }
+  .brand-tag {
+    position:absolute; right:20px; top:14px; z-index:6000;
+    font-family:'Dancing Script',cursive; font-style:italic; font-weight:700;
+    font-size:32px; color:#D4AF37;
+    text-shadow:-1px -1px 0 #1a1a1a, 1px -1px 0 #1a1a1a, -1px 1px 0 #1a1a1a, 1px 1px 0 #1a1a1a, 0 2px 5px rgba(0,0,0,.4);
+    pointer-events:none;
+  }
+  .controls {
+    position:fixed; left:0; right:0; bottom:0; height:40px;
+    background:#3E2712; display:flex; align-items:center; justify-content:center; gap:8px;
+    z-index:1000; box-shadow: 0 -2px 10px rgba(0,0,0,.35);
+  }
+  .ctrl-btn {
+    width:26px; height:26px; border-radius:50%;
+    background:#5C3A1E; border:1px solid #8A5A32; color:#F1E9D8;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:12px; user-select:none;
+  }
+  .ctrl-btn.wide { width:auto; padding:0 10px; border-radius:13px; font-size:10px; font-family:'Segoe UI',sans-serif; }
+  .progress-track { position:absolute; top:0; left:0; right:0; height:4px; background:rgba(255,255,255,.12); }
+  .progress-fill { height:100%; width:35%; background:#F1E9D8; }
+</style>
+</head>
+<body>
+  <div class="viewport">
+    <div class="stage">
+      <img src="extracted_images/s14_p1.png" style="position:absolute;left:55px;top:45px;width:1170px;height:630px;z-index:0;object-fit:fill;">
+      <img src="extracted_images/s14_p2.png" style="position:absolute;left:406px;top:518px;width:519px;height:86px;z-index:1;object-fit:fill;">
+      <div class="note">&#9650; this pill image still has Hebrew text baked in (not translated)</div>
+      <div style="position:absolute;left:457px;top:93px;width:366px;text-align:center;z-index:2;">
+        <span style="font-size:80px;color:#FF0000;font-family:'Rubik','Segoe UI',sans-serif;font-weight:700">KeyClick</span>
+      </div>
+      <div style="position:absolute;left:111px;top:238px;width:1094px;text-align:center;z-index:2;">
+        <div style="text-align:center;line-height:1.25"><span style="font-size:58px;color:#475569;font-family:'Brush Script MT','Lucida Handwriting',cursive;font-weight:400">Technology, progress</span></div>
+        <div style="text-align:center;line-height:1.25">&nbsp;</div>
+        <div style="text-align:center;line-height:1.25"><span style="font-size:58px;color:#475569;font-family:'Brush Script MT','Lucida Handwriting',cursive;font-weight:400">simple, accessible financial management for everyone</span></div>
+      </div>
+      <div class="slide-num">14</div>
+      <div class="brand-tag">M Solution Group</div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="progress-track"><div class="progress-fill"></div></div>
+    <div class="ctrl-btn wide" title="Start">&#9198; Start</div>
+    <div class="ctrl-btn" title="Back">&lsaquo;</div>
+    <div class="ctrl-btn" title="Pause">&#9208;</div>
+    <div class="ctrl-btn" title="Play">&#9654;</div>
+    <div class="ctrl-btn" title="Forward">&rsaquo;</div>
+  </div>
+</body>
+</html>
