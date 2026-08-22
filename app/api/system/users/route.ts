@@ -13,9 +13,19 @@ export async function GET() {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS notes TEXT;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS weighted_score INTEGER DEFAULT 10;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS ip_registration VARCHAR(50);
+      DO $$
+      BEGIN
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='UUID_Local_Computer')
+           AND NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='UUID_Local_BIOS')
+        THEN
+          ALTER TABLE users RENAME COLUMN "UUID_Local_Computer" TO "UUID_Local_BIOS";
+        ELSE
+          ALTER TABLE users ADD COLUMN IF NOT EXISTS "UUID_Local_BIOS" VARCHAR(50);
+        END IF;
+      END $$;
     `)
     const result = await pool.query(
-      'SELECT id, name, email, language, currency, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, ip_registration, created_at, plan_start, plan_end, system_force, notes, weighted_score FROM users ORDER BY id'
+      'SELECT id, name, email, language, currency, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, ip_registration, "UUID_Local_BIOS", created_at, plan_start, plan_end, system_force, notes, weighted_score FROM users ORDER BY id'
     )
     return NextResponse.json({ users: result.rows })
   } catch (e) {
