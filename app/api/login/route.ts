@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!user.is_active) {
-    return NextResponse.json({ error: 'הרישום נכשל, נא לפנות למנהל המערכת', code: 'NEEDS_PLAN' }, { status: 409 })
+    return NextResponse.json({ error: 'התהליך לא הצליח. נא לפנות למנהל המערכת.', code: 'NEEDS_PLAN' }, { status: 409 })
   }
 
   const rawIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim()

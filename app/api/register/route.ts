@@ -24,10 +24,12 @@ export async function POST(req: NextRequest) {
   const ip = isLoopback ? (clientIp || rawIp || 'localhost') : rawIp
 
   const hash = password ? await bcrypt.hash(password, 10) : null
-  await pool.query(
-    'INSERT INTO users (name, email, password_hash, language, license_type, last_ip) VALUES ($1,$2,$3,$4,$5,$6)',
+  const inserted = await pool.query(
+    `INSERT INTO users (name, email, password_hash, language, license_type, last_ip)
+     VALUES ($1,$2,$3,$4,$5,$6)
+     RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip`,
     [name || null, email, hash, language || 'English', 'תקופת הרצה', ip]
   )
 
-  return NextResponse.json({ success: true, status: 'created' })
+  return NextResponse.json({ success: true, status: 'created', user: inserted.rows[0] })
 }

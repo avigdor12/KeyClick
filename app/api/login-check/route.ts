@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
 
   const result = await pool.query(
-    'SELECT password_hash, "UUID_Local_BIOS" FROM users WHERE email = $1',
+    'SELECT id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, password_hash, "UUID_Local_BIOS" FROM users WHERE email = $1',
     [email]
   )
   const user = result.rows[0]
@@ -20,9 +20,11 @@ export async function POST(req: NextRequest) {
     if (!valid) return NextResponse.json({ error: 'סיסמה שגויה' }, { status: 401 })
   }
 
+  const { password_hash, ...userWithoutPass } = user
+
   if (!user.UUID_Local_BIOS) {
-    return NextResponse.json({ error: 'לא נמצא קוד מכשיר רשום, יש להתקין את האפליקציה', code: 'NEEDS_INSTALL' }, { status: 409 })
+    return NextResponse.json({ error: 'לא נמצא קוד מכשיר רשום, יש להתקין את האפליקציה', code: 'NEEDS_INSTALL', user: userWithoutPass }, { status: 409 })
   }
 
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({ ok: true, user: userWithoutPass })
 }

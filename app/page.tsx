@@ -308,43 +308,20 @@ export default function Home() {
       }).catch(() => {})
     }
     dbg('flowDiagram', '1/10-לקוח נכנס לאתר, הקלט IP לסטטיסטיקה')
-    dbg('ipify', 'fetch GET https://api.ipify.org')
-    fetch('https://api.ipify.org?format=json')
+    fetch('/api/visits', { method: 'POST' })
       .then(r => r.json())
-      .then(d => {
-        dbg('ipify', `ip="${d.ip ?? 'none'}"`)
-        if (d.ip) setClientIp(d.ip)
-        fetch('/api/visits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clientIp: d.ip || '' }) })
-          .then(r => r.json())
-          .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
-          .catch(() => {})
-        dbg('initEffect', `fetch GET /api/current-user?clientIp=${d.ip ?? ''}`)
-        fetch(`/api/current-user?clientIp=${encodeURIComponent(d.ip ?? '')}`)
-          .then(r => r.json())
-          .then(data => {
-            dbg('initEffect', `identified_by="${data.identified_by}" current_ip="${data.current_ip ?? 'unknown'}"`)
-            dbg('initEffect', `Current_User=${data.user?.id ?? 0}  email="${data.user?.email ?? 'none'}"  IP="${data.user?.last_ip ?? data.current_ip ?? 'none'}"`)
-            if (!data.user) return
-            set_Current_User_Pointer_to_DB(data.user)
-          })
-          .catch(err => dbg('initEffect', `current-user failed err="${String(err)}"`))
+      .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
+      .catch(() => {})
+    dbg('initEffect', 'fetch GET /api/current-user')
+    fetch('/api/current-user')
+      .then(r => r.json())
+      .then(data => {
+        dbg('initEffect', `identified_by="${data.identified_by}" current_ip="${data.current_ip ?? 'unknown'}"`)
+        dbg('initEffect', `Current_User=${data.user?.id ?? 0}  email="${data.user?.email ?? 'none'}"  IP="${data.user?.last_ip ?? data.current_ip ?? 'none'}"`)
+        if (!data.user) return
+        set_Current_User_Pointer_to_DB(data.user)
       })
-      .catch(err => {
-        dbg('ipify', `failed err="${String(err)}"`)
-        fetch('/api/visits', { method: 'POST' })
-          .then(r => r.json())
-          .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
-          .catch(() => {})
-        dbg('initEffect', 'fetch GET /api/current-user (no clientIp)')
-        fetch('/api/current-user')
-          .then(r => r.json())
-          .then(data => {
-            dbg('initEffect', `identified_by="${data.identified_by}" current_ip="${data.current_ip ?? 'unknown'}"`)
-            if (!data.user) return
-            set_Current_User_Pointer_to_DB(data.user)
-          })
-          .catch(err2 => dbg('initEffect', `current-user failed err="${String(err2)}"`))
-      })
+      .catch(err => dbg('initEffect', `current-user failed err="${String(err)}"`))
     const params = new URLSearchParams(window.location.search)
     if (params.get('installed') === '1') {
       const uuidLocalBios = params.get('uuid') || ''
@@ -4929,57 +4906,57 @@ const FINANCE_GUIDE_SECTIONS: Record<string, GuideSection[]> = {
 
 const SITE_OVERVIEW_SECTIONS: Record<string, GuideSection[]> = {
   he: [
-    { heading: '', body: 'KeyClick משמש חזית שיווקית לטכנולוגיה חכמה. המהווה שער כניסה לאוסף כלים דיגיטליים המיועדים לשרת את הציבור הרחב בתחומים מגוונים של החיים היומיומיים, מתוך רצון להנגשה לפתרונות טכנולוגיים איכותיים — שבדרך כלל דורשים ידע טכני מוקדם — לכל אדם, ללא תלות ברמת ההיכרות שלו עם מחשבים.\nהפרויקט בנוי מאתר אינטרנט מודרני ומקצועי, בעל ביצועים גבוהים ו-SEO מיטבי. ניהול רישיונות, משתמשים וסליקה. יכולת שילוב מלאה עם אפליקציות בשפות תכנות שונות, גמישות מלאה לפיתוח עתידי ופלטפורמה לגישה לחשבונות בנק. האתר נמצא כל הזמן בהתהוות מתמדת.\nהרעיון המרכזי מאחורי KeyClick הוא הפשטות. כניסה חופשית לאתר, גלישה, קריאה בחומרי העזר וצפייה בסרטונים ללא עלות.' },
+    { heading: '', body: 'KeyClick משמש חזית שיווקית לטכנולוגיה חכמה. המהווה שער כניסה לאוסף כלים דיגיטליים המיועדים לשרת את הציבור הרחב בתחומים מגוונים של החיים היומיומיים, מתוך רצון להנגשה לפתרונות טכנולוגיים איכותיים — שבדרך כלל דורשים ידע טכני מוקדם — לכל אדם, ללא תלות ברמת ההיכרות שלו עם מחשבים.\nהפרויקט בנוי מאתר אינטרנט מודרני ומקצועי, בעל ביצועים גבוהים ויעילות מיטבית. ניהול רישיונות, משתמשים וסליקה. יכולת שילוב מלאה עם אפליקציות בשפות תכנות שונות, גמישות מלאה לפיתוח עתידי ופלטפורמה לגישה לחשבונות בנק. האתר נמצא כל הזמן בהתהוות מתמדת.\nהרעיון המרכזי מאחורי KeyClick הוא הפשטות. כניסה חופשית לאתר, גלישה, קריאה בחומרי העזר וצפייה בסרטונים ללא עלות.' },
     { heading: 'דף נחיתה', body: '•    דף הנחיתה הוא שער הכניסה לפרויקט KeyClick. דף הנחיתה מאפשר הכרות מהירה וכניסה לאתר. מרכיבי דף הנחיתה הם:\n•    הצגת הפלטפורמה\n•    שורת 11 דגלים לבחירת שפת המערכת\n•    שורת כרטיסיות שיווקיות להצגת יכולות\n•    גישה ישירה לאתר עצמו.' },
     { heading: 'רכיבי האתר', body: '•    דף נחיתה (הצגת הפרויקט וכניסה לאתר)\n•    אתר אינטרנט\n•    פרויקט ניהול תקציב הבית\n•    פלטפורמה התחברות לבנקים (אופציה ללקוח)\n•    קשרי לקוחות ודף אישי\n•    מדריכים וסרטונים\n•    מערכת מידע וניהול גרסאות תוכנה\n•    יומן תזכורות לשימוש המערכת וצרכים פרטיים\n•    מערכת סליקה\n•    בשימוש המערכת, ניהול ותחזוקה (נעול ללקוח)' },
   ],
   en: [
-    { heading: '', body: 'KeyClick serves as the marketing front for smart technology — a gateway to a collection of digital tools designed to serve the general public across various areas of everyday life, out of a desire to make high-quality technological solutions — which usually require prior technical knowledge — accessible to everyone, regardless of their familiarity with computers.\nThe project is built on a modern, professional website with high performance and optimal SEO. License, user and billing management. Full integration capability with applications in various programming languages, full flexibility for future development, and a platform for accessing bank accounts. The website is constantly evolving.\nThe core idea behind KeyClick is simplicity. Free entry to the website, browsing, reading the guide materials and watching videos at no cost.' },
+    { heading: '', body: 'KeyClick serves as the marketing front for smart technology — a gateway to a collection of digital tools designed to serve the general public across various areas of everyday life, out of a desire to make high-quality technological solutions — which usually require prior technical knowledge — accessible to everyone, regardless of their familiarity with computers.\nThe project is built on a modern, professional website with high performance and maximum efficiency. License, user and billing management. Full integration capability with applications in various programming languages, full flexibility for future development, and a platform for accessing bank accounts. The website is constantly evolving.\nThe core idea behind KeyClick is simplicity. Free entry to the website, browsing, reading the guide materials and watching videos at no cost.' },
     { heading: 'Landing Page', body: '•    The landing page is the entry gate to the KeyClick project. It allows a quick introduction and entry to the website. Its components are:\n•    Presentation of the platform\n•    A row of 11 flags for selecting the system language\n•    A row of marketing cards presenting capabilities\n•    Direct access to the website itself.' },
     { heading: 'Website Components', body: '•    Landing page (project presentation and entry to the website)\n•    Website\n•    Home budget management project\n•    Bank connection platform (optional for the customer)\n•    Customer relations and personal page\n•    Guides and videos\n•    Information and software version management system\n•    Reminder calendar for system use and private needs\n•    Billing system\n•    System use, management and maintenance (locked for the customer)' },
   ],
   ru: [
-    { heading: '', body: 'KeyClick служит маркетинговым фасадом умных технологий — воротами в коллекцию цифровых инструментов, предназначенных для широкой публики в различных сферах повседневной жизни, из стремления сделать качественные технологические решения — которые обычно требуют предварительных технических знаний — доступными для каждого, независимо от уровня знакомства с компьютерами.\nПроект построен на современном профессиональном веб-сайте с высокой производительностью и оптимальным SEO. Управление лицензиями, пользователями и биллингом. Полная возможность интеграции с приложениями на разных языках программирования, полная гибкость для будущего развития и платформа для доступа к банковским счетам. Сайт находится в постоянном развитии.\nОсновная идея KeyClick — простота. Свободный вход на сайт, просмотр, чтение справочных материалов и просмотр видео бесплатно.' },
+    { heading: '', body: 'KeyClick служит маркетинговым фасадом умных технологий — воротами в коллекцию цифровых инструментов, предназначенных для широкой публики в различных сферах повседневной жизни, из стремления сделать качественные технологические решения — которые обычно требуют предварительных технических знаний — доступными для каждого, независимо от уровня знакомства с компьютерами.\nПроект построен на современном профессиональном веб-сайте с высокой производительностью и максимальной эффективностью. Управление лицензиями, пользователями и биллингом. Полная возможность интеграции с приложениями на разных языках программирования, полная гибкость для будущего развития и платформа для доступа к банковским счетам. Сайт находится в постоянном развитии.\nОсновная идея KeyClick — простота. Свободный вход на сайт, просмотр, чтение справочных материалов и просмотр видео бесплатно.' },
     { heading: 'Целевая страница', body: '•    Целевая страница — это входные ворота проекта KeyClick. Она позволяет быстро познакомиться с сайтом и войти на него. Её элементы:\n•    Представление платформы\n•    Ряд из 11 флагов для выбора языка системы\n•    Ряд рекламных карточек с описанием возможностей\n•    Прямой доступ к самому сайту.' },
     { heading: 'Компоненты сайта', body: '•    Целевая страница (представление проекта и вход на сайт)\n•    Веб-сайт\n•    Проект управления семейным бюджетом\n•    Платформа подключения к банкам (по желанию клиента)\n•    Связь с клиентами и личная страница\n•    Руководства и видео\n•    Система информации и управления версиями ПО\n•    Календарь напоминаний для нужд системы и личных нужд\n•    Система биллинга\n•    Использование системы, управление и обслуживание (закрыто для клиента)' },
   ],
   de: [
-    { heading: '', body: 'KeyClick dient als Marketing-Frontend für intelligente Technologie – ein Tor zu einer Sammlung digitaler Werkzeuge, die der breiten Öffentlichkeit in verschiedenen Bereichen des Alltags dienen sollen, aus dem Wunsch heraus, hochwertige technologische Lösungen – die normalerweise technisches Vorwissen erfordern – für jeden zugänglich zu machen, unabhängig vom Grad seiner Vertrautheit mit Computern.\nDas Projekt basiert auf einer modernen, professionellen Website mit hoher Leistung und optimaler SEO. Verwaltung von Lizenzen, Benutzern und Abrechnung. Vollständige Integrationsfähigkeit mit Anwendungen in verschiedenen Programmiersprachen, volle Flexibilität für zukünftige Entwicklung und eine Plattform für den Zugriff auf Bankkonten. Die Website befindet sich in ständiger Weiterentwicklung.\nDie zentrale Idee hinter KeyClick ist Einfachheit. Freier Zugang zur Website, Browsen, Lesen der Hilfematerialien und Ansehen von Videos kostenlos.' },
+    { heading: '', body: 'KeyClick dient als Marketing-Frontend für intelligente Technologie – ein Tor zu einer Sammlung digitaler Werkzeuge, die der breiten Öffentlichkeit in verschiedenen Bereichen des Alltags dienen sollen, aus dem Wunsch heraus, hochwertige technologische Lösungen – die normalerweise technisches Vorwissen erfordern – für jeden zugänglich zu machen, unabhängig vom Grad seiner Vertrautheit mit Computern.\nDas Projekt basiert auf einer modernen, professionellen Website mit hoher Leistung und maximaler Effizienz. Verwaltung von Lizenzen, Benutzern und Abrechnung. Vollständige Integrationsfähigkeit mit Anwendungen in verschiedenen Programmiersprachen, volle Flexibilität für zukünftige Entwicklung und eine Plattform für den Zugriff auf Bankkonten. Die Website befindet sich in ständiger Weiterentwicklung.\nDie zentrale Idee hinter KeyClick ist Einfachheit. Freier Zugang zur Website, Browsen, Lesen der Hilfematerialien und Ansehen von Videos kostenlos.' },
     { heading: 'Landingpage', body: '•    Die Landingpage ist das Eingangstor zum KeyClick-Projekt. Sie ermöglicht ein schnelles Kennenlernen und den Einstieg in die Website. Ihre Bestandteile sind:\n•    Vorstellung der Plattform\n•    Eine Reihe von 11 Flaggen zur Auswahl der Systemsprache\n•    Eine Reihe von Marketing-Karten zur Darstellung der Funktionen\n•    Direkter Zugang zur Website selbst.' },
     { heading: 'Bestandteile der Website', body: '•    Landingpage (Präsentation des Projekts und Einstieg in die Website)\n•    Website\n•    Projekt zur Verwaltung des Haushaltsbudgets\n•    Plattform zur Bankverbindung (optional für den Kunden)\n•    Kundenbeziehungen und persönliche Seite\n•    Anleitungen und Videos\n•    Informations- und Softwareversionsverwaltungssystem\n•    Erinnerungskalender für Systemnutzung und private Bedürfnisse\n•    Abrechnungssystem\n•    Systemnutzung, Verwaltung und Wartung (für den Kunden gesperrt)' },
   ],
   fr: [
-    { heading: '', body: "KeyClick sert de vitrine marketing pour une technologie intelligente — une porte d'entrée vers une collection d'outils numériques destinés à servir le grand public dans divers domaines de la vie quotidienne, dans le but de rendre accessibles à tous, quel que soit leur niveau de familiarité avec les ordinateurs, des solutions technologiques de qualité — qui nécessitent généralement des connaissances techniques préalables.\nLe projet repose sur un site web moderne et professionnel, offrant des performances élevées et un référencement (SEO) optimal. Gestion des licences, des utilisateurs et de la facturation. Capacité d'intégration complète avec des applications dans divers langages de programmation, flexibilité totale pour le développement futur, et une plateforme d'accès aux comptes bancaires. Le site est en constante évolution.\nL'idée centrale derrière KeyClick est la simplicité. Accès libre au site, navigation, lecture des documents d'aide et visionnage de vidéos, gratuitement." },
+    { heading: '', body: "KeyClick sert de vitrine marketing pour une technologie intelligente — une porte d'entrée vers une collection d'outils numériques destinés à servir le grand public dans divers domaines de la vie quotidienne, dans le but de rendre accessibles à tous, quel que soit leur niveau de familiarité avec les ordinateurs, des solutions technologiques de qualité — qui nécessitent généralement des connaissances techniques préalables.\nLe projet repose sur un site web moderne et professionnel, offrant des performances élevées et une efficacité maximale. Gestion des licences, des utilisateurs et de la facturation. Capacité d'intégration complète avec des applications dans divers langages de programmation, flexibilité totale pour le développement futur, et une plateforme d'accès aux comptes bancaires. Le site est en constante évolution.\nL'idée centrale derrière KeyClick est la simplicité. Accès libre au site, navigation, lecture des documents d'aide et visionnage de vidéos, gratuitement." },
     { heading: "Page d'atterrissage", body: "•    La page d'atterrissage est la porte d'entrée du projet KeyClick. Elle permet une prise de contact rapide et l'accès au site. Ses composants sont :\n•    Présentation de la plateforme\n•    Une rangée de 11 drapeaux pour choisir la langue du système\n•    Une rangée de cartes marketing présentant les fonctionnalités\n•    Accès direct au site lui-même." },
     { heading: 'Composants du site', body: "•    Page d'atterrissage (présentation du projet et accès au site)\n•    Site web\n•    Projet de gestion du budget familial\n•    Plateforme de connexion bancaire (en option pour le client)\n•    Relations clients et page personnelle\n•    Guides et vidéos\n•    Système d'information et de gestion des versions logicielles\n•    Calendrier de rappels pour les besoins du système et les besoins privés\n•    Système de facturation\n•    Utilisation du système, gestion et maintenance (verrouillé pour le client)" },
   ],
   es: [
-    { heading: '', body: 'KeyClick funciona como el frente de marketing de la tecnología inteligente: una puerta de entrada a una colección de herramientas digitales destinadas a servir al público en general en diversas áreas de la vida cotidiana, con el deseo de hacer accesibles a cualquier persona, independientemente de su nivel de familiaridad con los ordenadores, soluciones tecnológicas de calidad que normalmente requieren conocimientos técnicos previos.\nEl proyecto está construido sobre un sitio web moderno y profesional, con un alto rendimiento y un SEO óptimo. Gestión de licencias, usuarios y facturación. Capacidad de integración completa con aplicaciones en diversos lenguajes de programación, plena flexibilidad para el desarrollo futuro y una plataforma para acceder a cuentas bancarias. El sitio está en constante evolución.\nLa idea central detrás de KeyClick es la simplicidad. Entrada libre al sitio, navegación, lectura de los materiales de ayuda y visualización de vídeos, sin coste alguno.' },
+    { heading: '', body: 'KeyClick funciona como el frente de marketing de la tecnología inteligente: una puerta de entrada a una colección de herramientas digitales destinadas a servir al público en general en diversas áreas de la vida cotidiana, con el deseo de hacer accesibles a cualquier persona, independientemente de su nivel de familiaridad con los ordenadores, soluciones tecnológicas de calidad que normalmente requieren conocimientos técnicos previos.\nEl proyecto está construido sobre un sitio web moderno y profesional, con un alto rendimiento y una eficiencia máxima. Gestión de licencias, usuarios y facturación. Capacidad de integración completa con aplicaciones en diversos lenguajes de programación, plena flexibilidad para el desarrollo futuro y una plataforma para acceder a cuentas bancarias. El sitio está en constante evolución.\nLa idea central detrás de KeyClick es la simplicidad. Entrada libre al sitio, navegación, lectura de los materiales de ayuda y visualización de vídeos, sin coste alguno.' },
     { heading: 'Página de aterrizaje', body: '•    La página de aterrizaje es la puerta de entrada al proyecto KeyClick. Permite un conocimiento rápido y el acceso al sitio. Sus componentes son:\n•    Presentación de la plataforma\n•    Una fila de 11 banderas para elegir el idioma del sistema\n•    Una fila de tarjetas de marketing que presentan las capacidades\n•    Acceso directo al propio sitio.' },
     { heading: 'Componentes del sitio', body: '•    Página de aterrizaje (presentación del proyecto y acceso al sitio)\n•    Sitio web\n•    Proyecto de gestión del presupuesto familiar\n•    Plataforma de conexión con bancos (opcional para el cliente)\n•    Relaciones con el cliente y página personal\n•    Guías y vídeos\n•    Sistema de información y gestión de versiones de software\n•    Calendario de recordatorios para uso del sistema y necesidades privadas\n•    Sistema de facturación\n•    Uso del sistema, gestión y mantenimiento (bloqueado para el cliente)' },
   ],
   ja: [
-    { heading: '', body: 'KeyClickは、スマートテクノロジーのマーケティングフロントとして機能します。日常生活のさまざまな分野で一般の人々に役立つデジタルツールのコレクションへの入り口であり、通常は事前の技術知識を必要とする質の高い技術的ソリューションを、コンピューターへの習熟度に関係なく、誰もが利用できるようにしたいという思いから生まれました。\nこのプロジェクトは、高いパフォーマンスと最適なSEOを備えた、モダンでプロフェッショナルなウェブサイトの上に構築されています。ライセンス、ユーザー、決済の管理。さまざまなプログラミング言語のアプリケーションとの完全な統合機能、将来の開発への完全な柔軟性、銀行口座へのアクセスのためのプラットフォーム。ウェブサイトは常に進化し続けています。\nKeyClickの背後にある中心的な考え方はシンプルさです。ウェブサイトへの自由なアクセス、閲覧、ガイド資料の閲覧、動画の視聴が無料です。' },
+    { heading: '', body: 'KeyClickは、スマートテクノロジーのマーケティングフロントとして機能します。日常生活のさまざまな分野で一般の人々に役立つデジタルツールのコレクションへの入り口であり、通常は事前の技術知識を必要とする質の高い技術的ソリューションを、コンピューターへの習熟度に関係なく、誰もが利用できるようにしたいという思いから生まれました。\nこのプロジェクトは、高いパフォーマンスと最大限の効率性を備えた、モダンでプロフェッショナルなウェブサイトの上に構築されています。ライセンス、ユーザー、決済の管理。さまざまなプログラミング言語のアプリケーションとの完全な統合機能、将来の開発への完全な柔軟性、銀行口座へのアクセスのためのプラットフォーム。ウェブサイトは常に進化し続けています。\nKeyClickの背後にある中心的な考え方はシンプルさです。ウェブサイトへの自由なアクセス、閲覧、ガイド資料の閲覧、動画の視聴が無料です。' },
     { heading: 'ランディングページ', body: '•    ランディングページはKeyClickプロジェクトへの入り口です。サイトへの素早い理解と入場を可能にします。その構成要素は次のとおりです：\n•    プラットフォームの紹介\n•    システム言語を選択するための11の国旗の列\n•    機能を紹介するマーケティングカードの列\n•    ウェブサイト自体への直接アクセス。' },
     { heading: 'サイトの構成要素', body: '•    ランディングページ（プロジェクトの紹介とサイトへの入場）\n•    ウェブサイト\n•    家計管理プロジェクト\n•    銀行接続プラットフォーム（顧客のオプション）\n•    顧客関係と個人ページ\n•    ガイドと動画\n•    情報およびソフトウェアバージョン管理システム\n•    システム利用とプライベートなニーズのためのリマインダーカレンダー\n•    決済システム\n•    システム利用、管理およびメンテナンス（顧客にはロック）' },
   ],
   ar: [
-    { heading: '', body: 'يُستخدم KeyClick كواجهة تسويقية للتكنولوجيا الذكية — بوابة دخول إلى مجموعة من الأدوات الرقمية المخصصة لخدمة الجمهور العام في مجالات متنوعة من الحياة اليومية، انطلاقًا من الرغبة في إتاحة حلول تكنولوجية عالية الجودة — عادةً ما تتطلب معرفة تقنية مسبقة — لكل شخص، بغض النظر عن مستوى إلمامه بالحواسيب.\nالمشروع مبني على موقع إنترنت حديث واحترافي، بأداء عالٍ وتحسين مثالي لمحركات البحث (SEO). إدارة التراخيص والمستخدمين والفوترة. قدرة تكامل كاملة مع تطبيقات بلغات برمجة مختلفة، ومرونة كاملة للتطوير المستقبلي، ومنصة للوصول إلى الحسابات المصرفية. الموقع في تطور مستمر دائمًا.\nالفكرة المركزية وراء KeyClick هي البساطة. دخول حر إلى الموقع، تصفح، قراءة مواد المساعدة ومشاهدة الفيديوهات دون أي تكلفة.' },
+    { heading: '', body: 'يُستخدم KeyClick كواجهة تسويقية للتكنولوجيا الذكية — بوابة دخول إلى مجموعة من الأدوات الرقمية المخصصة لخدمة الجمهور العام في مجالات متنوعة من الحياة اليومية، انطلاقًا من الرغبة في إتاحة حلول تكنولوجية عالية الجودة — عادةً ما تتطلب معرفة تقنية مسبقة — لكل شخص، بغض النظر عن مستوى إلمامه بالحواسيب.\nالمشروع مبني على موقع إنترنت حديث واحترافي، بأداء عالٍ وأقصى كفاءة لمحركات البحث. إدارة التراخيص والمستخدمين والفوترة. قدرة تكامل كاملة مع تطبيقات بلغات برمجة مختلفة، ومرونة كاملة للتطوير المستقبلي، ومنصة للوصول إلى الحسابات المصرفية. الموقع في تطور مستمر دائمًا.\nالفكرة المركزية وراء KeyClick هي البساطة. دخول حر إلى الموقع، تصفح، قراءة مواد المساعدة ومشاهدة الفيديوهات دون أي تكلفة.' },
     { heading: 'صفحة الهبوط', body: '•    صفحة الهبوط هي بوابة الدخول إلى مشروع KeyClick. تتيح تعرفًا سريعًا ودخولًا إلى الموقع. مكوناتها هي:\n•    عرض المنصة\n•    صف من 11 علمًا لاختيار لغة النظام\n•    صف من البطاقات التسويقية لعرض القدرات\n•    وصول مباشر إلى الموقع نفسه.' },
     { heading: 'مكونات الموقع', body: '•    صفحة الهبوط (عرض المشروع والدخول إلى الموقع)\n•    موقع الإنترنت\n•    مشروع إدارة ميزانية المنزل\n•    منصة الاتصال بالبنوك (اختيارية للعميل)\n•    علاقات العملاء والصفحة الشخصية\n•    الأدلة والفيديوهات\n•    نظام المعلومات وإدارة إصدارات البرمجيات\n•    تقويم تذكيرات لاستخدام النظام والاحتياجات الخاصة\n•    نظام الفوترة\n•    استخدام النظام، الإدارة والصيانة (مقفل أمام العميل)' },
   ],
   zh: [
-    { heading: '', body: 'KeyClick 是智能科技的营销门户——通向一系列数字工具的入口，旨在服务日常生活各个领域的广大公众，出于让每个人都能使用高质量科技解决方案（这些解决方案通常需要事先的技术知识）的愿望，无论其对电脑的熟悉程度如何。\n该项目建立在一个现代、专业的网站之上，具有高性能和最佳的搜索引擎优化（SEO）。许可证、用户和账单管理。能够与各种编程语言的应用程序完全集成，为未来发展提供充分的灵活性，并提供访问银行账户的平台。网站始终处于不断发展之中。\nKeyClick 背后的核心理念是简单。免费进入网站、浏览、阅读帮助资料和观看视频。' },
+    { heading: '', body: 'KeyClick 是智能科技的营销门户——通向一系列数字工具的入口，旨在服务日常生活各个领域的广大公众，出于让每个人都能使用高质量科技解决方案（这些解决方案通常需要事先的技术知识）的愿望，无论其对电脑的熟悉程度如何。\n该项目建立在一个现代、专业的网站之上，具有高性能和最高效率。许可证、用户和账单管理。能够与各种编程语言的应用程序完全集成，为未来发展提供充分的灵活性，并提供访问银行账户的平台。网站始终处于不断发展之中。\nKeyClick 背后的核心理念是简单。免费进入网站、浏览、阅读帮助资料和观看视频。' },
     { heading: '着陆页', body: '•    着陆页是 KeyClick 项目的入口。它使您能够快速了解并进入网站。其组成部分包括：\n•    平台展示\n•    一排 11 面旗帜，用于选择系统语言\n•    一排展示功能的营销卡片\n•    直接访问网站本身。' },
     { heading: '网站组成部分', body: '•    着陆页（项目展示与进入网站）\n•    网站\n•    家庭预算管理项目\n•    银行连接平台（客户可选）\n•    客户关系与个人页面\n•    指南与视频\n•    信息及软件版本管理系统\n•    用于系统使用及个人需求的提醒日历\n•    结算系统\n•    系统使用、管理与维护（对客户锁定）' },
   ],
   it: [
-    { heading: '', body: "KeyClick funge da vetrina di marketing per la tecnologia intelligente — una porta d'accesso a una raccolta di strumenti digitali destinati a servire il grande pubblico in diversi ambiti della vita quotidiana, nel desiderio di rendere accessibili a chiunque, indipendentemente dal proprio livello di familiarità con i computer, soluzioni tecnologiche di qualità che solitamente richiedono conoscenze tecniche preliminari.\nIl progetto è costruito su un sito web moderno e professionale, con prestazioni elevate e una SEO ottimale. Gestione di licenze, utenti e fatturazione. Piena capacità di integrazione con applicazioni in diversi linguaggi di programmazione, piena flessibilità per lo sviluppo futuro e una piattaforma per l'accesso ai conti bancari. Il sito è in continua evoluzione.\nL'idea centrale alla base di KeyClick è la semplicità. Accesso libero al sito, navigazione, lettura dei materiali guida e visione di video, gratuitamente." },
+    { heading: '', body: "KeyClick funge da vetrina di marketing per la tecnologia intelligente — una porta d'accesso a una raccolta di strumenti digitali destinati a servire il grande pubblico in diversi ambiti della vita quotidiana, nel desiderio di rendere accessibili a chiunque, indipendentemente dal proprio livello di familiarità con i computer, soluzioni tecnologiche di qualità che solitamente richiedono conoscenze tecniche preliminari.\nIl progetto è costruito su un sito web moderno e professionale, con prestazioni elevate e un'efficienza massima. Gestione di licenze, utenti e fatturazione. Piena capacità di integrazione con applicazioni in diversi linguaggi di programmazione, piena flessibilità per lo sviluppo futuro e una piattaforma per l'accesso ai conti bancari. Il sito è in continua evoluzione.\nL'idea centrale alla base di KeyClick è la semplicità. Accesso libero al sito, navigazione, lettura dei materiali guida e visione di video, gratuitamente." },
     { heading: 'Pagina di destinazione', body: "•    La pagina di destinazione è la porta d'ingresso al progetto KeyClick. Consente una rapida presa di contatto e l'accesso al sito. I suoi componenti sono:\n•    Presentazione della piattaforma\n•    Una fila di 11 bandiere per selezionare la lingua del sistema\n•    Una fila di schede di marketing che presentano le funzionalità\n•    Accesso diretto al sito stesso." },
     { heading: 'Componenti del sito', body: '•    Pagina di destinazione (presentazione del progetto e accesso al sito)\n•    Sito web\n•    Progetto di gestione del bilancio familiare\n•    Piattaforma di connessione bancaria (opzionale per il cliente)\n•    Relazioni con i clienti e pagina personale\n•    Guide e video\n•    Sistema di informazione e gestione delle versioni software\n•    Calendario di promemoria per l\'uso del sistema e necessità private\n•    Sistema di fatturazione\n•    Uso del sistema, gestione e manutenzione (bloccato per il cliente)' },
   ],
   hi: [
-    { heading: '', body: 'KeyClick स्मार्ट तकनीक के लिए एक मार्केटिंग फ्रंट के रूप में कार्य करता है — डिजिटल टूल्स के एक संग्रह का प्रवेश द्वार, जो रोज़मर्रा की ज़िंदगी के विभिन्न क्षेत्रों में आम जनता की सेवा के लिए बनाया गया है, इस इच्छा से कि उच्च-गुणवत्ता वाले तकनीकी समाधान — जिनके लिए आमतौर पर पूर्व तकनीकी ज्ञान की आवश्यकता होती है — कंप्यूटर से परिचय के स्तर की परवाह किए बिना, हर व्यक्ति के लिए सुलभ हों।\nयह प्रोजेक्ट एक आधुनिक, पेशेवर वेबसाइट पर बना है, जिसमें उच्च प्रदर्शन और बेहतरीन SEO है। लाइसेंस, उपयोगकर्ता और बिलिंग प्रबंधन। विभिन्न प्रोग्रामिंग भाषाओं में एप्लिकेशन के साथ पूर्ण एकीकरण क्षमता, भविष्य के विकास के लिए पूरी लचीलापन, और बैंक खातों तक पहुंचने के लिए एक प्लेटफ़ॉर्म। वेबसाइट हमेशा निरंतर विकसित हो रही है।\nKeyClick के पीछे का मुख्य विचार सरलता है। वेबसाइट में मुफ़्त प्रवेश, ब्राउज़िंग, सहायता सामग्री पढ़ना और वीडियो देखना, बिना किसी लागत के।' },
+    { heading: '', body: 'KeyClick स्मार्ट तकनीक के लिए एक मार्केटिंग फ्रंट के रूप में कार्य करता है — डिजिटल टूल्स के एक संग्रह का प्रवेश द्वार, जो रोज़मर्रा की ज़िंदगी के विभिन्न क्षेत्रों में आम जनता की सेवा के लिए बनाया गया है, इस इच्छा से कि उच्च-गुणवत्ता वाले तकनीकी समाधान — जिनके लिए आमतौर पर पूर्व तकनीकी ज्ञान की आवश्यकता होती है — कंप्यूटर से परिचय के स्तर की परवाह किए बिना, हर व्यक्ति के लिए सुलभ हों।\nयह प्रोजेक्ट एक आधुनिक, पेशेवर वेबसाइट पर बना है, जिसमें उच्च प्रदर्शन और अधिकतम दक्षता है। लाइसेंस, उपयोगकर्ता और बिलिंग प्रबंधन। विभिन्न प्रोग्रामिंग भाषाओं में एप्लिकेशन के साथ पूर्ण एकीकरण क्षमता, भविष्य के विकास के लिए पूरी लचीलापन, और बैंक खातों तक पहुंचने के लिए एक प्लेटफ़ॉर्म। वेबसाइट हमेशा निरंतर विकसित हो रही है।\nKeyClick के पीछे का मुख्य विचार सरलता है। वेबसाइट में मुफ़्त प्रवेश, ब्राउज़िंग, सहायता सामग्री पढ़ना और वीडियो देखना, बिना किसी लागत के।' },
     { heading: 'लैंडिंग पेज', body: '•    लैंडिंग पेज KeyClick प्रोजेक्ट का प्रवेश द्वार है। यह वेबसाइट से त्वरित परिचय और प्रवेश की अनुमति देता है। इसके घटक हैं:\n•    प्लेटफ़ॉर्म की प्रस्तुति\n•    सिस्टम की भाषा चुनने के लिए 11 झंडों की एक पंक्ति\n•    क्षमताओं को प्रस्तुत करने वाले मार्केटिंग कार्ड्स की एक पंक्ति\n•    वेबसाइट तक सीधी पहुंच।' },
     { heading: 'वेबसाइट के घटक', body: '•    लैंडिंग पेज (प्रोजेक्ट की प्रस्तुति और वेबसाइट में प्रवेश)\n•    वेबसाइट\n•    गृह बजट प्रबंधन प्रोजेक्ट\n•    बैंक कनेक्शन प्लेटफ़ॉर्म (ग्राहक के लिए वैकल्पिक)\n•    ग्राहक संबंध और व्यक्तिगत पेज\n•    गाइड और वीडियो\n•    सूचना एवं सॉफ़्टवेयर संस्करण प्रबंधन प्रणाली\n•    सिस्टम उपयोग और निजी आवश्यकताओं के लिए रिमाइंडर कैलेंडर\n•    बिलिंग प्रणाली\n•    सिस्टम का उपयोग, प्रबंधन और रखरखाव (ग्राहक के लिए लॉक)' },
   ],
@@ -5257,6 +5234,9 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
   const cabinetWidth = isColLayout ? 'min(1040px,100%)' : 'min(1040px,92vw)'
   const isRTL = lang.code === 'he' || lang.code === 'ar'
 
+  const trayCardRef = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (trayCardRef.current) trayCardRef.current.scrollTop = 0 }, [pageId])
+
   const leftPanelBox = navButtons && (
     <div style={{ position: 'relative', border: '2px solid #FFD700', borderRadius: 8, padding: '18px 10px 10px', background: '#1a1a1a' }}>
       <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 8px', fontFamily: 'var(--font-dancing), Georgia, serif', fontStyle: 'italic', fontSize: 18, color: '#FFD700', whiteSpace: 'nowrap' }}>KeyClick</div>
@@ -5309,7 +5289,7 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
         <span className="brandplate" style={navButtons ? { background: 'linear-gradient(180deg, #8b1e1e, #4a0d0d)' } : undefined}>{drawerLabel}</span>
       </div>
       <div className="cabinet" style={{ width: cabinetWidth, maxWidth: isColLayout ? '100%' : undefined, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, ...(isColLayout ? {} : { maxHeight: 'calc(100vh - 320px)' }) }}>
-        <div className="tray-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
+        <div className="tray-card" ref={trayCardRef} style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
           {!videoSrc && (
             <div className="tray-row" style={(sections && sections.length > 0) ? { justifyContent: 'center' } : undefined}><strong style={(sections && sections.length > 0) ? { fontSize: 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
           )}
@@ -5515,8 +5495,8 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
-  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
@@ -6835,7 +6815,7 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   }
 }
 
-function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, onLogin, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
+function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
   const font = handFont(lang.code)
@@ -6918,10 +6898,29 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     onDbg('handleUpdate', `success status="${data.status}" => onMsg`)
     onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: c.msgRegistered })
     if (data.status === 'created') {
+      onDbg('handleUpdate', `user="${data.user?.email}" is_M_Finance_installed=${data.user?.is_M_Finance_installed} => onUserUpdate`)
+      onUserUpdate(data.user)
       onDbg('flowDiagram', '13-תהליך התקנת M Finance')
       onDbg('handleUpdate', 'status=created => onNavigate mf-install')
       onNavigate('mf-install')
     }
+  }
+
+  async function isComputerAlreadyTakenByAnotherCustomer(): Promise<boolean> {
+    onDbg('flowDiagram', '23-בדיקה: קיים לקוח רשום במחשב?')
+    const newDeviceUuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
+    const computerRes = await fetch('/api/check-computer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uuidBiosCode: newDeviceUuid }),
+    })
+    const computerData = await computerRes.json()
+    onDbg('handleLogin', `check-computer taken=${computerData.taken}`)
+    if (computerData.taken) {
+      onDbg('flowDiagram', '22-כניסה נכשלה (מחשב זה כבר משויך ללקוח אחר)')
+      onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: 'התהליך נכשל. משתמש אחד במחשב אחד. כבר קיים.' })
+    }
+    return computerData.taken
   }
 
   async function handleLogin() {
@@ -6943,24 +6942,17 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     if (!checkRes.ok) {
       onDbg('handleLogin', `login-check failed err="${checkData.error}" code="${checkData.code}"`)
       if (checkData.code === 'NOT_FOUND') {
-        onDbg('flowDiagram', '23-בדיקה: קיים לקוח רשום במחשב?')
-        const newDeviceUuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
-        const computerRes = await fetch('/api/check-computer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ uuidBiosCode: newDeviceUuid }),
-        })
-        const computerData = await computerRes.json()
-        onDbg('handleLogin', `check-computer taken=${computerData.taken}`)
-        if (computerData.taken) {
-          onDbg('flowDiagram', '22-כניסה נכשלה (מחשב זה כבר משויך ללקוח אחר)')
-          onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: 'התהליך נכשל. משתמש אחד במחשב אחד. כבר קיים.' })
-          return
-        }
+        if (await isComputerAlreadyTakenByAnotherCustomer()) return
         setShowNotFoundMsg(true)
         return
       }
-      if (checkData.code === 'NEEDS_INSTALL') { onNavigate('mf-install'); return }
+      if (checkData.code === 'NEEDS_INSTALL') {
+        if (await isComputerAlreadyTakenByAnotherCustomer()) return
+        onDbg('flowDiagram', `13-ממשיך בתהליך התקנת M Finance (רשומה קיימת, אין UUID עדיין) user="${checkData.user?.email}"`)
+        onUserUpdate(checkData.user)
+        onNavigate('mf-install')
+        return
+      }
       setError(checkData.error); return
     }
 
@@ -6978,7 +6970,6 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     if (!res.ok) {
       onDbg('handleLogin', `res.ok=false err="${data.error}" code="${data.code}"`)
       if (data.code === 'NOT_FOUND') { setShowNotFoundMsg(true); return }
-      if (data.code === 'NEEDS_INSTALL') { onNavigate('mf-install'); return }
       if (data.code === 'WRONG_DEVICE') { onDbg('flowDiagram', '8-הלקוח רשום במחשב אחר => 21-כניסה נכשלה'); setError(data.error); return }
       if (data.code === 'NEEDS_PLAN') { onDbg('flowDiagram', '9-תוכנית לא תקפה'); onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: data.error }); return }
       if (data.code === 'CRITICAL_FAILURE') { onDbg('flowDiagram', '21-כניסה נכשלה (תקלה קריטית)'); onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: data.error }); return }
