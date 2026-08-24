@@ -312,8 +312,15 @@ export default function Home() {
       .then(r => r.json())
       .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
       .catch(() => {})
-    dbg('initEffect', 'fetch GET /api/current-user')
-    fetch('/api/current-user')
+    dbg('initEffect', 'fetch ipify for clientIp (needed for current-user lookup on loopback/dev)')
+    fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(3000) })
+      .then(r => r.json())
+      .then(d => { const ip = d.ip || ''; if (ip) setClientIp(ip); dbg('initEffect', `ipify ok ip="${ip}"`); return ip })
+      .catch(e => { dbg('initEffect', `ipify failed/timeout: ${String(e)}`); return '' })
+      .then(ip => {
+        dbg('initEffect', `fetch GET /api/current-user clientIp="${ip}"`)
+        return fetch(`/api/current-user?clientIp=${encodeURIComponent(ip)}`)
+      })
       .then(r => r.json())
       .then(data => {
         dbg('initEffect', `identified_by="${data.identified_by}" current_ip="${data.current_ip ?? 'unknown'}"`)
@@ -329,11 +336,13 @@ export default function Home() {
       localStorage.setItem('mf_installed', '1')
       setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgInstallComplete })
       window.history.replaceState({}, '', window.location.pathname)
-      dbg('installCallback', `installed=1 detected uuid="${uuidLocalBios}" => mf_installed saved`)
-      fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: Current_User_Pointer_to_DB?.email, clientIp, uuidLocalBios }) })
+      const pendingEmail = localStorage.getItem('mf_pending_install_email') || Current_User_Pointer_to_DB?.email || ''
+      dbg('installCallback', `installed=1 detected uuid="${uuidLocalBios}" pendingEmail="${pendingEmail}" => mf_installed saved`)
+      fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: pendingEmail, clientIp, uuidLocalBios }) })
         .then(r => r.json())
         .then(d => {
           dbg('installCallback', `DB updated ok=${d.ok}`)
+          localStorage.removeItem('mf_pending_install_email')
           return fetch(`/api/current-user?clientIp=${encodeURIComponent(clientIp)}`).then(r2 => r2.json())
         })
         .then(d2 => { if (d2.user) set_Current_User_Pointer_to_DB(d2.user) })
@@ -484,6 +493,10 @@ export default function Home() {
     }
     setDebugLog([])
     dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} is_M_Finance_installed=${Current_User_Pointer_to_DB?.is_M_Finance_installed ?? 'unknown'}`)
+    if (Current_User_Pointer_to_DB?.email) {
+      localStorage.setItem('mf_pending_install_email', Current_User_Pointer_to_DB.email)
+      dbg('handleInstall', `saved mf_pending_install_email="${Current_User_Pointer_to_DB.email}" (so the ?installed=1 callback, which may load in a fresh tab with no React user state yet, updates the right user)`)
+    }
     setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgDownloading })
     dbg('handleInstall', 'fetch GET /api/download-mfinance')
     try {
@@ -502,10 +515,11 @@ export default function Home() {
       a.download = 'M_Finance_Setup.exe'
       dbg('handleInstall', `a.download="${a.download}" => a.click()`)
       a.click()
+      setPopupMsg(null)
+      dbg('handleInstall', 'popupMsg closed (download triggered)')
       await new Promise(r => setTimeout(r, 1000))
       URL.revokeObjectURL(url)
-      dbg('handleInstall', 'revokeObjectURL done => file ready')
-      setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgInstallComplete })
+      dbg('handleInstall', 'revokeObjectURL done => file ready (InstallCard page already shows msgInstallComplete + run button, no popup needed)')
     } catch (err) {
       dbg('handleInstall', `catch err="${String(err)}"`)
       setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgDownloadError, bodyColor: '#ff6600' })
@@ -1583,7 +1597,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.UUID_Local_BIOS ?? '')}</td>
+                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                            {usersEditMode
+                              ? <input value={String(u.UUID_Local_BIOS ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, UUID_Local_BIOS: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], UUID_Local_BIOS: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '150px', backgroundColor: 'yellow' }} />
+                              : String(u.UUID_Local_BIOS ?? '')}
+                          </td>
                           <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                             {usersEditMode
                               ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_active} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_active: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_active: v } })) }} /></span>

@@ -13,12 +13,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true })
   }
 
-  const cur = await pool.query("SELECT value FROM system_DB_Records WHERE key='Current_User'")
-  const userId = Number(cur.rows[0]?.value ?? 0)
-  if (userId) {
-    await pool.query('UPDATE users SET is_m_finance_installed = true, "UUID_Local_BIOS" = COALESCE(NULLIF($2, \'\'), "UUID_Local_BIOS") WHERE id = $1', [userId, uuidLocalBios ?? ''])
-    return NextResponse.json({ ok: true })
-  }
-
-  return NextResponse.json({ ok: false })
+  // No email identifies which customer this install belongs to — do NOT fall back to the
+  // global Current_User system pointer here, it is shared across all sessions/computers and
+  // previously caused this UUID to get written onto an unrelated customer's record.
+  return NextResponse.json({ ok: false, error: 'no email provided, cannot identify customer' })
 }
