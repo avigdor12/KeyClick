@@ -951,6 +951,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [prSaved, setPrSaved] = useState(false)
   const [updatesResetDone, setUpdatesResetDone] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [confirmDeleteUser, setConfirmDeleteUser] = useState<UserRecord | null>(null)
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<UserRecord[]>([])
@@ -1333,6 +1334,26 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           </div>
         )}
 
+        {confirmDeleteUser && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#1e1e2e', border: '2px solid #cc0000', borderRadius: '12px', padding: '28px 32px', minWidth: '320px', boxShadow: '0 8px 32px rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', direction: 'rtl' }}>
+              <div style={{ color: '#ff5555', fontSize: '16px', fontWeight: 'bold', borderBottom: '1px solid #cc0000', paddingBottom: '10px', width: '100%', textAlign: 'center' }}>{lang.system.delete}</div>
+              <div style={{ color: '#ccc', fontSize: '14px', textAlign: 'center' }}>
+                למחוק את המשתמש {confirmDeleteUser.name || confirmDeleteUser.email} (ID {confirmDeleteUser.id})?<br/>הפעולה בלתי הפיכה.
+              </div>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                <button onClick={async () => {
+                  const id = confirmDeleteUser.id
+                  setConfirmDeleteUser(null)
+                  await fetch('/api/system/delete-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: id }) }).catch(() => {})
+                  setUsers(prev => prev.filter(u => String(u.id) !== String(id)))
+                }} style={{ fontSize: '13px', padding: '6px 20px', background: '#cc0000', color: '#fff', border: '1px solid #ff5555', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.system.delete}</button>
+                <button onClick={() => setConfirmDeleteUser(null)} style={{ fontSize: '13px', padding: '6px 20px', background: '#444', color: '#ccc', border: '1px solid #666', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>{lang.card.cancel}</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {view === 'banking' && (
           <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
 
@@ -1553,6 +1574,31 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <div style={{ width: 'fit-content' }}>
             <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>{lang.system.users}</div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', direction: 'ltr' }}>
+            <table style={{ borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '4px 10px', border: '1px solid transparent', color: '#003399' }}>&nbsp;</th></tr>
+                <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '4px 8px', border: '1px solid transparent' }}>&nbsp;</th></tr>
+              </thead>
+              <tbody>
+                {users.map((u, idx) => {
+                  const rowBg = idx % 2 === 0 ? '#fff' : '#f5f5fc'
+                  return (
+                    <React.Fragment key={`del-${String(u.id)}`}>
+                      <tr style={{ background: rowBg }}>
+                        <td style={{ padding: '3px 8px', border: '1px solid transparent', textAlign: 'center' }}>
+                          <button onClick={() => setConfirmDeleteUser(u)} title={lang.system.delete}
+                            style={{ width: 20, height: 20, lineHeight: '18px', padding: 0, borderRadius: '50%', background: '#fff', border: '2px solid #cc0000', color: '#cc0000', fontWeight: 'bold', fontSize: 12, cursor: 'pointer' }}>✕</button>
+                        </td>
+                      </tr>
+                      <tr style={{ background: rowBg }}>
+                        <td style={{ padding: '2px 8px', border: '1px solid transparent' }}>&nbsp;</td>
+                      </tr>
+                    </React.Fragment>
+                  )
+                })}
+              </tbody>
+            </table>
             <div style={{ border: '2px solid #003399', borderRadius: 3 }}>
               <table style={{ borderCollapse: 'collapse', fontSize: 13, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
@@ -1646,6 +1692,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   })}
                 </tbody>
               </table>
+            </div>
             </div>
             <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
               <button
