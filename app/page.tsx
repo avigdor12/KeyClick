@@ -334,7 +334,7 @@ export default function Home() {
       const uuidLocalBios = params.get('uuid') || ''
       dbg('flowDiagram', '14-בקשת UUID מקומי (מנגנון פסיבי) => 15-רישום UUID ברשומת לקוח')
       localStorage.setItem('mf_installed', '1')
-      setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgInstallComplete })
+      setIsLoggedInExplicit(true)
       window.history.replaceState({}, '', window.location.pathname)
       const pendingEmail = localStorage.getItem('mf_pending_install_email') || Current_User_Pointer_to_DB?.email || ''
       dbg('installCallback', `installed=1 detected uuid="${uuidLocalBios}" pendingEmail="${pendingEmail}" => mf_installed saved`)
@@ -347,7 +347,6 @@ export default function Home() {
         })
         .then(d2 => { if (d2.user) set_Current_User_Pointer_to_DB(d2.user) })
         .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
-      handleRun()
     }
     const bankingParam = params.get('banking')
     if (bankingParam === 'success' || bankingParam === 'direct') {
@@ -634,7 +633,7 @@ export default function Home() {
                 if (!user.is_M_Finance_installed) setActivePage('mf-install')
                 else setActivePage(null)
               }
-            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onOpenDebug={() => {
+            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onSetLoggedIn={() => setIsLoggedInExplicit(true)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -1575,10 +1574,10 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             <div style={{ width: 'fit-content' }}>
             <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>{lang.system.users}</div>
             <div style={{ display: 'flex', alignItems: 'flex-start', direction: 'ltr' }}>
-            <table style={{ borderCollapse: 'collapse', fontSize: 13 }}>
+            <table style={{ borderCollapse: 'collapse', fontSize: 12 }}>
               <thead>
-                <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '4px 10px', border: '1px solid transparent', color: '#003399' }}>&nbsp;</th></tr>
-                <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '4px 8px', border: '1px solid transparent' }}>&nbsp;</th></tr>
+                <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '3px 6px', border: '1px solid transparent', color: '#003399' }}>&nbsp;</th></tr>
+                <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '3px 5px', border: '1px solid transparent' }}>&nbsp;</th></tr>
               </thead>
               <tbody>
                 {users.map((u, idx) => {
@@ -1586,13 +1585,13 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   return (
                     <React.Fragment key={`del-${String(u.id)}`}>
                       <tr style={{ background: rowBg }}>
-                        <td style={{ padding: '3px 8px', border: '1px solid transparent', textAlign: 'center' }}>
+                        <td style={{ padding: '2px 6px', border: '1px solid transparent', textAlign: 'center' }}>
                           <button onClick={() => setConfirmDeleteUser(u)} title={lang.system.delete}
-                            style={{ width: 20, height: 20, lineHeight: '18px', padding: 0, borderRadius: '50%', background: '#fff', border: '2px solid #cc0000', color: '#cc0000', fontWeight: 'bold', fontSize: 12, cursor: 'pointer' }}>✕</button>
+                            style={{ width: 18, height: 18, lineHeight: '16px', padding: 0, borderRadius: '50%', background: '#fff', border: '2px solid #cc0000', color: '#cc0000', fontWeight: 'bold', fontSize: 11, cursor: 'pointer' }}>✕</button>
                         </td>
                       </tr>
                       <tr style={{ background: rowBg }}>
-                        <td style={{ padding: '2px 8px', border: '1px solid transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '2px 6px', border: '1px solid transparent' }}>&nbsp;</td>
                       </tr>
                     </React.Fragment>
                   )
@@ -1600,18 +1599,18 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               </tbody>
             </table>
             <div style={{ border: '2px solid #003399', borderRadius: 3 }}>
-              <table style={{ borderCollapse: 'collapse', fontSize: 13, direction: 'ltr', whiteSpace: 'nowrap' }}>
+              <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
-                    <th colSpan={10} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
-                    <th colSpan={6} style={{ padding: '4px 10px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
+                    <th colSpan={10} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
+                    <th colSpan={6} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
                     {['ID', `${lang.system.weightedScoreTitle} 0-10`, lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.system.colCurrency, 'IP Registration', 'Last IP', 'UUID Local BIOS'].map(h => (
-                      <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
+                      <th key={h} style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>{h}</th>
                     ))}
                     {[lang.system.colActive, lang.system.colAppInstalled, lang.profile.planFrom, lang.profile.planTo, lang.system.colLicenceType, lang.system.colSystemForce].map(h => (
-                      <th key={h} style={{ padding: '4px 8px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{h}</th>
+                      <th key={h} style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -1622,46 +1621,46 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                     return (
                       <React.Fragment key={String(u.id)}>
                         <tr style={{ background: rowBg }}>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.id ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.id ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                             {usersEditMode
                               ? <input type="number" min={0} max={10} value={Number(u.weighted_score ?? 10)} onChange={e => { const v = Math.min(10, Math.max(0, Number(e.target.value))); setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, weighted_score: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], weighted_score: v } })) }} style={{ fontSize: 12, width: 40, textAlign: 'center', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '1px 2px' }} />
                               : <span style={{ fontWeight: 'bold', color: `hsl(${(Number(u.weighted_score ?? 10)) * 12}, 80%, 35%)` }}>{Number(u.weighted_score ?? 10)}</span>}
                           </td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{created}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{created}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0' }}>
                             {usersEditMode
                               ? <input value={String(u.name ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, name: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], name: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '100px', backgroundColor: 'yellow' }} />
                               : String(u.name ?? '')}
                           </td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0' }}>
                             {usersEditMode
                               ? <input value={String(u.email ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, email: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], email: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '130px', backgroundColor: 'yellow' }} />
                               : String(u.email ?? '')}
                           </td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center', fontSize: 11 }}>
                             {usersEditMode
-                              ? <input value={String(u.UUID_Local_BIOS ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, UUID_Local_BIOS: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], UUID_Local_BIOS: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '150px', backgroundColor: 'yellow' }} />
+                              ? <input value={String(u.UUID_Local_BIOS ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, UUID_Local_BIOS: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], UUID_Local_BIOS: v } })) }} style={{ fontSize: 11, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '150px', backgroundColor: 'yellow' }} />
                               : String(u.UUID_Local_BIOS ?? '')}
                           </td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                             {usersEditMode
                               ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_active} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_active: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_active: v } })) }} /></span>
                               : u.is_active ? '✓' : ''}
                           </td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                             {usersEditMode
                               ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_M_Finance_installed} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_M_Finance_installed: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_m_finance_installed: v } })) }} /></span>
                               : u.is_M_Finance_installed ? '✓' : ''}
                           </td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
-                          <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
                             <select
                               value={String(u.system_force ?? 'User')}
                               onChange={e => {
@@ -1681,7 +1680,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           </td>
                         </tr>
                         <tr style={{ background: rowBg }}>
-                          <td colSpan={15} style={{ padding: '2px 8px', border: '1px solid #c8cce0', borderTop: 'none' }}>
+                          <td colSpan={15} style={{ padding: '2px 6px', border: '1px solid #c8cce0', borderTop: 'none' }}>
                             {usersEditMode
                               ? <textarea value={String(u.notes ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, notes: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], notes: v } })) }} style={{ fontSize: 11, width: '100%', height: 36, resize: 'vertical', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '2px 4px', boxSizing: 'border-box', direction: 'rtl', textAlign: 'right' }} />
                               : <div style={{ fontSize: 11, color: '#444', minHeight: 18, padding: '1px 4px', backgroundColor: '#f9f9f9', borderRadius: 3, direction: 'rtl', textAlign: 'right' }}>{String(u.notes ?? '')}</div>}
@@ -5555,13 +5554,13 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
-  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
@@ -6880,7 +6879,7 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   }
 }
 
-function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
+function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
   const font = handFont(lang.code)
@@ -6965,6 +6964,7 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     if (data.status === 'created') {
       onDbg('handleUpdate', `user="${data.user?.email}" is_M_Finance_installed=${data.user?.is_M_Finance_installed} => onUserUpdate`)
       onUserUpdate(data.user)
+      onSetLoggedIn()
       onDbg('flowDiagram', '13-תהליך התקנת M Finance')
       onDbg('handleUpdate', 'status=created => onNavigate mf-install')
       onNavigate('mf-install')
@@ -7015,6 +7015,7 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
         if (await isComputerAlreadyTakenByAnotherCustomer()) return
         onDbg('flowDiagram', `13-ממשיך בתהליך התקנת M Finance (רשומה קיימת, אין UUID עדיין) user="${checkData.user?.email}"`)
         onUserUpdate(checkData.user)
+        onSetLoggedIn()
         onNavigate('mf-install')
         return
       }
@@ -7078,7 +7079,6 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
             <div style={{ position: 'relative', border: '2px solid #555', borderRadius: '10px', padding: '16px', paddingTop: '22px', marginBottom: '10px' }}>
               <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: '#2a2a2a', padding: '0 10px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', direction: dir }}>{c.existingCustomer}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <input type="text"     placeholder={c.namePh}  value={savedName}  onChange={e => { setSavedName(e.target.value);  setShowNotFoundMsg(false) }} style={{ ...regInput, direction: dir }} />
                 <input type="email"    placeholder={c.emailPh} value={savedEmail} onChange={e => { setSavedEmail(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput }} />
                 <div style={{ position: 'relative' }}>
                   <input type={showPass ? 'text' : 'password'} placeholder={c.passPh} value={savedPass} onChange={e => { setSavedPass(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput, paddingRight: '40px' }} />

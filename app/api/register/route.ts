@@ -25,9 +25,9 @@ export async function POST(req: NextRequest) {
 
   const hash = password ? await bcrypt.hash(password, 10) : null
   const inserted = await pool.query(
-    `INSERT INTO users (name, email, password_hash, language, license_type, last_ip)
-     VALUES ($1,$2,$3,$4,$5,$6)
-     RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip`,
+    `INSERT INTO users (name, email, password_hash, language, license_type, last_ip, ip_registration)
+     VALUES ($1,$2,$3,$4,$5,$6,$6)
+     RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, ip_registration`,
     [name || null, email, hash, language || 'English', 'תקופת הרצה', ip]
   )
 
