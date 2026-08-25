@@ -202,6 +202,7 @@ export default function Home() {
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
   const [isLoggedInExplicit, setIsLoggedInExplicit] = useState(false)
   const [clientIp, setClientIp] = useState('')
+  const [uuidHintEmail, setUuidHintEmail] = useState('') // מייל למילוי מקדים בטופס כניסה, לפי UUID שמור בדפדפן - לא זיהוי/כניסה בפועל
   const [hasUnreadMsg, setHasUnreadMsg] = useState(false)
   const [hasNewCustomerMsg, setHasNewCustomerMsg] = useState(false)
   const lang = languages[langIdx]
@@ -318,6 +319,20 @@ export default function Home() {
       .then(d => { const ip = d.ip || ''; if (ip) setClientIp(ip); dbg('initEffect', `ipify ok ip="${ip}"`) })
       .catch(e => { dbg('initEffect', `ipify failed/timeout: ${String(e)}`) })
     dbg('initEffect', 'no automatic user identification on page load — customer must log in explicitly')
+    const savedUuid = localStorage.getItem('mf_uuid_local_bios')
+    if (savedUuid) {
+      dbg('initEffect', `fetch POST /api/identify-by-uuid uuid="${savedUuid}" (prefill email+language only, not login)`)
+      fetch('/api/identify-by-uuid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uuidBiosCode: savedUuid }) })
+        .then(r => r.json())
+        .then(d => {
+          dbg('initEffect', `identify-by-uuid found=${d.found} email="${d.email ?? 'none'}" language="${d.language ?? 'none'}"`)
+          if (!d.found) return
+          setUuidHintEmail(d.email)
+          const idx = languages.findIndex(l => l.name === d.language)
+          if (idx !== -1) setLangIdx(idx)
+        })
+        .catch(e => dbg('initEffect', `identify-by-uuid failed err="${String(e)}"`))
+    }
     const params = new URLSearchParams(window.location.search)
     if (params.get('installed') === '1') {
       const uuidLocalBios = params.get('uuid') || ''
@@ -598,7 +613,7 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : (
-            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
+            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} uuidHintEmail={uuidHintEmail} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
               set_Current_User_Pointer_to_DB(user)
               setIsLoggedInExplicit(true)
               if (mfChainRef.current) {
@@ -5532,12 +5547,12 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, uuidHintEmail, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; uuidHintEmail: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
-  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} prefillEmail={uuidHintEmail} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-install')  return <InstallCard lang={lang} email={user?.email} clientIp={clientIp} onInstall={onInstall} onRun={onRun} onSetLoggedIn={onSetLoggedIn} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
@@ -6817,6 +6832,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
         if (uuid) {
           onDbg('InstallCard.poll', `attempt #${attempt} SUCCESS uuid="${uuid}" => registering to server`)
+          localStorage.setItem('mf_uuid_local_bios', uuid)
           pollingRef.current = false
           try {
             const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
@@ -6913,7 +6929,7 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   }
 }
 
-function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
+function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
   const font = handFont(lang.code)
@@ -6945,7 +6961,8 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
 
   const [phase,      setPhase]      = useState<'default' | 'register'>(initialPhase)
   const [savedName,  setSavedName]  = useState('')
-  const [savedEmail, setSavedEmail] = useState('')
+  const [savedEmail, setSavedEmail] = useState(prefillEmail)
+  useEffect(() => { if (prefillEmail) setSavedEmail(prefillEmail) }, [prefillEmail])
   const [savedPass,  setSavedPass]  = useState('')
   const [savedConf,  setSavedConf]  = useState('')
   const [error,      setError]      = useState('')
