@@ -5539,7 +5539,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'mf-install')  return <InstallCard lang={lang} email={user?.email} clientIp={clientIp} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
+  if (page === 'mf-install')  return <InstallCard lang={lang} email={user?.email} clientIp={clientIp} onInstall={onInstall} onRun={onRun} onSetLoggedIn={onSetLoggedIn} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
@@ -6791,8 +6791,9 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 }
 
-function InstallCard({ lang, email, clientIp, onInstall, onRun, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onDbg: (func: string, msg: string) => void }) {
+function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   const pollingRef = useRef(false)
+  const [setupComplete, setSetupComplete] = useState(false)
 
   useEffect(() => {
     onDbg('InstallCard', 'mount => onInstall()')
@@ -6822,6 +6823,11 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onDbg }: { lang:
             onDbg('InstallCard.poll', `set-mfinance-installed res.status=${res.status}`)
             const d = await res.json()
             onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
+            if (d.ok) {
+              onDbg('InstallCard.poll', 'setup fully complete => unlocking UI + showing success message')
+              setSetupComplete(true)
+              onSetLoggedIn()
+            }
           } catch (e) {
             onDbg('InstallCard.poll', `set-mfinance-installed fetch failed err="${String(e)}"`)
           }
@@ -6841,8 +6847,21 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onDbg }: { lang:
 
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', ...GRANITE_BG, direction: dir }}>
-      <div style={{ textAlign: 'center', padding: '32px' }}></div>
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
+      <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {setupComplete && (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '64px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+              תהליך הרישום עבר בהצלחה
+            </div>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '48px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+              גלישה נעימה
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -6979,7 +6998,6 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
     if (data.status === 'created') {
       onDbg('handleUpdate', `user="${data.user?.email}" is_M_Finance_installed=${data.user?.is_M_Finance_installed} => onUserUpdate`)
       onUserUpdate(data.user)
-      onSetLoggedIn()
       onDbg('flowDiagram', '13-תהליך התקנת M Finance')
       onDbg('handleUpdate', 'status=created => onNavigate mf-install')
       onNavigate('mf-install')
@@ -7030,7 +7048,6 @@ function RegisterCard({ lang, clientIp = '', initialPhase = 'default', onClose, 
         if (await isComputerAlreadyTakenByAnotherCustomer()) return
         onDbg('flowDiagram', `13-ממשיך בתהליך התקנת M Finance (רשומה קיימת, אין UUID עדיין) user="${checkData.user?.email}"`)
         onUserUpdate(checkData.user)
-        onSetLoggedIn()
         onNavigate('mf-install')
         return
       }
