@@ -312,23 +312,12 @@ export default function Home() {
       .then(r => r.json())
       .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
       .catch(() => {})
-    dbg('initEffect', 'fetch ipify for clientIp (needed for current-user lookup on loopback/dev)')
+    dbg('initEffect', 'fetch ipify for clientIp (needed as loopback/dev fallback when recording last_ip on register/login)')
     fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(3000) })
       .then(r => r.json())
-      .then(d => { const ip = d.ip || ''; if (ip) setClientIp(ip); dbg('initEffect', `ipify ok ip="${ip}"`); return ip })
-      .catch(e => { dbg('initEffect', `ipify failed/timeout: ${String(e)}`); return '' })
-      .then(ip => {
-        dbg('initEffect', `fetch GET /api/current-user clientIp="${ip}"`)
-        return fetch(`/api/current-user?clientIp=${encodeURIComponent(ip)}`)
-      })
-      .then(r => r.json())
-      .then(data => {
-        dbg('initEffect', `identified_by="${data.identified_by}" current_ip="${data.current_ip ?? 'unknown'}"`)
-        dbg('initEffect', `Current_User=${data.user?.id ?? 0}  email="${data.user?.email ?? 'none'}"  IP="${data.user?.last_ip ?? data.current_ip ?? 'none'}"`)
-        if (!data.user) return
-        set_Current_User_Pointer_to_DB(data.user)
-      })
-      .catch(err => dbg('initEffect', `current-user failed err="${String(err)}"`))
+      .then(d => { const ip = d.ip || ''; if (ip) setClientIp(ip); dbg('initEffect', `ipify ok ip="${ip}"`) })
+      .catch(e => { dbg('initEffect', `ipify failed/timeout: ${String(e)}`) })
+    dbg('initEffect', 'no automatic user identification on page load — customer must log in explicitly')
     const params = new URLSearchParams(window.location.search)
     if (params.get('installed') === '1') {
       const uuidLocalBios = params.get('uuid') || ''
@@ -347,12 +336,6 @@ export default function Home() {
         .then(d => {
           dbg('installCallback', `DB updated ok=${d.ok} error="${d.error ?? 'none'}"`)
           localStorage.removeItem('mf_pending_install_email')
-          dbg('installCallback', `fetch GET /api/current-user?clientIp=${clientIp}`)
-          return fetch(`/api/current-user?clientIp=${encodeURIComponent(clientIp)}`).then(r2 => r2.json())
-        })
-        .then(d2 => {
-          dbg('installCallback', `current-user re-fetch identified_by="${d2.identified_by}" user.id=${d2.user?.id ?? 'none'} user.UUID_Local_BIOS="${d2.user?.UUID_Local_BIOS ?? 'none'}"`)
-          if (d2.user) set_Current_User_Pointer_to_DB(d2.user)
         })
         .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
     }
@@ -1714,7 +1697,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   setPendingForce({})
                   setPendingUserEdits({})
                   if (Object.keys(pendingUserEdits).length > 0) setUsersEditMode(false)
-                  fetch('/api/current-user').then(r => r.json()).then(d => { if (d.user) onUserUpdate(d.user) }).catch(() => {})
                   fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
                 }}
                 disabled={Object.keys(pendingForce).length === 0 && Object.keys(pendingUserEdits).length === 0}
@@ -6860,13 +6842,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onDbg }: { lang:
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', ...GRANITE_BG, direction: dir }}>
-      <div style={{ textAlign: 'center', padding: '32px' }}>
-        <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#003399', marginBottom: '6px' }}>{lang.card.mFinance}</div>
-        <div style={{ fontSize: '15px', color: '#555', marginBottom: '28px', whiteSpace: 'pre-line', lineHeight: '1.7' }}>{lang.card.msgInstallComplete}</div>
-        <button onClick={onRun} style={{ background: '#003399', color: '#FFD700', border: '2px solid #FFD700', borderRadius: '8px', padding: '12px 32px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
-          {lang.card.run}
-        </button>
-      </div>
+      <div style={{ textAlign: 'center', padding: '32px' }}></div>
     </div>
   )
 }
