@@ -432,28 +432,6 @@ export default function Home() {
       dbg('session', `Current_User=${Current_User_Pointer_to_DB?.id ?? 0}  email="${Current_User_Pointer_to_DB?.email ?? 'none'}"  IP="${Current_User_Pointer_to_DB?.last_ip ?? 'none'}"`)
       dbg('session', `license="${Current_User_Pointer_to_DB?.M_Finance_license_type ?? 'none'}"  active=${Current_User_Pointer_to_DB?.is_active ?? false}`)
       dbg('lang', `idx=${langIdx} code=${languages[langIdx].code} name=${languages[langIdx].name}`)
-      type SimExportRecord = {
-        record_id: string; source: number; is_credit_card: boolean; format_info: string
-        institution_name: string; account_number: string; credit_card_number: string
-        transaction_date: string; value_date: string; description: string
-        debit_amount: number; credit_amount: number; balance: number; currency: string
-        category: string; notes: string; num_of_months: number; category_tag: string
-      }
-      const n2 = (v: number) => v.toFixed(2)
-      ;(async () => {
-        try {
-          const bank = await fetch('/simulation/keyclick-export-checking.json').then(r => r.json())
-          dbg('════════ BANK ════════', '')
-          ;(bank.records ?? []).forEach((r: SimExportRecord) =>
-            dbg('BANK', `${r.transaction_date}   ${r.description}   ${n2(r.debit_amount)}   ${n2(r.credit_amount)}   ${n2(r.balance)}`))
-        } catch (e) { dbg('BANK', `fetch failed err="${String(e)}"`) }
-        try {
-          const credit = await fetch('/simulation/keyclick-export-credit.json').then(r => r.json())
-          dbg('════════ CREDIT ════════', '')
-          ;(credit.records ?? []).forEach((r: SimExportRecord) =>
-            dbg('CREDIT', `${r.transaction_date}   ${r.description}   ${n2(r.debit_amount)}`))
-        } catch (e) { dbg('CREDIT', `fetch failed err="${String(e)}"`) }
-      })()
     } else {
       debugPausedRef.current = false
       setDebugPaused(false)
@@ -5579,7 +5557,7 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'mf-install')  return <InstallCard lang={lang} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
+  if (page === 'mf-install')  return <InstallCard lang={lang} email={user?.email} clientIp={clientIp} onInstall={onInstall} onRun={onRun} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
@@ -6831,11 +6809,54 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 }
 
-function InstallCard({ lang, onInstall, onRun, onDbg }: { lang: typeof languages[0]; onInstall: () => void; onRun: () => void; onDbg: (func: string, msg: string) => void }) {
+function InstallCard({ lang, email, clientIp, onInstall, onRun, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onDbg: (func: string, msg: string) => void }) {
+  const pollingRef = useRef(false)
+
   useEffect(() => {
     onDbg('InstallCard', 'mount => onInstall()')
     onInstall()
   }, [])
+
+  useEffect(() => {
+    onDbg('InstallCard.poll', `effect start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
+    if (!email) {
+      onDbg('InstallCard.poll', 'WARNING: no email available => polling disabled, UUID will never be registered')
+      return
+    }
+    pollingRef.current = true
+    let attempt = 0
+    const MAX_ATTEMPTS = 90 // ~90 * 5s = 7.5 min
+    const poll = async () => {
+      while (pollingRef.current && attempt < MAX_ATTEMPTS) {
+        attempt++
+        onDbg('InstallCard.poll', `attempt #${attempt}/${MAX_ATTEMPTS} => Get_UUID_BIOS_Code_From_M_Finance`)
+        const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
+        if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
+        if (uuid) {
+          onDbg('InstallCard.poll', `attempt #${attempt} SUCCESS uuid="${uuid}" => registering to server`)
+          pollingRef.current = false
+          try {
+            const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
+            onDbg('InstallCard.poll', `set-mfinance-installed res.status=${res.status}`)
+            const d = await res.json()
+            onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
+          } catch (e) {
+            onDbg('InstallCard.poll', `set-mfinance-installed fetch failed err="${String(e)}"`)
+          }
+          return
+        }
+        onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet (app not installed/running), waiting 5s`)
+        await new Promise(r => setTimeout(r, 5000))
+      }
+      if (attempt >= MAX_ATTEMPTS) onDbg('InstallCard.poll', `gave up after ${MAX_ATTEMPTS} attempts`)
+    }
+    poll()
+    return () => {
+      onDbg('InstallCard.poll', 'effect cleanup => stop polling')
+      pollingRef.current = false
+    }
+  }, [email, clientIp])
+
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', ...GRANITE_BG, direction: dir }}>
