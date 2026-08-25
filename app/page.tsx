@@ -305,7 +305,24 @@ export default function Home() {
       dbg('devBypass', 'fetch GET /api/system/dev-bypass-login (dev env only)')
       fetch('/api/system/dev-bypass-login').then(r => r.json()).then(d => {
         dbg('devBypass', `enabled=${d.enabled}`)
-        if (d.enabled) setIsLoggedInExplicit(true)
+        if (d.enabled) {
+          setIsLoggedInExplicit(true)
+          dbg('devBypass', 'resolving UUID to identify System_Owner (localStorage first, then live app)')
+          ;(async () => {
+            let uuid = localStorage.getItem('mf_uuid_local_bios')
+            dbg('devBypass', `localStorage.mf_uuid_local_bios="${uuid ?? 'null'}"`)
+            if (!uuid) uuid = await Get_UUID_BIOS_Code_From_M_Finance(dbg)
+            if (!uuid) { dbg('devBypass', 'no UUID available => cannot identify, staying unidentified'); return }
+            dbg('devBypass', `fetch POST /api/identify-by-uuid uuid="${uuid}"`)
+            fetch('/api/identify-by-uuid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uuidBiosCode: uuid }) })
+              .then(r => r.json())
+              .then(d2 => {
+                dbg('devBypass', `identify-by-uuid found=${d2.found} license="${d2.user?.M_Finance_license_type ?? 'none'}"`)
+                if (d2.found && d2.user) set_Current_User_Pointer_to_DB(d2.user)
+              })
+              .catch(() => {})
+          })()
+        }
       }).catch(() => {})
     }
     dbg('flowDiagram', '1/10-לקוח נכנס לאתר, הקלט IP לסטטיסטיקה')
