@@ -333,19 +333,27 @@ export default function Home() {
     if (params.get('installed') === '1') {
       const uuidLocalBios = params.get('uuid') || ''
       dbg('flowDiagram', '14-בקשת UUID מקומי (מנגנון פסיבי) => 15-רישום UUID ברשומת לקוח')
+      dbg('installCallback', `url="${window.location.href}" uuidLocalBios="${uuidLocalBios}"`)
       localStorage.setItem('mf_installed', '1')
       setIsLoggedInExplicit(true)
       window.history.replaceState({}, '', window.location.pathname)
-      const pendingEmail = localStorage.getItem('mf_pending_install_email') || Current_User_Pointer_to_DB?.email || ''
-      dbg('installCallback', `installed=1 detected uuid="${uuidLocalBios}" pendingEmail="${pendingEmail}" => mf_installed saved`)
+      const storedEmail = localStorage.getItem('mf_pending_install_email')
+      dbg('installCallback', `localStorage.mf_pending_install_email="${storedEmail ?? 'null'}" Current_User_Pointer_to_DB?.email="${Current_User_Pointer_to_DB?.email ?? 'null'}"`)
+      const pendingEmail = storedEmail || Current_User_Pointer_to_DB?.email || ''
+      dbg('installCallback', `pendingEmail resolved="${pendingEmail || '(empty)'}" clientIp="${clientIp || '(empty)'}"`)
+      dbg('installCallback', `fetch POST /api/set-mfinance-installed body={email:"${pendingEmail}", clientIp:"${clientIp}", uuidLocalBios:"${uuidLocalBios}"}`)
       fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: pendingEmail, clientIp, uuidLocalBios }) })
-        .then(r => r.json())
+        .then(r => { dbg('installCallback', `set-mfinance-installed res.status=${r.status}`); return r.json() })
         .then(d => {
-          dbg('installCallback', `DB updated ok=${d.ok}`)
+          dbg('installCallback', `DB updated ok=${d.ok} error="${d.error ?? 'none'}"`)
           localStorage.removeItem('mf_pending_install_email')
+          dbg('installCallback', `fetch GET /api/current-user?clientIp=${clientIp}`)
           return fetch(`/api/current-user?clientIp=${encodeURIComponent(clientIp)}`).then(r2 => r2.json())
         })
-        .then(d2 => { if (d2.user) set_Current_User_Pointer_to_DB(d2.user) })
+        .then(d2 => {
+          dbg('installCallback', `current-user re-fetch identified_by="${d2.identified_by}" user.id=${d2.user?.id ?? 'none'} user.UUID_Local_BIOS="${d2.user?.UUID_Local_BIOS ?? 'none'}"`)
+          if (d2.user) set_Current_User_Pointer_to_DB(d2.user)
+        })
         .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
     }
     const bankingParam = params.get('banking')
@@ -492,9 +500,13 @@ export default function Home() {
     }
     setDebugLog([])
     dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} is_M_Finance_installed=${Current_User_Pointer_to_DB?.is_M_Finance_installed ?? 'unknown'}`)
+    dbg('handleInstall', `Current_User_Pointer_to_DB=${JSON.stringify(Current_User_Pointer_to_DB)}`)
     if (Current_User_Pointer_to_DB?.email) {
       localStorage.setItem('mf_pending_install_email', Current_User_Pointer_to_DB.email)
-      dbg('handleInstall', `saved mf_pending_install_email="${Current_User_Pointer_to_DB.email}" (so the ?installed=1 callback, which may load in a fresh tab with no React user state yet, updates the right user)`)
+      const readBack = localStorage.getItem('mf_pending_install_email')
+      dbg('handleInstall', `saved mf_pending_install_email="${Current_User_Pointer_to_DB.email}" readBack="${readBack ?? 'null'}" match=${readBack === Current_User_Pointer_to_DB.email} (so the ?installed=1 callback, which may load in a fresh tab with no React user state yet, updates the right user)`)
+    } else {
+      dbg('handleInstall', 'WARNING: Current_User_Pointer_to_DB?.email is empty => mf_pending_install_email NOT saved => ?installed=1 callback will have no email to use')
     }
     setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgDownloading })
     dbg('handleInstall', 'fetch GET /api/download-mfinance')
