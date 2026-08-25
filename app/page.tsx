@@ -741,22 +741,28 @@ export default function Home() {
           </div>
 
           <div style={{ flex: 1 }} />
-          <button onClick={() => {
-              if (activePage === 'system') {
-                debugWinRef.current?.close()
-                debugWinRef.current = null
-                setActivePage(null)
-              } else {
-                setActivePage('system')
-              }
-            }}
-            style={{
-              background: activePage === 'system' ? '#4a1a6e' : 'none', border: 'none',
-              borderTop: '2px solid #555', color: '#ff0000',
-              padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
-              fontSize: '15px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
-            }}
-          >{lang.system.adminButton}</button>
+          <div style={{ position: 'relative', overflow: 'hidden' }}>
+            {!isAdminAccount && (
+              <div style={{ position: 'absolute', top: '6px', left: '-22px', width: '90px', transform: 'rotate(-45deg)', background: '#c0392b', color: '#fff', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', padding: '1px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.5)', zIndex: 5, pointerEvents: 'none' }}>{lang.card.locked}</div>
+            )}
+            <button onClick={() => {
+                if (!isAdminAccount) { dbg('btnClick', 'adminButton clicked isAdminAccount=false => blocked'); return }
+                if (activePage === 'system') {
+                  debugWinRef.current?.close()
+                  debugWinRef.current = null
+                  setActivePage(null)
+                } else {
+                  setActivePage('system')
+                }
+              }}
+              style={{
+                width: '100%', background: activePage === 'system' ? '#4a1a6e' : 'none', border: 'none',
+                borderTop: '2px solid #555', color: '#ff0000',
+                padding: '12px 8px', cursor: 'pointer', textAlign: 'center',
+                fontSize: '15px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.3',
+              }}
+            >{lang.system.adminButton}</button>
+          </div>
           {hasNewCustomerMsg && (
             <button onClick={async () => {
                 setHasNewCustomerMsg(false)
