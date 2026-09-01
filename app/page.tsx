@@ -375,9 +375,30 @@ export default function Home() {
     if (bankingParam === 'success' || bankingParam === 'direct') {
       const bsessionParam = params.get('bsession')
       if (bsessionParam) setPendingBankSession(bsessionParam)
+      const kct = params.get('kct')
       window.history.replaceState({}, '', window.location.pathname)
       setActivePage('4')
       if (bankingParam === 'direct') setBankingDirect(true)
+      if (kct) {
+        // הגענו לכאן מ-M Finance (כפתור "מוסד פיננסי") - הכתובת נושאת טוקן-זהות שהאתר עצמו
+        // ייצר קודם, בזמן שהלקוח היה מחובר. מפענחים אותו וטוענים את הלקוח, כדי שהמסך הזה
+        // יהיה מחובר ובשפת הלקוח ולא מופע אנונימי נעול.
+        dbg('bankingDirect', `resolving kct launch token`)
+        fetch('/api/mf-launch-resolve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: kct }) })
+          .then(r => r.json())
+          .then(d => {
+            if (d.user) {
+              dbg('bankingDirect', `kct resolved user id=${d.user.id} email="${d.user.email}" language="${d.user.language}"`)
+              set_Current_User_Pointer_to_DB(d.user)
+              setIsLoggedInExplicit(true)
+              const idx = languages.findIndex(l => l.name === d.user.language)
+              if (idx !== -1) setLangIdx(idx)
+            } else {
+              dbg('bankingDirect', `kct not resolved: ${d.error ?? 'unknown'}`)
+            }
+          })
+          .catch(e => dbg('bankingDirect', `kct resolve failed: ${String(e)}`))
+      }
     } else if (bankingParam === 'error') {
       window.history.replaceState({}, '', window.location.pathname)
       setActivePage('4')
@@ -530,9 +551,30 @@ export default function Home() {
     }
   }
 
-  function handleRun() {
+  async function handleRun() {
     dbg('handleRun', 'mfinance:// launch')
-    window.location.href = 'mfinance://'
+    let launchUrl = 'mfinance://'
+    const uid = Current_User_Pointer_to_DB?.id
+    if (uid) {
+      // הלקוח מחובר כאן ועכשיו - מייצרים טוקן-זהות קצר-טווח ומעבירים לאפליקציה כתובת חזרה
+      // למסך הבנקאות עם הטוקן בתוכה. כשהלקוח ילחץ "מוסד פיננסי" בתוך M Finance, היא תפתח את
+      // הכתובת הזאת, והלשונית שתיפתח תזהה את הלקוח ותיטען מחוברת (במקום מופע אנונימי באנגלית).
+      try {
+        dbg('handleRun', `fetch POST /api/mf-launch-token userId=${uid}`)
+        const r = await fetch('/api/mf-launch-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: uid }) })
+        const d = await r.json()
+        if (d.token) {
+          const ret = `${window.location.origin}/?banking=direct&kct=${encodeURIComponent(d.token)}`
+          launchUrl = `mfinance://launch?return=${encodeURIComponent(ret)}`
+          dbg('handleRun', `launch with return="${ret}"`)
+        } else {
+          dbg('handleRun', `no token returned (${d.error ?? 'unknown'}) => bare mfinance://`)
+        }
+      } catch (e) {
+        dbg('handleRun', `token fetch failed: ${String(e)} => bare mfinance://`)
+      }
+    }
+    window.location.href = launchUrl
   }
 
   async function changeLang(i: number) {
