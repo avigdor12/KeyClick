@@ -6866,16 +6866,10 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 }
 
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
-  const pollingRef = useRef(false)
   const startRef = useRef(0)
   const [setupComplete, setSetupComplete] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [finalSeconds, setFinalSeconds] = useState<number | null>(null)
-
-  useEffect(() => {
-    onDbg('InstallCard', 'mount => onInstall()')
-    onInstall()
-  }, [])
 
   // ניסוי מדידת זמן: שעון שרץ כל עוד ההרשמה לא הסתיימה
   useEffect(() => {
@@ -6886,51 +6880,69 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
   }, [email, finalSeconds])
 
   useEffect(() => {
-    onDbg('InstallCard.poll', `effect start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
+    onDbg('InstallCard', `orchestrator start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
     if (!email) {
-      onDbg('InstallCard.poll', 'WARNING: no email available => polling disabled, UUID will never be registered')
+      onDbg('InstallCard', 'WARNING: no email available => cannot register, aborting')
       return
     }
     if (!startRef.current) startRef.current = Date.now()
-    pollingRef.current = true
-    let attempt = 0
-    // ניסוי: אין תקרת ניסיונות ואין timeout כולל - poll ממשיך עד שה-UUID נרשם, כדי למדוד
-    // כמה זמן באמת לוקח תהליך ההתקנה+הרשמה מקצה לקצה.
-    const poll = async () => {
-      while (pollingRef.current) {
+    let cancelled = false
+
+    const register = async (uuid: string) => {
+      localStorage.setItem('mf_uuid_local_bios', uuid)
+      try {
+        const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
+        onDbg('InstallCard', `set-mfinance-installed res.status=${res.status}`)
+        const d = await res.json()
+        onDbg('InstallCard', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
+        if (d.ok) {
+          const total = Math.floor((Date.now() - startRef.current) / 1000)
+          onDbg('InstallCard', `setup fully complete after ${total}s => unlocking UI + showing success message`)
+          setFinalSeconds(total)
+          setSetupComplete(true)
+          onSetLoggedIn()
+        }
+      } catch (e) {
+        onDbg('InstallCard', `set-mfinance-installed fetch failed err="${String(e)}"`)
+      }
+    }
+
+    const run = async () => {
+      // שלב 1: אולי האפליקציה כבר מותקנת (מחשב שכבר היה עליו M Finance, או לקוח ישן שנתקע).
+      // מנסים לקרוא UUID ישירות, לפני שמורידים משהו - אם יש תשובה, אין צורך בהתקנה בכלל,
+      // וגם אין התנגשות בין ההורדה לטריגר של mfinance://.
+      onDbg('InstallCard', 'phase 1: probing already-installed app (no download yet)')
+      const probe = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
+      if (cancelled) return
+      if (probe) {
+        onDbg('InstallCard', `phase 1 SUCCESS uuid="${probe}" => app already installed, skipping download`)
+        await register(probe)
+        return
+      }
+
+      // שלב 2: אין אפליקציה - מורידים ומתקינים, ואז poll עד שהיא תענה (בלי תקרה).
+      onDbg('InstallCard', 'phase 1 no response => phase 2: download + install, then poll')
+      onInstall()
+      let attempt = 0
+      while (!cancelled) {
         attempt++
-        onDbg('InstallCard.poll', `attempt #${attempt} (no cap) => Get_UUID_BIOS_Code_From_M_Finance`)
+        onDbg('InstallCard.poll', `attempt #${attempt} => Get_UUID_BIOS_Code_From_M_Finance`)
         const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
-        if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
+        if (cancelled) return
         if (uuid) {
-          onDbg('InstallCard.poll', `attempt #${attempt} SUCCESS uuid="${uuid}" => registering to server`)
-          localStorage.setItem('mf_uuid_local_bios', uuid)
-          pollingRef.current = false
-          try {
-            const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
-            onDbg('InstallCard.poll', `set-mfinance-installed res.status=${res.status}`)
-            const d = await res.json()
-            onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
-            if (d.ok) {
-              const total = Math.floor((Date.now() - startRef.current) / 1000)
-              onDbg('InstallCard.poll', `setup fully complete after ${total}s => unlocking UI + showing success message`)
-              setFinalSeconds(total)
-              setSetupComplete(true)
-              onSetLoggedIn()
-            }
-          } catch (e) {
-            onDbg('InstallCard.poll', `set-mfinance-installed fetch failed err="${String(e)}"`)
-          }
+          onDbg('InstallCard.poll', `attempt #${attempt} got uuid="${uuid}" => registering`)
+          await register(uuid)
           return
         }
-        onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet (app not installed/running), waiting 5s`)
+        onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet, waiting 5s`)
         await new Promise(r => setTimeout(r, 5000))
       }
     }
-    poll()
+
+    run()
     return () => {
-      onDbg('InstallCard.poll', 'effect cleanup => stop polling')
-      pollingRef.current = false
+      cancelled = true
+      onDbg('InstallCard', 'cleanup => cancelled')
     }
   }, [email, clientIp])
 
