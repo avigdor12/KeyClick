@@ -6867,12 +6867,23 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   const pollingRef = useRef(false)
+  const startRef = useRef(0)
   const [setupComplete, setSetupComplete] = useState(false)
+  const [seconds, setSeconds] = useState(0)
+  const [finalSeconds, setFinalSeconds] = useState<number | null>(null)
 
   useEffect(() => {
     onDbg('InstallCard', 'mount => onInstall()')
     onInstall()
   }, [])
+
+  // ניסוי מדידת זמן: שעון שרץ כל עוד ההרשמה לא הסתיימה
+  useEffect(() => {
+    if (!email || finalSeconds != null) return
+    if (!startRef.current) startRef.current = Date.now()
+    const id = setInterval(() => setSeconds(Math.floor((Date.now() - startRef.current) / 1000)), 1000)
+    return () => clearInterval(id)
+  }, [email, finalSeconds])
 
   useEffect(() => {
     onDbg('InstallCard.poll', `effect start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
@@ -6880,13 +6891,15 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
       onDbg('InstallCard.poll', 'WARNING: no email available => polling disabled, UUID will never be registered')
       return
     }
+    if (!startRef.current) startRef.current = Date.now()
     pollingRef.current = true
     let attempt = 0
-    const MAX_ATTEMPTS = 90 // ~90 * 5s = 7.5 min
+    // ניסוי: אין תקרת ניסיונות ואין timeout כולל - poll ממשיך עד שה-UUID נרשם, כדי למדוד
+    // כמה זמן באמת לוקח תהליך ההתקנה+הרשמה מקצה לקצה.
     const poll = async () => {
-      while (pollingRef.current && attempt < MAX_ATTEMPTS) {
+      while (pollingRef.current) {
         attempt++
-        onDbg('InstallCard.poll', `attempt #${attempt}/${MAX_ATTEMPTS} => Get_UUID_BIOS_Code_From_M_Finance`)
+        onDbg('InstallCard.poll', `attempt #${attempt} (no cap) => Get_UUID_BIOS_Code_From_M_Finance`)
         const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
         if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
         if (uuid) {
@@ -6899,7 +6912,9 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
             const d = await res.json()
             onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
             if (d.ok) {
-              onDbg('InstallCard.poll', 'setup fully complete => unlocking UI + showing success message')
+              const total = Math.floor((Date.now() - startRef.current) / 1000)
+              onDbg('InstallCard.poll', `setup fully complete after ${total}s => unlocking UI + showing success message`)
+              setFinalSeconds(total)
               setSetupComplete(true)
               onSetLoggedIn()
             }
@@ -6911,7 +6926,6 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet (app not installed/running), waiting 5s`)
         await new Promise(r => setTimeout(r, 5000))
       }
-      if (attempt >= MAX_ATTEMPTS) onDbg('InstallCard.poll', `gave up after ${MAX_ATTEMPTS} attempts`)
     }
     poll()
     return () => {
@@ -6921,18 +6935,31 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
   }, [email, clientIp])
 
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
+  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {setupComplete && (
+        {/* עברית בלבד לעת עתה — פיצ'ר/ניסוי חדש, תרגום ל-11 שפות רק כשזה יציב */}
+        {setupComplete ? (
           <div style={{ textAlign: 'center', padding: '32px' }}>
-            {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
             <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '64px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-              תהליך הרישום עבר בהצלחה
+              תהליך ההרשמה הסתיים
             </div>
-            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '48px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '56px', lineHeight: 1.4, letterSpacing: '2px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+              {fmt(finalSeconds ?? seconds)}
+            </div>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '40px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
               גלישה נעימה
+            </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '56px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+              תהליך הרישום, נא להמתין
+            </div>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '72px', lineHeight: 1.4, letterSpacing: '2px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+              {fmt(seconds)}
             </div>
           </div>
         )}
