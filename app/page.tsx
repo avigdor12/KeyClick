@@ -6993,26 +6993,35 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   onDbg('Get_UUID_BIOS_Code_From_M_Finance', 'triggering mfinance://get-uuid')
   window.location.href = 'mfinance://get-uuid'
 
-  await new Promise(r => setTimeout(r, 800))
-
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 8000)
-  try {
-    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `fetch GET http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`)
-    const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
-    clearTimeout(timeoutId)
-    if (!res.ok) {
-      onDbg('Get_UUID_BIOS_Code_From_M_Finance', `res.ok=false status=${res.status}`)
-      return null
+  // האפליקציה צריכה כמה שניות לעלות מאפס ולפתוח את המאזין המקומי. במקום ירייה אחת אחרי 800ms
+  // (שנכשלת תמיד בהפעלה קרה), מנסים fetch שוב ושוב עד ~12 שניות - כך גם הניסיון הראשון מצליח
+  // בעצמו בלי להסתמך על מרוץ מול הניסיון הבא של ה-poll.
+  onDbg('Get_UUID_BIOS_Code_From_M_Finance', `polling http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/ up to 12s`)
+  const deadline = Date.now() + 12000
+  let firstWait = true
+  while (Date.now() < deadline) {
+    await new Promise(r => setTimeout(r, firstWait ? 800 : 500))
+    firstWait = false
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 2500)
+    try {
+      const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
+      clearTimeout(timeoutId)
+      if (!res.ok) {
+        onDbg('Get_UUID_BIOS_Code_From_M_Finance', `res.ok=false status=${res.status}`)
+        continue
+      }
+      const code = (await res.text()).trim()
+      if (!code) continue
+      onDbg('Get_UUID_BIOS_Code_From_M_Finance', `received code="${code}"`)
+      return code
+    } catch {
+      clearTimeout(timeoutId)
+      // המאזין עדיין לא עלה - ממשיכים לנסות עד ה-deadline
     }
-    const code = (await res.text()).trim()
-    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `received code="${code}"`)
-    return code || null
-  } catch (err) {
-    clearTimeout(timeoutId)
-    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `no response from M_Finance — err="${String(err)}"`)
-    return null
   }
+  onDbg('Get_UUID_BIOS_Code_From_M_Finance', 'no response from M_Finance within 12s')
+  return null
 }
 
 function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
