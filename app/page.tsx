@@ -6866,112 +6866,73 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 }
 
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
-  const startRef = useRef(0)
+  const pollingRef = useRef(false)
   const [setupComplete, setSetupComplete] = useState(false)
-  const [seconds, setSeconds] = useState(0)
-  const [finalSeconds, setFinalSeconds] = useState<number | null>(null)
-
-  // ניסוי מדידת זמן: שעון שרץ כל עוד ההרשמה לא הסתיימה
-  useEffect(() => {
-    if (!email || finalSeconds != null) return
-    if (!startRef.current) startRef.current = Date.now()
-    const id = setInterval(() => setSeconds(Math.floor((Date.now() - startRef.current) / 1000)), 1000)
-    return () => clearInterval(id)
-  }, [email, finalSeconds])
 
   useEffect(() => {
-    onDbg('InstallCard', `orchestrator start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
+    onDbg('InstallCard', 'mount => onInstall()')
+    onInstall()
+  }, [])
+
+  useEffect(() => {
+    onDbg('InstallCard.poll', `effect start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
     if (!email) {
-      onDbg('InstallCard', 'WARNING: no email available => cannot register, aborting')
+      onDbg('InstallCard.poll', 'WARNING: no email available => polling disabled, UUID will never be registered')
       return
     }
-    if (!startRef.current) startRef.current = Date.now()
-    let cancelled = false
-
-    const register = async (uuid: string) => {
-      localStorage.setItem('mf_uuid_local_bios', uuid)
-      try {
-        const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
-        onDbg('InstallCard', `set-mfinance-installed res.status=${res.status}`)
-        const d = await res.json()
-        onDbg('InstallCard', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
-        if (d.ok) {
-          const total = Math.floor((Date.now() - startRef.current) / 1000)
-          onDbg('InstallCard', `setup fully complete after ${total}s => unlocking UI + showing success message`)
-          setFinalSeconds(total)
-          setSetupComplete(true)
-          onSetLoggedIn()
-        }
-      } catch (e) {
-        onDbg('InstallCard', `set-mfinance-installed fetch failed err="${String(e)}"`)
-      }
-    }
-
-    const run = async () => {
-      // שלב 1: אולי האפליקציה כבר מותקנת (מחשב שכבר היה עליו M Finance, או לקוח ישן שנתקע).
-      // מנסים לקרוא UUID ישירות, לפני שמורידים משהו - אם יש תשובה, אין צורך בהתקנה בכלל,
-      // וגם אין התנגשות בין ההורדה לטריגר של mfinance://.
-      onDbg('InstallCard', 'phase 1: probing already-installed app (no download yet)')
-      const probe = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
-      if (cancelled) return
-      if (probe) {
-        onDbg('InstallCard', `phase 1 SUCCESS uuid="${probe}" => app already installed, skipping download`)
-        await register(probe)
-        return
-      }
-
-      // שלב 2: אין אפליקציה - מורידים ומתקינים, ואז poll עד שהיא תענה (בלי תקרה).
-      onDbg('InstallCard', 'phase 1 no response => phase 2: download + install, then poll')
-      onInstall()
-      let attempt = 0
-      while (!cancelled) {
+    pollingRef.current = true
+    let attempt = 0
+    const MAX_ATTEMPTS = 90 // ~90 * 5s = 7.5 min
+    const poll = async () => {
+      while (pollingRef.current && attempt < MAX_ATTEMPTS) {
         attempt++
-        onDbg('InstallCard.poll', `attempt #${attempt} => Get_UUID_BIOS_Code_From_M_Finance`)
+        onDbg('InstallCard.poll', `attempt #${attempt}/${MAX_ATTEMPTS} => Get_UUID_BIOS_Code_From_M_Finance`)
         const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
-        if (cancelled) return
+        if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
         if (uuid) {
-          onDbg('InstallCard.poll', `attempt #${attempt} got uuid="${uuid}" => registering`)
-          await register(uuid)
+          onDbg('InstallCard.poll', `attempt #${attempt} SUCCESS uuid="${uuid}" => registering to server`)
+          localStorage.setItem('mf_uuid_local_bios', uuid)
+          pollingRef.current = false
+          try {
+            const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
+            onDbg('InstallCard.poll', `set-mfinance-installed res.status=${res.status}`)
+            const d = await res.json()
+            onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
+            if (d.ok) {
+              onDbg('InstallCard.poll', 'setup fully complete => unlocking UI + showing success message')
+              setSetupComplete(true)
+              onSetLoggedIn()
+            }
+          } catch (e) {
+            onDbg('InstallCard.poll', `set-mfinance-installed fetch failed err="${String(e)}"`)
+          }
           return
         }
-        onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet, waiting 5s`)
+        onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet (app not installed/running), waiting 5s`)
         await new Promise(r => setTimeout(r, 5000))
       }
+      if (attempt >= MAX_ATTEMPTS) onDbg('InstallCard.poll', `gave up after ${MAX_ATTEMPTS} attempts`)
     }
-
-    run()
+    poll()
     return () => {
-      cancelled = true
-      onDbg('InstallCard', 'cleanup => cancelled')
+      onDbg('InstallCard.poll', 'effect cleanup => stop polling')
+      pollingRef.current = false
     }
   }, [email, clientIp])
 
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
-  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {/* עברית בלבד לעת עתה — פיצ'ר/ניסוי חדש, תרגום ל-11 שפות רק כשזה יציב */}
-        {setupComplete ? (
+        {setupComplete && (
           <div style={{ textAlign: 'center', padding: '32px' }}>
+            {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
             <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '64px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-              תהליך ההרשמה הסתיים
+              תהליך הרישום עבר בהצלחה
             </div>
-            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '56px', lineHeight: 1.4, letterSpacing: '2px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-              {fmt(finalSeconds ?? seconds)}
-            </div>
-            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '40px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '48px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
               גלישה נעימה
-            </div>
-          </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: '32px' }}>
-            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '56px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-              תהליך הרישום, נא להמתין
-            </div>
-            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '72px', lineHeight: 1.4, letterSpacing: '2px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-              {fmt(seconds)}
             </div>
           </div>
         )}
@@ -7005,35 +6966,26 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   onDbg('Get_UUID_BIOS_Code_From_M_Finance', 'triggering mfinance://get-uuid')
   window.location.href = 'mfinance://get-uuid'
 
-  // האפליקציה צריכה כמה שניות לעלות מאפס ולפתוח את המאזין המקומי. במקום ירייה אחת אחרי 800ms
-  // (שנכשלת תמיד בהפעלה קרה), מנסים fetch שוב ושוב עד ~12 שניות - כך גם הניסיון הראשון מצליח
-  // בעצמו בלי להסתמך על מרוץ מול הניסיון הבא של ה-poll.
-  onDbg('Get_UUID_BIOS_Code_From_M_Finance', `polling http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/ up to 12s`)
-  const deadline = Date.now() + 12000
-  let firstWait = true
-  while (Date.now() < deadline) {
-    await new Promise(r => setTimeout(r, firstWait ? 800 : 500))
-    firstWait = false
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 2500)
-    try {
-      const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
-      clearTimeout(timeoutId)
-      if (!res.ok) {
-        onDbg('Get_UUID_BIOS_Code_From_M_Finance', `res.ok=false status=${res.status}`)
-        continue
-      }
-      const code = (await res.text()).trim()
-      if (!code) continue
-      onDbg('Get_UUID_BIOS_Code_From_M_Finance', `received code="${code}"`)
-      return code
-    } catch {
-      clearTimeout(timeoutId)
-      // המאזין עדיין לא עלה - ממשיכים לנסות עד ה-deadline
+  await new Promise(r => setTimeout(r, 800))
+
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 8000)
+  try {
+    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `fetch GET http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`)
+    const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
+    clearTimeout(timeoutId)
+    if (!res.ok) {
+      onDbg('Get_UUID_BIOS_Code_From_M_Finance', `res.ok=false status=${res.status}`)
+      return null
     }
+    const code = (await res.text()).trim()
+    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `received code="${code}"`)
+    return code || null
+  } catch (err) {
+    clearTimeout(timeoutId)
+    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `no response from M_Finance — err="${String(err)}"`)
+    return null
   }
-  onDbg('Get_UUID_BIOS_Code_From_M_Finance', 'no response from M_Finance within 12s')
-  return null
 }
 
 function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
