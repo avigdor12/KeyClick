@@ -6972,9 +6972,9 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           <div style={{ textAlign: 'center', maxWidth: '640px' }}>
             <div style={{ ...hf, fontSize: '40px', lineHeight: 1.4, marginBottom: '18px' }}>התקנת M Finance</div>
             <div style={{ ...hf, fontSize: '24px', lineHeight: 1.7, marginBottom: '28px' }}>
-              קובץ ההתקנה יורד עכשיו. הרץ אותו וסיים את ההתקנה,<br />ואז לחץ על הכפתור.
+              קובץ ההתקנה יורד עכשיו. הרץ אותו,<br />ואחרי שההתקנה הסתיימה לחץ להמשך.
             </div>
-            <button style={btn} onClick={startConnecting} disabled={!email}>סיימתי להתקין — המשך</button>
+            <button style={btn} onClick={startConnecting} disabled={!email}>התקנתי — המשך</button>
           </div>
         ) : (
           <div style={{ textAlign: 'center' }}>
