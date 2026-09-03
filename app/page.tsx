@@ -6867,10 +6867,14 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   const pollingRef = useRef(false)
+  // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
+  // הלוג המאוחד: /api/uuid-log?last=1  (או ?run=<id>). ראה app/api/uuid-log/route.ts.
+  const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
   const [setupComplete, setSetupComplete] = useState(false)
 
   useEffect(() => {
-    onDbg('InstallCard', 'mount => onInstall()')
+    onDbg('InstallCard', `mount => onInstall()  [uuid-log run=${runIdRef.current}]`)
+    uuidLog(runIdRef.current, '0', `InstallCard mount — email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
     onInstall()
   }, [])
 
@@ -6887,31 +6891,39 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
       while (pollingRef.current && attempt < MAX_ATTEMPTS) {
         attempt++
         onDbg('InstallCard.poll', `attempt #${attempt}/${MAX_ATTEMPTS} => Get_UUID_BIOS_Code_From_M_Finance`)
-        const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
+        uuidLog(runIdRef.current, 'poll', `attempt #${attempt}/${MAX_ATTEMPTS}`)
+        const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, runIdRef.current)
         if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
         if (uuid) {
           onDbg('InstallCard.poll', `attempt #${attempt} SUCCESS uuid="${uuid}" => registering to server`)
           localStorage.setItem('mf_uuid_local_bios', uuid)
           pollingRef.current = false
           try {
+            uuidLog(runIdRef.current, '13', `POST /api/set-mfinance-installed  email="${email}" uuid="${uuid}"`)
             const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
             onDbg('InstallCard.poll', `set-mfinance-installed res.status=${res.status}`)
             const d = await res.json()
             onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
+            uuidLog(runIdRef.current, '14', `set-mfinance-installed res.status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
             if (d.ok) {
               onDbg('InstallCard.poll', 'setup fully complete => unlocking UI + showing success message')
+              uuidLog(runIdRef.current, '16', 'setup complete — הכפתורים משוחררים')
               setSetupComplete(true)
               onSetLoggedIn()
             }
           } catch (e) {
             onDbg('InstallCard.poll', `set-mfinance-installed fetch failed err="${String(e)}"`)
+            uuidLog(runIdRef.current, '14', `set-mfinance-installed נכשל: ${String(e)}`)
           }
           return
         }
         onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet (app not installed/running), waiting 5s`)
         await new Promise(r => setTimeout(r, 5000))
       }
-      if (attempt >= MAX_ATTEMPTS) onDbg('InstallCard.poll', `gave up after ${MAX_ATTEMPTS} attempts`)
+      if (attempt >= MAX_ATTEMPTS) {
+        onDbg('InstallCard.poll', `gave up after ${MAX_ATTEMPTS} attempts`)
+        uuidLog(runIdRef.current, 'poll', `ויתור אחרי ${MAX_ATTEMPTS} ניסיונות`)
+      }
     }
     poll()
     return () => {
@@ -6962,9 +6974,25 @@ function EyeIcon({ open }: { open: boolean }) {
 
 const M_FINANCE_LOCAL_UUID_SERVER_PORT = 57891
 
-async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: string) => void): Promise<string | null> {
-  onDbg('Get_UUID_BIOS_Code_From_M_Finance', 'triggering mfinance://get-uuid')
-  window.location.href = 'mfinance://get-uuid'
+// לוג משותף לתהליך ה-UUID handshake — נשלח ל-/api/uuid-log עם run_id משותף לדפדפן ולאפליקציה.
+// fire-and-forget, keepalive כדי לשרוד ניווט. ראה app/api/uuid-log/route.ts.
+function uuidLog(runId: string | undefined, step: string, msg: string) {
+  if (!runId) return
+  try {
+    fetch('/api/uuid-log', {
+      method: 'POST',
+      keepalive: true,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ run_id: runId, actor: 'BROWSER', step, msg, ts_client: new Date().toISOString() }),
+    }).catch(() => {})
+  } catch { /* לא נוגעים בזרימה */ }
+}
+
+async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: string) => void, runId?: string): Promise<string | null> {
+  const trigger = `mfinance://get-uuid${runId ? `?run=${encodeURIComponent(runId)}` : ''}`
+  onDbg('Get_UUID_BIOS_Code_From_M_Finance', `triggering ${trigger}`)
+  uuidLog(runId, '1', `triggering ${trigger}`)
+  window.location.href = trigger
 
   await new Promise(r => setTimeout(r, 800))
 
@@ -6972,18 +7000,22 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   const timeoutId = setTimeout(() => controller.abort(), 8000)
   try {
     onDbg('Get_UUID_BIOS_Code_From_M_Finance', `fetch GET http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`)
+    uuidLog(runId, '8', `fetch GET http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/ (800ms אחרי הטריגר)`)
     const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
     clearTimeout(timeoutId)
     if (!res.ok) {
       onDbg('Get_UUID_BIOS_Code_From_M_Finance', `res.ok=false status=${res.status}`)
+      uuidLog(runId, '8b', `fetch res.ok=false status=${res.status}`)
       return null
     }
     const code = (await res.text()).trim()
     onDbg('Get_UUID_BIOS_Code_From_M_Finance', `received code="${code}"`)
+    uuidLog(runId, '8b', `fetch OK — received code="${code}"`)
     return code || null
   } catch (err) {
     clearTimeout(timeoutId)
     onDbg('Get_UUID_BIOS_Code_From_M_Finance', `no response from M_Finance — err="${String(err)}"`)
+    uuidLog(runId, '8b', `fetch נכשל: ${String(err)}`)
     return null
   }
 }
