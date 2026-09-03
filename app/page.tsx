@@ -6867,120 +6867,85 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   const pollingRef = useRef(false)
-  const doneRef = useRef(false)
-  const startRef = useRef(0)
   // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   // הלוג המאוחד: /api/uuid-log?last=1  (או ?run=<id>). ראה app/api/uuid-log/route.ts.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
-  const [phase, setPhase] = useState<'install' | 'connecting'>('install')
-  const [seconds, setSeconds] = useState(0)
   const [setupComplete, setSetupComplete] = useState(false)
 
-  // מבנה חדש (לפי הנחיית המשתמש 03.09.2026):
-  // 1. משחררים כפתורים מיד עם הכניסה למסך - עוד לפני ההתקנה.
-  // 2. מורידים את המתקין. הלקוח מתקין, ואז לוחץ "סיימתי" - רק אז מתחיל תהליך ה-UUID.
-  // 3. כל שלב נכתב ללוג המשותף (/api/uuid-log).
   useEffect(() => {
-    onDbg('InstallCard', `mount [uuid-log run=${runIdRef.current}]`)
-    uuidLog(runIdRef.current, '0', `InstallCard mount — משחרר כפתורים לפני ההתקנה, מתחיל הורדה. email="${email ?? '(none)'}"`)
-    onSetLoggedIn()   // #1 — הכפתורים משוחררים מיד
-    onInstall()       // הורדת המתקין
-    return () => { pollingRef.current = false }
+    onDbg('InstallCard', `mount => onInstall()  [uuid-log run=${runIdRef.current}]`)
+    uuidLog(runIdRef.current, '0', `InstallCard mount — email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
+    onInstall()
   }, [])
 
-  // שעון - רץ רק בשלב "מחבר את האפליקציה"
   useEffect(() => {
-    if (phase !== 'connecting' || setupComplete) return
-    if (!startRef.current) startRef.current = Date.now()
-    const id = setInterval(() => setSeconds(Math.floor((Date.now() - startRef.current) / 1000)), 1000)
-    return () => clearInterval(id)
-  }, [phase, setupComplete])
-
-  const register = async (uuid: string) => {
-    if (doneRef.current) return
-    doneRef.current = true
-    pollingRef.current = false
-    localStorage.setItem('mf_uuid_local_bios', uuid)
-    try {
-      uuidLog(runIdRef.current, '13', `POST /api/set-mfinance-installed  email="${email}" uuid="${uuid}"`)
-      const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
-      const d = await res.json()
-      onDbg('InstallCard', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
-      uuidLog(runIdRef.current, '14', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
-      if (d.ok) {
-        uuidLog(runIdRef.current, '16', 'setup complete — הרישום הושלם')
-        setSetupComplete(true)
-        onSetLoggedIn()
-      } else {
-        doneRef.current = false // מאפשר ניסיון חוזר אם השרת סירב
-      }
-    } catch (e) {
-      onDbg('InstallCard', `set-mfinance-installed failed err="${String(e)}"`)
-      uuidLog(runIdRef.current, '14', `set-mfinance-installed נכשל: ${String(e)}`)
-      doneRef.current = false
+    onDbg('InstallCard.poll', `effect start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
+    if (!email) {
+      onDbg('InstallCard.poll', 'WARNING: no email available => polling disabled, UUID will never be registered')
+      return
     }
-  }
-
-  const attemptOnce = async () => {
-    if (doneRef.current || !email) return
-    const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, runIdRef.current)
-    if (uuid) await register(uuid)
-  }
-
-  // #2 — מתחיל את תהליך ה-UUID רק כשהלקוח מאשר שההתקנה הסתיימה
-  const startConnecting = () => {
-    if (pollingRef.current || setupComplete) return
-    if (!email) { onDbg('InstallCard', 'no email => cannot start'); return }
-    uuidLog(runIdRef.current, 'B', "הלקוח לחץ 'סיימתי להתקין' — מתחיל תהליך UUID")
-    startRef.current = Date.now()
-    setSeconds(0)
-    setPhase('connecting')
     pollingRef.current = true
-    ;(async () => {
-      let attempt = 0
-      while (pollingRef.current && !doneRef.current) {
+    let attempt = 0
+    const MAX_ATTEMPTS = 90 // ~90 * 5s = 7.5 min
+    const poll = async () => {
+      while (pollingRef.current && attempt < MAX_ATTEMPTS) {
         attempt++
-        uuidLog(runIdRef.current, 'poll', `attempt #${attempt}`)
-        await attemptOnce()
-        if (doneRef.current || !pollingRef.current) return
+        onDbg('InstallCard.poll', `attempt #${attempt}/${MAX_ATTEMPTS} => Get_UUID_BIOS_Code_From_M_Finance`)
+        uuidLog(runIdRef.current, 'poll', `attempt #${attempt}/${MAX_ATTEMPTS}`)
+        const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, runIdRef.current)
+        if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
+        if (uuid) {
+          onDbg('InstallCard.poll', `attempt #${attempt} SUCCESS uuid="${uuid}" => registering to server`)
+          localStorage.setItem('mf_uuid_local_bios', uuid)
+          pollingRef.current = false
+          try {
+            uuidLog(runIdRef.current, '13', `POST /api/set-mfinance-installed  email="${email}" uuid="${uuid}"`)
+            const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
+            onDbg('InstallCard.poll', `set-mfinance-installed res.status=${res.status}`)
+            const d = await res.json()
+            onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
+            uuidLog(runIdRef.current, '14', `set-mfinance-installed res.status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
+            if (d.ok) {
+              onDbg('InstallCard.poll', 'setup fully complete => unlocking UI + showing success message')
+              uuidLog(runIdRef.current, '16', 'setup complete — הכפתורים משוחררים')
+              setSetupComplete(true)
+              onSetLoggedIn()
+            }
+          } catch (e) {
+            onDbg('InstallCard.poll', `set-mfinance-installed fetch failed err="${String(e)}"`)
+            uuidLog(runIdRef.current, '14', `set-mfinance-installed נכשל: ${String(e)}`)
+          }
+          return
+        }
+        onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet (app not installed/running), waiting 5s`)
         await new Promise(r => setTimeout(r, 5000))
       }
-    })()
-  }
-
-  const retry = () => {
-    uuidLog(runIdRef.current, 'B', "הלקוח לחץ 'נסה שוב' — ניסיון בודד על גב הלחיצה")
-    void attemptOnce()
-  }
+      if (attempt >= MAX_ATTEMPTS) {
+        onDbg('InstallCard.poll', `gave up after ${MAX_ATTEMPTS} attempts`)
+        uuidLog(runIdRef.current, 'poll', `ויתור אחרי ${MAX_ATTEMPTS} ניסיונות`)
+      }
+    }
+    poll()
+    return () => {
+      onDbg('InstallCard.poll', 'effect cleanup => stop polling')
+      pollingRef.current = false
+    }
+  }, [email, clientIp])
 
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
-  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
-  const hf = { fontFamily: handFont('he'), color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' } as const
-  const btn: React.CSSProperties = { fontFamily: 'Arial, sans-serif', fontSize: '17px', fontWeight: 'bold', color: '#0d0d2b', background: 'linear-gradient(to bottom, #FFE9A0, #FFD700)', border: '2px solid #b9960b', borderRadius: '10px', padding: '12px 28px', cursor: 'pointer' }
-
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
-        {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
-        {setupComplete ? (
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ ...hf, fontSize: '60px', lineHeight: 1.4 }}>תהליך הרישום הושלם</div>
-            <div style={{ ...hf, fontSize: '44px', lineHeight: 1.4 }}>גלישה נעימה</div>
-          </div>
-        ) : phase === 'install' ? (
-          <div style={{ textAlign: 'center', maxWidth: '640px' }}>
-            <div style={{ ...hf, fontSize: '40px', lineHeight: 1.4, marginBottom: '18px' }}>התקנת M Finance</div>
-            <div style={{ ...hf, fontSize: '24px', lineHeight: 1.7, marginBottom: '28px' }}>
-              קובץ ההתקנה יורד עכשיו. הרץ אותו,<br />ואחרי שההתקנה הסתיימה לחץ להמשך.
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {setupComplete && (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '64px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+              תהליך הרישום עבר בהצלחה
             </div>
-            <button style={btn} onClick={startConnecting} disabled={!email}>התקנתי — המשך</button>
-          </div>
-        ) : (
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ ...hf, fontSize: '40px', lineHeight: 1.4 }}>מחבר את האפליקציה, נא להמתין</div>
-            <div style={{ ...hf, fontSize: '64px', lineHeight: 1.4, letterSpacing: '2px' }}>{fmt(seconds)}</div>
-            <button style={{ ...btn, fontSize: '15px', padding: '9px 22px', marginTop: '18px' }} onClick={retry}>נסה שוב</button>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '48px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+              גלישה נעימה
+            </div>
           </div>
         )}
       </div>
