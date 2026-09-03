@@ -294,6 +294,19 @@ export default function Home() {
       .catch(() => {})
   }, [Current_User_Pointer_to_DB])
 
+  // זיהוי שפה אוטומטי לפי מדינה (middleware.ts מציב cookie keyclick_lang). לא דורס:
+  //  - בחירה ידנית קודמת של המשתמש (localStorage kc_lang_chosen)
+  //  - שפת משתמש מחובר (מטופל באפקט הנפרד לפי Current_User_Pointer_to_DB, שרץ אחר כך)
+  useLayoutEffect(() => {
+    try {
+      if (localStorage.getItem('kc_lang_chosen')) return
+      const code = (document.cookie.match(/(?:^|;\s*)keyclick_lang=([a-z]{2})/) || [])[1]
+      if (!code) return
+      const idx = languages.findIndex(l => l.code === code)
+      if (idx !== -1) setLangIdx(idx)
+    } catch { /* מתעלמים */ }
+  }, [])
+
   useEffect(() => {
     fetch('/api/site-version').then(r => r.json()).then(data => setSiteVersion(data)).catch(() => {})
     fetch('/api/system/pr-message').then(r => r.json()).then(d => {
@@ -563,6 +576,11 @@ export default function Home() {
   async function changeLang(i: number) {
     dbg('changeLang', `i=${i} code=${languages[i].code} name="${languages[i].name}" userLoggedIn=${!!Current_User_Pointer_to_DB}`)
     setLangIdx(i)
+    // בחירה ידנית - נשמרת, כדי שהזיהוי האוטומטי לפי מדינה לא ידרוס אותה בכניסה הבאה
+    try {
+      localStorage.setItem('kc_lang_chosen', languages[i].code)
+      document.cookie = `keyclick_lang=${languages[i].code};path=/;max-age=31536000`
+    } catch { /* מתעלמים */ }
     if (Current_User_Pointer_to_DB) {
       const newLang = languages[i].name
       dbg('changeLang', `fetch POST /api/update-language email="${Current_User_Pointer_to_DB.email}" language="${newLang}"`)
@@ -979,6 +997,13 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   ])
   const [activeMfBtnTest, setActiveMfBtnTest] = useState<string | null>(null)
   const [newFolderNameTest, setNewFolderNameTest] = useState('')
+  const [uuidTest, setUuidTest] = useState('')
+  const [uuidTestBusy, setUuidTestBusy] = useState(false)
+  // זחל השהיה לניסוי: כמה זמן ממתינים מרגע הלחיצה עד שיורים את mfinance://get-uuid.
+  // צעדים לא-אחידים: 0-10 בקפיצות של 1, 10-30 בקפיצות של 5, 30-60 בקפיצות של 10.
+  const UUID_DELAY_STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50, 60]
+  const [uuidDelayIdx, setUuidDelayIdx] = useState(0)
+  const uuidDelaySec = UUID_DELAY_STEPS[uuidDelayIdx]
   const [usersEditMode, setUsersEditMode] = useState(false)
   const [pendingUserEdits, setPendingUserEdits] = useState<Record<string, Record<string, unknown>>>({})
   const [debugOpen, setDebugOpen] = useState(false)
@@ -1540,7 +1565,60 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         )}
 
         {view === 'tests' && (
-          <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '4px' }}>
+            <fieldset style={{ margin: '8px 6px', border: '1px solid #003399', borderRadius: '6px', padding: '10px 12px', height: 'fit-content', minWidth: '240px' }}>
+              <legend style={{ color: 'red', fontSize: '20px', fontWeight: 'bold', padding: '0 6px', direction: 'rtl' }}>קוד מחשב</legend>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', direction: 'rtl', minWidth: '300px' }}>
+                <div style={{ border: '1px solid #003399', borderRadius: '4px', background: '#eef1fa', color: '#003399', fontSize: '14px', fontWeight: 'bold', wordBreak: 'break-all', minHeight: '34px', padding: '7px 9px', textAlign: 'center' }}>
+                  {uuidTest}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <input
+                    type="range"
+                    min={0}
+                    max={UUID_DELAY_STEPS.length - 1}
+                    step={1}
+                    value={uuidDelayIdx}
+                    onChange={e => setUuidDelayIdx(Number(e.target.value))}
+                    disabled={uuidTestBusy}
+                    style={{ flex: 1, direction: 'ltr' }} />
+                  <div style={{ border: '1px solid #003399', borderRadius: '4px', background: '#fff', color: '#003399', fontSize: '14px', fontWeight: 'bold', padding: '5px 8px', minWidth: '54px', textAlign: 'center' }}>
+                    {uuidDelaySec} ש׳
+                  </div>
+                </div>
+                <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>השהיה מרגע הלחיצה עד שליחת ההודעה</div>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <button
+                    disabled={uuidTestBusy}
+                    onClick={async () => {
+                      setUuidTestBusy(true)
+                      const rid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())
+                      // מדמה את תהליך הכניסה: קודם פנייה לשרת (round-trip אמיתי), כמו login-check
+                      setUuidTest('פונה לשרת…')
+                      try {
+                        await fetch('/api/login-check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'uuid-delay-test', password: '-' }) })
+                      } catch { /* מתעלמים מהתוצאה - רק ההשהיה מעניינת */ }
+                      for (let s = uuidDelaySec; s > 0; s--) {
+                        setUuidTest(`ממתין ${s} ש׳ לפני שליחה…`)
+                        await new Promise(r => setTimeout(r, 1000))
+                      }
+                      setUuidTest('שולח בקשה…')
+                      const code = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, rid)
+                      setUuidTest(code ? code : 'אין תשובה מהאפליקציה')
+                      setUuidTestBusy(false)
+                    }}
+                    style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: '4px', padding: '6px 12px', fontSize: '15px', fontWeight: 'bold', cursor: uuidTestBusy ? 'default' : 'pointer', opacity: uuidTestBusy ? 0.6 : 1 }}>
+                    קרא UUID
+                  </button>
+                  <button
+                    disabled={uuidTestBusy}
+                    onClick={() => setUuidTest('')}
+                    style={{ background: '#777', color: '#fff', border: 'none', borderRadius: '4px', padding: '6px 12px', fontSize: '15px', fontWeight: 'bold', cursor: uuidTestBusy ? 'default' : 'pointer', opacity: uuidTestBusy ? 0.6 : 1 }}>
+                    איפוס
+                  </button>
+                </div>
+              </div>
+            </fieldset>
             <fieldset style={{ margin: '8px 6px', border: '1px solid #003399', borderRadius: '6px', padding: '10px 12px', height: 'fit-content' }}>
               <legend style={{ color: 'red', fontSize: '20px', fontWeight: 'bold', padding: '0 6px', direction: 'rtl' }}>{lang.system.testsCreateFolderLegend}</legend>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
