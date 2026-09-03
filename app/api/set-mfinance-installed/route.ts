@@ -10,9 +10,19 @@ export async function POST(req: NextRequest) {
   await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS "UUID_Local_BIOS" VARCHAR(50)')
 
   if (email) {
-    const result = await pool.query('UPDATE users SET is_m_finance_installed = true, "UUID_Local_BIOS" = COALESCE(NULLIF($2, \'\'), "UUID_Local_BIOS") WHERE email = $1 RETURNING id, email, "UUID_Local_BIOS"', [email, uuidLocalBios ?? ''])
+    // UUID = החדש אם ניתן, אחרת נשמר הקיים. is_m_finance_installed נדלק אך ורק כשבסופו של דבר
+    // יש UUID ברשומה - כדי שהדגל וה-UUID לא יוכלו לא להסכים (זה מה שחסם את handleInstall).
+    const result = await pool.query(
+      `UPDATE users
+         SET "UUID_Local_BIOS"     = COALESCE(NULLIF($2, ''), "UUID_Local_BIOS"),
+             is_m_finance_installed = (COALESCE(NULLIF($2, ''), "UUID_Local_BIOS") IS NOT NULL)
+       WHERE email = $1
+       RETURNING id, email, "UUID_Local_BIOS", is_m_finance_installed`,
+      [email, uuidLocalBios ?? ''],
+    )
     console.log(`[set-mfinance-installed] UPDATE matched ${result.rowCount} row(s): ${JSON.stringify(result.rows)}`)
-    return NextResponse.json({ ok: true })
+    const row = result.rows[0]
+    return NextResponse.json({ ok: !!row?.UUID_Local_BIOS, uuidRegistered: !!row?.UUID_Local_BIOS })
   }
 
   // No email identifies which customer this install belongs to — do NOT fall back to the

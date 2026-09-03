@@ -508,47 +508,30 @@ export default function Home() {
   }
 
   async function handleInstall() {
-    if (Current_User_Pointer_to_DB?.is_M_Finance_installed) {
+    // "כבר מותקן" נקבע לפי UUID רשום בפועל - לא לפי הדגל is_M_Finance_installed, שיכול להיות
+    // true בלי UUID (מצב לא-עקבי מבדיקות קודמות) והיה חוסם את ההורדה למי שדווקא צריך להתקין.
+    if (Current_User_Pointer_to_DB?.UUID_Local_BIOS) {
       setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgAlreadyInstalled })
       return
     }
     setDebugLog([])
-    dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} is_M_Finance_installed=${Current_User_Pointer_to_DB?.is_M_Finance_installed ?? 'unknown'}`)
-    dbg('handleInstall', `Current_User_Pointer_to_DB=${JSON.stringify(Current_User_Pointer_to_DB)}`)
+    dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} UUID_Local_BIOS=${Current_User_Pointer_to_DB?.UUID_Local_BIOS ?? 'none'}`)
     if (Current_User_Pointer_to_DB?.email) {
       localStorage.setItem('mf_pending_install_email', Current_User_Pointer_to_DB.email)
-      const readBack = localStorage.getItem('mf_pending_install_email')
-      dbg('handleInstall', `saved mf_pending_install_email="${Current_User_Pointer_to_DB.email}" readBack="${readBack ?? 'null'}" match=${readBack === Current_User_Pointer_to_DB.email} (so the ?installed=1 callback, which may load in a fresh tab with no React user state yet, updates the right user)`)
+      dbg('handleInstall', `saved mf_pending_install_email="${Current_User_Pointer_to_DB.email}"`)
     } else {
-      dbg('handleInstall', 'WARNING: Current_User_Pointer_to_DB?.email is empty => mf_pending_install_email NOT saved => ?installed=1 callback will have no email to use')
+      dbg('handleInstall', 'WARNING: no email => mf_pending_install_email NOT saved')
     }
-    setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgDownloading })
-    dbg('handleInstall', 'fetch GET /api/download-mfinance')
-    try {
-      const res = await fetch('/api/download-mfinance')
-      dbg('handleInstall', `res.status=${res.status} res.ok=${res.ok}`)
-      if (!res.ok) {
-        dbg('handleInstall', `res.status=${res.status} res.statusText="${res.statusText}" => throw`)
-        throw new Error(`HTTP ${res.status}`)
-      }
-      const blob = await res.blob()
-      dbg('handleInstall', `blob.size=${blob.size} (${(blob.size/1024/1024).toFixed(2)}MB) blob.type="${blob.type}" size>1MB=${blob.size > 1024*1024}`)
-      const url = URL.createObjectURL(blob)
-      dbg('handleInstall', `objectURL="${url.substring(0,50)}..."`)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = 'M_Finance_Setup.exe'
-      dbg('handleInstall', `a.download="${a.download}" => a.click()`)
-      a.click()
-      setPopupMsg(null)
-      dbg('handleInstall', 'popupMsg closed (download triggered)')
-      await new Promise(r => setTimeout(r, 1000))
-      URL.revokeObjectURL(url)
-      dbg('handleInstall', 'revokeObjectURL done => file ready (InstallCard page already shows msgInstallComplete + run button, no popup needed)')
-    } catch (err) {
-      dbg('handleInstall', `catch err="${String(err)}"`)
-      setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgDownloadError, bodyColor: '#ff6600' })
-    }
+    // הורדה ישירה: ה-<a> מצביע על ה-API והדפדפן מוריד תוך כדי stream (מד התקדמות מובנה),
+    // בלי fetch+blob שמאגר את כל 139MB בזיכרון לפני שמשהו קורה.
+    dbg('handleInstall', 'a.href=/api/download-mfinance => a.click()')
+    const a = document.createElement('a')
+    a.href = '/api/download-mfinance'
+    a.download = 'M_Finance_Setup.exe'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    dbg('handleInstall', 'download triggered')
   }
 
   async function handleRun() {
@@ -6880,8 +6863,8 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
   useEffect(() => {
     onDbg('InstallCard', `mount [uuid-log run=${runIdRef.current}]`)
     step('רשומה', `רשומת לקוח קיימת — ${email ?? '(ללא מייל)'}`)
-    step('הורדה', 'הורדת קובץ ההתקנה החלה')
     onInstall()
+    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
     return () => { pollingRef.current = false }
   }, [])
 
