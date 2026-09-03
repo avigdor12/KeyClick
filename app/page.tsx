@@ -6865,87 +6865,118 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 }
 
+type InstallStepStatus = 'pending' | 'active' | 'done' | 'error'
+const INSTALL_STEPS: { id: string; label: string }[] = [
+  { id: 'record',    label: 'הקמת רשומת לקוח' },
+  { id: 'install',   label: 'הורדה והתקנת האפליקציה' },
+  { id: 'installed', label: 'סיום התקנה' },
+  { id: 'dialog',    label: 'תקשורת עם האפליקציה' },
+  { id: 'uuid',      label: 'קריאת קוד המחשב' },
+  { id: 'db',        label: 'רישום ברשומת הלקוח' },
+  { id: 'done',      label: 'סיום ההרשמה' },
+]
+
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   const pollingRef = useRef(false)
   // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   // הלוג המאוחד: /api/uuid-log?last=1  (או ?run=<id>). ראה app/api/uuid-log/route.ts.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
   const [setupComplete, setSetupComplete] = useState(false)
+  const [steps, setSteps] = useState<Record<string, { status: InstallStepStatus; detail?: string }>>(
+    () => Object.fromEntries(INSTALL_STEPS.map(s => [s.id, { status: 'pending' as InstallStepStatus }])),
+  )
+
+  const mark = (id: string, status: InstallStepStatus, detail?: string) => {
+    setSteps(prev => ({ ...prev, [id]: { status, detail: detail ?? prev[id]?.detail } }))
+    uuidLog(runIdRef.current, id, `${status}${detail ? ' — ' + detail : ''}`)
+  }
 
   useEffect(() => {
-    onDbg('InstallCard', `mount => onInstall()  [uuid-log run=${runIdRef.current}]`)
-    uuidLog(runIdRef.current, '0', `InstallCard mount — email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
+    onDbg('InstallCard', `mount [uuid-log run=${runIdRef.current}]`)
+    uuidLog(runIdRef.current, '0', `InstallCard mount — email="${email ?? '(none)'}"`)
+    mark('record', 'done')   // הגענו הנה רק אחרי שהרשומה נוצרה
+    mark('install', 'active', 'קובץ ההתקנה יורד — הרץ אותו והשלם את ההתקנה')
     onInstall()
+    return () => { pollingRef.current = false }
   }, [])
 
   useEffect(() => {
-    onDbg('InstallCard.poll', `effect start email="${email ?? '(none)'}" clientIp="${clientIp ?? '(none)'}"`)
-    if (!email) {
-      onDbg('InstallCard.poll', 'WARNING: no email available => polling disabled, UUID will never be registered')
-      return
-    }
+    if (!email) { onDbg('InstallCard', 'no email => poll disabled'); mark('dialog', 'error', 'חסר מייל'); return }
     pollingRef.current = true
     let attempt = 0
-    const MAX_ATTEMPTS = 90 // ~90 * 5s = 7.5 min
+    const MAX_ATTEMPTS = 90 // ~90 * 5s
     const poll = async () => {
+      mark('installed', 'active', 'ממתין לסיום ההתקנה')
       while (pollingRef.current && attempt < MAX_ATTEMPTS) {
         attempt++
-        onDbg('InstallCard.poll', `attempt #${attempt}/${MAX_ATTEMPTS} => Get_UUID_BIOS_Code_From_M_Finance`)
-        uuidLog(runIdRef.current, 'poll', `attempt #${attempt}/${MAX_ATTEMPTS}`)
-        const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, runIdRef.current)
-        if (!pollingRef.current) { onDbg('InstallCard.poll', 'polling was stopped mid-attempt, aborting'); return }
+        mark('dialog', 'active', `ניסיון ${attempt}`)
+        const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, runIdRef.current, m => mark('dialog', 'active', `${m} (ניסיון ${attempt})`))
+        if (!pollingRef.current) return
         if (uuid) {
-          onDbg('InstallCard.poll', `attempt #${attempt} SUCCESS uuid="${uuid}" => registering to server`)
           localStorage.setItem('mf_uuid_local_bios', uuid)
           pollingRef.current = false
+          mark('install', 'done')
+          mark('installed', 'done', 'האפליקציה מותקנת ומגיבה')
+          mark('dialog', 'done')
+          mark('uuid', 'done', `UUID: ${uuid}`)
+          mark('db', 'active', 'שולח לשרת')
           try {
-            uuidLog(runIdRef.current, '13', `POST /api/set-mfinance-installed  email="${email}" uuid="${uuid}"`)
             const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
-            onDbg('InstallCard.poll', `set-mfinance-installed res.status=${res.status}`)
             const d = await res.json()
-            onDbg('InstallCard.poll', `set-mfinance-installed ok=${d.ok} error="${d.error ?? 'none'}"`)
-            uuidLog(runIdRef.current, '14', `set-mfinance-installed res.status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
+            onDbg('InstallCard', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
             if (d.ok) {
-              onDbg('InstallCard.poll', 'setup fully complete => unlocking UI + showing success message')
-              uuidLog(runIdRef.current, '16', 'setup complete — הכפתורים משוחררים')
+              mark('db', 'done', 'נשמר ברשומת הלקוח')
+              mark('done', 'done', 'ההרשמה הושלמה')
               setSetupComplete(true)
               onSetLoggedIn()
+            } else {
+              mark('db', 'error', d.error ?? 'השרת סירב')
             }
           } catch (e) {
-            onDbg('InstallCard.poll', `set-mfinance-installed fetch failed err="${String(e)}"`)
-            uuidLog(runIdRef.current, '14', `set-mfinance-installed נכשל: ${String(e)}`)
+            mark('db', 'error', String(e))
           }
           return
         }
-        onDbg('InstallCard.poll', `attempt #${attempt} no uuid yet (app not installed/running), waiting 5s`)
+        mark('dialog', 'active', `אין תשובה — ממתין 5 שניות (ניסיון ${attempt})`)
         await new Promise(r => setTimeout(r, 5000))
       }
-      if (attempt >= MAX_ATTEMPTS) {
-        onDbg('InstallCard.poll', `gave up after ${MAX_ATTEMPTS} attempts`)
-        uuidLog(runIdRef.current, 'poll', `ויתור אחרי ${MAX_ATTEMPTS} ניסיונות`)
-      }
+      if (attempt >= MAX_ATTEMPTS) mark('dialog', 'error', 'לא התקבלה תשובה מהאפליקציה')
     }
     poll()
-    return () => {
-      onDbg('InstallCard.poll', 'effect cleanup => stop polling')
-      pollingRef.current = false
-    }
+    return () => { pollingRef.current = false }
   }, [email, clientIp])
 
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
+  const stepIcon = (s: InstallStepStatus) => (s === 'done' ? '✓' : s === 'active' ? '⏳' : s === 'error' ? '✕' : '○')
+  const stepColor = (s: InstallStepStatus) => (s === 'done' ? '#4caf50' : s === 'active' ? '#FFD700' : s === 'error' ? '#e05656' : '#7a7a7a')
+
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {setupComplete && (
-          <div style={{ textAlign: 'center', padding: '32px' }}>
-            {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
-            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '64px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-              תהליך הרישום עבר בהצלחה
-            </div>
-            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '48px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-              גלישה נעימה
-            </div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
+        {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
+        {setupComplete ? (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '56px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>תהליך הרישום עבר בהצלחה</div>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '40px', lineHeight: 1.4, textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>גלישה נעימה</div>
+          </div>
+        ) : (
+          <div style={{ direction: 'rtl', background: 'rgba(0,0,0,0.38)', border: '1px solid #4a4a4a', borderRadius: '14px', padding: '24px 28px', maxWidth: '560px', width: '100%', fontFamily: 'Arial, sans-serif' }}>
+            <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '30px', marginBottom: '16px', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>תהליך ההרשמה</div>
+            <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {INSTALL_STEPS.map((st, i) => {
+                const s = steps[st.id] ?? { status: 'pending' as InstallStepStatus }
+                return (
+                  <li key={st.id} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                    <span style={{ color: stepColor(s.status), fontSize: '17px', width: '20px', flexShrink: 0, textAlign: 'center' }}>{stepIcon(s.status)}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ color: s.status === 'pending' ? '#8a8a8a' : '#eaeaea', fontSize: '16px', fontWeight: s.status === 'active' ? 700 : 400 }}>{i + 1}. {st.label}</div>
+                      {s.detail && <div style={{ color: '#9fb4c9', fontSize: '13px', marginTop: '2px', wordBreak: 'break-all' }}>{s.detail}</div>}
+                    </div>
+                  </li>
+                )
+              })}
+            </ol>
           </div>
         )}
       </div>
@@ -6988,10 +7019,11 @@ function uuidLog(runId: string | undefined, step: string, msg: string) {
   } catch { /* לא נוגעים בזרימה */ }
 }
 
-async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: string) => void, runId?: string): Promise<string | null> {
+async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: string) => void, runId?: string, onStep?: (msg: string) => void): Promise<string | null> {
   const trigger = `mfinance://get-uuid${runId ? `?run=${encodeURIComponent(runId)}` : ''}`
   onDbg('Get_UUID_BIOS_Code_From_M_Finance', `triggering ${trigger}`)
   uuidLog(runId, '1', `triggering ${trigger}`)
+  onStep?.('פותח קשר עם האפליקציה')
   window.location.href = trigger
 
   await new Promise(r => setTimeout(r, 800))
@@ -7001,11 +7033,13 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   try {
     onDbg('Get_UUID_BIOS_Code_From_M_Finance', `fetch GET http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`)
     uuidLog(runId, '8', `fetch GET http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/ (800ms אחרי הטריגר)`)
+    onStep?.('קורא את קוד המחשב')
     const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
     clearTimeout(timeoutId)
     if (!res.ok) {
       onDbg('Get_UUID_BIOS_Code_From_M_Finance', `res.ok=false status=${res.status}`)
       uuidLog(runId, '8b', `fetch res.ok=false status=${res.status}`)
+      onStep?.(`האפליקציה החזירה שגיאה (${res.status})`)
       return null
     }
     const code = (await res.text()).trim()
@@ -7016,6 +7050,7 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
     clearTimeout(timeoutId)
     onDbg('Get_UUID_BIOS_Code_From_M_Finance', `no response from M_Finance — err="${String(err)}"`)
     uuidLog(runId, '8b', `fetch נכשל: ${String(err)}`)
+    onStep?.('אין תשובה מהאפליקציה')
     return null
   }
 }
@@ -7106,6 +7141,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     if (data.status === 'created') {
       onDbg('handleUpdate', `user="${data.user?.email}" is_M_Finance_installed=${data.user?.is_M_Finance_installed} => onUserUpdate`)
       onUserUpdate(data.user)
+      onSetLoggedIn() // הרשומה נוצרה - משחררים כפתורים מיד, לפני ההתקנה
       onDbg('flowDiagram', '13-תהליך התקנת M Finance')
       onDbg('handleUpdate', 'status=created => onNavigate mf-install')
       onNavigate('mf-install')
@@ -7156,6 +7192,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
         if (await isComputerAlreadyTakenByAnotherCustomer()) return
         onDbg('flowDiagram', `13-ממשיך בתהליך התקנת M Finance (רשומה קיימת, אין UUID עדיין) user="${checkData.user?.email}"`)
         onUserUpdate(checkData.user)
+        onSetLoggedIn() // הרשומה קיימת - משחררים כפתורים מיד, לפני ההתקנה
         onNavigate('mf-install')
         return
       }
