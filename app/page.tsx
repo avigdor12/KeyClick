@@ -6852,7 +6852,8 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
   const pollingRef = useRef(false)
   // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
-  const [setupComplete, setSetupComplete] = useState(false)
+  // running = בתהליך · done = ה-UUID נרשם בפועל בשרת, אפשר להיכנס · incomplete = נעצר בלי UUID
+  const [phase, setPhase] = useState<'running' | 'done' | 'incomplete'>('running')
   const [logText, setLogText] = useState('(ממתין לתחילת התהליך…)')
   const logBoxRef = useRef<HTMLPreElement>(null)
 
@@ -6862,9 +6863,9 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
 
   useEffect(() => {
     onDbg('InstallCard', `mount [uuid-log run=${runIdRef.current}]`)
-    step('רשומה', `רשומת לקוח קיימת — ${email ?? '(ללא מייל)'}`)
+    step('רשומה', `רשומת לקוח נוצרה — ${email ?? '(ללא מייל)'}. הרישום עדיין לא מלא: חסר קוד מחשב.`)
     onInstall()
-    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
+    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן — הרץ אותו והשלם את ההתקנה')
     return () => { pollingRef.current = false }
   }, [])
 
@@ -6896,35 +6897,40 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
     const poll = async () => {
       while (pollingRef.current && attempt < MAX_ATTEMPTS) {
         attempt++
-        step('ניסיון', `ניסיון ${attempt}/${MAX_ATTEMPTS} — פנייה לאפליקציה`)
+        step('ניסיון', `ניסיון ${attempt}/${MAX_ATTEMPTS} — מנסה לקבל קוד מחשב מהאפליקציה`)
         const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, runIdRef.current)
         if (!pollingRef.current) return
         if (uuid) {
           localStorage.setItem('mf_uuid_local_bios', uuid)
           pollingRef.current = false
           step('התקנה', 'האפליקציה מותקנת ומגיבה')
-          step('רישום', `שולח לשרת: ${uuid}`)
+          step('רישום', `שומר קוד מחשב ברשומה: ${uuid}`)
           try {
             const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
             const d = await res.json()
             onDbg('InstallCard', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
             if (d.ok) {
-              step('רישום', 'נשמר ברשומת הלקוח')
-              step('סיום', 'ההרשמה הושלמה')
-              setSetupComplete(true)
+              step('רישום', 'השרת אישר — קוד המחשב נרשם ברשומה')
+              step('סיום', 'הרישום הושלם — הלקוח יכול להיכנס')
+              setPhase('done')
               onSetLoggedIn()
             } else {
-              step('שגיאה', `השרת סירב: ${d.error ?? '(ללא פירוט)'}`)
+              step('שגיאה', `השרת לא רשם את הקוד: ${d.error ?? '(ללא פירוט)'} — הרישום לא הושלם`)
+              setPhase('incomplete')
             }
           } catch (e) {
-            step('שגיאה', `שליחה לשרת נכשלה: ${String(e)}`)
+            step('שגיאה', `שליחת הקוד לשרת נכשלה: ${String(e)} — הרישום לא הושלם`)
+            setPhase('incomplete')
           }
           return
         }
-        step('המתנה', `אין תשובה — ממתין 5 שניות (אחרי ניסיון ${attempt})`)
+        step('המתנה', `אין תשובה מהאפליקציה — ממתין 5 שניות (אחרי ניסיון ${attempt})`)
         await new Promise(r => setTimeout(r, 5000))
       }
-      if (attempt >= MAX_ATTEMPTS) step('שגיאה', `אין תשובה מהאפליקציה אחרי ${MAX_ATTEMPTS} ניסיונות`)
+      if (attempt >= MAX_ATTEMPTS) {
+        step('שגיאה', `אין תשובה מהאפליקציה אחרי ${MAX_ATTEMPTS} ניסיונות — הרישום לא הושלם`)
+        setPhase('incomplete')
+      }
     }
     poll()
     return () => { pollingRef.current = false }
@@ -6937,8 +6943,12 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '28px', gap: '18px' }}>
         {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
-        <div style={{ fontFamily: handFont('he'), color: setupComplete ? '#2e7d32' : '#c31432', fontSize: '34px', lineHeight: 1.3, textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-          {setupComplete ? 'תהליך הרישום הושלם — גלישה נעימה' : 'תהליך ההרשמה מתבצע'}
+        <div style={{ fontFamily: handFont('he'), color: phase === 'done' ? '#2e7d32' : phase === 'incomplete' ? '#c62828' : '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+          {phase === 'done'
+            ? 'הרישום הושלם — אפשר להיכנס. גלישה נעימה'
+            : phase === 'incomplete'
+              ? 'הרישום לא הושלם — חסר קוד מחשב. לא ניתן להיכנס בפעם הבאה עד שקוד המחשב יירשם.'
+              : 'תהליך ההרשמה מתבצע — נא להמתין'}
         </div>
         <pre
           ref={logBoxRef}
@@ -7098,15 +7108,17 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     setSavedConf('')
     setError('')
     onDbg('flowDiagram', '18-הרשמה מוצלחת')
-    onDbg('handleUpdate', `success status="${data.status}" => onMsg`)
-    onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: c.msgRegistered })
+    onDbg('handleUpdate', `success status="${data.status}"`)
     if (data.status === 'created') {
-      onDbg('handleUpdate', `user="${data.user?.email}" is_M_Finance_installed=${data.user?.is_M_Finance_installed} => onUserUpdate`)
+      // רשומה נוצרה - אבל ההרשמה לא הסתיימה (חסר קוד מחשב). בלי popup "הרשמה הושלמה":
+      // עוברים ישר למסך ההתקנה שמציג את המצב האמיתי בזמן אמת.
+      onDbg('handleUpdate', `user="${data.user?.email}" => onUserUpdate + navigate mf-install`)
       onUserUpdate(data.user)
       onSetLoggedIn() // הרשומה נוצרה - משחררים כפתורים מיד, לפני ההתקנה
-      onDbg('flowDiagram', '13-תהליך התקנת M Finance')
-      onDbg('handleUpdate', 'status=created => onNavigate mf-install')
       onNavigate('mf-install')
+    } else {
+      // עדכון פרטים של רשומה קיימת - כאן ההודעה כן נכונה
+      onMsg({ title: c.mFinance, subtitle: c.title, body: c.msgUpdated })
     }
   }
 
