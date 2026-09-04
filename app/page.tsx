@@ -1844,6 +1844,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             </div>
             <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
               <button
+                onClick={() => { fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {}) }}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                רענן
+              </button>
+              <button
                 onClick={() => { setUsersEditMode(m => !m); if (usersEditMode) { setPendingUserEdits({}); setPendingForce({}) } }}
                 style={{ background: usersEditMode ? '#cc6600' : '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
                 {lang.system.editButton}
@@ -7069,11 +7074,14 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '28px', gap: '18px' }}>
         {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
-        {phase !== 'incomplete' && (
-          <div style={{ fontFamily: handFont('he'), color: phase === 'done' ? '#2e7d32' : '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-            {phase === 'done'
-              ? 'הרישום הסתיים בהצלחה, המשך גלישה נעימה'
-              : 'שים לב לקובץ ההתקנה שיופיע מעל הדף, לחץ עליו מהר להתקנה'}
+        {phase === 'done' && (
+          <div style={{ fontFamily: handFont('he'), color: '#d32f2f', fontSize: 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)' }}>
+            הרישום הסתיים בהצלחה<br />המשך גלישה נעימה
+          </div>
+        )}
+        {phase === 'running' && (
+          <div style={{ fontFamily: handFont('he'), color: '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+            שים לב לקובץ ההתקנה שיופיע מעל הדף, לחץ עליו מהר להתקנה
           </div>
         )}
         {phase === 'incomplete' && (
