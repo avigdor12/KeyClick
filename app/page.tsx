@@ -7049,14 +7049,16 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           <div style={{ fontFamily: handFont('he'), color: phase === 'done' ? '#2e7d32' : '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
             {phase === 'done'
               ? 'הרישום הסתיים בהצלחה, המשך גלישה נעימה'
-              : 'תהליך ההרשמה מתבצע — נא להמתין'}
+              : 'שים לב לקובץ ההתקנה שיופיע מעל הדף, לחץ עליו מהר להתקנה'}
           </div>
         )}
         {phase === 'incomplete' && (
-          <button
-            onClick={retry}
-            style={{ fontFamily: handFont('he'), fontSize: '20px', padding: '10px 30px', borderRadius: '10px', border: 'none', background: '#c31432', color: '#fff', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,.25)' }}
-          >ההורדה הסתיימה, נא לאשר סיום התקנה</button>
+          <div style={{ background: '#2a2a2a', border: '2px solid #FFD700', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <button
+              onClick={retry}
+              style={{ ...regBtn, fontFamily: handFont('he'), fontSize: '22px', padding: '12px 40px', borderRadius: '10px' }}
+            >ההורדה הסתיימה, נא לאשר סיום התקנה</button>
+          </div>
         )}
       </div>
     </div>
