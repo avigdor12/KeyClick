@@ -6964,23 +6964,15 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
-  // running = בתהליך · done = ה-UUID נרשם בפועל בשרת, אפשר להיכנס · incomplete = נעצר בלי UUID
+  // running = מסך 1 (מתקינים, בודקים) · done = נרשם בשרת · incomplete = מסך 2 (הכרטיס עם הכפתור)
   const [phase, setPhase] = useState<'running' | 'done' | 'incomplete'>('running')
+  // קוד מחשב שנתפס בבדיקה הסבלנית (מסלול הרשמה). קיים → הכפתור מאשר מיד, בלי לירות טריגר.
+  const capturedUuidRef = useRef<string | null>(null)
 
   // כותב שלב ללוג המשותף /api/uuid-log (לא מוצג על המסך).
   const step = (name: string, msg: string) => uuidLog(runIdRef.current, name, msg)
 
-  useEffect(() => {
-    // מאמצים את ה-run_id של הלכידה שהתחילה בלחיצה, כדי שכל שורות הלוג יגיעו לאותה ריצה.
-    if (uuidCapture) runIdRef.current = uuidCapture.runId
-    onDbg('InstallCard', `mount [uuid-log run=${runIdRef.current}]`)
-    step('רשומה', `רשומת לקוח נוצרה — ${email ?? '(ללא מייל)'}. הרישום עדיין לא מלא: חסר קוד מחשב.`)
-    onInstall()
-    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן — הרץ אותו והשלם את ההתקנה')
-  }, [])
-
-  // רישום ה-UUID ברשומת הלקוח. משותף למסלול הרגיל (uuidCapture נלכד ב-handleLogin/handleUpdate)
-  // ולכפתור "נסה שוב".
+  // רישום ה-UUID ברשומת הלקוח.
   const registerUuid = async (uuid: string | null) => {
     if (!uuid) {
       step('שגיאה', 'לא התקבל קוד מחשב מהאפליקציה — הרישום לא הושלם')
@@ -7008,30 +7000,62 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
     }
   }
 
-  // ה-UUID נלכד ב-handleLogin/handleUpdate מיד עם הלחיצה (הטריגר mfinance:// חייב לצאת
-  // משרשרת אירוע-משתמש, לא מ-useEffect). כאן רק ממתינים לתוצאה ששמורה ב-uuidCapture.
-  useEffect(() => {
-    if (!email) { onDbg('InstallCard', 'no email'); step('שגיאה', 'חסר מייל — לא ניתן לרשום'); setPhase('incomplete'); return }
-    if (!uuidCapture) {
-      onDbg('InstallCard', 'no uuidCapture — trigger was not fired from a click')
-      step('קוד מחשב', 'תהליך קוד המחשב לא הופעל מהלחיצה. אם האפליקציה כבר מותקנת — לחץ "נסה שוב".')
-      setPhase('incomplete')
-      return
+  // בדיקה סבלנית: האם האפליקציה עונה על הפורט המקומי (בלי לוג לכל ניסיון). האפליקציה פותחת
+  // את הפורט ב-OnFirstRun של Velopack ברגע שההתקנה נגמרת.
+  const pollForApp = async (maxMs: number, cancelled: { v: boolean }): Promise<string | null> => {
+    const deadline = Date.now() + maxMs
+    while (Date.now() < deadline && !cancelled.v) {
+      await new Promise(r => setTimeout(r, 1500))
+      if (cancelled.v) return null
+      const controller = new AbortController()
+      const t = setTimeout(() => controller.abort(), 3000)
+      try {
+        const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
+        clearTimeout(t)
+        if (res.ok) {
+          const code = (await res.text()).trim()
+          if (code) return code
+        }
+      } catch { clearTimeout(t) }
     }
-    let cancelled = false
-    runIdRef.current = uuidCapture.runId
-    step('קוד מחשב', 'ממתין לקוד מחשב מהאפליקציה')
-    ;(async () => {
-      const uuid = await uuidCapture!.promise
-      if (!cancelled) await registerUuid(uuid)
-    })()
-    return () => { cancelled = true }
-  }, [email, clientIp])
+    return null
+  }
 
-  // "נסה שוב" — לחיצה טרייה, מותר לירות שוב את הטריגר mfinance:// מתוך ה-onClick.
-  const retry = async () => {
+  useEffect(() => {
+    if (uuidCapture) runIdRef.current = uuidCapture.runId
+    onDbg('InstallCard', `mount [run=${runIdRef.current}] uuidCapture=${uuidCapture ? 'yes' : 'no'}`)
+    if (!email) { onDbg('InstallCard', 'no email'); step('שגיאה', 'חסר מייל — לא ניתן לרשום'); setPhase('incomplete'); return }
+    step('רשומה', `רשומת לקוח נוצרה — ${email}. חסר קוד מחשב.`)
+    onInstall()
+    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
+
+    const cancelled = { v: false }
+    ;(async () => {
+      if (uuidCapture) {
+        // מסלול כניסה: הטריגר כבר נורה מהלחיצה. ממתינים לתוצאה.
+        const uuid = await uuidCapture.promise
+        if (cancelled.v) return
+        if (uuid) await registerUuid(uuid)
+        else setPhase('incomplete')
+      } else {
+        // מסלול הרשמה: אין אפליקציה עדיין. בודקים את הפורט בסבלנות עד 5 דקות. הכפתור (מסך 2)
+        // יופיע רק כשהאפליקציה תגיב — כלומר כשההתקנה תיגמר.
+        step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
+        const uuid = await pollForApp(300000, cancelled)
+        if (cancelled.v) return
+        if (uuid) { capturedUuidRef.current = uuid; step('קוד מחשב', 'האפליקציה מגיבה — ההתקנה הסתיימה') }
+        else step('קוד מחשב', 'עברו 5 דקות בלי תשובה — מציג כפתור ידני')
+        setPhase('incomplete')
+      }
+    })()
+    return () => { cancelled.v = true }
+  }, [])
+
+  // לחיצת "אישור סיום התקנה". אם נתפס קוד בבדיקה — רושמים מיד. אחרת (גיבוי) — יורים טריגר טרי.
+  const onConfirmClick = async () => {
+    if (capturedUuidRef.current) { await registerUuid(capturedUuidRef.current); return }
     setPhase('running')
-    step('קוד מחשב', 'ניסיון חוזר — פנייה לאפליקציה')
+    step('קוד מחשב', 'ניסיון ידני — פנייה לאפליקציה')
     Start_UUID_Capture(onDbg)
     runIdRef.current = uuidCapture!.runId
     const uuid = await uuidCapture!.promise
@@ -7055,7 +7079,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         {phase === 'incomplete' && (
           <div style={{ background: '#2a2a2a', border: '2px solid #FFD700', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button
-              onClick={retry}
+              onClick={onConfirmClick}
               style={{ ...regBtn, fontFamily: handFont('he'), fontSize: '22px', padding: '12px 40px', borderRadius: '10px' }}
             >ההורדה הסתיימה, נא לאשר סיום התקנה</button>
           </div>
@@ -7240,8 +7264,9 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     if (savedPass && savedPass.length < 6)       { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
     if (savedPass !== savedConf)                 { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
 
-    // הטריגר mfinance://get-uuid חייב לצאת כאן, סינכרונית מתוך הלחיצה, לפני כל await
-    Start_UUID_Capture(onDbg)
+    // בהרשמה האפליקציה עוד לא מותקנת — אין למי לפנות. InstallCard בודק את הפורט בסבלנות
+    // עד שההתקנה נגמרת והאפליקציה מגיבה (Serve_UUID_Once ב-OnFirstRun של Velopack).
+    uuidCapture = null
 
     onDbg('handleUpdate', `fetch POST /api/register email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/register', {
