@@ -6966,11 +6966,8 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
   // running = בתהליך · done = ה-UUID נרשם בפועל בשרת, אפשר להיכנס · incomplete = נעצר בלי UUID
   const [phase, setPhase] = useState<'running' | 'done' | 'incomplete'>('running')
-  const [logText, setLogText] = useState('(ממתין לתחילת התהליך…)')
-  const logBoxRef = useRef<HTMLPreElement>(null)
 
-  // כותב שלב אמיתי ללוג המשותף. אותם שלבים בדיוק מוצגים על המסך למטה,
-  // כי המסך שואב את /api/uuid-log?run=<id> כל 2 שניות.
+  // כותב שלב ללוג המשותף /api/uuid-log (לא מוצג על המסך).
   const step = (name: string, msg: string) => uuidLog(runIdRef.current, name, msg)
 
   useEffect(() => {
@@ -6981,26 +6978,6 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
     onInstall()
     step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן — הרץ אותו והשלם את ההתקנה')
   }, [])
-
-  // מסך = הלוג. מושכים את הלוג של הריצה הזו כל 2 שניות ומציגים אותו כמו שהוא.
-  useEffect(() => {
-    let alive = true
-    const pull = async () => {
-      try {
-        const r = await fetch(`/api/uuid-log?run=${encodeURIComponent(runIdRef.current)}&view=1`, { cache: 'no-store' })
-        const t = await r.text()
-        if (alive && t && t.trim()) setLogText(t)
-      } catch { /* נציג מה שיש */ }
-    }
-    pull()
-    const id = setInterval(pull, 2000)
-    return () => { alive = false; clearInterval(id) }
-  }, [])
-
-  useEffect(() => {
-    const el = logBoxRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [logText])
 
   // רישום ה-UUID ברשומת הלקוח. משותף למסלול הרגיל (uuidCapture נלכד ב-handleLogin/handleUpdate)
   // ולכפתור "נסה שוב".
@@ -7068,23 +7045,18 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '28px', gap: '18px' }}>
         {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
-        <div style={{ fontFamily: handFont('he'), color: phase === 'done' ? '#2e7d32' : phase === 'incomplete' ? '#c62828' : '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
-          {phase === 'done'
-            ? 'הרישום הושלם — אפשר להיכנס. גלישה נעימה'
-            : phase === 'incomplete'
-              ? 'הרישום לא הושלם — חסר קוד מחשב. לא ניתן להיכנס בפעם הבאה עד שקוד המחשב יירשם.'
+        {phase !== 'incomplete' && (
+          <div style={{ fontFamily: handFont('he'), color: phase === 'done' ? '#2e7d32' : '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+            {phase === 'done'
+              ? 'הרישום הסתיים בהצלחה, המשך גלישה נעימה'
               : 'תהליך ההרשמה מתבצע — נא להמתין'}
-        </div>
-        <pre
-          ref={logBoxRef}
-          dir="ltr"
-          style={{ direction: 'ltr', textAlign: 'left', margin: 0, width: '100%', maxWidth: '680px', height: '340px', overflowY: 'auto', background: 'rgba(0,0,0,0.5)', border: '1px solid #4a4a4a', borderRadius: '10px', padding: '16px', color: '#d7e2ee', fontFamily: 'Consolas, "Courier New", monospace', fontSize: '12.5px', lineHeight: 1.55, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
-        >{logText}</pre>
+          </div>
+        )}
         {phase === 'incomplete' && (
           <button
             onClick={retry}
             style={{ fontFamily: handFont('he'), fontSize: '20px', padding: '10px 30px', borderRadius: '10px', border: 'none', background: '#c31432', color: '#fff', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,.25)' }}
-          >נסה שוב</button>
+          >ההורדה הסתיימה, נא לאשר סיום התקנה</button>
         )}
       </div>
     </div>
