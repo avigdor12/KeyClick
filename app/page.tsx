@@ -6961,120 +6961,131 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 }
 
-// טקסטים של מסך ההתקנה, ב-11 השפות. fallback ל-en.
-type MfInstallTxt = { done: string; doneSub: string; downloading: string; wait: string; verifying: string; verifyingSub: string; ready: string; readyBody: string; retryNote: string; confirmBtn: string; checkAgainBtn: string }
-const MF_INSTALL_TXT: Record<string, MfInstallTxt> = {
-  en: { done: 'Registration complete', doneSub: 'You can now log in. Enjoy.', downloading: 'Downloading the installation file…', wait: 'Please wait', verifying: 'Verifying with the app…', verifyingSub: 'Please wait a few seconds', ready: 'Download finished', readyBody: 'Run the installation file, complete the installation, then click below to confirm.', retryNote: "The app hasn't responded yet. Make sure the installation finished, then click again.", confirmBtn: 'Confirm installation complete', checkAgainBtn: 'Check again' },
-  ru: { done: 'Регистрация завершена', doneSub: 'Теперь можно войти. Приятной работы.', downloading: 'Загрузка установочного файла…', wait: 'Пожалуйста, подождите', verifying: 'Проверка связи с приложением…', verifyingSub: 'Подождите несколько секунд', ready: 'Загрузка завершена', readyBody: 'Запустите установочный файл, завершите установку, затем нажмите кнопку ниже для подтверждения.', retryNote: 'Приложение пока не ответило. Убедитесь, что установка завершена, и нажмите снова.', confirmBtn: 'Подтвердить завершение установки', checkAgainBtn: 'Проверить снова' },
-  de: { done: 'Registrierung abgeschlossen', doneSub: 'Sie können sich jetzt anmelden. Viel Erfolg.', downloading: 'Installationsdatei wird heruntergeladen…', wait: 'Bitte warten', verifying: 'Verbindung zur App wird geprüft…', verifyingSub: 'Bitte einige Sekunden warten', ready: 'Download abgeschlossen', readyBody: 'Führen Sie die Installationsdatei aus, schließen Sie die Installation ab und klicken Sie dann unten zur Bestätigung.', retryNote: 'Die App hat noch nicht geantwortet. Stellen Sie sicher, dass die Installation abgeschlossen ist, und klicken Sie erneut.', confirmBtn: 'Installation abschließen bestätigen', checkAgainBtn: 'Erneut prüfen' },
-  fr: { done: 'Inscription terminée', doneSub: 'Vous pouvez maintenant vous connecter. Bonne navigation.', downloading: "Téléchargement du fichier d'installation…", wait: 'Veuillez patienter', verifying: "Vérification avec l'application…", verifyingSub: 'Veuillez patienter quelques secondes', ready: 'Téléchargement terminé', readyBody: "Exécutez le fichier d'installation, terminez l'installation, puis cliquez ci-dessous pour confirmer.", retryNote: "L'application n'a pas encore répondu. Vérifiez que l'installation est terminée, puis cliquez à nouveau.", confirmBtn: "Confirmer la fin de l'installation", checkAgainBtn: 'Vérifier à nouveau' },
-  he: { done: 'הרישום הושלם', doneSub: 'אפשר להיכנס. גלישה נעימה.', downloading: 'מוריד את קובץ ההתקנה…', wait: 'נא להמתין', verifying: 'מאמת מול האפליקציה…', verifyingSub: 'נא להמתין כמה שניות', ready: 'ההורדה הסתיימה', readyBody: 'הרץ את קובץ ההתקנה, השלם את ההתקנה, ואז לחץ למטה כדי לאשר.', retryNote: 'האפליקציה עדיין לא הגיבה. ודא שההתקנה הסתיימה, ולחץ שוב.', confirmBtn: 'אישור סיום התקנה', checkAgainBtn: 'בדוק שוב' },
-  es: { done: 'Registro completado', doneSub: 'Ya puede iniciar sesión. Buena navegación.', downloading: 'Descargando el archivo de instalación…', wait: 'Por favor, espere', verifying: 'Verificando con la aplicación…', verifyingSub: 'Espere unos segundos', ready: 'Descarga finalizada', readyBody: 'Ejecute el archivo de instalación, complete la instalación y luego haga clic abajo para confirmar.', retryNote: 'La aplicación aún no ha respondido. Asegúrese de que la instalación haya terminado y haga clic de nuevo.', confirmBtn: 'Confirmar instalación completada', checkAgainBtn: 'Comprobar de nuevo' },
-  ja: { done: '登録が完了しました', doneSub: 'ログインできます。ごゆっくりどうぞ。', downloading: 'インストールファイルをダウンロードしています…', wait: 'お待ちください', verifying: 'アプリと確認しています…', verifyingSub: '数秒お待ちください', ready: 'ダウンロードが完了しました', readyBody: 'インストールファイルを実行し、インストールを完了してから、下のボタンをクリックして確認してください。', retryNote: 'アプリがまだ応答していません。インストールが完了したことを確認して、もう一度クリックしてください。', confirmBtn: 'インストール完了を確認', checkAgainBtn: '再確認' },
-  ar: { done: 'اكتمل التسجيل', doneSub: 'يمكنك الآن تسجيل الدخول. تصفح ممتع.', downloading: 'جارٍ تنزيل ملف التثبيت…', wait: 'يرجى الانتظار', verifying: 'جارٍ التحقق مع التطبيق…', verifyingSub: 'يرجى الانتظار بضع ثوانٍ', ready: 'اكتمل التنزيل', readyBody: 'شغّل ملف التثبيت، أكمل التثبيت، ثم انقر بالأسفل للتأكيد.', retryNote: 'لم يستجب التطبيق بعد. تأكد من اكتمال التثبيت، ثم انقر مرة أخرى.', confirmBtn: 'تأكيد اكتمال التثبيت', checkAgainBtn: 'تحقق مرة أخرى' },
-  zh: { done: '注册完成', doneSub: '现在可以登录了。祝使用愉快。', downloading: '正在下载安装文件…', wait: '请稍候', verifying: '正在与应用验证…', verifyingSub: '请稍候几秒', ready: '下载完成', readyBody: '运行安装文件，完成安装，然后点击下方按钮进行确认。', retryNote: '应用尚未响应。请确认安装已完成，然后再次点击。', confirmBtn: '确认安装完成', checkAgainBtn: '再次检查' },
-  it: { done: 'Registrazione completata', doneSub: 'Ora puoi accedere. Buona navigazione.', downloading: 'Download del file di installazione…', wait: 'Attendere prego', verifying: "Verifica con l'applicazione…", verifyingSub: 'Attendere qualche secondo', ready: 'Download completato', readyBody: "Esegui il file di installazione, completa l'installazione, quindi fai clic qui sotto per confermare.", retryNote: "L'applicazione non ha ancora risposto. Assicurati che l'installazione sia terminata e fai clic di nuovo.", confirmBtn: 'Conferma installazione completata', checkAgainBtn: 'Controlla di nuovo' },
-  hi: { done: 'पंजीकरण पूर्ण', doneSub: 'अब आप लॉग इन कर सकते हैं। शुभकामनाएँ।', downloading: 'इंस्टॉलेशन फ़ाइल डाउनलोड हो रही है…', wait: 'कृपया प्रतीक्षा करें', verifying: 'ऐप से सत्यापन हो रहा है…', verifyingSub: 'कृपया कुछ सेकंड प्रतीक्षा करें', ready: 'डाउनलोड पूरा हुआ', readyBody: 'इंस्टॉलेशन फ़ाइल चलाएँ, इंस्टॉलेशन पूरा करें, फिर पुष्टि के लिए नीचे क्लिक करें।', retryNote: 'ऐप ने अभी तक जवाब नहीं दिया। सुनिश्चित करें कि इंस्टॉलेशन पूरा हो गया, फिर दोबारा क्लिक करें।', confirmBtn: 'इंस्टॉलेशन पूर्ण होने की पुष्टि करें', checkAgainBtn: 'फिर से जांचें' },
-}
-
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
-  // run_id משותף לתהליך — נכתב ל-/api/uuid-log לצורכי דיבאג (לא מוצג על המסך).
+  // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
-  // downloading = ההורדה נשלחה, מציגים "מוריד…" רגע קצר · confirm = "ההורדה הסתיימה, אשר סיום התקנה"
-  // verifying = הלקוח אישר, פונים לאפליקציה · retry = פנייה קודמת לא קיבלה תשובה · done = נרשם בשרת
-  const [phase, setPhase] = useState<'downloading' | 'confirm' | 'verifying' | 'retry' | 'done'>('downloading')
+  // running = בתהליך · done = ה-UUID נרשם בפועל בשרת, אפשר להיכנס · incomplete = נעצר בלי UUID
+  const [phase, setPhase] = useState<'running' | 'done' | 'incomplete'>('running')
+  const [logText, setLogText] = useState('(ממתין לתחילת התהליך…)')
+  const logBoxRef = useRef<HTMLPreElement>(null)
+
+  // כותב שלב אמיתי ללוג המשותף. אותם שלבים בדיוק מוצגים על המסך למטה,
+  // כי המסך שואב את /api/uuid-log?run=<id> כל 2 שניות.
   const step = (name: string, msg: string) => uuidLog(runIdRef.current, name, msg)
 
-  // שומר את קוד המחשב ברשומת הלקוח. מחזיר true אם השרת אישר.
-  const registerUuid = async (uuid: string | null): Promise<boolean> => {
-    if (!uuid) { step('שגיאה', 'לא התקבל קוד מחשב מהאפליקציה'); return false }
+  useEffect(() => {
+    // מאמצים את ה-run_id של הלכידה שהתחילה בלחיצה, כדי שכל שורות הלוג יגיעו לאותה ריצה.
+    if (uuidCapture) runIdRef.current = uuidCapture.runId
+    onDbg('InstallCard', `mount [uuid-log run=${runIdRef.current}]`)
+    step('רשומה', `רשומת לקוח נוצרה — ${email ?? '(ללא מייל)'}. הרישום עדיין לא מלא: חסר קוד מחשב.`)
+    onInstall()
+    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן — הרץ אותו והשלם את ההתקנה')
+  }, [])
+
+  // מסך = הלוג. מושכים את הלוג של הריצה הזו כל 2 שניות ומציגים אותו כמו שהוא.
+  useEffect(() => {
+    let alive = true
+    const pull = async () => {
+      try {
+        const r = await fetch(`/api/uuid-log?run=${encodeURIComponent(runIdRef.current)}&view=1`, { cache: 'no-store' })
+        const t = await r.text()
+        if (alive && t && t.trim()) setLogText(t)
+      } catch { /* נציג מה שיש */ }
+    }
+    pull()
+    const id = setInterval(pull, 2000)
+    return () => { alive = false; clearInterval(id) }
+  }, [])
+
+  useEffect(() => {
+    const el = logBoxRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [logText])
+
+  // רישום ה-UUID ברשומת הלקוח. משותף למסלול הרגיל (uuidCapture נלכד ב-handleLogin/handleUpdate)
+  // ולכפתור "נסה שוב".
+  const registerUuid = async (uuid: string | null) => {
+    if (!uuid) {
+      step('שגיאה', 'לא התקבל קוד מחשב מהאפליקציה — הרישום לא הושלם')
+      setPhase('incomplete')
+      return
+    }
     localStorage.setItem('mf_uuid_local_bios', uuid)
     step('רישום', `שומר קוד מחשב ברשומה: ${uuid}`)
     try {
       const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
       const d = await res.json()
       onDbg('InstallCard', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
-      if (d.ok) { step('סיום', 'הרישום הושלם — הלקוח יכול להיכנס'); return true }
-      step('שגיאה', `השרת לא רשם את הקוד: ${d.error ?? '(ללא פירוט)'}`)
-      return false
+      if (d.ok) {
+        step('רישום', 'השרת אישר — קוד המחשב נרשם ברשומה')
+        step('סיום', 'הרישום הושלם — הלקוח יכול להיכנס')
+        setPhase('done')
+        onSetLoggedIn()
+      } else {
+        step('שגיאה', `השרת לא רשם את הקוד: ${d.error ?? '(ללא פירוט)'} — הרישום לא הושלם`)
+        setPhase('incomplete')
+      }
     } catch (e) {
-      step('שגיאה', `שליחת הקוד לשרת נכשלה: ${String(e)}`)
-      return false
+      step('שגיאה', `שליחת הקוד לשרת נכשלה: ${String(e)} — הרישום לא הושלם`)
+      setPhase('incomplete')
     }
   }
 
+  // ה-UUID נלכד ב-handleLogin/handleUpdate מיד עם הלחיצה (הטריגר mfinance:// חייב לצאת
+  // משרשרת אירוע-משתמש, לא מ-useEffect). כאן רק ממתינים לתוצאה ששמורה ב-uuidCapture.
   useEffect(() => {
-    // מסלול כניסה (לקוח חוזר): handleLogin כבר ירה Start_UUID_Capture. אם האפליקציה מותקנת
-    // היא כבר עונה — משלימים בשקט. מסלול הרשמה: uuidCapture = null, ניגשים ישר למסך האישור.
-    if (uuidCapture) runIdRef.current = uuidCapture.runId
-    onDbg('InstallCard', `mount [run=${runIdRef.current}] uuidCapture=${uuidCapture ? 'yes' : 'no'}`)
-    step('רשומה', `רשומת לקוח נוצרה — ${email ?? '(ללא מייל)'}. חסר קוד מחשב.`)
-    onInstall() // מוריד את קובץ ההתקנה (139MB, stream)
-    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
-
-    let cancelled = false
-    const cap = uuidCapture
-    const t = setTimeout(() => { if (!cancelled) setPhase('confirm') }, 3000)
-    if (cap) {
-      ;(async () => {
-        const uuid = await cap.promise
-        if (cancelled || !uuid) return
-        clearTimeout(t)
-        if (await registerUuid(uuid)) { setPhase('done'); onSetLoggedIn() }
-        else setPhase('confirm')
-      })()
+    if (!email) { onDbg('InstallCard', 'no email'); step('שגיאה', 'חסר מייל — לא ניתן לרשום'); setPhase('incomplete'); return }
+    if (!uuidCapture) {
+      onDbg('InstallCard', 'no uuidCapture — trigger was not fired from a click')
+      step('קוד מחשב', 'תהליך קוד המחשב לא הופעל מהלחיצה. אם האפליקציה כבר מותקנת — לחץ "נסה שוב".')
+      setPhase('incomplete')
+      return
     }
-    return () => { cancelled = true; clearTimeout(t) }
-  }, [])
+    let cancelled = false
+    runIdRef.current = uuidCapture.runId
+    step('קוד מחשב', 'ממתין לקוד מחשב מהאפליקציה')
+    ;(async () => {
+      const uuid = await uuidCapture!.promise
+      if (!cancelled) await registerUuid(uuid)
+    })()
+    return () => { cancelled = true }
+  }, [email, clientIp])
 
-  // "אישור סיום התקנה" — לחיצה טרייה: מותר לירות את mfinance://get-uuid מתוך ה-onClick.
-  const confirmInstalled = async () => {
-    setPhase('verifying')
-    step('אישור', 'הלקוח אישר סיום התקנה — פונה לאפליקציה')
-    Start_UUID_Capture(onDbg, 40000) // חלון ארוך — ייתכן שהאפליקציה עולה בפעם הראשונה אחרי התקנה
+  // "נסה שוב" — לחיצה טרייה, מותר לירות שוב את הטריגר mfinance:// מתוך ה-onClick.
+  const retry = async () => {
+    setPhase('running')
+    step('קוד מחשב', 'ניסיון חוזר — פנייה לאפליקציה')
+    Start_UUID_Capture(onDbg)
     runIdRef.current = uuidCapture!.runId
     const uuid = await uuidCapture!.promise
-    if (await registerUuid(uuid)) { setPhase('done'); onSetLoggedIn() }
-    else setPhase('retry')
+    await registerUuid(uuid)
   }
 
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
-  const F = handFont(lang.code)
-  const t = MF_INSTALL_TXT[lang.code] ?? MF_INSTALL_TXT.en
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '28px' }}>
-        <div style={{ width: '100%', maxWidth: '480px', background: '#2a2a2a', border: '2px solid #FFD700', borderRadius: '14px', padding: '36px 32px', boxShadow: '0 8px 32px rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', textAlign: 'center' }}>
-          {phase === 'done' ? (
-            <>
-              <div style={{ fontFamily: F, color: '#FFD700', fontSize: '30px', lineHeight: 1.3 }}>{t.done}</div>
-              <div style={{ color: '#cbb26b', fontSize: '17px', fontFamily: 'Arial, sans-serif' }}>{t.doneSub}</div>
-            </>
-          ) : phase === 'downloading' ? (
-            <>
-              <div style={{ fontFamily: F, color: '#FFD700', fontSize: '26px', lineHeight: 1.3 }}>{t.downloading}</div>
-              <div style={{ color: '#aaa', fontSize: '15px', fontFamily: 'Arial, sans-serif' }}>{t.wait}</div>
-            </>
-          ) : phase === 'verifying' ? (
-            <>
-              <div style={{ fontFamily: F, color: '#FFD700', fontSize: '26px', lineHeight: 1.3 }}>{t.verifying}</div>
-              <div style={{ color: '#aaa', fontSize: '15px', fontFamily: 'Arial, sans-serif' }}>{t.verifyingSub}</div>
-            </>
-          ) : (
-            <>
-              <div style={{ fontFamily: F, color: '#FFD700', fontSize: '28px', lineHeight: 1.35 }}>{t.ready}</div>
-              <div style={{ color: '#e8e8e8', fontSize: '17px', fontFamily: 'Arial, sans-serif', lineHeight: 1.65 }}>{t.readyBody}</div>
-              {phase === 'retry' && (
-                <div style={{ color: '#ff8a8a', fontSize: '14px', fontFamily: 'Arial, sans-serif', lineHeight: 1.5 }}>{t.retryNote}</div>
-              )}
-              <button onClick={confirmInstalled} style={{ ...regBtn, fontFamily: F, fontSize: '22px', padding: '12px 40px', borderRadius: '10px', marginTop: '4px' }}>
-                {phase === 'retry' ? t.checkAgainBtn : t.confirmBtn}
-              </button>
-            </>
-          )}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '28px', gap: '18px' }}>
+        {/* עברית בלבד לעת עתה — פיצ'ר חדש, תרגום ל-11 שפות רק כשזה יציב */}
+        <div style={{ fontFamily: handFont('he'), color: phase === 'done' ? '#2e7d32' : phase === 'incomplete' ? '#c62828' : '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+          {phase === 'done'
+            ? 'הרישום הושלם — אפשר להיכנס. גלישה נעימה'
+            : phase === 'incomplete'
+              ? 'הרישום לא הושלם — חסר קוד מחשב. לא ניתן להיכנס בפעם הבאה עד שקוד המחשב יירשם.'
+              : 'תהליך ההרשמה מתבצע — נא להמתין'}
         </div>
+        <pre
+          ref={logBoxRef}
+          dir="ltr"
+          style={{ direction: 'ltr', textAlign: 'left', margin: 0, width: '100%', maxWidth: '680px', height: '340px', overflowY: 'auto', background: 'rgba(0,0,0,0.5)', border: '1px solid #4a4a4a', borderRadius: '10px', padding: '16px', color: '#d7e2ee', fontFamily: 'Consolas, "Courier New", monospace', fontSize: '12.5px', lineHeight: 1.55, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+        >{logText}</pre>
+        {phase === 'incomplete' && (
+          <button
+            onClick={retry}
+            style={{ fontFamily: handFont('he'), fontSize: '20px', padding: '10px 30px', borderRadius: '10px', border: 'none', background: '#c31432', color: '#fff', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,.25)' }}
+          >נסה שוב</button>
+        )}
       </div>
     </div>
   )
@@ -7153,13 +7164,13 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
 // ונשמרת ב-uuidCapture; InstallCard קורא משם במקום לירות טריגר בעצמו מ-useEffect.
 let uuidCapture: { runId: string; promise: Promise<string | null> } | null = null
 
-function Start_UUID_Capture(onDbg: (func: string, msg: string) => void, maxMs = 20000): string {
+function Start_UUID_Capture(onDbg: (func: string, msg: string) => void): string {
   const runId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())
   const trigger = `mfinance://get-uuid?run=${encodeURIComponent(runId)}`
   onDbg('Start_UUID_Capture', `triggering ${trigger}`)
   uuidLog(runId, 'פנייה', `פותח קשר עם האפליקציה — ${trigger}`)
   window.location.href = trigger
-  uuidCapture = { runId, promise: Poll_UUID_From_Local(onDbg, runId, maxMs) }
+  uuidCapture = { runId, promise: Poll_UUID_From_Local(onDbg, runId, 20000) }
   return runId
 }
 
@@ -7255,9 +7266,8 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     if (savedPass && savedPass.length < 6)       { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
     if (savedPass !== savedConf)                 { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
 
-    // בהרשמה האפליקציה עוד לא מותקנת — אין למי לפנות. הלכידה תיעשה מכפתור "אישור סיום התקנה"
-    // במסך ההתקנה (לחיצה טרייה = gesture). מאפסים לכידה ישנה שאולי נשארה מניסיון קודם.
-    uuidCapture = null
+    // הטריגר mfinance://get-uuid חייב לצאת כאן, סינכרונית מתוך הלחיצה, לפני כל await
+    Start_UUID_Capture(onDbg)
 
     onDbg('handleUpdate', `fetch POST /api/register email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/register', {
