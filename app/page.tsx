@@ -929,6 +929,21 @@ function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof langu
   )
 }
 
+// ניסוי: קומפוננטה שיורה את הטריגר מ-useEffect על ה-mount שלה (כמו InstallCard בתהליך הכניסה),
+// במקום ישירות מ-onClick. משמש את כפתור "קרא UUID" עם התיבה "לירות מ-useEffect".
+function UuidEffectFire({ onDbg, onResult }: { onDbg: (func: string, msg: string) => void; onResult: (code: string | null) => void }) {
+  useEffect(() => {
+    let alive = true
+    ;(async () => {
+      const rid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())
+      const code = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, rid)
+      if (alive) onResult(code)
+    })()
+    return () => { alive = false }
+  }, [])
+  return null
+}
+
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking' | 'data' | 'statistics' | 'billing' | 'institutions'>('none')
   const [devBypassLogin, setDevBypassLogin] = useState(false)
@@ -1004,6 +1019,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const UUID_DELAY_STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50, 60]
   const [uuidDelayIdx, setUuidDelayIdx] = useState(0)
   const uuidDelaySec = UUID_DELAY_STEPS[uuidDelayIdx]
+  const [uuidFireViaEffect, setUuidFireViaEffect] = useState(false)
+  const [uuidEffectMount, setUuidEffectMount] = useState(false)
   const [usersEditMode, setUsersEditMode] = useState(false)
   const [pendingUserEdits, setPendingUserEdits] = useState<Record<string, Record<string, unknown>>>({})
   const [debugOpen, setDebugOpen] = useState(false)
@@ -1587,6 +1604,10 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   </div>
                 </div>
                 <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>השהיה מרגע הלחיצה עד שליחת ההודעה</div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#003399', fontWeight: 'bold', justifyContent: 'center' }}>
+                  <input type="checkbox" checked={uuidFireViaEffect} onChange={e => setUuidFireViaEffect(e.target.checked)} disabled={uuidTestBusy} />
+                  לירות מ-useEffect (כמו כניסה)
+                </label>
                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                   <button
                     disabled={uuidTestBusy}
@@ -1603,9 +1624,14 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                         await new Promise(r => setTimeout(r, 1000))
                       }
                       setUuidTest('שולח בקשה…')
-                      const code = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, rid)
-                      setUuidTest(code ? code : 'אין תשובה מהאפליקציה')
-                      setUuidTestBusy(false)
+                      if (uuidFireViaEffect) {
+                        // כמו כניסה: הטריגר יירה מ-useEffect של קומפוננטה חדשה, לא מכאן
+                        setUuidEffectMount(true)
+                      } else {
+                        const code = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, rid)
+                        setUuidTest(code ? code : 'אין תשובה מהאפליקציה')
+                        setUuidTestBusy(false)
+                      }
                     }}
                     style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: '4px', padding: '6px 12px', fontSize: '15px', fontWeight: 'bold', cursor: uuidTestBusy ? 'default' : 'pointer', opacity: uuidTestBusy ? 0.6 : 1 }}>
                     קרא UUID
@@ -1617,6 +1643,15 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                     איפוס
                   </button>
                 </div>
+                {uuidEffectMount && (
+                  <UuidEffectFire
+                    onDbg={onDbg}
+                    onResult={code => {
+                      setUuidTest(code ? code : 'אין תשובה מהאפליקציה')
+                      setUuidTestBusy(false)
+                      setUuidEffectMount(false)
+                    }} />
+                )}
               </div>
             </fieldset>
             <fieldset style={{ margin: '8px 6px', border: '1px solid #003399', borderRadius: '6px', padding: '10px 12px', height: 'fit-content' }}>
@@ -6927,7 +6962,6 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 }
 
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
-  const pollingRef = useRef(false)
   // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
   // running = בתהליך · done = ה-UUID נרשם בפועל בשרת, אפשר להיכנס · incomplete = נעצר בלי UUID
@@ -6940,11 +6974,12 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
   const step = (name: string, msg: string) => uuidLog(runIdRef.current, name, msg)
 
   useEffect(() => {
+    // מאמצים את ה-run_id של הלכידה שהתחילה בלחיצה, כדי שכל שורות הלוג יגיעו לאותה ריצה.
+    if (uuidCapture) runIdRef.current = uuidCapture.runId
     onDbg('InstallCard', `mount [uuid-log run=${runIdRef.current}]`)
     step('רשומה', `רשומת לקוח נוצרה — ${email ?? '(ללא מייל)'}. הרישום עדיין לא מלא: חסר קוד מחשב.`)
     onInstall()
     step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן — הרץ אותו והשלם את ההתקנה')
-    return () => { pollingRef.current = false }
   }, [])
 
   // מסך = הלוג. מושכים את הלוג של הריצה הזו כל 2 שניות ומציגים אותו כמו שהוא.
@@ -6967,52 +7002,64 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
     if (el) el.scrollTop = el.scrollHeight
   }, [logText])
 
-  useEffect(() => {
-    if (!email) { onDbg('InstallCard', 'no email => poll disabled'); step('שגיאה', 'חסר מייל — לא ניתן לרשום'); return }
-    pollingRef.current = true
-    let attempt = 0
-    const MAX_ATTEMPTS = 90 // ~90 * 5s
-    const poll = async () => {
-      while (pollingRef.current && attempt < MAX_ATTEMPTS) {
-        attempt++
-        step('ניסיון', `ניסיון ${attempt}/${MAX_ATTEMPTS} — מנסה לקבל קוד מחשב מהאפליקציה`)
-        const uuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, runIdRef.current)
-        if (!pollingRef.current) return
-        if (uuid) {
-          localStorage.setItem('mf_uuid_local_bios', uuid)
-          pollingRef.current = false
-          step('התקנה', 'האפליקציה מותקנת ומגיבה')
-          step('רישום', `שומר קוד מחשב ברשומה: ${uuid}`)
-          try {
-            const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
-            const d = await res.json()
-            onDbg('InstallCard', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
-            if (d.ok) {
-              step('רישום', 'השרת אישר — קוד המחשב נרשם ברשומה')
-              step('סיום', 'הרישום הושלם — הלקוח יכול להיכנס')
-              setPhase('done')
-              onSetLoggedIn()
-            } else {
-              step('שגיאה', `השרת לא רשם את הקוד: ${d.error ?? '(ללא פירוט)'} — הרישום לא הושלם`)
-              setPhase('incomplete')
-            }
-          } catch (e) {
-            step('שגיאה', `שליחת הקוד לשרת נכשלה: ${String(e)} — הרישום לא הושלם`)
-            setPhase('incomplete')
-          }
-          return
-        }
-        step('המתנה', `אין תשובה מהאפליקציה — ממתין 5 שניות (אחרי ניסיון ${attempt})`)
-        await new Promise(r => setTimeout(r, 5000))
-      }
-      if (attempt >= MAX_ATTEMPTS) {
-        step('שגיאה', `אין תשובה מהאפליקציה אחרי ${MAX_ATTEMPTS} ניסיונות — הרישום לא הושלם`)
+  // רישום ה-UUID ברשומת הלקוח. משותף למסלול הרגיל (uuidCapture נלכד ב-handleLogin/handleUpdate)
+  // ולכפתור "נסה שוב".
+  const registerUuid = async (uuid: string | null) => {
+    if (!uuid) {
+      step('שגיאה', 'לא התקבל קוד מחשב מהאפליקציה — הרישום לא הושלם')
+      setPhase('incomplete')
+      return
+    }
+    localStorage.setItem('mf_uuid_local_bios', uuid)
+    step('רישום', `שומר קוד מחשב ברשומה: ${uuid}`)
+    try {
+      const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
+      const d = await res.json()
+      onDbg('InstallCard', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
+      if (d.ok) {
+        step('רישום', 'השרת אישר — קוד המחשב נרשם ברשומה')
+        step('סיום', 'הרישום הושלם — הלקוח יכול להיכנס')
+        setPhase('done')
+        onSetLoggedIn()
+      } else {
+        step('שגיאה', `השרת לא רשם את הקוד: ${d.error ?? '(ללא פירוט)'} — הרישום לא הושלם`)
         setPhase('incomplete')
       }
+    } catch (e) {
+      step('שגיאה', `שליחת הקוד לשרת נכשלה: ${String(e)} — הרישום לא הושלם`)
+      setPhase('incomplete')
     }
-    poll()
-    return () => { pollingRef.current = false }
+  }
+
+  // ה-UUID נלכד ב-handleLogin/handleUpdate מיד עם הלחיצה (הטריגר mfinance:// חייב לצאת
+  // משרשרת אירוע-משתמש, לא מ-useEffect). כאן רק ממתינים לתוצאה ששמורה ב-uuidCapture.
+  useEffect(() => {
+    if (!email) { onDbg('InstallCard', 'no email'); step('שגיאה', 'חסר מייל — לא ניתן לרשום'); setPhase('incomplete'); return }
+    if (!uuidCapture) {
+      onDbg('InstallCard', 'no uuidCapture — trigger was not fired from a click')
+      step('קוד מחשב', 'תהליך קוד המחשב לא הופעל מהלחיצה. אם האפליקציה כבר מותקנת — לחץ "נסה שוב".')
+      setPhase('incomplete')
+      return
+    }
+    let cancelled = false
+    runIdRef.current = uuidCapture.runId
+    step('קוד מחשב', 'ממתין לקוד מחשב מהאפליקציה')
+    ;(async () => {
+      const uuid = await uuidCapture!.promise
+      if (!cancelled) await registerUuid(uuid)
+    })()
+    return () => { cancelled = true }
   }, [email, clientIp])
+
+  // "נסה שוב" — לחיצה טרייה, מותר לירות שוב את הטריגר mfinance:// מתוך ה-onClick.
+  const retry = async () => {
+    setPhase('running')
+    step('קוד מחשב', 'ניסיון חוזר — פנייה לאפליקציה')
+    Start_UUID_Capture(onDbg)
+    runIdRef.current = uuidCapture!.runId
+    const uuid = await uuidCapture!.promise
+    await registerUuid(uuid)
+  }
 
   const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
 
@@ -7033,6 +7080,12 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           dir="ltr"
           style={{ direction: 'ltr', textAlign: 'left', margin: 0, width: '100%', maxWidth: '680px', height: '340px', overflowY: 'auto', background: 'rgba(0,0,0,0.5)', border: '1px solid #4a4a4a', borderRadius: '10px', padding: '16px', color: '#d7e2ee', fontFamily: 'Consolas, "Courier New", monospace', fontSize: '12.5px', lineHeight: 1.55, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         >{logText}</pre>
+        {phase === 'incomplete' && (
+          <button
+            onClick={retry}
+            style={{ fontFamily: handFont('he'), fontSize: '20px', padding: '10px 30px', borderRadius: '10px', border: 'none', background: '#c31432', color: '#fff', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,.25)' }}
+          >נסה שוב</button>
+        )}
       </div>
     </div>
   )
@@ -7105,6 +7158,45 @@ async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: stri
   }
 }
 
+// לכידת UUID לתהליך הכניסה/הרשמה. הטריגר mfinance://get-uuid חייב להיירות מתוך handler של לחיצה
+// (הדפדפן מפעיל אפליקציה חיצונית רק כשהקריאה יורדת משרשרת של אירוע משתמש). לכן Start_UUID_Capture
+// נקראת סינכרונית ב-handleLogin/handleUpdate, לפני כל await. המשיכה מ-localhost נעשית ברקע
+// ונשמרת ב-uuidCapture; InstallCard קורא משם במקום לירות טריגר בעצמו מ-useEffect.
+let uuidCapture: { runId: string; promise: Promise<string | null> } | null = null
+
+function Start_UUID_Capture(onDbg: (func: string, msg: string) => void): string {
+  const runId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())
+  const trigger = `mfinance://get-uuid?run=${encodeURIComponent(runId)}`
+  onDbg('Start_UUID_Capture', `triggering ${trigger}`)
+  uuidLog(runId, 'פנייה', `פותח קשר עם האפליקציה — ${trigger}`)
+  window.location.href = trigger
+  uuidCapture = { runId, promise: Poll_UUID_From_Local(onDbg, runId, 20000) }
+  return runId
+}
+
+async function Poll_UUID_From_Local(onDbg: (func: string, msg: string) => void, runId: string, maxMs: number): Promise<string | null> {
+  const deadline = Date.now() + maxMs
+  let first = true
+  while (Date.now() < deadline) {
+    await new Promise(r => setTimeout(r, first ? 800 : 700))
+    first = false
+    const controller = new AbortController()
+    const t = setTimeout(() => controller.abort(), 3000)
+    try {
+      uuidLog(runId, 'קריאה', `קורא את קוד המחשב מ-localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}`)
+      const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
+      clearTimeout(t)
+      if (res.ok) {
+        const code = (await res.text()).trim()
+        if (code) { onDbg('Poll_UUID_From_Local', `received "${code}"`); uuidLog(runId, 'UUID', `התקבל קוד מחשב: ${code}`); return code }
+      }
+    } catch { clearTimeout(t) }
+  }
+  onDbg('Poll_UUID_From_Local', 'no response within window')
+  uuidLog(runId, 'קריאה', 'אין תשובה מהאפליקציה בחלון הזמן')
+  return null
+}
+
 function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
@@ -7173,6 +7265,10 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     if (savedEmail && !savedEmail.includes('@')) { onDbg('handleUpdate', `email="${savedEmail}" invalid => errEmail`); setError(c.errEmail); return }
     if (savedPass && savedPass.length < 6)       { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
     if (savedPass !== savedConf)                 { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
+
+    // הטריגר mfinance://get-uuid חייב לצאת כאן, סינכרונית מתוך הלחיצה, לפני כל await
+    Start_UUID_Capture(onDbg)
+
     onDbg('handleUpdate', `fetch POST /api/register email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/register', {
       method: 'POST',
@@ -7202,7 +7298,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
 
   async function isComputerAlreadyTakenByAnotherCustomer(): Promise<boolean> {
     onDbg('flowDiagram', '23-בדיקה: קיים לקוח רשום במחשב?')
-    const newDeviceUuid = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
+    const newDeviceUuid = uuidCapture ? await uuidCapture.promise : null
     const computerRes = await fetch('/api/check-computer', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -7222,6 +7318,9 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     onDbg('handleLogin', `email="${savedEmail}" pass.len=${savedPass.length}`)
     setError('')
     if (!savedPass) { onDbg('handleLogin', 'pass empty => errPassLen'); setError(c.errPassLen); return }
+
+    // הטריגר mfinance://get-uuid חייב לצאת כאן, סינכרונית מתוך הלחיצה, לפני כל await
+    Start_UUID_Capture(onDbg)
 
     onDbg('flowDiagram', '4-בדיקה: קיימת רשומת לקוח (מייל+סיסמה)')
     onDbg('handleLogin', `fetch POST /api/login-check email="${savedEmail}"`)
@@ -7252,7 +7351,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     }
 
     onDbg('flowDiagram', '6-בקשת UUID מקומי מהאפליקציה')
-    const uuidBiosCode = await Get_UUID_BIOS_Code_From_M_Finance(onDbg)
+    const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
     onDbg('flowDiagram', '7-בדיקה: רישום UUID = UUID מקומי')
     onDbg('handleLogin', `fetch POST /api/login email="${savedEmail}" clientIp="${clientIp}" uuidBiosCode="${uuidBiosCode ?? 'null'}"`)
     const res = await fetch('/api/login', {
