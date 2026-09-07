@@ -190,6 +190,10 @@ export default function Home() {
   const [prText, setPrText] = useState('')
   const [prDate, setPrDate] = useState('')
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
+  // דף ההסבר לתהליך ההתקנה - נפתח כ-overlay מעל המסך הנוכחי, ממש לפני שההורדה האמיתית
+  // מתחילה (בתוך handleInstall), לא בכניסה לאתר. ראה handleInstall/resolveInstallConfirm.
+  const [installConfirmOpen, setInstallConfirmOpen] = useState(false)
+  const installConfirmResolveRef = useRef<((proceed: boolean) => void) | null>(null)
   const [reminderNotif, setReminderNotif] = useState<ReminderRecord[] | null>(null)
   const [siteVersion, setSiteVersion] = useState({ line1: '', line2: '' })
   const [debugLog, setDebugLog]       = useState<string[]>([])
@@ -534,6 +538,16 @@ export default function Home() {
     }
     setDebugLog([])
     dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} UUID_Local_BIOS=${Current_User_Pointer_to_DB?.UUID_Local_BIOS ?? 'none'}`)
+
+    // לא מותקן - לפני שמורידים בפועל, מציגים את דף ההסבר ומחכים ללחיצת "המשך" שם.
+    dbg('handleInstall', 'showing install explanation screen, waiting for confirm')
+    const proceed = await new Promise<boolean>(resolve => {
+      installConfirmResolveRef.current = resolve
+      setInstallConfirmOpen(true)
+    })
+    setInstallConfirmOpen(false)
+    if (!proceed) { dbg('handleInstall', 'user closed explanation screen without continuing => not downloading'); return }
+
     if (Current_User_Pointer_to_DB?.email) {
       localStorage.setItem('mf_pending_install_email', Current_User_Pointer_to_DB.email)
       dbg('handleInstall', `saved mf_pending_install_email="${Current_User_Pointer_to_DB.email}"`)
@@ -550,6 +564,12 @@ export default function Home() {
     a.click()
     a.remove()
     dbg('handleInstall', 'download triggered')
+  }
+
+  function resolveInstallConfirm(proceed: boolean) {
+    dbg('resolveInstallConfirm', `proceed=${proceed}`)
+    installConfirmResolveRef.current?.(proceed)
+    installConfirmResolveRef.current = null
   }
 
   async function handleRun() {
@@ -640,6 +660,12 @@ export default function Home() {
             <div style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', color: popupMsg.bodyColor ?? '#FFD700', fontSize: '32px', lineHeight: '1.4', marginBottom: '8px', whiteSpace: 'pre-line' }}>{popupMsg.body}</div>
             <div onClick={() => setPopupMsg(null)} style={{ position: 'absolute', right: '12px', bottom: '10px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>{lang.card.ok}</div>
           </div>
+        </div>
+      )}
+
+      {installConfirmOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
+          <InstallInfoCard lang={lang} onClose={() => resolveInstallConfirm(false)} onNavigate={() => resolveInstallConfirm(true)} />
         </div>
       )}
 
