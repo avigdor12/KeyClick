@@ -7273,7 +7273,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           </div>
         )}
         {phase === 'running' && (
-          <div style={{ fontFamily: handFont(lang.code), color: '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)', fontWeight: 'bold' }}>
+          <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
             {t.runningLine1}<br />{t.runningLine2}
           </div>
         )}
