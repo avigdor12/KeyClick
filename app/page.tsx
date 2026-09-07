@@ -7180,20 +7180,27 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
     onDbg('InstallCard', `mount [run=${runIdRef.current}] uuidCapture=${uuidCapture ? 'yes' : 'no'}`)
     if (!email) { onDbg('InstallCard', 'no email'); step('שגיאה', 'חסר מייל — לא ניתן לרשום'); setPhase('incomplete'); return }
     step('רשומה', `רשומת לקוח נוצרה — ${email}. חסר קוד מחשב.`)
-    onInstall()
-    step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
 
     const cancelled = { v: false }
     ;(async () => {
       if (uuidCapture) {
-        // מסלול כניסה: הטריגר כבר נורה מהלחיצה. ממתינים לתוצאה.
-        const uuid = await uuidCapture.promise
+        // כבר ניסינו ליצור קשר עם האפליקציה מהלחיצה שלפני המסך הזה (כניסה או הרשמה).
+        // ממתינים לתוצאה הזו לפני שמחליטים אם בכלל צריך להוריד - אם האפליקציה כבר ענתה,
+        // היא מותקנת בפועל, ואין שום סיבה להוריד ולהתקין אותה מחדש.
+        const uuid = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
         if (cancelled.v) return
-        if (uuid) await registerUuid(uuid)
-        else setPhase('incomplete')
+        if (uuid) {
+          await registerUuid(uuid)
+        } else {
+          onInstall()
+          step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
+          setPhase('incomplete')
+        }
       } else {
-        // מסלול הרשמה: אין אפליקציה עדיין. בודקים את הפורט בסבלנות עד 5 דקות. הכפתור (מסך 2)
-        // יופיע רק כשהאפליקציה תגיב — כלומר כשההתקנה תיגמר.
+        // מסלול הרשמה בלי ניסיון מוקדם: אין אפליקציה עדיין. מורידים, ובודקים את הפורט
+        // בסבלנות עד 5 דקות. הכפתור (מסך 2) יופיע רק כשהאפליקציה תגיב - כשההתקנה תיגמר.
+        onInstall()
+        step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
         step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
         const uuid = await pollForApp(300000, cancelled)
         if (cancelled.v) return
@@ -7212,7 +7219,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
     step('קוד מחשב', 'ניסיון ידני — פנייה לאפליקציה')
     Start_UUID_Capture(onDbg)
     runIdRef.current = uuidCapture!.runId
-    const uuid = await uuidCapture!.promise
+    const uuid = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
     await registerUuid(uuid)
   }
 
@@ -7343,12 +7350,30 @@ async function Poll_UUID_From_Local(onDbg: (func: string, msg: string) => void, 
       clearTimeout(t)
       if (res.ok) {
         const code = (await res.text()).trim()
-        if (code) { onDbg('Poll_UUID_From_Local', `received "${code}"`); uuidLog(runId, 'UUID', `התקבל קוד מחשב: ${code}`); return code }
+        if (code) {
+          onDbg('Poll_UUID_From_Local', `received "${code}"`)
+          uuidLog(runId, 'UUID', `התקבל קוד מחשב: ${code}`)
+          try { localStorage.setItem('mf_uuid_local_bios', code) } catch { /* לא נוגעים בזרימה */ }
+          return code
+        }
       }
     } catch { clearTimeout(t) }
   }
   onDbg('Poll_UUID_From_Local', 'no response within window')
   uuidLog(runId, 'קריאה', 'אין תשובה מהאפליקציה בחלון הזמן')
+  return null
+}
+
+// עוטפת כל מקום שמחכה לתוצאה של Start_UUID_Capture. קודם מחכים לקריאה החיה כרגיל (עד המועד
+// שנקבע לה) - רק אם היא לא ענתה בכלל, נופלים לערך השמור מהפעם האחרונה שהתקבל קוד בהצלחה
+// (localStorage, ראה Poll_UUID_From_Local). לא אוטומטי - תמיד מנסים את הקריאה האמיתית קודם.
+async function Get_UUID_With_Cache_Fallback(onDbg: (func: string, msg: string) => void, capture: { runId: string; promise: Promise<string | null> } | null): Promise<string | null> {
+  const uuid = capture ? await capture.promise : null
+  if (uuid) return uuid
+  try {
+    const cached = localStorage.getItem('mf_uuid_local_bios')
+    if (cached) { onDbg('Get_UUID_With_Cache_Fallback', `no live response => using cached localStorage value "${cached}"`); return cached }
+  } catch { /* לא נוגעים בזרימה */ }
   return null
 }
 
@@ -7421,9 +7446,10 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     if (savedPass && savedPass.length < 6)       { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
     if (savedPass !== savedConf)                 { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
 
-    // בהרשמה האפליקציה עוד לא מותקנת — אין למי לפנות. InstallCard בודק את הפורט בסבלנות
-    // עד שההתקנה נגמרת והאפליקציה מגיבה (Serve_UUID_Once ב-OnFirstRun של Velopack).
-    uuidCapture = null
+    // ניסיון מהיר: אולי האפליקציה כבר מותקנת על המחשב הזה (התקנה קודמת). הטריגר חייב לצאת
+    // כאן, סינכרונית מתוך הלחיצה, לפני כל await - בדיוק כמו ב-handleLogin. אם לא תהיה תשובה,
+    // InstallCard יפיל את זה חזרה למסלול הרגיל (הורדה + polling סבלני על הפורט).
+    Start_UUID_Capture(onDbg)
 
     onDbg('handleUpdate', `fetch POST /api/register email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/register', {
@@ -7454,7 +7480,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
 
   async function isComputerAlreadyTakenByAnotherCustomer(): Promise<boolean> {
     onDbg('flowDiagram', '23-בדיקה: קיים לקוח רשום במחשב?')
-    const newDeviceUuid = uuidCapture ? await uuidCapture.promise : null
+    const newDeviceUuid = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
     const computerRes = await fetch('/api/check-computer', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -7531,7 +7557,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
       if (checkData.code === 'NEEDS_INSTALL') {
         // ה-UUID כבר בתהליך תפיסה מאז לחיצת הכניסה (Start_UUID_Capture למעלה) - אם האפליקציה
         // כבר מותקנת ועונה, הקוד יגיע כאן. משתמשים בתוצאה הזו במקום לנחש "לא מותקן" אוטומטית.
-        const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
+        const uuidBiosCode = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
         onDbg('handleLogin', `NEEDS_INSTALL uuidBiosCode="${uuidBiosCode ?? 'null'}"`)
         if (await isComputerAlreadyTakenByAnotherCustomer()) return
         if (!uuidBiosCode) {
@@ -7567,7 +7593,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     }
 
     onDbg('flowDiagram', '6-בקשת UUID מקומי מהאפליקציה')
-    const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
+    const uuidBiosCode = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
     await finishLogin(uuidBiosCode)
   }
 
