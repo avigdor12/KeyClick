@@ -7274,9 +7274,14 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         )}
         {phase === 'running' && (
           <>
-            <style>{`@keyframes mfRunningPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }`}</style>
-            <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: '59px', lineHeight: 1.25, textAlign: dir === 'rtl' ? 'right' : 'left', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold', animation: 'mfRunningPulse 1.6s ease-in-out infinite' }}>
+            <style>{`
+              @keyframes mfProgressSlide { 0% { left: -30%; } 100% { left: 100%; } }
+            `}</style>
+            <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: '59px', lineHeight: 1.25, textAlign: dir === 'rtl' ? 'right' : 'left', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
               {t.runningLine1}<br />{t.runningLine2}
+            </div>
+            <div style={{ position: 'relative', width: '340px', maxWidth: '80%', height: '10px', background: '#ddd', borderRadius: '5px', overflow: 'hidden', marginTop: '18px' }}>
+              <div style={{ position: 'absolute', top: 0, left: '-30%', width: '30%', height: '100%', background: '#111', borderRadius: '5px', animation: 'mfProgressSlide 1.3s linear infinite' }} />
             </div>
           </>
         )}
