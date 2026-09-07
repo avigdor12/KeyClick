@@ -528,6 +528,7 @@ export default function Home() {
     // "כבר מותקן" נקבע לפי UUID רשום בפועל - לא לפי הדגל is_M_Finance_installed, שיכול להיות
     // true בלי UUID (מצב לא-עקבי מבדיקות קודמות) והיה חוסם את ההורדה למי שדווקא צריך להתקין.
     if (Current_User_Pointer_to_DB?.UUID_Local_BIOS) {
+      dbg('handleInstall', `already installed, UUID_Local_BIOS="${Current_User_Pointer_to_DB.UUID_Local_BIOS}" => skip download`)
       setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgAlreadyInstalled })
       return
     }
@@ -7468,45 +7469,9 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     return computerData.taken
   }
 
-  async function handleLogin() {
-    onDbg('flowDiagram', '3-לקוח ממלא פרטי כניסה ולוחץ כניסה')
-    onDbg('handleLogin', `email="${savedEmail}" pass.len=${savedPass.length}`)
-    setError('')
-    if (!savedPass) { onDbg('handleLogin', 'pass empty => errPassLen'); setError(c.errPassLen); return }
-
-    // הטריגר mfinance://get-uuid חייב לצאת כאן, סינכרונית מתוך הלחיצה, לפני כל await
-    Start_UUID_Capture(onDbg)
-
-    onDbg('flowDiagram', '4-בדיקה: קיימת רשומת לקוח (מייל+סיסמה)')
-    onDbg('handleLogin', `fetch POST /api/login-check email="${savedEmail}"`)
-    const checkRes = await fetch('/api/login-check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: savedEmail, password: savedPass }),
-    })
-    const checkData = await checkRes.json()
-    onDbg('flowDiagram', '5-בדיקה: UUID BIOS קיים ברשומה')
-    onDbg('handleLogin', `login-check res.status=${checkRes.status} res.ok=${checkRes.ok}`)
-    if (!checkRes.ok) {
-      onDbg('handleLogin', `login-check failed err="${checkData.error}" code="${checkData.code}"`)
-      if (checkData.code === 'NOT_FOUND') {
-        if (await isComputerAlreadyTakenByAnotherCustomer()) return
-        setShowNotFoundMsg(true)
-        return
-      }
-      if (checkData.code === 'NEEDS_INSTALL') {
-        if (await isComputerAlreadyTakenByAnotherCustomer()) return
-        onDbg('flowDiagram', `13-ממשיך בתהליך התקנת M Finance (רשומה קיימת, אין UUID עדיין) user="${checkData.user?.email}"`)
-        onUserUpdate(checkData.user)
-        onSetLoggedIn() // הרשומה קיימת - משחררים כפתורים מיד, לפני ההתקנה
-        onNavigate('mf-install')
-        return
-      }
-      setError(checkData.error); return
-    }
-
-    onDbg('flowDiagram', '6-בקשת UUID מקומי מהאפליקציה')
-    const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
+  // משותף לכל סיום כניסה מוצלח (גם המסלול הרגיל וגם רישום-UUID-ישיר בהמשך) - קריאה ל-/api/login
+  // עם קוד המחשב שכבר בידיים, וטיפול בתוצאה.
+  async function finishLogin(uuidBiosCode: string | null) {
     onDbg('flowDiagram', '7-בדיקה: רישום UUID = UUID מקומי')
     onDbg('handleLogin', `fetch POST /api/login email="${savedEmail}" clientIp="${clientIp}" uuidBiosCode="${uuidBiosCode ?? 'null'}"`)
     const res = await fetch('/api/login', {
@@ -7535,6 +7500,75 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     setRegistered(false)
     onClose()
     onLogin(data.user)
+  }
+
+  async function handleLogin() {
+    onDbg('flowDiagram', '3-לקוח ממלא פרטי כניסה ולוחץ כניסה')
+    onDbg('handleLogin', `email="${savedEmail}" pass.len=${savedPass.length}`)
+    setError('')
+    if (!savedPass) { onDbg('handleLogin', 'pass empty => errPassLen'); setError(c.errPassLen); return }
+
+    // הטריגר mfinance://get-uuid חייב לצאת כאן, סינכרונית מתוך הלחיצה, לפני כל await
+    Start_UUID_Capture(onDbg)
+
+    onDbg('flowDiagram', '4-בדיקה: קיימת רשומת לקוח (מייל+סיסמה)')
+    onDbg('handleLogin', `fetch POST /api/login-check email="${savedEmail}"`)
+    const checkRes = await fetch('/api/login-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: savedEmail, password: savedPass }),
+    })
+    const checkData = await checkRes.json()
+    onDbg('flowDiagram', '5-בדיקה: UUID BIOS קיים ברשומה')
+    onDbg('handleLogin', `login-check res.status=${checkRes.status} res.ok=${checkRes.ok}`)
+    if (!checkRes.ok) {
+      onDbg('handleLogin', `login-check failed err="${checkData.error}" code="${checkData.code}"`)
+      if (checkData.code === 'NOT_FOUND') {
+        if (await isComputerAlreadyTakenByAnotherCustomer()) return
+        setShowNotFoundMsg(true)
+        return
+      }
+      if (checkData.code === 'NEEDS_INSTALL') {
+        // ה-UUID כבר בתהליך תפיסה מאז לחיצת הכניסה (Start_UUID_Capture למעלה) - אם האפליקציה
+        // כבר מותקנת ועונה, הקוד יגיע כאן. משתמשים בתוצאה הזו במקום לנחש "לא מותקן" אוטומטית.
+        const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
+        onDbg('handleLogin', `NEEDS_INSTALL uuidBiosCode="${uuidBiosCode ?? 'null'}"`)
+        if (await isComputerAlreadyTakenByAnotherCustomer()) return
+        if (!uuidBiosCode) {
+          // אין תשובה מהאפליקציה - באמת לא מותקן. ממשיכים למסך ההתקנה כרגיל.
+          onDbg('flowDiagram', `13-ממשיך בתהליך התקנת M Finance (רשומה קיימת, אין UUID עדיין) user="${checkData.user?.email}"`)
+          onUserUpdate(checkData.user)
+          onSetLoggedIn() // הרשומה קיימת - משחררים כפתורים מיד, לפני ההתקנה
+          onNavigate('mf-install')
+          return
+        }
+        // האפליקציה כבר ענתה - מותקנת בפועל. רושמים את קוד המחשב ומדלגים לגמרי על מסך ההתקנה.
+        onDbg('handleLogin', 'NEEDS_INSTALL app already responded => registering uuid directly, skip install screen')
+        const setRes = await fetch('/api/set-mfinance-installed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: savedEmail, clientIp, uuidLocalBios: uuidBiosCode }),
+        })
+        const setData = await setRes.json()
+        onDbg('handleLogin', `set-mfinance-installed status=${setRes.status} ok=${setData.ok} error="${setData.error ?? 'none'}"`)
+        if (!setData.ok) {
+          // הרישום נכשל - נופלים חזרה למסך ההתקנה הרגיל, בדיוק כמו לפני התיקון
+          onDbg('handleLogin', 'set-mfinance-installed failed => falling back to install screen')
+          onUserUpdate(checkData.user)
+          onSetLoggedIn()
+          onNavigate('mf-install')
+          return
+        }
+        onDbg('handleLogin', 'uuid registered directly => skipping install screen, finishing login')
+        await finishLogin(uuidBiosCode)
+        return
+      }
+      setError(checkData.error); return
+    }
+
+    onDbg('flowDiagram', '6-בקשת UUID מקומי מהאפליקציה')
+    const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
+    await finishLogin(uuidBiosCode)
   }
 
   return (
