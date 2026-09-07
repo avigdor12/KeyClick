@@ -712,9 +712,8 @@ export default function Home() {
                 if (isLoggedInExplicit) return
                 dbg('flowDiagram', '2-לקוח לחץ על כניסה')
                 mfChainRef.current = true
-                // לקוח שהמחשב שלו לא מזוהה (אין רשומה קיימת) - מסך הסבר על ההרשמה וההתקנה קודם.
-                // לקוח מוכר (יש רשומה) - ישר למסך הכניסה הרגיל, בלי לשנות כלום עבורו.
-                setActivePage(knownMachineChecked && !uuidHintEmail ? 'mf-newinfo' : 'mf-login')
+                // תמיד ישר לטופס הכניסה - בלי ניתוב אוטומטי לדף הסבר לפי זיהוי מקומי.
+                setActivePage('mf-login')
               }}
               style={{ display: 'block', width: '100%', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px', cursor: 'pointer', fontSize: '20px', fontWeight: 'bold' }}>
               {lang.card.login}
