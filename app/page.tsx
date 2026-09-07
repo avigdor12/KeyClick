@@ -7622,9 +7622,9 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
             <div style={{ position: 'relative', border: '2px solid #555', borderRadius: '10px', padding: '16px', paddingTop: '22px', marginBottom: '10px' }}>
               <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: '#2a2a2a', padding: '0 10px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', direction: dir }}>{c.existingCustomer}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <input type="email"    placeholder={c.emailPh} value={savedEmail} onChange={e => { setSavedEmail(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput }} />
+                <input type="email"    autoComplete="email" placeholder={c.emailPh} value={savedEmail} onChange={e => { setSavedEmail(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput }} />
                 <div style={{ position: 'relative' }}>
-                  <input type={showPass ? 'text' : 'password'} placeholder={c.passPh} value={savedPass} onChange={e => { setSavedPass(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput, paddingRight: '40px' }} />
+                  <input type={showPass ? 'text' : 'password'} autoComplete="new-password" placeholder={c.passPh} value={savedPass} onChange={e => { setSavedPass(e.target.value); setShowNotFoundMsg(false) }} style={{ ...regInput, paddingRight: '40px' }} />
                   <button type="button" onClick={() => setShowPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showPass} /></button>
                 </div>
               </div>
@@ -7650,13 +7650,13 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
           <>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <input type="text"     placeholder={c.namePh}        value={savedName}  onChange={e => setSavedName(e.target.value)}  style={{ ...regInput, direction: dir }} />
-              <input type="email"    placeholder={c.emailPh}       value={savedEmail} onChange={e => setSavedEmail(e.target.value)} style={{ ...regInput }} />
+              <input type="email"    autoComplete="email" placeholder={c.emailPh}       value={savedEmail} onChange={e => setSavedEmail(e.target.value)} style={{ ...regInput }} />
               <div style={{ position: 'relative' }}>
-                <input type={showPass ? 'text' : 'password'} placeholder={c.passPh} value={savedPass} onChange={e => setSavedPass(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
+                <input type={showPass ? 'text' : 'password'} autoComplete="new-password" placeholder={c.passPh} value={savedPass} onChange={e => setSavedPass(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
                 <button type="button" onClick={() => setShowPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showPass} /></button>
               </div>
               <div style={{ position: 'relative' }}>
-                <input type={showConfPass ? 'text' : 'password'} placeholder={c.confirmPassPh} value={savedConf} onChange={e => setSavedConf(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
+                <input type={showConfPass ? 'text' : 'password'} autoComplete="new-password" placeholder={c.confirmPassPh} value={savedConf} onChange={e => setSavedConf(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
                 <button type="button" onClick={() => setShowConfPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showConfPass} /></button>
               </div>
             </div>
