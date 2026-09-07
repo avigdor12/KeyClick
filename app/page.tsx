@@ -2701,7 +2701,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
           const last = msgs[msgs.length - 1]
           const hasR = !!last?.reply_text
           onDbg('FeedbackPage.poll', `count=${msgs.length} lastId=${last?.id ?? 'null'} hasReply=${hasR}`)
-          if (last?.reply_text) {
+          if (last?.reply_text && !userText.trim()) {
             setExpandedMsgId(last.id)
             setReplyText(last.reply_text)
             setReplyDate(last.reply_date || new Date().toISOString().slice(0, 10))
