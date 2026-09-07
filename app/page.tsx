@@ -7187,7 +7187,10 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         // כבר ניסינו ליצור קשר עם האפליקציה מהלחיצה שלפני המסך הזה (כניסה או הרשמה).
         // ממתינים לתוצאה הזו לפני שמחליטים אם בכלל צריך להוריד - אם האפליקציה כבר ענתה,
         // היא מותקנת בפועל, ואין שום סיבה להוריד ולהתקין אותה מחדש.
-        const uuid = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
+        // חייבת להיות תשובה חיה בלבד כאן - לא ליפול לערך שמור, אחרת נרשם "הותקן" בלי שבאמת
+        // הותקן הפעם (ראה Get_UUID_With_Cache_Fallback - מיועדת רק להשלמת כניסה עם WRONG_DEVICE
+        // כגנן-בטיחות בשרת, לא להחלטה אם להתקין).
+        const uuid = await uuidCapture.promise
         if (cancelled.v) return
         if (uuid) {
           await registerUuid(uuid)
@@ -7219,7 +7222,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
     step('קוד מחשב', 'ניסיון ידני — פנייה לאפליקציה')
     Start_UUID_Capture(onDbg)
     runIdRef.current = uuidCapture!.runId
-    const uuid = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
+    const uuid = await uuidCapture!.promise // תשובה חיה בלבד - הלקוח בדיוק אמר "סיימתי להתקין"
     await registerUuid(uuid)
   }
 
@@ -7480,7 +7483,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
 
   async function isComputerAlreadyTakenByAnotherCustomer(): Promise<boolean> {
     onDbg('flowDiagram', '23-בדיקה: קיים לקוח רשום במחשב?')
-    const newDeviceUuid = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
+    const newDeviceUuid = uuidCapture ? await uuidCapture.promise : null // בדיקת אבטחה - תשובה חיה בלבד, לא ערך שמור
     const computerRes = await fetch('/api/check-computer', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -7557,7 +7560,8 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
       if (checkData.code === 'NEEDS_INSTALL') {
         // ה-UUID כבר בתהליך תפיסה מאז לחיצת הכניסה (Start_UUID_Capture למעלה) - אם האפליקציה
         // כבר מותקנת ועונה, הקוד יגיע כאן. משתמשים בתוצאה הזו במקום לנחש "לא מותקן" אוטומטית.
-        const uuidBiosCode = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
+        // תשובה חיה בלבד - זו ההחלטה אם לדלג על מסך ההתקנה, אסור לה להסתמך על ערך שמור מהעבר.
+        const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
         onDbg('handleLogin', `NEEDS_INSTALL uuidBiosCode="${uuidBiosCode ?? 'null'}"`)
         if (await isComputerAlreadyTakenByAnotherCustomer()) return
         if (!uuidBiosCode) {
@@ -7593,6 +7597,9 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     }
 
     onDbg('flowDiagram', '6-בקשת UUID מקומי מהאפליקציה')
+    // המקום היחיד שמותר לו ליפול לערך שמור: יש כבר UUID רשום ברשומה (login-check הצליח), אז
+    // /api/login עדיין משווה בפועל מול הרשומה (WRONG_DEVICE) - ערך שמור שגוי פשוט ייחסם שם,
+    // לא נכתב לשום מקום בלי אימות.
     const uuidBiosCode = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
     await finishLogin(uuidBiosCode)
   }
