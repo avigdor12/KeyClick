@@ -7194,8 +7194,15 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         if (uuid) {
           await registerUuid(uuid)
         } else {
+          // אין תשובה חיה - באמת לא מותקן. מורידים, וממתינים בסבלנות (כמו במסלול הרשמה
+          // רגיל) לפני שמציגים את הכפתור - לא לקפוץ ישר ל"ההורדה הסתיימה" כשהיא רק התחילה.
           onInstall()
           step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
+          step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
+          const patientUuid = await pollForApp(300000, cancelled)
+          if (cancelled.v) return
+          if (patientUuid) { capturedUuidRef.current = patientUuid; step('קוד מחשב', 'האפליקציה מגיבה — ההתקנה הסתיימה') }
+          else step('קוד מחשב', 'עברו 5 דקות בלי תשובה — מציג כפתור ידני')
           setPhase('incomplete')
         }
       } else {
