@@ -7121,7 +7121,7 @@ function InstallInfoCard({ lang, onClose, onNavigate }: { lang: typeof languages
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '28px', overflow: 'auto' }}>
-        <div style={{ position: 'relative', width: '100%', maxWidth: '620px', maxHeight: '100%', overflowY: 'auto', background: '#f5f7fd', border: '2px solid #003399', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.35)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '900px', maxHeight: '100%', overflowY: 'auto', background: '#f5f7fd', border: '2px solid #003399', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.35)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ fontFamily: F, color: '#c62828', fontWeight: 'bold', fontSize: '23px', textAlign: 'center', marginBottom: '4px' }}>{t.infoHeading}</div>
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '8px', paddingRight: '16px' }}>
             {/* מחיצה כמו בדף הנחיתה (.box::after): פס 4px, gradient זהב-ורוד, לכל גובה הרשימה */}
@@ -7273,9 +7273,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           </div>
         )}
         {phase === 'running' && (
-          // גופן קבוע לכל השפות (לא handFont) - כדי שהעברית לא תיראה גדולה בהרבה מהאנגלית
-          // באותו font-size מוצהר, כי לגופנים כתב-יד שונים "גוף אותיות" שונה מאוד.
-          <div style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', color: '#003399', fontSize: 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
+          <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: lang.code === 'he' ? 'clamp(20px, 4.5vw, 45px)' : 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
             {t.runningLine1}<br />{t.runningLine2}
           </div>
         )}
