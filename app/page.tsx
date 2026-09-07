@@ -2701,7 +2701,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
           const last = msgs[msgs.length - 1]
           const hasR = !!last?.reply_text
           onDbg('FeedbackPage.poll', `count=${msgs.length} lastId=${last?.id ?? 'null'} hasReply=${hasR}`)
-          if (last?.reply_text && !userText.trim()) {
+          if (last?.reply_text && !showCompose) {
             setExpandedMsgId(last.id)
             setReplyText(last.reply_text)
             setReplyDate(last.reply_date || new Date().toISOString().slice(0, 10))
@@ -3134,6 +3134,13 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
               <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px', direction: dir, flexShrink: 0 }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
               </div>
+              {isAdmin && (
+                <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 10, flexShrink: 0 }}>
+                  <button onClick={handleSendReply} disabled={!selectedMsgId || !replyText.trim() || !replyDate.trim()} style={{ fontSize: 13, padding: '5px 18px', background: hasReply ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 5, cursor: (!selectedMsgId || !replyText.trim() || !replyDate.trim()) ? 'default' : 'pointer', fontWeight: 'bold', opacity: (selectedMsgId && replyText.trim() && replyDate.trim()) ? 1 : 0.5 }}>
+                    {hasReply ? '✓ ' + lang.system.replySent : lang.system.send + ' ' + lang.system.reply}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
