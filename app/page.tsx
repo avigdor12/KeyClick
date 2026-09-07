@@ -7122,18 +7122,18 @@ function InstallInfoCard({ lang, onClose, onNavigate }: { lang: typeof languages
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '28px', overflow: 'auto' }}>
         <div style={{ position: 'relative', width: '100%', maxWidth: '620px', maxHeight: '100%', overflowY: 'auto', background: '#f5f7fd', border: '2px solid #003399', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.35)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ fontFamily: F, color: '#c62828', fontWeight: 'bold', fontSize: '18px', textAlign: 'center', marginBottom: '4px' }}>{t.infoHeading}</div>
+          <div style={{ fontFamily: F, color: '#c62828', fontWeight: 'bold', fontSize: '23px', textAlign: 'center', marginBottom: '4px' }}>{t.infoHeading}</div>
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '8px', paddingRight: '16px' }}>
             {/* מחיצה כמו בדף הנחיתה (.box::after): פס 4px, gradient זהב-ורוד, לכל גובה הרשימה */}
             <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '4px', background: 'linear-gradient(#d4af37, #c93d7a)' }} />
             {paragraphs.map((p, i) => (
-              <div key={i} style={{ fontFamily: 'Arial, sans-serif', color: '#003399', fontSize: '14px', lineHeight: 1.3, textAlign: 'right' }}>
-                <span style={{ color: '#d4af37', fontSize: '10px' }}>◆</span> {p}
+              <div key={i} style={{ fontFamily: 'Arial, sans-serif', color: '#003399', fontSize: '18px', lineHeight: 1.35, textAlign: 'right' }}>
+                <span style={{ color: '#d4af37', fontSize: '13px' }}>◆</span> {p}
               </div>
             ))}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <button onClick={() => onNavigate('mf-login')} style={{ ...regBtn, fontSize: '12px', padding: '5px 16px', borderRadius: '6px' }}>{t.infoEnterBtn}</button>
+            <button onClick={() => onNavigate('mf-login')} style={{ ...regBtn, fontSize: '16px', padding: '6px 18px', borderRadius: '6px' }}>{t.infoEnterBtn}</button>
           </div>
           <div onClick={onClose} style={{ position: 'absolute', right: '12px', bottom: '12px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>{lang.card.cancel}</div>
         </div>
@@ -7273,7 +7273,9 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           </div>
         )}
         {phase === 'running' && (
-          <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
+          // גופן קבוע לכל השפות (לא handFont) - כדי שהעברית לא תיראה גדולה בהרבה מהאנגלית
+          // באותו font-size מוצהר, כי לגופנים כתב-יד שונים "גוף אותיות" שונה מאוד.
+          <div style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', color: '#003399', fontSize: 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
             {t.runningLine1}<br />{t.runningLine2}
           </div>
         )}
