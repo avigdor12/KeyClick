@@ -7227,22 +7227,22 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           onInstall()
           step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
           step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
-          const patientUuid = await pollForApp(300000, cancelled)
+          const patientUuid = await pollForApp(30000, cancelled)
           if (cancelled.v) return
           if (patientUuid) { capturedUuidRef.current = patientUuid; step('קוד מחשב', 'האפליקציה מגיבה — ההתקנה הסתיימה') }
-          else step('קוד מחשב', 'עברו 5 דקות בלי תשובה — מציג כפתור ידני')
+          else step('קוד מחשב', 'עברו 30 שניות בלי תשובה — מציג כפתור ידני')
           setPhase('incomplete')
         }
       } else {
         // מסלול הרשמה בלי ניסיון מוקדם: אין אפליקציה עדיין. מורידים, ובודקים את הפורט
-        // בסבלנות עד 5 דקות. הכפתור (מסך 2) יופיע רק כשהאפליקציה תגיב - כשההתקנה תיגמר.
+        // בסבלנות עד 30 שניות. הכפתור (מסך 2) יופיע רק כשהאפליקציה תגיב - כשההתקנה תיגמר.
         onInstall()
         step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
         step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
-        const uuid = await pollForApp(300000, cancelled)
+        const uuid = await pollForApp(30000, cancelled)
         if (cancelled.v) return
         if (uuid) { capturedUuidRef.current = uuid; step('קוד מחשב', 'האפליקציה מגיבה — ההתקנה הסתיימה') }
-        else step('קוד מחשב', 'עברו 5 דקות בלי תשובה — מציג כפתור ידני')
+        else step('קוד מחשב', 'עברו 30 שניות בלי תשובה — מציג כפתור ידני')
         setPhase('incomplete')
       }
     })()
@@ -7273,9 +7273,12 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
           </div>
         )}
         {phase === 'running' && (
-          <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: '59px', lineHeight: 1.25, textAlign: dir === 'rtl' ? 'right' : 'left', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
-            {t.runningLine1}<br />{t.runningLine2}
-          </div>
+          <>
+            <style>{`@keyframes mfRunningPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }`}</style>
+            <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: '59px', lineHeight: 1.25, textAlign: dir === 'rtl' ? 'right' : 'left', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold', animation: 'mfRunningPulse 1.6s ease-in-out infinite' }}>
+              {t.runningLine1}<br />{t.runningLine2}
+            </div>
+          </>
         )}
         {phase === 'incomplete' && (
           <div style={{ background: '#2a2a2a', border: '2px solid #FFD700', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
