@@ -528,7 +528,7 @@ export default function Home() {
     }
   }
 
-  async function handleInstall() {
+  function handleInstall() {
     // "כבר מותקן" נקבע לפי UUID רשום בפועל - לא לפי הדגל is_M_Finance_installed, שיכול להיות
     // true בלי UUID (מצב לא-עקבי מבדיקות קודמות) והיה חוסם את ההורדה למי שדווקא צריך להתקין.
     if (Current_User_Pointer_to_DB?.UUID_Local_BIOS) {
@@ -538,15 +538,6 @@ export default function Home() {
     }
     setDebugLog([])
     dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} UUID_Local_BIOS=${Current_User_Pointer_to_DB?.UUID_Local_BIOS ?? 'none'}`)
-
-    // לא מותקן - לפני שמורידים בפועל, מציגים את דף ההסבר ומחכים ללחיצת "המשך" שם.
-    dbg('handleInstall', 'showing install explanation screen, waiting for confirm')
-    const proceed = await new Promise<boolean>(resolve => {
-      installConfirmResolveRef.current = resolve
-      setInstallConfirmOpen(true)
-    })
-    setInstallConfirmOpen(false)
-    if (!proceed) { dbg('handleInstall', 'user closed explanation screen without continuing => not downloading'); return }
 
     if (Current_User_Pointer_to_DB?.email) {
       localStorage.setItem('mf_pending_install_email', Current_User_Pointer_to_DB.email)
@@ -568,8 +559,19 @@ export default function Home() {
 
   function resolveInstallConfirm(proceed: boolean) {
     dbg('resolveInstallConfirm', `proceed=${proceed}`)
+    setInstallConfirmOpen(false)
     installConfirmResolveRef.current?.(proceed)
     installConfirmResolveRef.current = null
+  }
+
+  // מציגה את דף ההסבר כ-overlay מיד בסיום הרשמה מוצלחת, לפני מסך ההתקנה - לא בתוך
+  // handleInstall (זה גרם לעיכובים לא צפויים כשההורדה מעורבת בבדיקות אחרות).
+  function showInstallExplanation(): Promise<boolean> {
+    dbg('showInstallExplanation', 'showing install explanation screen, waiting for confirm')
+    return new Promise<boolean>(resolve => {
+      installConfirmResolveRef.current = resolve
+      setInstallConfirmOpen(true)
+    })
   }
 
   async function handleRun() {
@@ -712,7 +714,7 @@ export default function Home() {
                 if (!user.is_M_Finance_installed) setActivePage('mf-install')
                 else setActivePage(null)
               }
-            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onSetLoggedIn={() => setIsLoggedInExplicit(true)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onOpenDebug={() => {
+            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onSetLoggedIn={() => setIsLoggedInExplicit(true)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onShowInstallExplanation={showInstallExplanation} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -981,7 +983,7 @@ function UuidEffectFire({ onDbg, onResult }: { onDbg: (func: string, msg: string
   return null
 }
 
-function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => Promise<void>; onRun: () => void }) {
+function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking' | 'data' | 'statistics' | 'billing' | 'institutions'>('none')
   const [devBypassLogin, setDevBypassLogin] = useState(false)
   useEffect(() => {
@@ -1716,7 +1718,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                   {lang.card.register}
                 </button>
-                <button onClick={async () => { setActiveMfBtnTest(activeMfBtnTest === 'install' ? null : 'install'); await onInstall() }}
+                <button onClick={() => { setActiveMfBtnTest(activeMfBtnTest === 'install' ? null : 'install'); onInstall() }}
                   style={{ background: activeMfBtnTest === 'install' ? '#4a1a6e' : '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                   {lang.card.install}
                 </button>
@@ -5744,14 +5746,14 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, uuidHintEmail, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; uuidHintEmail: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => Promise<void>; onRun: () => void }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, uuidHintEmail, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun, onShowInstallExplanation }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; uuidHintEmail: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void; onShowInstallExplanation: () => Promise<boolean> }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
   if (page === 'mf-newinfo')  return <InstallInfoCard lang={lang} onClose={onClose} onNavigate={onNavigate} />
-  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} prefillEmail={uuidHintEmail} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
-  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} prefillEmail={uuidHintEmail} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} onShowInstallExplanation={onShowInstallExplanation} />
+  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} onShowInstallExplanation={onShowInstallExplanation} />
   if (page === 'mf-install')  return <InstallCard lang={lang} email={user?.email} clientIp={clientIp} onInstall={onInstall} onRun={onRun} onSetLoggedIn={onSetLoggedIn} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
@@ -7140,7 +7142,7 @@ function InstallInfoCard({ lang, onClose, onNavigate }: { lang: typeof languages
   )
 }
 
-function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => Promise<void>; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
+function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
   // running = מסך 1 (מתקינים, בודקים) · done = נרשם בשרת · incomplete = מסך 2 (הכרטיס עם הכפתור)
@@ -7222,10 +7224,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         } else {
           // אין תשובה חיה - באמת לא מותקן. מורידים, וממתינים בסבלנות (כמו במסלול הרשמה
           // רגיל) לפני שמציגים את הכפתור - לא לקפוץ ישר ל"ההורדה הסתיימה" כשהיא רק התחילה.
-          // onInstall() עכשיו אסינכרונית - מציגה קודם את דף ההסבר ומחכה ללחיצה שם. חובה לחכות
-          // לה לפני שרושמים "ההורדה נשלחה" ומתחילים לבדוק את הפורט.
-          await onInstall()
-          if (cancelled.v) return
+          onInstall()
           step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
           step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
           const patientUuid = await pollForApp(300000, cancelled)
@@ -7237,9 +7236,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
       } else {
         // מסלול הרשמה בלי ניסיון מוקדם: אין אפליקציה עדיין. מורידים, ובודקים את הפורט
         // בסבלנות עד 5 דקות. הכפתור (מסך 2) יופיע רק כשהאפליקציה תגיב - כשההתקנה תיגמר.
-        // onInstall() אסינכרונית - מציגה קודם את דף ההסבר ומחכה ללחיצה. חובה לחכות לה.
-        await onInstall()
-        if (cancelled.v) return
+        onInstall()
         step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
         step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
         const uuid = await pollForApp(300000, cancelled)
@@ -7417,7 +7414,7 @@ async function Get_UUID_With_Cache_Fallback(onDbg: (func: string, msg: string) =
   return null
 }
 
-function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
+function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onShowInstallExplanation }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onShowInstallExplanation: () => Promise<boolean> }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
   const font = handFont(lang.code)
@@ -7507,11 +7504,13 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     onDbg('handleUpdate', `success status="${data.status}"`)
     if (data.status === 'created') {
       // רשומה נוצרה - אבל ההרשמה לא הסתיימה (חסר קוד מחשב). בלי popup "הרשמה הושלמה":
-      // עוברים ישר למסך ההתקנה שמציג את המצב האמיתי בזמן אמת.
-      onDbg('handleUpdate', `user="${data.user?.email}" => onUserUpdate + navigate mf-install`)
+      // מציגים מיד את דף ההסבר, ורק בלחיצת "המשך" שם עוברים למסך ההתקנה בפועל.
+      onDbg('handleUpdate', `user="${data.user?.email}" => onUserUpdate, showing install explanation`)
       onUserUpdate(data.user)
       onSetLoggedIn() // הרשומה נוצרה - משחררים כפתורים מיד, לפני ההתקנה
-      onNavigate('mf-install')
+      const proceed = await onShowInstallExplanation()
+      onDbg('handleUpdate', `explanation screen closed proceed=${proceed}`)
+      if (proceed) onNavigate('mf-install')
     } else {
       // עדכון פרטים של רשומה קיימת - כאן ההודעה כן נכונה
       onMsg({ title: c.mFinance, subtitle: c.title, body: c.msgUpdated })
