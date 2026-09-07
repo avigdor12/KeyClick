@@ -7007,9 +7007,9 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 }
 
 // טקסטים של תהליך ההרשמה/ההתקנה (InstallCard + InstallInfoCard), ב-11 השפות. fallback ל-en.
-type MfRegTxt = { doneLine1: string; doneLine2: string; running: string; incompleteBtn: string; infoHeading: string; infoBullets: string[]; infoEnterBtn: string }
+type MfRegTxt = { doneLine1: string; doneLine2: string; checking: string; running: string; incompleteBtn: string; infoHeading: string; infoBullets: string[]; infoEnterBtn: string }
 const MF_REG_TXT: Record<string, MfRegTxt> = {
-  en: { doneLine1: 'Registration completed successfully', doneLine2: 'Enjoy your browsing', running: 'Watch for the installation file that appears above the page, click it quickly to install', incompleteBtn: 'Download finished, please confirm installation is complete', infoHeading: 'Description of the registration process', infoEnterBtn: 'Click to log in', infoBullets: [
+  en: { doneLine1: 'Registration completed successfully', doneLine2: 'Enjoy your browsing', checking: 'Please wait...', running: 'Watch for the installation file that appears above the page, click it quickly to install', incompleteBtn: 'Download finished, please confirm installation is complete', infoHeading: 'Description of the registration process', infoEnterBtn: 'Click to log in', infoBullets: [
     'The KeyClick registration process: click the New Customer button, complete a standard registration with name, email and password, and install the home budget management app.',
     'During installation, Microsoft may show a warning that the app is not recognized. This does not indicate a real problem — it is Microsoft’s caution for new applications.',
     'The project is in its launch period. Once the project reaches a certain number of users, this message will disappear.',
@@ -7018,7 +7018,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     'Finishing the installation actually completes the registration, and from then on there are no restrictions — use of the whole site and the apps installed on it is completely free.',
     'Note that for data security reasons, the method here is one person per computer. You can only work on the computer you registered with. The project is built exclusively for a computer running a Microsoft operating system.',
   ] },
-  ru: { doneLine1: 'Регистрация успешно завершена', doneLine2: 'Приятного пользования', running: 'Обратите внимание на файл установки, который появится над страницей — нажмите на него, чтобы быстро начать установку', incompleteBtn: 'Загрузка завершена, подтвердите завершение установки', infoHeading: 'Описание процесса регистрации', infoEnterBtn: 'Нажмите, чтобы войти', infoBullets: [
+  ru: { doneLine1: 'Регистрация успешно завершена', doneLine2: 'Приятного пользования', checking: 'Пожалуйста, подождите...', running: 'Обратите внимание на файл установки, который появится над страницей — нажмите на него, чтобы быстро начать установку', incompleteBtn: 'Загрузка завершена, подтвердите завершение установки', infoHeading: 'Описание процесса регистрации', infoEnterBtn: 'Нажмите, чтобы войти', infoBullets: [
     'Процесс регистрации в KeyClick: нажатие кнопки «Новый клиент», обычная регистрация с именем, email и паролем, а также установка приложения для управления домашним бюджетом.',
     'Во время установки Windows может показать предупреждение о том, что приложение не распознано. Это не признак реальной проблемы, а мера предосторожности Microsoft для новых приложений.',
     'Проект находится в начальном периоде запуска. После достижения определённого числа пользователей это сообщение исчезнет.',
@@ -7027,7 +7027,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     'Завершение установки фактически завершает регистрацию, и с этого момента никаких ограничений нет — использование всего сайта и установленных приложений полностью свободно.',
     'Обратите внимание, что из соображений безопасности данных здесь действует правило: один человек — один компьютер. Работать можно только на том компьютере, на котором вы зарегистрировались. Проект предназначен исключительно для компьютеров с операционной системой Microsoft.',
   ] },
-  de: { doneLine1: 'Registrierung erfolgreich abgeschlossen', doneLine2: 'Viel Spaß beim Surfen', running: 'Achten Sie auf die Installationsdatei, die über der Seite erscheint, und klicken Sie schnell darauf, um die Installation zu starten', incompleteBtn: 'Download abgeschlossen, bitte Installation bestätigen', infoHeading: 'Beschreibung des Registrierungsprozesses', infoEnterBtn: 'Zum Anmelden klicken', infoBullets: [
+  de: { doneLine1: 'Registrierung erfolgreich abgeschlossen', doneLine2: 'Viel Spaß beim Surfen', checking: 'Bitte warten...', running: 'Achten Sie auf die Installationsdatei, die über der Seite erscheint, und klicken Sie schnell darauf, um die Installation zu starten', incompleteBtn: 'Download abgeschlossen, bitte Installation bestätigen', infoHeading: 'Beschreibung des Registrierungsprozesses', infoEnterBtn: 'Zum Anmelden klicken', infoBullets: [
     'Der Registrierungsprozess bei KeyClick: Klicken Sie auf die Schaltfläche „Neuer Kunde“, führen Sie eine normale Registrierung mit Name, E-Mail und Passwort durch und installieren Sie die App für die Haushaltsbudgetverwaltung.',
     'Während der Installation kann Windows eine Warnung anzeigen, dass die App nicht erkannt wird. Das ist kein echtes Problem, sondern eine Vorsichtsmaßnahme von Microsoft für neue Anwendungen.',
     'Das Projekt befindet sich in der Startphase. Sobald eine bestimmte Anzahl an Nutzern erreicht ist, verschwindet diese Meldung.',
@@ -7036,7 +7036,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     'Der Abschluss der Installation ist zugleich der Abschluss der Registrierung. Ab diesem Zeitpunkt gibt es keine Einschränkungen mehr — die Nutzung der gesamten Website und der darauf installierten Anwendungen ist völlig frei.',
     'Beachten Sie, dass aus Datensicherheitsgründen hier das Prinzip „eine Person, ein Computer“ gilt. Sie können nur an dem Computer arbeiten, mit dem Sie sich registriert haben. Das Projekt ist ausschließlich für Computer mit einem Microsoft-Betriebssystem ausgelegt.',
   ] },
-  fr: { doneLine1: 'Inscription terminée avec succès', doneLine2: 'Bonne navigation', running: "Repérez le fichier d'installation qui apparaîtra au-dessus de la page, cliquez dessus rapidement pour lancer l'installation", incompleteBtn: "Téléchargement terminé, veuillez confirmer la fin de l'installation", infoHeading: "Description du processus d'inscription", infoEnterBtn: 'Cliquez pour vous connecter', infoBullets: [
+  fr: { doneLine1: 'Inscription terminée avec succès', doneLine2: 'Bonne navigation', checking: 'Veuillez patienter...', running: "Repérez le fichier d'installation qui apparaîtra au-dessus de la page, cliquez dessus rapidement pour lancer l'installation", incompleteBtn: "Téléchargement terminé, veuillez confirmer la fin de l'installation", infoHeading: "Description du processus d'inscription", infoEnterBtn: 'Cliquez pour vous connecter', infoBullets: [
     "Le processus d'inscription à KeyClick : cliquez sur le bouton « Nouveau client », effectuez une inscription classique avec nom, e-mail et mot de passe, puis installez l'application de gestion du budget familial.",
     "Pendant l'installation, Windows peut afficher un avertissement indiquant que l'application n'est pas reconnue. Cela n'indique pas un réel problème, mais une mesure de précaution de Microsoft pour les nouvelles applications.",
     "Le projet est en période de lancement. Une fois qu'un certain nombre d'utilisateurs sera atteint, ce message disparaîtra.",
@@ -7045,7 +7045,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     "La fin de l'installation marque en réalité la fin de l'inscription, et dès lors il n'y a plus aucune restriction — l'utilisation de tout le site et des applications qui y sont installées est totalement libre.",
     "Notez que pour des raisons de sécurité des données, la méthode ici est une personne par ordinateur. Vous ne pourrez travailler que sur l'ordinateur avec lequel vous vous êtes inscrit. Le projet est conçu exclusivement pour un ordinateur fonctionnant sous un système d'exploitation Microsoft.",
   ] },
-  he: { doneLine1: 'הרישום הסתיים בהצלחה', doneLine2: 'המשך גלישה נעימה', running: 'שים לב לקובץ ההתקנה שיופיע מעל הדף, לחץ עליו מהר להתקנה', incompleteBtn: 'ההורדה הסתיימה, נא לאשר סיום התקנה', infoHeading: 'תיאור תהליך ההרשמה', infoEnterBtn: 'לחץ לכניסה', infoBullets: [
+  he: { doneLine1: 'הרישום הסתיים בהצלחה', doneLine2: 'המשך גלישה נעימה', checking: 'אנא המתן...', running: 'שים לב לקובץ ההתקנה שיופיע מעל הדף, לחץ עליו מהר להתקנה', incompleteBtn: 'ההורדה הסתיימה, נא לאשר סיום התקנה', infoHeading: 'תיאור תהליך ההרשמה', infoEnterBtn: 'לחץ לכניסה', infoBullets: [
     'תהליך ההרשמה ל-KeyClick, לחיצה על כפתור לקוח חדש, רישום רגיל הכולל שם, מייל וסיסמא והתקנת האפליקציה לניהול תקציב בית.',
     'בתהליך ההתקנה, מיקרוסופט עשויה להציג מודעת אזהרה על כך שהאפליקציה אינה מוכרת. הדבר אינו מעיד על בעיה אמיתית אלא על אמצעי זהירות של מיקרוסופט לאפליקציות צעירות.',
     'הפרויקט נמצא בתקופת הרצה. לאחר כמות מסוימת של משתמשים בפרויקט ההודעה הזאת תיעלם.',
@@ -7054,7 +7054,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     'סיום ההתקנה הוא בעצם סיום ההרשמה ומעתה אין מגבלות והשימוש בכל האתר והאפליקציות המותקנות עליו חופשי לגמרי.',
     'יש לציין שמטעמי בטחון מידע, השיטה כאן היא אדם אחד למחשב אחד. תוכל לעבוד רק במחשב שנרשמת אליו. הפרויקט מותאם אך ורק על מחשב עם מערכת הפעלה של מיקרוסופט.',
   ] },
-  es: { doneLine1: 'Registro completado con éxito', doneLine2: 'Buena navegación', running: 'Preste atención al archivo de instalación que aparecerá encima de la página, haga clic en él rápido para instalar', incompleteBtn: 'Descarga finalizada, confirme que la instalación ha terminado', infoHeading: 'Descripción del proceso de registro', infoEnterBtn: 'Haga clic para iniciar sesión', infoBullets: [
+  es: { doneLine1: 'Registro completado con éxito', doneLine2: 'Buena navegación', checking: 'Por favor espere...', running: 'Preste atención al archivo de instalación que aparecerá encima de la página, haga clic en él rápido para instalar', incompleteBtn: 'Descarga finalizada, confirme que la instalación ha terminado', infoHeading: 'Descripción del proceso de registro', infoEnterBtn: 'Haga clic para iniciar sesión', infoBullets: [
     'El proceso de registro en KeyClick: hacer clic en el botón «Cliente nuevo», completar un registro normal con nombre, correo electrónico y contraseña, e instalar la aplicación de gestión del presupuesto familiar.',
     'Durante la instalación, Windows puede mostrar una advertencia de que la aplicación no está reconocida. Esto no indica un problema real, sino una medida de precaución de Microsoft para aplicaciones nuevas.',
     'El proyecto está en su período de lanzamiento. Una vez que se alcance cierta cantidad de usuarios, este mensaje desaparecerá.',
@@ -7063,7 +7063,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     'Finalizar la instalación es en realidad finalizar el registro, y a partir de ese momento no hay restricciones — el uso de todo el sitio y de las aplicaciones instaladas en él es completamente libre.',
     'Cabe señalar que, por razones de seguridad de la información, el método aquí es una persona por computadora. Solo podrá trabajar en la computadora con la que se registró. El proyecto está diseñado exclusivamente para una computadora con sistema operativo de Microsoft.',
   ] },
-  ja: { doneLine1: '登録が正常に完了しました', doneLine2: '快適にご利用ください', running: 'ページの上に表示されるインストールファイルに注意し、すばやくクリックしてインストールしてください', incompleteBtn: 'ダウンロードが完了しました。インストールの完了を確認してください', infoHeading: '登録プロセスの説明', infoEnterBtn: 'クリックしてログイン', infoBullets: [
+  ja: { doneLine1: '登録が正常に完了しました', doneLine2: '快適にご利用ください', checking: 'しばらくお待ちください...', running: 'ページの上に表示されるインストールファイルに注意し、すばやくクリックしてインストールしてください', incompleteBtn: 'ダウンロードが完了しました。インストールの完了を確認してください', infoHeading: '登録プロセスの説明', infoEnterBtn: 'クリックしてログイン', infoBullets: [
     'KeyClickの登録プロセス: 「新規顧客」ボタンをクリックし、氏名・メール・パスワードによる通常の登録を行い、家庭予算管理アプリをインストールします。',
     'インストール中、Windowsがこのアプリを認識できないという警告を表示する場合があります。これは実際の問題ではなく、新しいアプリケーションに対するMicrosoftの注意喚起です。',
     'このプロジェクトは立ち上げ期間中です。一定数の利用者に達すると、このメッセージは表示されなくなります。',
@@ -7072,7 +7072,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     'インストールの完了は実質的に登録の完了を意味し、以降は制限なく、サイト全体とインストールされたアプリを自由にご利用いただけます。',
     '情報セキュリティ上の理由から、ここでは「1人につき1台のパソコン」という方式を採用しています。登録したパソコンでのみ作業できます。本プロジェクトはMicrosoftのオペレーティングシステムを搭載したパソコン専用です。',
   ] },
-  ar: { doneLine1: 'اكتمل التسجيل بنجاح', doneLine2: 'تصفح ممتع', running: 'انتبه لملف التثبيت الذي سيظهر أعلى الصفحة، وانقر عليه بسرعة للتثبيت', incompleteBtn: 'اكتمل التنزيل، يرجى تأكيد اكتمال التثبيت', infoHeading: 'وصف عملية التسجيل', infoEnterBtn: 'انقر للدخول', infoBullets: [
+  ar: { doneLine1: 'اكتمل التسجيل بنجاح', doneLine2: 'تصفح ممتع', checking: 'الرجاء الانتظار...', running: 'انتبه لملف التثبيت الذي سيظهر أعلى الصفحة، وانقر عليه بسرعة للتثبيت', incompleteBtn: 'اكتمل التنزيل، يرجى تأكيد اكتمال التثبيت', infoHeading: 'وصف عملية التسجيل', infoEnterBtn: 'انقر للدخول', infoBullets: [
     'عملية التسجيل في KeyClick: النقر على زر «عميل جديد»، وإجراء تسجيل عادي يتضمن الاسم والبريد الإلكتروني وكلمة المرور، وتثبيت تطبيق إدارة ميزانية المنزل.',
     'أثناء التثبيت، قد يعرض ويندوز تحذيرًا بأن التطبيق غير معروف. هذا لا يشير إلى مشكلة حقيقية، بل هو إجراء احترازي من مايكروسوفت للتطبيقات الجديدة.',
     'المشروع في فترة الإطلاق. بعد وصول عدد معين من المستخدمين، ستختفي هذه الرسالة.',
@@ -7081,7 +7081,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     'انتهاء التثبيت يعني في الواقع انتهاء التسجيل، ومنذ تلك اللحظة لا توجد أي قيود — استخدام الموقع بالكامل والتطبيقات المثبتة عليه حر تمامًا.',
     'يُذكر أنه لأسباب تتعلق بأمن المعلومات، فإن الطريقة هنا هي شخص واحد لكل جهاز. يمكنك العمل فقط على الجهاز الذي سجّلت به. المشروع مخصص فقط لجهاز يعمل بنظام تشغيل مايكروسوفت.',
   ] },
-  zh: { doneLine1: '注册成功完成', doneLine2: '祝浏览愉快', running: '请留意页面上方出现的安装文件，尽快点击它进行安装', incompleteBtn: '下载已完成，请确认安装已完成', infoHeading: '注册流程说明', infoEnterBtn: '点击登录', infoBullets: [
+  zh: { doneLine1: '注册成功完成', doneLine2: '祝浏览愉快', checking: '请稍候...', running: '请留意页面上方出现的安装文件，尽快点击它进行安装', incompleteBtn: '下载已完成，请确认安装已完成', infoHeading: '注册流程说明', infoEnterBtn: '点击登录', infoBullets: [
     'KeyClick 的注册流程：点击「新客户」按钮，完成包含姓名、邮箱和密码的常规注册，并安装家庭预算管理应用程序。',
     '在安装过程中，Windows 可能会显示该应用程序未被识别的警告。这并不代表存在真正的问题，而只是 Microsoft 对新应用程序采取的一种谨慎措施。',
     '该项目正处于启动期。达到一定数量的用户后，此消息将会消失。',
@@ -7090,7 +7090,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     '安装完成实际上也就完成了注册，从此以后不再有任何限制——可以完全自由地使用整个网站及其上安装的应用程序。',
     '请注意，出于信息安全考虑，这里采用「一人一机」的方式。您只能在注册所用的那台电脑上工作。该项目仅适用于运行 Microsoft 操作系统的电脑。',
   ] },
-  it: { doneLine1: 'Registrazione completata con successo', doneLine2: 'Buona navigazione', running: 'Fai attenzione al file di installazione che apparirà sopra la pagina, cliccalo rapidamente per installare', incompleteBtn: "Download completato, conferma il completamento dell'installazione", infoHeading: 'Descrizione del processo di registrazione', infoEnterBtn: 'Clicca per accedere', infoBullets: [
+  it: { doneLine1: 'Registrazione completata con successo', doneLine2: 'Buona navigazione', checking: 'Attendere prego...', running: 'Fai attenzione al file di installazione che apparirà sopra la pagina, cliccalo rapidamente per installare', incompleteBtn: "Download completato, conferma il completamento dell'installazione", infoHeading: 'Descrizione del processo di registrazione', infoEnterBtn: 'Clicca per accedere', infoBullets: [
     "Il processo di registrazione a KeyClick: clicca sul pulsante «Nuovo cliente», completa una normale registrazione con nome, email e password, e installa l'app per la gestione del budget familiare.",
     "Durante l'installazione, Windows potrebbe mostrare un avviso secondo cui l'app non è riconosciuta. Questo non indica un problema reale, ma è una misura precauzionale di Microsoft per le nuove applicazioni.",
     'Il progetto è nel suo periodo di avvio. Una volta raggiunto un certo numero di utenti, questo messaggio scomparirà.',
@@ -7099,7 +7099,7 @@ const MF_REG_TXT: Record<string, MfRegTxt> = {
     "Il completamento dell'installazione corrisponde di fatto al completamento della registrazione, e da quel momento non ci sono più restrizioni: l'uso dell'intero sito e delle applicazioni installate è completamente libero.",
     "Va notato che, per motivi di sicurezza dei dati, il metodo qui adottato è una persona per computer. Potrai lavorare solo sul computer con cui ti sei registrato. Il progetto è predisposto esclusivamente per un computer con sistema operativo Microsoft.",
   ] },
-  hi: { doneLine1: 'पंजीकरण सफलतापूर्वक पूरा हुआ', doneLine2: 'शुभ ब्राउज़िंग', running: 'पेज के ऊपर दिखाई देने वाली इंस्टॉलेशन फ़ाइल पर ध्यान दें, इंस्टॉल करने के लिए उस पर जल्दी क्लिक करें', incompleteBtn: 'डाउनलोड पूरा हुआ, कृपया इंस्टॉलेशन पूर्ण होने की पुष्टि करें', infoHeading: 'पंजीकरण प्रक्रिया का विवरण', infoEnterBtn: 'लॉग इन करने के लिए क्लिक करें', infoBullets: [
+  hi: { doneLine1: 'पंजीकरण सफलतापूर्वक पूरा हुआ', doneLine2: 'शुभ ब्राउज़िंग', checking: 'कृपया प्रतीक्षा करें...', running: 'पेज के ऊपर दिखाई देने वाली इंस्टॉलेशन फ़ाइल पर ध्यान दें, इंस्टॉल करने के लिए उस पर जल्दी क्लिक करें', incompleteBtn: 'डाउनलोड पूरा हुआ, कृपया इंस्टॉलेशन पूर्ण होने की पुष्टि करें', infoHeading: 'पंजीकरण प्रक्रिया का विवरण', infoEnterBtn: 'लॉग इन करने के लिए क्लिक करें', infoBullets: [
     'KeyClick में पंजीकरण प्रक्रिया: «नया ग्राहक» बटन पर क्लिक करें, नाम, ईमेल और पासवर्ड के साथ सामान्य पंजीकरण पूरा करें, और घरेलू बजट प्रबंधन ऐप इंस्टॉल करें।',
     'इंस्टॉलेशन के दौरान, Windows यह चेतावनी दिखा सकता है कि ऐप पहचाना नहीं गया है। यह किसी वास्तविक समस्या का संकेत नहीं है, बल्कि नए एप्लिकेशनों के लिए Microsoft की एक सावधानी है।',
     'यह प्रोजेक्ट अपनी शुरुआती अवधि में है। उपयोगकर्ताओं की एक निश्चित संख्या तक पहुंचने के बाद, यह संदेश गायब हो जाएगा।',
@@ -7145,8 +7145,9 @@ function InstallInfoCard({ lang, onClose, onNavigate }: { lang: typeof languages
 function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
   // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
   const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
-  // running = מסך 1 (מתקינים, בודקים) · done = נרשם בשרת · incomplete = מסך 2 (הכרטיס עם הכפתור)
-  const [phase, setPhase] = useState<'running' | 'done' | 'incomplete'>('running')
+  // checking = בודקים אם כבר מותקן (לפני שיודעים אם צריך הורדה) · running = ההורדה התחילה בפועל
+  // · done = נרשם בשרת · incomplete = מסך 2 (הכרטיס עם הכפתור)
+  const [phase, setPhase] = useState<'checking' | 'running' | 'done' | 'incomplete'>('checking')
   // קוד מחשב שנתפס בבדיקה הסבלנית (מסלול הרשמה). קיים → הכפתור מאשר מיד, בלי לירות טריגר.
   const capturedUuidRef = useRef<string | null>(null)
 
@@ -7224,6 +7225,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         } else {
           // אין תשובה חיה - באמת לא מותקן. מורידים, וממתינים בסבלנות (כמו במסלול הרשמה
           // רגיל) לפני שמציגים את הכפתור - לא לקפוץ ישר ל"ההורדה הסתיימה" כשהיא רק התחילה.
+          setPhase('running') // רק עכשיו ההורדה האמיתית מתחילה - לפני זה הוצג 'checking'
           onInstall()
           step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
           step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
@@ -7236,6 +7238,7 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
       } else {
         // מסלול הרשמה בלי ניסיון מוקדם: אין אפליקציה עדיין. מורידים, ובודקים את הפורט
         // בסבלנות עד 5 דקות. הכפתור (מסך 2) יופיע רק כשהאפליקציה תגיב - כשההתקנה תיגמר.
+        setPhase('running')
         onInstall()
         step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
         step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
@@ -7270,6 +7273,11 @@ function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, o
         {phase === 'done' && (
           <div style={{ fontFamily: handFont(lang.code), color: '#d32f2f', fontSize: 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)' }}>
             {t.doneLine1}<br />{t.doneLine2}
+          </div>
+        )}
+        {phase === 'checking' && (
+          <div style={{ fontFamily: handFont(lang.code), color: '#c31432', fontSize: '30px', lineHeight: 1.35, textAlign: 'center', maxWidth: '680px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+            {t.checking}
           </div>
         )}
         {phase === 'running' && (
