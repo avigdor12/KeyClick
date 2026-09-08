@@ -259,7 +259,7 @@ export default function Home() {
         .catch(() => {})
     }
     checkUnread()
-    const interval = setInterval(checkUnread, 20000)
+    const interval = setInterval(checkUnread, 60000)
     return () => clearInterval(interval)
   }, [Current_User_Pointer_to_DB?.id, activePage])
 
@@ -272,7 +272,7 @@ export default function Home() {
         .catch(() => {})
     }
     checkAdminUnread()
-    const interval = setInterval(checkAdminUnread, 20000)
+    const interval = setInterval(checkAdminUnread, 60000)
     return () => clearInterval(interval)
   }, [isAdminAccount, activePage])
 
@@ -2645,7 +2645,8 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       fetch('/api/feedback?view=feedback')
         .then(r => r.json())
         .then(d => {
-          const msgs: FeedbackMessage[] = d.messages ?? []
+          if (d.error || !Array.isArray(d.messages)) { onDbg('FeedbackPage.admin.load', `skip — bad response: ${d.error ?? 'no messages array'}`); return }
+          const msgs: FeedbackMessage[] = d.messages
           setLoadedMessages(msgs)
           onDbg('FeedbackPage.admin.load', `count=${msgs.length} ids=${msgs.map(m => m.id).join(',')}`)
           const defMsg = msgs[msgs.length - 1]
@@ -2670,7 +2671,8 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
           return fetch(`/api/feedback?userId=${user.id}&sessionId=${sid}`)
             .then(r => r.json())
             .then(d2 => {
-              const msgs: FeedbackMessage[] = d2.messages ?? []
+              if (d2.error || !Array.isArray(d2.messages)) { onDbg('FeedbackPage.loadMsgs', `skip — bad response: ${d2.error ?? 'no messages array'}`); return }
+              const msgs: FeedbackMessage[] = d2.messages
               setLoadedMessages(msgs)
               onDbg('FeedbackPage.loadMsgs', `count=${msgs.length} sessionId=${sid}`)
               const def = msgs[msgs.length - 1]
@@ -2696,12 +2698,13 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       fetch(`/api/feedback?userId=${user.id}&sessionId=${sessionId}`)
         .then(r => r.json())
         .then(d => {
-          const msgs: FeedbackMessage[] = d.messages ?? []
+          if (d.error || !Array.isArray(d.messages)) { onDbg('FeedbackPage.poll', `skip — bad response: ${d.error ?? 'no messages array'}`); return }
+          const msgs: FeedbackMessage[] = d.messages
           setLoadedMessages(msgs)
           const last = msgs[msgs.length - 1]
           const hasR = !!last?.reply_text
           onDbg('FeedbackPage.poll', `count=${msgs.length} lastId=${last?.id ?? 'null'} hasReply=${hasR}`)
-          if (last?.reply_text && !showCompose) {
+          if (last?.reply_text && !(showCompose && expandedMsgId === null)) {
             setExpandedMsgId(last.id)
             setReplyText(last.reply_text)
             setReplyDate(last.reply_date || new Date().toISOString().slice(0, 10))
@@ -2712,7 +2715,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         .catch(e => onDbg('FeedbackPage.poll', `error: ${String(e)}`))
     }, 5000)
     return () => clearInterval(interval)
-  }, [user?.id, isAdmin, sessionId])
+  }, [user?.id, isAdmin, sessionId, showCompose, expandedMsgId])
 
   function handleSelectMsg(id: number) {
     setSelectedMsgId(id)
@@ -2819,14 +2822,16 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       setUserTitle(''); setUserText(''); setUserDate(''); setRatingSite(null); setRatingBudget(null); setRefNum('')
       if (user?.id && effectiveSid) {
         fetch(`/api/feedback?userId=${user.id}&sessionId=${effectiveSid}`).then(r => r.json()).then(d => {
-          const msgs: FeedbackMessage[] = d.messages ?? []
+          if (d.error || !Array.isArray(d.messages)) { onDbg('FeedbackPage.send', `refetch skip — bad response: ${d.error ?? 'no messages array'}`); return }
+          const msgs: FeedbackMessage[] = d.messages
           setLoadedMessages(msgs)
           onDbg('FeedbackPage.send', `refetched sessionId=${effectiveSid} count=${msgs.length}`)
           if (msgs[msgs.length - 1]) { setSelectedMsgId(msgs[msgs.length - 1].id); setExpandedMsgId(msgs[msgs.length - 1].id) }
         }).catch(() => {})
       } else if (isAdmin) {
         fetch('/api/feedback?view=feedback').then(r => r.json()).then(d => {
-          const msgs: FeedbackMessage[] = d.messages ?? []
+          if (d.error || !Array.isArray(d.messages)) { onDbg('FeedbackPage.send', `refetch skip — bad response: ${d.error ?? 'no messages array'}`); return }
+          const msgs: FeedbackMessage[] = d.messages
           setLoadedMessages(msgs)
           onDbg('FeedbackPage.send', `refetched admin count=${msgs.length}`)
           if (msgs[0]) { setSelectedMsgId(msgs[0].id) }
@@ -2850,7 +2855,8 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         body: JSON.stringify({ id: selectedMsgId, replyText, replyDate, isRead: true, customerRead: false, replyBody })
       })
       fetch('/api/feedback?view=feedback').then(r => r.json()).then(d => {
-        const msgs: FeedbackMessage[] = d.messages ?? []
+        if (d.error || !Array.isArray(d.messages)) { onDbg('FeedbackPage.sendReply', `refetch skip — bad response: ${d.error ?? 'no messages array'}`); return }
+        const msgs: FeedbackMessage[] = d.messages
         setLoadedMessages(msgs)
         const updated = msgs.find(m => m.id === selectedMsgId)
         if (updated) { setHasReply(!!updated.reply_text) }
@@ -3186,7 +3192,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   function reloadMessages() {
     if (!user) return
     const url = isAdmin ? '/api/feedback?view=system' : `/api/feedback?userId=${user.id}`
-    fetch(url).then(r => r.json()).then(d => setMsgs(d.messages ?? [])).catch(() => {})
+    fetch(url).then(r => r.json()).then(d => { if (!d.error && Array.isArray(d.messages)) setMsgs(d.messages) }).catch(() => {})
   }
 
   useEffect(() => {
@@ -3242,9 +3248,10 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
     const url = isAdmin ? '/api/feedback?view=system' : `/api/feedback?userId=${user.id}`
     onDbg('MessagesPage.load', `fetch ${url}`)
     fetch(url).then(r => r.json()).then(d => {
-      const loaded = d.messages ?? []
-      setMsgs(loaded)
       setLoading(false)
+      if (d.error || !Array.isArray(d.messages)) { onDbg('MessagesPage.load', `skip — bad response: ${d.error ?? 'no messages array'}`); return }
+      const loaded: FeedbackMessage[] = d.messages
+      setMsgs(loaded)
       onDbg('MessagesPage.load', `count=${loaded.length} ids=${loaded.map((m: FeedbackMessage) => m.id).join(',')}`)
     }).catch(e => { setLoading(false); onDbg('MessagesPage.load', `error: ${String(e)}`) })
   }, [user?.id])
