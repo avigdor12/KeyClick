@@ -299,13 +299,14 @@ export default function Home() {
       .catch(() => {})
   }, [Current_User_Pointer_to_DB])
 
-  // זיהוי שפה אוטומטי לפי מדינה (middleware.ts מציב cookie keyclick_lang). לא דורס:
-  //  - בחירה ידנית קודמת של המשתמש (localStorage kc_lang_chosen)
-  //  - שפת משתמש מחובר (מטופל באפקט הנפרד לפי Current_User_Pointer_to_DB, שרץ אחר כך)
+  // קביעת שפה בטעינה, לפי סדר קדימות:
+  //  1. בחירה ידנית קודמת של המשתמש (localStorage kc_lang_chosen) — גוברת על הכל
+  //  2. אחרת: שפת המדינה (cookie keyclick_lang שמציב middleware.ts)
+  // שפת משתמש מחובר מטופלת באפקט הנפרד לפי Current_User_Pointer_to_DB, שרץ אחר כך ודורס.
   useLayoutEffect(() => {
     try {
-      if (localStorage.getItem('kc_lang_chosen')) return
-      const code = (document.cookie.match(/(?:^|;\s*)keyclick_lang=([a-z]{2})/) || [])[1]
+      const chosen = localStorage.getItem('kc_lang_chosen')
+      const code = chosen || (document.cookie.match(/(?:^|;\s*)keyclick_lang=([a-z]{2})/) || [])[1]
       if (!code) return
       const idx = languages.findIndex(l => l.code === code)
       if (idx !== -1) setLangIdx(idx)
