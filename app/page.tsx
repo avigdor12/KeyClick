@@ -259,7 +259,7 @@ export default function Home() {
         .catch(() => {})
     }
     checkUnread()
-    const interval = setInterval(checkUnread, 300000)
+    const interval = setInterval(checkUnread, 20000)
     return () => clearInterval(interval)
   }, [Current_User_Pointer_to_DB?.id, activePage])
 
@@ -272,7 +272,7 @@ export default function Home() {
         .catch(() => {})
     }
     checkAdminUnread()
-    const interval = setInterval(checkAdminUnread, 300000)
+    const interval = setInterval(checkAdminUnread, 20000)
     return () => clearInterval(interval)
   }, [isAdminAccount, activePage])
 
