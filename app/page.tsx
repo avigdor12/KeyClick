@@ -854,6 +854,7 @@ export default function Home() {
             <button onClick={async () => {
                 setHasNewCustomerMsg(false)
                 await fetch('/api/feedback/admin-unread', { method: 'PATCH' }).catch(() => {})
+                setActivePage('0')
               }}
               style={{
                 background: 'none', border: 'none', borderTop: '1px solid #555',
@@ -2558,7 +2559,7 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
 function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; systemMessage: string; onDbg: (func: string, msg: string) => void }) {
   const [ratingSite,   setRatingSite]   = useState<number | null>(null)
   const [ratingBudget, setRatingBudget] = useState<number | null>(null)
-  const [userDate,  setUserDate]  = useState('')
+  const [userDate,  setUserDate]  = useState(new Date().toISOString().slice(0, 10))
   const [userTitle, setUserTitle] = useState('')
   const [userFrom,  setUserFrom]  = useState('')
   const [userText,  setUserText]  = useState('')
@@ -2737,7 +2738,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
     setLoadedMessages([])
     setRatingSite(null)
     setRatingBudget(null)
-    setUserDate('')
+    setUserDate(new Date().toISOString().slice(0, 10))
     setUserTitle('')
     setUserFrom('')
     setUserText('')
@@ -2819,7 +2820,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       onDbg('FeedbackPage.send', `POST response ok=${postData.ok} id=${postData.id ?? 'null'} error=${postData.error ?? 'none'}`)
       setSendDone(true)
       setTimeout(() => setSendDone(false), 3000)
-      setUserTitle(''); setUserText(''); setUserDate(''); setRatingSite(null); setRatingBudget(null); setRefNum('')
+      setUserTitle(''); setUserText(''); setUserDate(new Date().toISOString().slice(0, 10)); setRatingSite(null); setRatingBudget(null); setRefNum('')
       if (user?.id && effectiveSid) {
         fetch(`/api/feedback?userId=${user.id}&sessionId=${effectiveSid}`).then(r => r.json()).then(d => {
           if (d.error || !Array.isArray(d.messages)) { onDbg('FeedbackPage.send', `refetch skip — bad response: ${d.error ?? 'no messages array'}`); return }
@@ -2987,7 +2988,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
         <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '8px' }}>
           <button onClick={() => {
               if (showCompose && !selectedMsg) { setShowCompose(false); return }
-              setExpandedMsgId(null); setSelectedMsgId(null); setUserDate(''); setUserTitle(''); setUserFrom(''); setUserText(''); setReplyDate(''); setReplyText(''); setHasReply(false); setRatingSite(null); setRatingBudget(null); setValidationErrors({}); setRefNum(''); setShowCompose(true)
+              setExpandedMsgId(null); setSelectedMsgId(null); setUserDate(new Date().toISOString().slice(0, 10)); setUserTitle(''); setUserFrom(''); setUserText(''); setReplyDate(''); setReplyText(''); setHasReply(false); setRatingSite(null); setRatingBudget(null); setValidationErrors({}); setRefNum(''); setShowCompose(true)
             }}
             style={{ fontSize: '13px', padding: '4px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{showCompose && !selectedMsg ? lang.profile.close : lang.system.newMessage}</button>
         </div>
@@ -3099,7 +3100,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                     </span>
                     {refNum && <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{refNum}</span>}
                   </div>
-                  <textarea value={userText} onChange={e => setUserText(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', direction: dir, margin: '4px 0' }} />
+                  <textarea value={userText} onChange={e => setUserText(e.target.value)} placeholder={fb.userMessage} style={{ flex: 1, minHeight: '140px', border: '1px solid #b8c2e0', borderRadius: '4px', outline: 'none', resize: 'none', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', color: '#222', background: '#fbfcff', direction: dir, margin: '4px 0', padding: '8px', boxSizing: 'border-box', cursor: 'text' }} />
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', fontSize: '13px', color: '#222', flexShrink: 0, borderTop: '1px solid #eee', paddingTop: '6px' }}>
                     <span style={{ whiteSpace: 'nowrap' }}>{fb.from}</span>
                     <input value={userFrom} onChange={e => { setUserFrom(e.target.value); if (validationErrors.from) setValidationErrors(prev => ({...prev, from: false})) }} style={{ border: 'none', borderBottom: validationErrors.from ? '2px solid red' : '1px solid #aaa', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '180px', direction: dir }} />
@@ -3136,7 +3137,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                   </div>
                 )}
               </div>
-              <textarea value={isAdmin && adminReplyEditing ? replyText : (lang.code !== 'he' && txReply) || replyText} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: dir, background: !isAdmin ? '#f0f4ff' : 'transparent', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0' }} />
+              <textarea value={isAdmin && adminReplyEditing ? replyText : (lang.code !== 'he' && txReply) || replyText} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, minHeight: '120px', border: isAdmin ? '1px solid #b8c2e0' : 'none', borderRadius: '4px', outline: 'none', resize: 'none', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', direction: dir, color: '#222', background: !isAdmin ? '#f0f4ff' : '#fbfcff', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0', padding: '8px', boxSizing: 'border-box' }} />
               <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px', direction: dir, flexShrink: 0 }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
               </div>
@@ -3456,7 +3457,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                     {fb.date}
                     <input type="date" value={broadcastDate} onChange={e => setBroadcastDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #333', outline: 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', background: 'transparent', width: '130px', direction: 'ltr' }} />
                   </div>
-                  <textarea value={broadcastText} onChange={e => setBroadcastText(e.target.value)} placeholder={lang.system.broadcastPlaceholder} style={{ minHeight: '160px', flex: 1, border: '1px dashed #a0a8d0', outline: 'none', resize: 'vertical', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: 'rtl', background: '#f0f4ff', width: '100%', boxSizing: 'border-box', borderRadius: 4, padding: '4px 8px' }} />
+                  <textarea value={broadcastText} onChange={e => setBroadcastText(e.target.value)} placeholder={lang.system.broadcastPlaceholder} style={{ minHeight: '160px', flex: 1, border: '1px solid #b8c2e0', outline: 'none', resize: 'vertical', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', color: '#222', direction: 'rtl', background: '#fbfcff', width: '100%', boxSizing: 'border-box', borderRadius: 4, padding: '8px', cursor: 'text' }} />
                   <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
                     {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                   </div>
@@ -3513,7 +3514,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                           </span>
                           <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{buildMsgRef(msg) || '______'}</span>
                         </div>
-                        <textarea value={isAdmin && adminReplyEditing ? adminReply : (lang.code !== 'he' && txMsgReply) || (isAdmin ? adminReply : msg.reply_text || '')} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setAdminReply(e.target.value) : undefined} style={{ minHeight: '160px', flex: 1, border: isAdmin ? '1px dashed #a0a8d0' : 'none', outline: 'none', resize: isAdmin ? 'vertical' : 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: isAdmin && adminReplyEditing ? 'rtl' : dir, background: isAdmin ? '#f0f4ff' : 'transparent', cursor: isAdmin ? 'text' : 'default', width: '100%', boxSizing: 'border-box' as const, borderRadius: isAdmin ? 4 : 0, padding: isAdmin ? '4px 8px' : '0' }} />
+                        <textarea value={isAdmin && adminReplyEditing ? adminReply : (lang.code !== 'he' && txMsgReply) || (isAdmin ? adminReply : msg.reply_text || '')} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setAdminReply(e.target.value) : undefined} style={{ minHeight: '160px', flex: 1, border: isAdmin ? '1px solid #b8c2e0' : 'none', outline: 'none', resize: isAdmin ? 'vertical' : 'none', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', color: '#222', direction: isAdmin && adminReplyEditing ? 'rtl' : dir, background: isAdmin ? '#fbfcff' : 'transparent', cursor: isAdmin ? 'text' : 'default', width: '100%', boxSizing: 'border-box' as const, borderRadius: isAdmin ? 4 : 0, padding: isAdmin ? '8px' : '0' }} />
                         <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
                           {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                         </div>
