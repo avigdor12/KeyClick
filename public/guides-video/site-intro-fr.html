@@ -178,18 +178,21 @@
       const restPx = textWidth - SW;  // left edge exactly at x=0 (fully visible)
       const endPx = -SW;              // right edge exactly at x=0 (just past the left edge, hidden)
 
-      const enterMs = Math.max(800, ((startPx - restPx) / CRAWL_SPEED_PX_PER_SEC) * 1000);
-      const exitMs = Math.max(800, ((restPx - endPx) / CRAWL_SPEED_PX_PER_SEC) * 1000);
+      const _rtl = document.documentElement.dir === 'rtl';
+      const _p0 = _rtl ? endPx : startPx;
+      const _p1 = _rtl ? startPx : endPx;
+      const enterMs = Math.max(800, (Math.abs(_p0 - restPx) / CRAWL_SPEED_PX_PER_SEC) * 1000);
+      const exitMs = Math.max(800, (Math.abs(restPx - _p1) / CRAWL_SPEED_PX_PER_SEC) * 1000);
       const durationMs = enterMs + HOLD_MS + exitMs;
       const holdStartFrac = enterMs / durationMs;
       const holdEndFrac = (enterMs + HOLD_MS) / durationMs;
 
       crawlAnim = subtitleText.animate(
         [
-          { offset: 0,             transform: `translateX(${startPx}px)` },
+          { offset: 0,             transform: `translateX(${_p0}px)` },
           { offset: holdStartFrac, transform: `translateX(${restPx}px)` },
           { offset: holdEndFrac,   transform: `translateX(${restPx}px)` },
-          { offset: 1,             transform: `translateX(${endPx}px)` },
+          { offset: 1,             transform: `translateX(${_p1}px)` },
         ],
         { duration: durationMs, easing: 'linear', fill: 'forwards' }
       );
