@@ -230,8 +230,9 @@ export default function Home() {
       const natural = content.offsetHeight
       if (!available || !natural) return
       const nextScale = Math.max(MIN_SIDEBAR_SCALE, Math.min(1, available / natural))
-      setSidebarScale(nextScale)
-      setSidebarBoxHeight(natural * nextScale)
+      // guard against a scale <-> scrollbar oscillation loop: ignore sub-1% wobble
+      setSidebarScale(prev => Math.abs(prev - nextScale) < 0.01 ? prev : nextScale)
+      setSidebarBoxHeight(prev => (prev !== undefined && Math.abs(prev - natural * nextScale) < 2) ? prev : natural * nextScale)
     }
     recompute()
     const ro = new ResizeObserver(recompute)
@@ -723,7 +724,7 @@ export default function Home() {
         </main>
 
         {/* RIGHT — Sidebar */}
-        <aside ref={sidebarOuterRef} style={{ width: '140px', background: '#1a1a1a', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0, overflowY: 'auto' }}>
+        <aside ref={sidebarOuterRef} style={{ width: '140px', background: '#1a1a1a', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'stretch', flexShrink: 0, overflowY: 'auto', scrollbarGutter: 'stable' }}>
         <div style={{ width: '100%', height: sidebarBoxHeight, position: 'relative', flexShrink: 0 }}>
         <div ref={sidebarContentRef} style={{ width: '100%', minHeight: sidebarAvailable, transform: `scale(${sidebarScale})`, transformOrigin: 'top center', position: 'absolute', top: 0, left: 0, display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '4px 6px 8px', borderBottom: '1px solid #333' }}>
@@ -771,10 +772,10 @@ export default function Home() {
               )}
             </div>
             <button onClick={() => { dbg('btnClick', `M Finance clicked isLoggedInExplicit=${isLoggedInExplicit}`); if (isLoggedInExplicit) { handleRun() } }}
-              style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'italic', fontWeight: 'bold', lineHeight: '1.2', fontFamily: 'var(--font-amatic),"Amatic SC",cursive', textShadow: '0 0 8px rgba(255,215,0,0.8), 0 1px 3px rgba(0,0,0,0.9)', letterSpacing: '1px', WebkitTextStroke: '0.6px #FFD700', wordBreak: 'break-word' }}
+              style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'normal', fontWeight: 'bold', lineHeight: '1.2', wordBreak: 'normal', overflowWrap: 'normal' }}
               onMouseEnter={e => { if (isLoggedInExplicit) e.currentTarget.style.opacity = '0.75' }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-            >{lang.card.title}</button>
+            >{lang.code === 'de' && lang.card.title === 'Haushaltsverwaltung' ? <>Haushalts<br />verwaltung</> : lang.card.title}</button>
           </div>
 
           {/* 3. קשרי לקוחות */}
@@ -4232,6 +4233,8 @@ function ProcessingPage({ lang, visits: liveVisits, reload, onDbg, samplingConfi
 
 const GUIDES_CSS = `
   .guides-page, .guides-page *{ box-sizing:border-box; }
+  .gp-navbtn{ transition: opacity .12s ease; }
+  .gp-navbtn:hover{ opacity: .78; }
 
   .guides-page{
     position:relative;
@@ -5480,7 +5483,7 @@ function GuidesMusicBar() {
   )
 }
 
-function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, imageWidth, imageHeight, videoSrc, pageId, navButtons, onNavigate }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string; image?: { src: string; width: number; height: number } }[]; imageSrc?: string; imageWidth?: number; imageHeight?: number; videoSrc?: string; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void }) {
+function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDesc, sections, imageSrc, imageWidth, imageHeight, videoSrc, pageId, navButtons, onNavigate, onChangeLang }: { lang: typeof languages[0]; category: string; drawerLabel: string; contentTitle: string; contentDesc: string; sections?: { heading: string; body: string; image?: { src: string; width: number; height: number } }[]; imageSrc?: string; imageWidth?: number; imageHeight?: number; videoSrc?: string; pageId?: string; navButtons?: { label: string; page: string }[]; onNavigate?: (page: string) => void; onChangeLang?: (i: number) => void }) {
   const isColLayout = true
   const cabinetWidth = isColLayout ? 'min(1040px,100%)' : 'min(1040px,92vw)'
   const isRTL = lang.code === 'he' || lang.code === 'ar'
@@ -5488,25 +5491,88 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
   const trayCardRef = useRef<HTMLDivElement>(null)
   useEffect(() => { if (trayCardRef.current) trayCardRef.current.scrollTop = 0 }, [pageId])
 
+  const fsRef = useRef<HTMLDivElement>(null)
+  const [isFs, setIsFs] = useState(false)
+  useEffect(() => {
+    const h = () => setIsFs(!!document.fullscreenElement && document.fullscreenElement === fsRef.current)
+    document.addEventListener('fullscreenchange', h)
+    return () => document.removeEventListener('fullscreenchange', h)
+  }, [])
+  const goFullscreen = () => {
+    const el = fsRef.current
+    if (!el) return
+    if (document.fullscreenElement) { document.exitFullscreen?.(); return }
+    el.requestFullscreen?.()?.catch(() => {})
+  }
+
+  const fsNavLabels = ['אתר כללי', 'אתר מדריך', 'אתר סרטון', 'תקציב בית כללי', 'תקציב בית מדריך', 'תקציב בית סרטון']
+  const fsToolbar = isFs && (
+    <div style={{
+      flexShrink: 0, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 4,
+      padding: '6px 10px', background: '#0d0d2b',
+    }}>
+      {languages.map((l, i) => (
+        <button key={l.code} type="button" onClick={() => onChangeLang?.(i)} title={l.name}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, lineHeight: 0 }}>
+          <Image src={`/flags/${l.code}${l.code === lang.code ? '1' : ''}.png`} alt={l.flag} width={26} height={26}
+            style={{ borderRadius: '50%', border: l.code === lang.code ? '2px solid #FFD700' : '2px solid transparent', display: 'block' }} />
+        </button>
+      ))}
+      <span style={{ width: 1, height: 22, background: 'rgba(255,255,255,.3)', margin: '0 4px' }} />
+      {navButtons?.map((n, i) => (
+        <button key={n.page} type="button"
+          onClick={() => onNavigate?.(n.page)}
+          title={n.label}
+          style={{
+            height: 26, borderRadius: 6, cursor: 'pointer', padding: '0 10px', margin: '0 3px',
+            background: n.page === pageId ? '#8b1e1e' : 'rgba(0,0,0,.35)',
+            border: '1px solid #FFD700', color: '#FFD700', fontSize: 11, fontWeight: 'bold',
+            whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>{i + 1} {fsNavLabels[i]}</button>
+      ))}
+      <button type="button" onClick={() => document.exitFullscreen?.()} title={isRTL ? 'יציאה (Esc)' : 'Exit (Esc)'}
+        style={{
+          marginInlineStart: 'auto', height: 26, borderRadius: 6, cursor: 'pointer', padding: '0 8px',
+          background: 'rgba(0,0,0,.35)', border: '1px solid #FFD700', color: '#FFD700', fontSize: 13,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+        }}>✕ Esc</button>
+    </div>
+  )
+  const fsButton = !isFs && (
+    <button type="button" onClick={goFullscreen}
+      aria-label={isRTL ? 'מסך מלא' : 'Fullscreen'} title={isRTL ? 'מסך מלא' : 'Fullscreen'}
+      style={{
+        position: 'absolute', top: 10, insetInlineEnd: 10, zIndex: 5,
+        width: 34, height: 34, borderRadius: 8, cursor: 'pointer',
+        background: 'rgba(13,13,43,0.8)', border: '1px solid #FFD700', color: '#FFD700',
+        fontSize: 17, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>⛶</button>
+  )
+
+  const navBtn = (n: { label: string; page: string }) => {
+    const m = n.label.match(/^(\d+)\s+(.+?)\s+-\s+(.+)$/)
+    const num = m ? m[1] : ''
+    const brand = m ? m[2] : n.label
+    const category = m ? m[3] : ''
+    return (
+      <button key={n.page} className="gp-navbtn" onClick={() => onNavigate?.(n.page)} style={{
+        width: '140px',
+        background: n.page === pageId ? 'linear-gradient(to bottom, #8b1e1e, #4a0d0d)' : 'linear-gradient(to bottom, #0d0d2b, #001a4a)',
+        border: '2px solid #FFD700', borderRadius: '10px',
+        color: '#FFD700', padding: '7px 12px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold',
+        textAlign: 'center', whiteSpace: 'normal', boxShadow: '0 3px 8px rgba(0,0,0,.35)', lineHeight: 1.15,
+      }}>
+        <span style={{ display: 'block', fontSize: '11px', lineHeight: 1 }}>{num}</span>
+        {brand}<br/>{category}
+      </button>
+    )
+  }
+
   const leftPanelBox = navButtons && (
     <div style={{ position: 'relative', border: '2px solid #FFD700', borderRadius: 8, padding: '18px 10px 10px', background: '#1a1a1a' }}>
       <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 8px', fontFamily: 'var(--font-dancing), Georgia, serif', fontStyle: 'italic', fontSize: 18, color: '#FFD700', whiteSpace: 'nowrap' }}>KeyClick</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {navButtons.slice(0, 3).map(n => {
-          const [prefix, category] = n.label.split(' - ')
-          return (
-            <button key={n.page} onClick={() => onNavigate?.(n.page)} style={{
-              width: '140px',
-              background: n.page === pageId ? 'linear-gradient(to bottom, #8b1e1e, #4a0d0d)' : 'linear-gradient(to bottom, #0d0d2b, #001a4a)',
-              border: '2px solid #FFD700', borderRadius: '10px',
-              color: '#FFD700', padding: '10px 14px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold',
-              textAlign: 'center', whiteSpace: 'normal', boxShadow: '0 3px 8px rgba(0,0,0,.35)',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
-              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-            >{prefix}<br/>{category}</button>
-          )
-        })}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {navButtons.slice(0, 3).map(navBtn)}
       </div>
     </div>
   )
@@ -5514,22 +5580,8 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
   const rightPanelBox = navButtons && (
     <div style={{ position: 'relative', border: '2px solid #FFD700', borderRadius: 8, padding: '18px 10px 10px', background: '#1a1a1a' }}>
       <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: '#1a1a1a', padding: '0 8px', fontWeight: 'bold', fontSize: 14, color: '#FFD700', whiteSpace: 'nowrap' }}>M Finance</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {navButtons.slice(3, 6).map(n => {
-          const [prefix, category] = n.label.split(' - ')
-          return (
-            <button key={n.page} onClick={() => onNavigate?.(n.page)} style={{
-              width: '140px',
-              background: n.page === pageId ? 'linear-gradient(to bottom, #8b1e1e, #4a0d0d)' : 'linear-gradient(to bottom, #0d0d2b, #001a4a)',
-              border: '2px solid #FFD700', borderRadius: '10px',
-              color: '#FFD700', padding: '10px 14px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold',
-              textAlign: 'center', whiteSpace: 'normal', boxShadow: '0 3px 8px rgba(0,0,0,.35)',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '0.75' }}
-              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-            >{prefix}<br/>{category}</button>
-          )
-        })}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {navButtons.slice(3, 6).map(navBtn)}
       </div>
     </div>
   )
@@ -5540,34 +5592,39 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
         <span className="brandplate" style={navButtons ? { background: 'linear-gradient(180deg, #8b1e1e, #4a0d0d)' } : undefined}>{drawerLabel}</span>
       </div>
       <div className="cabinet" style={{ width: cabinetWidth, maxWidth: isColLayout ? '100%' : undefined, flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, ...(isColLayout ? {} : { maxHeight: 'calc(100vh - 320px)' }) }}>
-        <div className="tray-card" ref={trayCardRef} style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
+        <div ref={fsRef} style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', position: 'relative', background: '#eef1f9' }}>
+          {fsToolbar}
+          {fsButton}
+          <div className="tray-card" ref={trayCardRef} style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto', marginTop: isFs ? 0 : undefined }}>
           {!videoSrc && (
-            <div className="tray-row" style={(sections && sections.length > 0) ? { justifyContent: 'center' } : undefined}><strong style={(sections && sections.length > 0) ? { fontSize: 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
+            <div className="tray-row" style={(sections && sections.length > 0) ? { justifyContent: 'center' } : undefined}><strong style={(sections && sections.length > 0) ? { fontSize: isFs ? 32 : 26, color: '#e02020', fontWeight: 800, letterSpacing: '.01em', textShadow: '0 1px 2px rgba(0,0,0,.25)', direction: isRTL ? 'rtl' : 'ltr' } : { direction: isRTL ? 'rtl' : 'ltr' }}>{contentTitle}</strong></div>
           )}
           {videoSrc ? (
-            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 6, background: '#0d0d2b' }}>
               <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                 <iframe
+                  key={videoSrc}
                   src={videoSrc}
                   title={contentTitle}
                   scrolling="no"
                   style={{ width: '100%', height: '100%', border: '2px solid #FFD700', borderRadius: 8, background: 'red', overflow: 'hidden' }}
-                  allow="autoplay"
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
                 />
               </div>
               <GuidesMusicBar />
             </div>
           ) : sections && sections.length > 0 ? (
-            <div style={{ marginTop: 6, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
+            <div style={{ marginTop: 6, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left', maxWidth: isFs ? 1100 : undefined, marginInline: isFs ? 'auto' : undefined }}>
               {sections.map((s, i) => (
                 <div key={i} style={{ marginTop: i === 0 ? 0 : 20 }}>
                   {s.image && (
                     <Image src={s.image.src} alt={s.heading || contentTitle} width={s.image.width} height={s.image.height} style={{ float: isRTL ? 'right' : 'left', margin: isRTL ? '0 0 10px 16px' : '0 16px 10px 0', maxWidth: '30%', height: 'auto', borderRadius: 8 }} />
                   )}
                   {s.heading && (
-                    <div style={{ fontWeight: 700, fontSize: 17, color: '#131a4a', borderBottom: '2px solid #d4af37', paddingBottom: 3, marginBottom: 6, display: 'inline-block' }}>{s.heading}</div>
+                    <div style={{ fontWeight: 700, fontSize: isFs ? 22 : 17, color: '#131a4a', borderBottom: '2px solid #d4af37', paddingBottom: 3, marginBottom: 6, display: 'inline-block' }}>{s.heading}</div>
                   )}
-                  <p className="tray-desc" style={{ maxWidth: 'none', whiteSpace: 'pre-line', color: '#20264a', fontSize: 16, fontWeight: 500, lineHeight: 1.7 }}>{s.body}</p>
+                  <p className="tray-desc" style={{ maxWidth: 'none', whiteSpace: 'pre-line', color: '#20264a', fontSize: isFs ? 21 : 16, fontWeight: 500, lineHeight: 1.7 }}>{s.body}</p>
                 </div>
               ))}
               <div style={{ clear: 'both' }} />
@@ -5578,8 +5635,9 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
               )}
             </div>
           ) : (
-            <p className="tray-desc" style={{ maxWidth: 'none', flex: 1, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>{contentDesc}</p>
+            <p className="tray-desc" style={{ maxWidth: 'none', flex: 1, direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left', fontSize: isFs ? 21 : undefined }}>{contentDesc}</p>
           )}
+          </div>
         </div>
       </div>
       <div className="feet" style={{ width: `calc(${cabinetWidth} - 34px)`, maxWidth: isColLayout ? '100%' : undefined }}><div className="foot" /><div className="foot" /></div>
@@ -5754,12 +5812,12 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, uuidHintEmai
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
   if (page === 'guides')      return <GuidesPage lang={lang} onNavigate={onNavigate} />
-  if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={FINANCE_OVERVIEW_TITLES[lang.code] ?? lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} sections={FINANCE_OVERVIEW_SECTIONS[lang.code]} imageSrc="/guides/mfinance-structure-diagram.png" imageWidth={2092} imageHeight={2184} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-fin-guide')     return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`5 ${lang.card.title} - ${lang.guides.userGuide}`} contentTitle={FINANCE_GUIDE_TITLES[lang.code] ?? lang.guides.financeGuideTitle} contentDesc={lang.guides.financeGuideDesc} sections={FINANCE_GUIDE_SECTIONS[lang.code]} pageId='guides-fin-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} videoSrc={`/guides-video/finance-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=8`} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} imageSrc={`/guides/site-structure-diagram-${lang.code}.png`} pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-site-guide')    return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`2 ${lang.card.theWebsite} - ${lang.guides.userGuide}`} contentTitle={SITE_GUIDE_TITLES[lang.code] ?? lang.guides.siteGuideTitle} contentDesc={lang.guides.siteGuideDesc} sections={SITE_GUIDE_SECTIONS[lang.code]} pageId='guides-site-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
-  if (page === 'guides-site-videos')   return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`3 ${lang.card.theWebsite} - ${lang.card.videos}`} contentTitle={lang.guides.siteVideosTitle} contentDesc={lang.guides.siteVideosDesc} videoSrc={`/guides-video/site-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=999xyza`} pageId='guides-site-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} />
+  if (page === 'guides-fin-overview')  return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`4 ${lang.card.title} - ${lang.guides.overview}`} contentTitle={FINANCE_OVERVIEW_TITLES[lang.code] ?? lang.guides.financeOverviewTitle} contentDesc={lang.guides.financeOverviewDesc} sections={FINANCE_OVERVIEW_SECTIONS[lang.code]} imageSrc="/guides/mfinance-structure-diagram.png" imageWidth={2092} imageHeight={2184} pageId='guides-fin-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} onChangeLang={onChangeLang} />
+  if (page === 'guides-fin-guide')     return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`5 ${lang.card.title} - ${lang.guides.userGuide}`} contentTitle={FINANCE_GUIDE_TITLES[lang.code] ?? lang.guides.financeGuideTitle} contentDesc={lang.guides.financeGuideDesc} sections={FINANCE_GUIDE_SECTIONS[lang.code]} pageId='guides-fin-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} onChangeLang={onChangeLang} />
+  if (page === 'guides-fin-videos')    return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`6 ${lang.card.title} - ${lang.card.videos}`} contentTitle={lang.guides.financeVideosTitle} contentDesc={lang.guides.financeVideosDesc} videoSrc={`/guides-video/finance-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=8`} pageId='guides-fin-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} onChangeLang={onChangeLang} />
+  if (page === 'guides-site-overview') return <GuidesDetailPage lang={lang} category={lang.guides.overview} drawerLabel={`1 ${lang.card.theWebsite} - ${lang.guides.overview}`} contentTitle={SITE_OVERVIEW_TITLES[lang.code] ?? lang.guides.siteOverviewTitle} contentDesc={lang.guides.siteOverviewDesc} sections={SITE_OVERVIEW_SECTIONS[lang.code]} imageSrc={`/guides/site-structure-diagram-${lang.code}.png`} pageId='guides-site-overview' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} onChangeLang={onChangeLang} />
+  if (page === 'guides-site-guide')    return <GuidesDetailPage lang={lang} category={lang.guides.userGuide} drawerLabel={`2 ${lang.card.theWebsite} - ${lang.guides.userGuide}`} contentTitle={SITE_GUIDE_TITLES[lang.code] ?? lang.guides.siteGuideTitle} contentDesc={lang.guides.siteGuideDesc} sections={SITE_GUIDE_SECTIONS[lang.code]} pageId='guides-site-guide' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} onChangeLang={onChangeLang} />
+  if (page === 'guides-site-videos')   return <GuidesDetailPage lang={lang} category={lang.card.videos} drawerLabel={`3 ${lang.card.theWebsite} - ${lang.card.videos}`} contentTitle={lang.guides.siteVideosTitle} contentDesc={lang.guides.siteVideosDesc} videoSrc={`/guides-video/site-intro${lang.code === 'he' ? '' : '-' + lang.code}.html?v=999xyza`} pageId='guides-site-videos' navButtons={buildGuideNavButtons(lang)} onNavigate={onNavigate} onChangeLang={onChangeLang} />
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial, sans-serif' }}>
       <div style={{ textAlign: 'center', color: '#555' }}>
