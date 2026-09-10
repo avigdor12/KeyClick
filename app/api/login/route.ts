@@ -8,8 +8,9 @@ export async function POST(req: NextRequest) {
   const { email, password, clientIp, uuidBiosCode } = await req.json()
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
 
+  try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT`) } catch { /* ignore */ }
   const result = await pool.query(
-    'SELECT id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", password_hash, "UUID_Local_BIOS" FROM users WHERE email = $1',
+    'SELECT id, name, email, language, country, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", password_hash, "UUID_Local_BIOS" FROM users WHERE email = $1',
     [email]
   )
   const user = result.rows[0]

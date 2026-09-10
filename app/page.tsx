@@ -148,23 +148,25 @@ const GRANITE_BG: React.CSSProperties = {
 type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; ip_registration?: string; UUID_Local_BIOS?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null }
 
 const _txCache = new Map<string, string>()
-async function _txChunk(chunk: string, lc: string): Promise<string> {
+function _mmLc(code: string): string { return code === 'zh' ? 'zh-CN' : code }
+async function _txChunk(chunk: string, fromLc: string, toLc: string): Promise<string> {
   try {
-    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=he|${lc}`)
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=${fromLc}|${toLc}`)
     const d = await res.json()
     return d.responseData?.translatedText ?? chunk
   } catch { return chunk }
 }
-async function translateFromHe(text: string, toLang: string): Promise<string> {
-  if (!text.trim() || toLang === 'he') return text
-  const lc = toLang === 'zh' ? 'zh-CN' : toLang
-  const key = `${lc}:${text}`
+// תרגום כללי דו-כיווני (MyMemory) — משפת מקור לשפת יעד. מדלג אם השפות שוות או הטקסט ריק.
+async function translateText(text: string, fromLang: string, toLang: string): Promise<string> {
+  if (!text.trim() || !fromLang || !toLang || fromLang === toLang) return text
+  const from = _mmLc(fromLang), to = _mmLc(toLang)
+  const key = `${from}>${to}:${text}`
   if (_txCache.has(key)) return _txCache.get(key)!
   // MyMemory free tier: max ~500 chars per request — split on paragraph breaks
   const MAX = 480
   let result: string
   if (text.length <= MAX) {
-    result = await _txChunk(text, lc)
+    result = await _txChunk(text, from, to)
   } else {
     const paragraphs = text.split('\n')
     const chunks: string[] = []
@@ -174,11 +176,15 @@ async function translateFromHe(text: string, toLang: string): Promise<string> {
       else { cur = cur ? cur + '\n' + line : line }
     }
     if (cur) chunks.push(cur)
-    const translated = await Promise.all(chunks.map(c => _txChunk(c, lc)))
+    const translated = await Promise.all(chunks.map(c => _txChunk(c, from, to)))
     result = translated.join('\n')
   }
   _txCache.set(key, result)
   return result
+}
+// עטיפה תואמת-לאחור: מקור עברית (טקסטים שנכתבים תמיד בעברית — יחצ, ברכת שער וכו')
+function translateFromHe(text: string, toLang: string): Promise<string> {
+  return translateText(text, 'he', toLang)
 }
 
 export default function Home() {
@@ -878,7 +884,7 @@ export default function Home() {
 const SCHEDULE_SUBJECTS = ['יום ה-X ההפצה', 'תקופת הרצה', 'תקופת ניסיון', 'VIP', 'חודשי', 'שנתי', 'חד פעמי'] as const
 function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}` }
 type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
-type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null; is_system?: boolean; is_broadcast?: boolean }
+type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null; is_system?: boolean; is_broadcast?: boolean; body_lang?: string | null; sender_country?: string | null; sender_language?: string | null }
 type PaymentRecord = { id: number; user_id: number; amount: number | null; currency: string | null; plan: string | null; payment_date: string; status: string }
 
 function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof languages[0] }) {
@@ -1787,11 +1793,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
-                    <th colSpan={10} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
+                    <th colSpan={11} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
                     <th colSpan={6} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
-                    {['ID', `${lang.system.weightedScoreTitle} 0-10`, lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.system.colCurrency, 'IP Registration', 'Last IP', 'UUID Local BIOS'].map(h => (
+                    {['ID', `${lang.system.weightedScoreTitle} 0-10`, lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.profile.country, lang.system.colCurrency, 'IP Registration', 'Last IP', 'UUID Local BIOS'].map(h => (
                       <th key={h} style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>{h}</th>
                     ))}
                     {[lang.system.colActive, lang.system.colAppInstalled, lang.profile.planFrom, lang.profile.planTo, lang.system.colLicenceType, lang.system.colSystemForce].map(h => (
@@ -1824,6 +1830,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                               : String(u.email ?? '')}
                           </td>
                           <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                            {usersEditMode
+                              ? <input value={String(u.country ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, country: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], country: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '90px', backgroundColor: 'yellow' }} />
+                              : String(u.country ?? '')}
+                          </td>
                           <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
                           <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
                           <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
@@ -1865,7 +1876,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           </td>
                         </tr>
                         <tr style={{ background: rowBg }}>
-                          <td colSpan={15} style={{ padding: '2px 6px', border: '1px solid #c8cce0', borderTop: 'none' }}>
+                          <td colSpan={16} style={{ padding: '2px 6px', border: '1px solid #c8cce0', borderTop: 'none' }}>
                             {usersEditMode
                               ? <textarea value={String(u.notes ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, notes: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], notes: v } })) }} style={{ fontSize: 11, width: '100%', height: 36, resize: 'vertical', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '2px 4px', boxSizing: 'border-box', direction: 'rtl', textAlign: 'right' }} />
                               : <div style={{ fontSize: 11, color: '#444', minHeight: 18, padding: '1px 4px', backgroundColor: '#f9f9f9', borderRadius: 3, direction: 'rtl', textAlign: 'right' }}>{String(u.notes ?? '')}</div>}
@@ -2586,7 +2597,8 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   const isAdmin = user?.M_Finance_license_type === LICENSE_TYPES.System_Owner
 
   useEffect(() => {
-    if (lang.code === 'he' || expandedMsgId === null) { setTxBody(''); setTxReply(''); setTxTitle(''); return }
+    setTxBody(''); setTxReply(''); setTxTitle('')
+    if (expandedMsgId === null) return
     const msg = loadedMessages.find(m => m.id === expandedMsgId)
     if (!msg) return
     const body = (() => {
@@ -2600,12 +2612,14 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       for (const sep of stops) { const idx = afterMeta.indexOf(sep); if (idx !== -1 && idx < endIdx) endIdx = idx }
       return afterMeta.slice(0, endIdx).trim()
     })()
-    Promise.all([
-      body ? translateFromHe(body, lang.code) : Promise.resolve(''),
-      msg.reply_text ? translateFromHe(msg.reply_text, lang.code) : Promise.resolve(''),
-      msg.title ? translateFromHe(msg.title, lang.code) : Promise.resolve('')
-    ]).then(([b, r, t]) => { setTxBody(b); setTxReply(r); setTxTitle(t) })
-  }, [expandedMsgId, lang.code])
+    // שפת מקור: תשובה + הודעת-מערכת תמיד עברית; טקסט/כותרת של לקוח = השפה שבה נכתב.
+    // מתרגם רק כשהשפות שונות; אחרת משאיר ריק והתצוגה תיפול למקור.
+    const bodyLang = msg.is_system ? 'he' : (msg.body_lang || 'he')
+    const tx = (text: string | null | undefined, from: string) =>
+      (text && from !== lang.code) ? translateText(text, from, lang.code) : Promise.resolve('')
+    Promise.all([tx(body, bodyLang), tx(msg.reply_text, 'he'), tx(msg.title, bodyLang)])
+      .then(([b, r, t]) => { setTxBody(b); setTxReply(r); setTxTitle(t) })
+  }, [expandedMsgId, lang.code, loadedMessages])
 
   useEffect(() => {
     if (lang.code === 'he' || !systemMessage) { setTxSysMsg(''); return }
@@ -2613,18 +2627,29 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   }, [systemMessage, lang.code])
 
   useEffect(() => {
-    if (lang.code === 'he' || loadedMessages.length === 0) { setTxTitlesList({}); return }
+    if (loadedMessages.length === 0) { setTxTitlesList({}); return }
     Promise.all(
-      loadedMessages.map(m => m.title
-        ? translateFromHe(m.title, lang.code).then(t => ({ id: m.id, t }))
-        : Promise.resolve({ id: m.id, t: '' })
-      )
+      loadedMessages.map(m => {
+        const from = m.is_system ? 'he' : (m.body_lang || 'he')
+        return (m.title && from !== lang.code)
+          ? translateText(m.title, from, lang.code).then(t => ({ id: m.id, t }))
+          : Promise.resolve({ id: m.id, t: '' })
+      })
     ).then(results => {
       const map: Record<number, string> = {}
       results.forEach(({ id, t }) => { if (t) map[id] = t })
       setTxTitlesList(map)
     })
   }, [loadedMessages, lang.code])
+
+  // שדה "מאת:" בטופס משוב — מילוי אוטומטי: שם, שפת המקור, מדינת המקור
+  useEffect(() => {
+    if (!showCompose || expandedMsgId !== null || userFrom.trim()) return
+    const langName = languages.find(l => l.code === lang.code)?.name ?? lang.code
+    const name = user ? [user.name, user.last_name].filter(Boolean).join(' ') : ''
+    const parts = [name, langName, user?.country].filter(Boolean)
+    if (parts.length) setUserFrom(parts.join(', '))
+  }, [showCompose, expandedMsgId, user?.id, lang.code])
 
   useEffect(() => {
     if (!user?.id) return
@@ -2810,7 +2835,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       const postRes = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id ?? null, userName: user?.name || userFrom || null, sentDate: userDate || null, title: userTitle || null, body: fullBody, ratingSite: ratingSite, ratingBudget: ratingBudget, sessionId: effectiveSid })
+        body: JSON.stringify({ userId: user?.id ?? null, userName: user?.name || userFrom || null, sentDate: userDate || null, title: userTitle || null, body: fullBody, ratingSite: ratingSite, ratingBudget: ratingBudget, sessionId: effectiveSid, bodyLang: lang.code })
       })
       const postData = await postRes.json()
       onDbg('FeedbackPage.send', `POST response ok=${postData.ok} id=${postData.id ?? 'null'} error=${postData.error ?? 'none'}`)
@@ -2948,7 +2973,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                     <td style={{ ...tdS, color: '#555' }}>{msgNum}</td>
                     <td style={{ ...tdS, fontSize: 10, color: '#888', direction: 'ltr' }}>{buildMsgRef(m) || '—'}</td>
                     <td style={{ ...tdS, textAlign: 'start', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {(lang.code !== 'he' && txTitlesList[m.id]) || m.title || '—'}
+                      {txTitlesList[m.id] || m.title || '—'}
                     </td>
                     {m.is_system ? (
                       <td colSpan={3} style={{ ...tdS, color: '#aaa' }}>—</td>
@@ -3042,7 +3067,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                   <span>{fb.date}{' '}{selectedMsg.sent_date || '______'}</span>
                   <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{buildMsgRef(selectedMsg) || '______'}</span>
                 </div>
-                <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', flex: 1 }}>{(lang.code !== 'he' && txReply) || replyText || '______'}</div>
+                <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', flex: 1 }}>{txReply || replyText || '______'}</div>
                 <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
                   {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                 </div>
@@ -3076,11 +3101,17 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222', flexShrink: 0 }}>
                     <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{selectedMsg.sent_date || '______'}</span>
-                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{(lang.code !== 'he' && txTitle) || selectedMsg.title || '______'}</span>
+                    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{txTitle || selectedMsg.title || '______'}</span>
                     <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{buildMsgRef(selectedMsg) || '______'}</span>
                   </div>
-                  <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', flex: 1 }}>{(lang.code !== 'he' && txBody) || getBodyText(selectedMsg) || '______'}</div>
-                  <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px' }}>{fb.from}{' '}{selectedMsg.user_name || '______'}</div>
+                  <div style={{ fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', flex: 1 }}>{txBody || getBodyText(selectedMsg) || '______'}</div>
+                  <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px' }}>{fb.from}{' '}{selectedMsg.user_name || '______'}
+                    {isAdmin && (() => {
+                      const c = selectedMsg.body_lang || selectedMsg.sender_language
+                      const parts = [selectedMsg.sender_country, c && (languages.find(l => l.code === c)?.name ?? c)].filter(Boolean)
+                      return parts.length ? <span style={{ color: '#888', fontSize: 12, marginInlineStart: 8 }}>({parts.join(' · ')})</span> : null
+                    })()}
+                  </div>
                 </div>
               ) : (
                 <>
@@ -3133,7 +3164,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
                   </div>
                 )}
               </div>
-              <textarea value={isAdmin && adminReplyEditing ? replyText : (lang.code !== 'he' && txReply) || replyText} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, minHeight: '120px', border: isAdmin ? '1px solid #b8c2e0' : 'none', borderRadius: '4px', outline: 'none', resize: 'none', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', direction: dir, color: '#222', background: !isAdmin ? '#f0f4ff' : '#fbfcff', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0', padding: '8px', boxSizing: 'border-box' }} />
+              <textarea value={isAdmin && adminReplyEditing ? replyText : txReply || replyText} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setReplyText(e.target.value) : undefined} style={{ flex: 1, minHeight: '120px', border: isAdmin ? '1px solid #b8c2e0' : 'none', borderRadius: '4px', outline: 'none', resize: 'none', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', direction: dir, color: '#222', background: !isAdmin ? '#f0f4ff' : '#fbfcff', cursor: !isAdmin ? 'default' : 'text', margin: '4px 0', padding: '8px', boxSizing: 'border-box' }} />
               <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #eee', paddingTop: '6px', direction: dir, flexShrink: 0 }}>
                 {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
               </div>
@@ -3222,7 +3253,8 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
   }
 
   useEffect(() => {
-    if (!selectedMsg || lang.code === 'he') { setTxMsgBody(''); setTxMsgReply(''); setTxMsgTitle(''); setTxSysMsg(''); return }
+    setTxMsgBody(''); setTxMsgReply(''); setTxMsgTitle(''); setTxSysMsg('')
+    if (!selectedMsg) return
     const body = selectedMsg.body ?? ''
     const cut = (text: string, sep: string): [string, string] => { const i = text.indexOf(sep); return i === -1 ? [text, ''] : [text.slice(0, i), text.slice(i + sep.length)] }
     const [withoutHistory] = cut(body, '\n\n══════════')
@@ -3231,11 +3263,14 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
     const lines = withoutSysMsg.split('\n')
     const userText = lines.slice(4).join('\n').trim()
     const sysMsgText = afterSysMsg ? afterSysMsg.split('\n\n')[0] : ''
+    // שפת מקור: טקסט/כותרת של הלקוח = השפה שנכתב בה; תשובה + הודעת מערכת תמיד עברית
+    const bodyLang = selectedMsg.is_system ? 'he' : (selectedMsg.body_lang || 'he')
+    const tx = (text: string, from: string) => (text && from !== lang.code) ? translateText(text, from, lang.code) : Promise.resolve('')
     Promise.all([
-      userText ? translateFromHe(userText, lang.code) : Promise.resolve(''),
-      selectedMsg.reply_text ? translateFromHe(selectedMsg.reply_text, lang.code) : Promise.resolve(''),
-      selectedMsg.title ? translateFromHe(selectedMsg.title, lang.code) : Promise.resolve(''),
-      sysMsgText ? translateFromHe(sysMsgText, lang.code) : Promise.resolve('')
+      tx(userText, bodyLang),
+      tx(selectedMsg.reply_text ?? '', 'he'),
+      tx(selectedMsg.title ?? '', bodyLang),
+      tx(sysMsgText, 'he'),
     ]).then(([b, r, t, s]) => { setTxMsgBody(b); setTxMsgReply(r); setTxMsgTitle(t); setTxSysMsg(s) })
   }, [selectedMsg?.id, lang.code])
 
@@ -3510,7 +3545,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                           </span>
                           <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{buildMsgRef(msg) || '______'}</span>
                         </div>
-                        <textarea value={isAdmin && adminReplyEditing ? adminReply : (lang.code !== 'he' && txMsgReply) || (isAdmin ? adminReply : msg.reply_text || '')} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setAdminReply(e.target.value) : undefined} style={{ minHeight: '160px', flex: 1, border: isAdmin ? '1px solid #b8c2e0' : 'none', outline: 'none', resize: isAdmin ? 'vertical' : 'none', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', color: '#222', direction: isAdmin && adminReplyEditing ? 'rtl' : dir, background: isAdmin ? '#fbfcff' : 'transparent', cursor: isAdmin ? 'text' : 'default', width: '100%', boxSizing: 'border-box' as const, borderRadius: isAdmin ? 4 : 0, padding: isAdmin ? '8px' : '0' }} />
+                        <textarea value={isAdmin && adminReplyEditing ? adminReply : txMsgReply || (isAdmin ? adminReply : msg.reply_text || '')} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setAdminReply(e.target.value) : undefined} style={{ minHeight: '160px', flex: 1, border: isAdmin ? '1px solid #b8c2e0' : 'none', outline: 'none', resize: isAdmin ? 'vertical' : 'none', fontSize: '13px', lineHeight: 1.5, fontFamily: 'Arial, sans-serif', color: '#222', direction: isAdmin && adminReplyEditing ? 'rtl' : dir, background: isAdmin ? '#fbfcff' : 'transparent', cursor: isAdmin ? 'text' : 'default', width: '100%', boxSizing: 'border-box' as const, borderRadius: isAdmin ? 4 : 0, padding: isAdmin ? '8px' : '0' }} />
                         <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
                           {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                         </div>
@@ -3530,7 +3565,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                   <div style={{ position: 'relative', marginTop: '28px' }}>
                     <span style={{ position: 'absolute', top: '-10px', right: '16px', background: '#f5f5f5', padding: '0 6px', fontSize: '13px', color: '#003399', fontWeight: 700 }}>{fb.systemMessage}</span>
                     <div style={{ border: '2px solid #003399', borderRadius: '6px', height: '135px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                      <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap', direction: dir }}>{(lang.code !== 'he' && txSysMsg) || sysMsgText}</div>
+                      <div style={{ fontSize: '13px', color: '#222', flex: 1, whiteSpace: 'pre-wrap', direction: dir }}>{txSysMsg || sysMsgText}</div>
                       <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '6px' }}>
                         {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                       </div>
@@ -3564,11 +3599,17 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                       <div style={{ position: 'relative', height: '26px', fontSize: '13px', color: '#222' }}>
                         <span style={{ position: 'absolute', right: 0 }}>{fb.date}{' '}{msg.sent_date || '______'}</span>
                         <span style={{ position: 'absolute', right: '175px', transform: 'translateX(50%)', color: '#555' }}>{lang.system.msgNo}{msgIdx + 1}</span>
-                        <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{(lang.code !== 'he' && txMsgTitle) || msg.title || '______'}</span>
+                        <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', fontWeight: 600, whiteSpace: 'nowrap' }}>{fb.title}{' '}{txMsgTitle || msg.title || '______'}</span>
                         <span style={{ position: 'absolute', left: 0, fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.ref + ' '}{refNum || '______'}</span>
                       </div>
-                      <div style={{ minHeight: '80px', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', direction: dir }}>{(lang.code !== 'he' && txMsgBody) || userText}</div>
-                      <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{msg.user_name || '______'}</div>
+                      <div style={{ minHeight: '80px', fontSize: '13px', whiteSpace: 'pre-wrap', color: '#222', margin: '8px 0', direction: dir }}>{txMsgBody || userText}</div>
+                      <div style={{ fontSize: '13px', color: '#222' }}>{fb.from}{' '}{msg.user_name || '______'}
+                        {isAdmin && (() => {
+                          const c = msg.body_lang || msg.sender_language
+                          const parts = [msg.sender_country, c && (languages.find(l => l.code === c)?.name ?? c)].filter(Boolean)
+                          return parts.length ? <span style={{ color: '#888', fontSize: 12, marginInlineStart: 8 }}>({parts.join(' · ')})</span> : null
+                        })()}
+                      </div>
                     </div>
                   </div>
 
@@ -3586,7 +3627,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                         </div>
                         <span style={{ fontSize: '11px', color: '#888', direction: 'ltr' }}>{lang.system.replyToRef}{' '}{refNum}</span>
                       </div>
-                      <textarea value={isAdmin && adminReplyEditing ? adminReply : (lang.code !== 'he' && txMsgReply) || (isAdmin ? adminReply : msg.reply_text || '')} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setAdminReply(e.target.value) : undefined} style={{ minHeight: '80px', border: isAdmin ? '1px dashed #a0a8d0' : 'none', outline: 'none', resize: isAdmin ? 'vertical' : 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: isAdmin && adminReplyEditing ? 'rtl' : dir, background: isAdmin ? '#f0f4ff' : 'transparent', cursor: isAdmin ? 'text' : 'default', width: '100%', boxSizing: 'border-box' as const, borderRadius: isAdmin ? 4 : 0, padding: isAdmin ? '4px 8px' : '0' }} />
+                      <textarea value={isAdmin && adminReplyEditing ? adminReply : txMsgReply || (isAdmin ? adminReply : msg.reply_text || '')} readOnly={!isAdmin} onFocus={isAdmin ? () => setAdminReplyEditing(true) : undefined} onBlur={isAdmin ? () => setAdminReplyEditing(false) : undefined} onChange={isAdmin ? e => setAdminReply(e.target.value) : undefined} style={{ minHeight: '80px', border: isAdmin ? '1px dashed #a0a8d0' : 'none', outline: 'none', resize: isAdmin ? 'vertical' : 'none', fontSize: '13px', fontFamily: 'Arial, sans-serif', direction: isAdmin && adminReplyEditing ? 'rtl' : dir, background: isAdmin ? '#f0f4ff' : 'transparent', cursor: isAdmin ? 'text' : 'default', width: '100%', boxSizing: 'border-box' as const, borderRadius: isAdmin ? 4 : 0, padding: isAdmin ? '4px 8px' : '0' }} />
                       <div style={{ fontSize: '13px', color: '#222', borderTop: '1px solid #ddd', paddingTop: '8px' }}>
                         {fb.respectfully} <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontStyle: 'italic', fontWeight: 'bold', color: '#003399' }}>KeyClick</span> {fb.customerRelations}
                       </div>

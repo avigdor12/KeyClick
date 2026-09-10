@@ -3,7 +3,7 @@ import { Pool } from 'pg'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-const ALLOWED = ['is_active', 'is_m_finance_installed', 'name', 'email', 'notes', 'weighted_score', 'UUID_Local_BIOS']
+const ALLOWED = ['is_active', 'is_m_finance_installed', 'name', 'email', 'notes', 'weighted_score', 'UUID_Local_BIOS', 'country']
 
 export async function POST(req: NextRequest) {
   try {

@@ -24,6 +24,8 @@ async function ensureTable() {
   await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS customer_read BOOLEAN DEFAULT false`)
   await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS deleted_by_customer BOOLEAN DEFAULT false`)
   await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS deleted_by_admin BOOLEAN DEFAULT false`)
+  await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS body_lang TEXT`)
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT`)
 }
 
 export async function GET(req: NextRequest) {
@@ -54,7 +56,7 @@ export async function GET(req: NextRequest) {
     }
     const view = searchParams.get('view')
     const deletedCol = view === 'feedback' ? 'deleted_by_customer' : 'deleted_by_admin'
-    const result = await pool.query(`SELECT fm.*, u.last_ip as sender_ip FROM feedback_messages fm LEFT JOIN users u ON u.id = fm.user_id WHERE fm.${deletedCol}=false ORDER BY fm.created_at ASC`)
+    const result = await pool.query(`SELECT fm.*, u.last_ip as sender_ip, u.country as sender_country, u.language as sender_language FROM feedback_messages fm LEFT JOIN users u ON u.id = fm.user_id WHERE fm.${deletedCol}=false ORDER BY fm.created_at ASC`)
     return NextResponse.json({ messages: result.rows })
   } catch (e) {
     return NextResponse.json({ messages: [], error: String(e) })
@@ -64,11 +66,19 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     await ensureTable()
-    const { userId, userName, sentDate, title, body, ratingSite, ratingBudget, sessionId } = await req.json()
+    const { userId, userName, sentDate, title, body, ratingSite, ratingBudget, sessionId, bodyLang } = await req.json()
+    // שפת ההודעה: מה שהלקוח שלח, אחרת שפת המשתמש מהמסד, אחרת עברית
+    let msgLang: string = bodyLang || 'he'
+    if (!bodyLang && userId) {
+      try {
+        const u = await pool.query(`SELECT language FROM users WHERE id=$1`, [Number(userId)])
+        if (u.rows[0]?.language) msgLang = u.rows[0].language
+      } catch { /* keep default */ }
+    }
     const result = await pool.query(
-      `INSERT INTO feedback_messages (user_id, user_name, sent_date, title, body, rating_site, rating_budget, session_id)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
-      [userId ?? null, userName ?? null, sentDate ?? null, title ?? null, body ?? null, ratingSite ?? null, ratingBudget ?? null, sessionId ?? null]
+      `INSERT INTO feedback_messages (user_id, user_name, sent_date, title, body, rating_site, rating_budget, session_id, body_lang)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
+      [userId ?? null, userName ?? null, sentDate ?? null, title ?? null, body ?? null, ratingSite ?? null, ratingBudget ?? null, sessionId ?? null, msgLang]
     )
     return NextResponse.json({ ok: true, id: result.rows[0].id })
   } catch (e) {
