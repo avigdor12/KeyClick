@@ -1,6 +1,6 @@
 'use client'
 import type { Metadata } from "next";
-import { Dancing_Script, Amatic_SC, Caveat, Assistant } from "next/font/google";
+import { Dancing_Script, Amatic_SC, Caveat, Assistant, Frank_Ruhl_Libre } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
@@ -28,13 +28,19 @@ const assistant = Assistant({
   weight: ["500"],
 });
 
+const frankRuhl = Frank_Ruhl_Libre({
+  variable: "--font-frank",
+  subsets: ["latin", "hebrew"],
+  weight: ["500", "700", "900"],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" className={`${dancingScript.variable} ${amaticSC.variable} ${caveat.variable} ${assistant.variable} h-full`}>
+    <html lang="he" className={`${dancingScript.variable} ${amaticSC.variable} ${caveat.variable} ${assistant.variable} ${frankRuhl.variable} h-full`}>
       <body className="min-h-full flex flex-col">
         <SessionProvider>{children}</SessionProvider>
       </body>
