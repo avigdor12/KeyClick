@@ -7747,6 +7747,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
   // [Claude Code 13.09.2026, לפי הנחיית המשתמש] סיסמה זמנית שהמנהל קבע - הלקוח חייב לבחור סיסמה משלו בכניסה הראשונה
   const [pendingLoginUser, setPendingLoginUser] = useState<UserRecord | null>(null)
   const [changePasswordText, setChangePasswordText] = useState('')
+  const [changePasswordConfirm, setChangePasswordConfirm] = useState('')
   const [changePasswordMsg, setChangePasswordMsg] = useState('')
   const [savedName,  setSavedName]  = useState('')
   const [savedEmail, setSavedEmail] = useState(prefillEmail)
@@ -7978,11 +7979,19 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
             <div style={{ position: 'relative', border: '2px solid #555', borderRadius: '10px', padding: '16px', paddingTop: '22px', marginBottom: '10px' }}>
               <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: '#2a2a2a', padding: '0 10px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', direction: dir }}>נא לבחור סיסמא חדשה</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <input type={showPass ? 'text' : 'password'} autoComplete="new-password" placeholder={c.passPh} value={changePasswordText} onChange={e => setChangePasswordText(e.target.value)} style={{ ...regInput }} />
+                <div style={{ position: 'relative' }}>
+                  <input type={showPass ? 'text' : 'password'} autoComplete="new-password" placeholder={c.passPh} value={changePasswordText} onChange={e => setChangePasswordText(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showPass} /></button>
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <input type={showConfPass ? 'text' : 'password'} autoComplete="new-password" placeholder={c.confirmPassPh} value={changePasswordConfirm} onChange={e => setChangePasswordConfirm(e.target.value)} style={{ ...regInput, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowConfPass(p => !p)} tabIndex={-1} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 0 }}><EyeIcon open={showConfPass} /></button>
+                </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
                 <button onClick={async () => {
                   if (!changePasswordText || !pendingLoginUser) { setChangePasswordMsg(c.errPassLen); return }
+                  if (changePasswordText !== changePasswordConfirm) { onDbg('changePassword', 'pass !== conf => errPassMatch'); setChangePasswordMsg(c.errPassMatch); return }
                   onDbg('changePassword', `נשלחה בקשה email="${pendingLoginUser.email}"`)
                   try {
                     const r = await fetch('/api/change-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: pendingLoginUser.email, newPassword: changePasswordText }) })
@@ -7991,6 +8000,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
                     onDbg('changePassword', `הצלחה email="${pendingLoginUser.email}" => טוען את המשתמש`)
                     const finalUser = { ...pendingLoginUser, temp_password: false }
                     setSavedName(''); setSavedEmail(''); setSavedPass(''); setSavedConf('')
+                    setChangePasswordText(''); setChangePasswordConfirm('')
                     setPhase('default'); setRegistered(false); setPendingLoginUser(null)
                     onClose()
                     onLogin(finalUser as UserRecord)
