@@ -9,8 +9,9 @@ export async function POST(req: NextRequest) {
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
 
   try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT`) } catch { /* ignore */ }
+  try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS temp_password BOOLEAN DEFAULT false`) } catch { /* ignore */ }
   const result = await pool.query(
-    'SELECT id, name, email, language, country, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", password_hash, "UUID_Local_BIOS" FROM users WHERE email = $1',
+    'SELECT id, name, email, language, country, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", password_hash, "UUID_Local_BIOS", temp_password FROM users WHERE email = $1',
     [email]
   )
   const user = result.rows[0]
@@ -35,6 +36,10 @@ export async function POST(req: NextRequest) {
 
   if (!user.is_active) {
     return NextResponse.json({ error: 'התהליך לא הצליח. נא לפנות למנהל המערכת.', code: 'NEEDS_PLAN' }, { status: 409 })
+  }
+
+  if (user.temp_password) {
+    console.log(`[login] temp_password=true email="${email}" => הלקוח יידרש לבחור סיסמה חדשה`)
   }
 
   const rawIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim()

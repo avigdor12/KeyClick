@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
@@ -145,7 +145,7 @@ const GRANITE_BG: React.CSSProperties = {
   backgroundSize: '180px 180px',
 }
 
-type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; ip_registration?: string; UUID_Local_BIOS?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null }
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; ip_registration?: string; UUID_Local_BIOS?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null; temp_password?: boolean }
 
 const _txCache = new Map<string, string>()
 function _mmLc(code: string): string { return code === 'zh' ? 'zh-CN' : code }
@@ -958,17 +958,17 @@ function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof langu
                 return (
                   <React.Fragment key={String(u.id)}>
                     <tr style={{ background: rowBg, cursor: 'pointer' }} onClick={() => setExpandedUserId(expanded ? null : u.id)}>
-                      <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.id}</td>
-                      <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{u.name ?? ''}</td>
-                      <td style={{ padding: '3px 8px', border: '1px solid #c8cce0' }}>{u.email ?? ''}</td>
-                      <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{last?.plan ?? '—'}</td>
-                      <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{last ? `${last.amount ?? ''} ${last.currency ?? ''}` : '—'}</td>
-                      <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{last ? String(last.payment_date).slice(0, 10) : '—'}</td>
-                      <td style={{ padding: '3px 8px', border: '1px solid #c8cce0', textAlign: 'center' }}>{last?.status ?? '—'}</td>
+                      <td style={{ padding: '3px 8px', border: '1px solid #003399', textAlign: 'center' }}>{u.id}</td>
+                      <td style={{ padding: '3px 8px', border: '1px solid #003399' }}>{u.name ?? ''}</td>
+                      <td style={{ padding: '3px 8px', border: '1px solid #003399' }}>{u.email ?? ''}</td>
+                      <td style={{ padding: '3px 8px', border: '1px solid #003399', textAlign: 'center' }}>{last?.plan ?? '—'}</td>
+                      <td style={{ padding: '3px 8px', border: '1px solid #003399', textAlign: 'center' }}>{last ? `${last.amount ?? ''} ${last.currency ?? ''}` : '—'}</td>
+                      <td style={{ padding: '3px 8px', border: '1px solid #003399', textAlign: 'center' }}>{last ? String(last.payment_date).slice(0, 10) : '—'}</td>
+                      <td style={{ padding: '3px 8px', border: '1px solid #003399', textAlign: 'center' }}>{last?.status ?? '—'}</td>
                     </tr>
                     {expanded && (
                       <tr style={{ background: rowBg }}>
-                        <td colSpan={7} style={{ padding: '4px 8px', border: '1px solid #c8cce0', borderTop: 'none' }}>
+                        <td colSpan={7} style={{ padding: '4px 8px', border: '1px solid #003399', borderTop: 'none' }}>
                           {userPayments.length === 0
                             ? <div style={{ fontSize: 12, color: '#888', padding: '4px' }}>{lang.system.billNoPayments}</div>
                             : (
@@ -1110,6 +1110,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<UserRecord[]>([])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
+  // [Claude Code 13.09.2026, לפי הנחיית המשתמש] איפוס סיסמה למשתמש - כפתור לכל לקוח + תיבת טקסט משותפת + כפתור ביצוע
+  const [resetPasswordUser, setResetPasswordUser] = useState<UserRecord | null>(null)
+  const [newPasswordText, setNewPasswordText] = useState('')
+  const [passwordResetMsg, setPasswordResetMsg] = useState('')
+  const [resetPasswordLight, setResetPasswordLight] = useState<'off' | 'red' | 'green'>('off')
   const [prTxText, setPrTxText] = useState('')
   const [bankingData, setBankingData] = useState<{ connections: Record<string,unknown>[]; accounts: Record<string,unknown>[]; transactions: Record<string,unknown>[] } | null>(null)
   const [bankingStatus, setBankingStatus] = useState<{ nordigen: boolean; plaid: boolean; il: boolean; groq: boolean } | null>(null)
@@ -1798,10 +1803,10 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 
 {view === 'users' && (
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ width: 'fit-content' }}>
+            <div style={{ width: 'fit-content', marginRight: '113px' }}>
             <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>{lang.system.users}</div>
             <div style={{ display: 'flex', alignItems: 'flex-start', direction: 'ltr' }}>
-            <table style={{ borderCollapse: 'collapse', fontSize: 12 }}>
+            <table style={{ borderCollapse: 'collapse', fontSize: 12, flexShrink: 0 }}>
               <thead>
                 <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '3px 6px', border: '1px solid transparent', color: '#003399' }}>&nbsp;</th></tr>
                 <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '3px 5px', border: '1px solid transparent' }}>&nbsp;</th></tr>
@@ -1812,33 +1817,37 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   return (
                     <React.Fragment key={`del-${String(u.id)}`}>
                       <tr style={{ background: rowBg }}>
-                        <td style={{ padding: '2px 6px', border: '1px solid transparent', textAlign: 'center' }}>
+                        <td style={{ padding: '2px 6px', textAlign: 'center', border: '2px solid #000', borderRight: 'none', borderBottom: 'none' }}>
                           <button onClick={() => setConfirmDeleteUser(u)} title={lang.system.delete}
                             style={{ width: 18, height: 18, lineHeight: '16px', padding: 0, borderRadius: '50%', background: '#fff', border: '2px solid #cc0000', color: '#cc0000', fontWeight: 'bold', fontSize: 11, cursor: 'pointer' }}>✕</button>
                         </td>
                       </tr>
                       <tr style={{ background: rowBg }}>
-                        <td style={{ padding: '2px 6px', border: '1px solid transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '2px 6px', border: '2px solid #000', borderRight: 'none', borderTop: 'none' }}>&nbsp;</td>
                       </tr>
+                      <tr><td style={{ height: 12, border: 'none', padding: 0 }}>&nbsp;</td></tr>
                     </React.Fragment>
                   )
                 })}
               </tbody>
             </table>
-            <div style={{ border: '2px solid #003399', borderRadius: 3 }}>
+            <div style={{ border: '2px solid #003399', borderRadius: 3, flexShrink: 0 }}>
               <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
                     <th colSpan={11} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
-                    <th colSpan={6} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
+                    <th colSpan={7} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
+                    <th style={{ padding: '3px 6px', border: '1px solid #a0a8c0' }}></th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
                     {['ID', `${lang.system.weightedScoreTitle} 0-10`, lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.profile.country, lang.system.colCurrency, 'IP Registration', 'Last IP', 'UUID Local BIOS'].map(h => (
                       <th key={h} style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>{h}</th>
                     ))}
+                    <th style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>סיסמה זמנית</th>
                     {[lang.system.colActive, lang.system.colAppInstalled, lang.profile.planFrom, lang.profile.planTo, lang.system.colLicenceType, lang.system.colSystemForce].map(h => (
                       <th key={h} style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>{h}</th>
                     ))}
+                    <th style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>איפוס סיסמה</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1848,51 +1857,54 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                     return (
                       <React.Fragment key={String(u.id)}>
                         <tr style={{ background: rowBg }}>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.id ?? '')}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.id ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             {usersEditMode
                               ? <input type="number" min={0} max={10} value={Number(u.weighted_score ?? 10)} onChange={e => { const v = Math.min(10, Math.max(0, Number(e.target.value))); setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, weighted_score: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], weighted_score: v } })) }} style={{ fontSize: 12, width: 40, textAlign: 'center', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '1px 2px' }} />
                               : <span style={{ fontWeight: 'bold', color: `hsl(${(Number(u.weighted_score ?? 10)) * 12}, 80%, 35%)` }}>{Number(u.weighted_score ?? 10)}</span>}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{created}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0' }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{created}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none' }}>
                             {usersEditMode
                               ? <input value={String(u.name ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, name: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], name: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '100px', backgroundColor: 'yellow' }} />
                               : String(u.name ?? '')}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0' }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none' }}>
                             {usersEditMode
                               ? <input value={String(u.email ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, email: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], email: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '130px', backgroundColor: 'yellow' }} />
                               : String(u.email ?? '')}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.language ?? '')}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.language ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             {usersEditMode
                               ? <input value={String(u.country ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, country: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], country: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '90px', backgroundColor: 'yellow' }} />
                               : String(u.country ?? '')}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center', fontSize: 11 }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center', fontSize: 11 }}>
                             {usersEditMode
                               ? <input value={String(u.UUID_Local_BIOS ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, UUID_Local_BIOS: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], UUID_Local_BIOS: v } })) }} style={{ fontSize: 11, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '150px', backgroundColor: 'yellow' }} />
                               : String(u.UUID_Local_BIOS ?? '')}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
+                            {u.temp_password ? '✓' : ''}
+                          </td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             {usersEditMode
                               ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_active} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_active: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_active: v } })) }} /></span>
                               : u.is_active ? '✓' : ''}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             {usersEditMode
                               ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_M_Finance_installed} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_M_Finance_installed: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_m_finance_installed: v } })) }} /></span>
                               : u.is_M_Finance_installed ? '✓' : ''}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0' }}>{String(u.M_Finance_license_type ?? '')}</td>
-                          <td style={{ padding: '2px 6px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center', minWidth: '90px' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none' }}>{String(u.M_Finance_license_type ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             <select
                               value={String(u.system_force ?? 'User')}
                               onChange={e => {
@@ -1910,14 +1922,26 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                               <option value="System_Owner">{lang.profile.planNames.System_Owner}</option>
                             </select>
                           </td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
+                            <button onClick={() => {
+                              // [Claude Code 13.09.2026, לפי הנחיית המשתמש] בניית סיסמה זמנית: ID מלא (מינימום 2 ספרות) + 4 ספרות שעה:דקה + 4 ספרות סוף UUID
+                              const idPart = String(u.id).padStart(2, '0')
+                              const now = new Date()
+                              const timePart = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0')
+                              const uuidPart = String(u.UUID_Local_BIOS ?? '').replace(/-/g, '').slice(-4).padStart(4, '0')
+                              onDbg('resetPassword', `נבחר לקוח email="${u.email}" id=${u.id} => נבנתה סיסמה זמנית`)
+                              setResetPasswordUser(u); setNewPasswordText(idPart + timePart + uuidPart); setPasswordResetMsg(''); setResetPasswordLight('red')
+                            }}
+                              style={{ background: '#003399', border: 'none', borderRadius: 4, color: '#FFD700', padding: '3px 8px', fontSize: 11, fontWeight: 'bold', cursor: 'pointer' }}>איפוס סיסמה</button>                          </td>
                         </tr>
                         <tr style={{ background: rowBg }}>
-                          <td colSpan={16} style={{ padding: '2px 6px', border: '1px solid #c8cce0', borderTop: 'none' }}>
+                          <td colSpan={18} style={{ padding: '2px 6px', border: '2px solid #000', borderTop: 'none' }}>
                             {usersEditMode
                               ? <textarea value={String(u.notes ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, notes: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], notes: v } })) }} style={{ fontSize: 11, width: '100%', height: 36, resize: 'vertical', backgroundColor: 'yellow', border: '1px solid #ccc', borderRadius: 3, padding: '2px 4px', boxSizing: 'border-box', direction: 'rtl', textAlign: 'right' }} />
                               : <div style={{ fontSize: 11, color: '#444', minHeight: 18, padding: '1px 4px', backgroundColor: '#f9f9f9', borderRadius: 3, direction: 'rtl', textAlign: 'right' }}>{String(u.notes ?? '')}</div>}
                           </td>
                         </tr>
+                        <tr><td colSpan={19} style={{ height: 12, border: 'none', padding: 0 }}>&nbsp;</td></tr>
                       </React.Fragment>
                     )
                   })}
@@ -1925,7 +1949,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               </table>
             </div>
             </div>
-            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
+            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'stretch', gap: 14 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <span style={{ color: 'red', fontWeight: 'bold', fontSize: 12, marginBottom: 4 }}>שינוי נתוני משתמש</span>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid #003399', borderRadius: 6, padding: '8px 12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
               <button
                 onClick={() => { fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {}) }}
                 style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
@@ -1963,6 +1991,53 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               </button>
             </div>
             </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <span style={{ width: 18, height: 18, borderRadius: '50%', display: 'inline-block', border: '1px solid #888', background: resetPasswordLight === 'red' ? '#cc0000' : resetPasswordLight === 'green' ? '#00aa00' : '#ccc' }} />
+                <span style={{ color: 'red', fontWeight: 'bold', fontSize: 12 }}>איפוס סיסמת משתמש</span>
+              </div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid #003399', borderRadius: 6, padding: '8px 12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 6 }}>
+              {resetPasswordUser && <span style={{ fontSize: 12, color: '#003399', fontWeight: 'bold' }}>{resetPasswordUser.email}</span>}
+              <button
+                onClick={() => { onDbg('resetPassword', `בוטל email="${resetPasswordUser?.email ?? ''}"`); setResetPasswordUser(null); setNewPasswordText(''); setPasswordResetMsg(''); setResetPasswordLight('off') }}
+                style={{ background: '#cc0000', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                בטל
+              </button>
+              <button
+                onClick={() => { onDbg('resetPassword', 'נקה לוח נלחץ'); setNewPasswordText(''); setPasswordResetMsg('') }}
+                style={{ background: '#888', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                נקה לוח
+              </button>
+              <input value={newPasswordText} onChange={e => setNewPasswordText(e.target.value)} placeholder="לוח"
+                style={{ fontSize: 12, border: '1px solid #003399', borderRadius: 4, padding: '4px 8px', width: 160, color: 'red', fontWeight: 'bold' }} />
+              <button
+                onClick={async () => {
+                  if (!newPasswordText || !resetPasswordUser) { setPasswordResetMsg('בחר לקוח והקלד סיסמה'); return }
+                  onDbg('resetPassword', `שלח נלחץ email="${resetPasswordUser.email}"`)
+                  try {
+                    const r = await fetch('/api/system/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: resetPasswordUser.email, newPassword: newPasswordText }) })
+                    const d = await r.json()
+                    onDbg('resetPassword', d.success ? `הצלחה email="${resetPasswordUser.email}"` : `נכשל: ${d.error || 'שגיאה'}`)
+                    if (d.success) setResetPasswordLight('green')
+                    setPasswordResetMsg(d.success ? 'הסיסמה עודכנה בהצלחה' : (d.error || 'שגיאה'))
+                  } catch (e) { onDbg('resetPassword', `שגיאת רשת: ${String(e)}`); setPasswordResetMsg('שגיאה: ' + String(e)) }
+                }}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                שלח
+              </button>
+              <button
+                onClick={() => { onDbg('resetPassword', 'העתק נלחץ'); navigator.clipboard?.writeText(newPasswordText).catch(() => {}) }}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                העתק
+              </button>
+              {passwordResetMsg && <span style={{ fontSize: 11, color: passwordResetMsg.includes('בהצלחה') ? '#006600' : '#cc0000' }}>{passwordResetMsg}</span>}
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
           </div>
         )}
 
@@ -1995,23 +2070,23 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                       const scheduleLabels = [lang.system.distributionDay, lang.profile.planNames.System_Free_Run, lang.profile.planNames.User_Trial, lang.profile.planNames.User_VIP_Free, lang.profile.planNames.User_Monthly, lang.profile.planNames.User_Annual, lang.profile.planNames.User_One_Time]
                       return (
                       <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#f5f5fc', height: rowHeights[i] }}>
-                        <td style={{ position: 'relative', padding: '3px 5px', border: '1px solid #c8cce0', fontWeight: 'bold', color: '#1a1a1a', whiteSpace: 'nowrap' }}>
+                        <td style={{ position: 'relative', padding: '3px 5px', border: '1px solid #003399', fontWeight: 'bold', color: '#1a1a1a', whiteSpace: 'nowrap' }}>
                           {scheduleLabels[i] ?? subject}
                           <div onMouseDown={e => onRowResizeDown(i, e)} style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, cursor: 'row-resize' }} />
                         </td>
-                        <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                        <td style={{ padding: '1px 2px', border: '1px solid #003399' }}>
                           <input type="text" value={scheduleRows[i].price}
                             onChange={e => updateScheduleRow(i, 'price', e.target.value)}
                             style={{ width: '100%', padding: '2px 3px', border: 'none', outline: 'none', fontSize: 14, textAlign: 'center', background: 'transparent', boxSizing: 'border-box' }} />
                         </td>
-                        <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                        <td style={{ padding: '1px 2px', border: '1px solid #003399' }}>
                           <input type="text" value={scheduleRows[i].months}
                             onChange={e => updateScheduleRow(i, 'months', e.target.value)}
                             style={{ width: '100%', padding: '2px 3px', border: 'none', outline: 'none', fontSize: 14, textAlign: 'center', background: 'transparent', boxSizing: 'border-box' }} />
                         </td>
                         {(['fromDate', 'toDate'] as const).map((field, fi) => (
                           <td key={field} onClick={() => dateRefs.current[i * 2 + fi]?.showPicker()}
-                            style={{ padding: '1px 2px', border: '1px solid #c8cce0', textAlign: 'center', cursor: 'pointer' }}>
+                            style={{ padding: '1px 2px', border: '1px solid #003399', textAlign: 'center', cursor: 'pointer' }}>
                             <input type="date" ref={el => { dateRefs.current[i * 2 + fi] = el }}
                               value={scheduleRows[i][field]}
                               onChange={e => updateScheduleRow(i, field, e.target.value)}
@@ -2021,7 +2096,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                             </span>
                           </td>
                         ))}
-                        <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                        <td style={{ padding: '1px 2px', border: '1px solid #003399' }}>
                           <textarea value={scheduleRows[i].notes}
                             onChange={e => updateScheduleRow(i, 'notes', e.target.value)}
                             rows={1}
@@ -2055,15 +2130,15 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                     <tbody>
                       {weightedRows.map((row, i) => (
                         <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#f5f5fc' }}>
-                          <td style={{ padding: '1px 2px', border: '1px solid #c8cce0', textAlign: 'center' }}>
+                          <td style={{ padding: '1px 2px', border: '1px solid #003399', textAlign: 'center' }}>
                             <input type="text" value={row.weight} onChange={e => setWeightedRows(prev => prev.map((r, j) => j === i ? { ...r, weight: e.target.value } : r))}
                               style={{ width: '100%', border: 'none', outline: 'none', fontSize: 13, textAlign: 'center', background: 'transparent', boxSizing: 'border-box', padding: '2px 3px' }} />
                           </td>
-                          <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                          <td style={{ padding: '1px 2px', border: '1px solid #003399' }}>
                             <input type="text" value={row.metric} onChange={e => setWeightedRows(prev => prev.map((r, j) => j === i ? { ...r, metric: e.target.value } : r))}
                               style={{ width: '100%', border: 'none', outline: 'none', fontSize: 13, textAlign: 'right', background: 'transparent', boxSizing: 'border-box', padding: '2px 3px' }} />
                           </td>
-                          <td style={{ padding: '1px 2px', border: '1px solid #c8cce0' }}>
+                          <td style={{ padding: '1px 2px', border: '1px solid #003399' }}>
                             <input type="text" value={row.explanation} onChange={e => setWeightedRows(prev => prev.map((r, j) => j === i ? { ...r, explanation: e.target.value } : r))}
                               style={{ width: '100%', border: 'none', outline: 'none', fontSize: 13, textAlign: 'right', background: 'transparent', boxSizing: 'border-box', padding: '2px 3px' }} />
                           </td>
@@ -7668,7 +7743,11 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     dragRef.current = { dragging: true, mx: e.clientX, my: e.clientY, px: pos.x, py: pos.y }
   }
 
-  const [phase,      setPhase]      = useState<'default' | 'register'>(initialPhase)
+  const [phase,      setPhase]      = useState<'default' | 'register' | 'must-change-password'>(initialPhase)
+  // [Claude Code 13.09.2026, לפי הנחיית המשתמש] סיסמה זמנית שהמנהל קבע - הלקוח חייב לבחור סיסמה משלו בכניסה הראשונה
+  const [pendingLoginUser, setPendingLoginUser] = useState<UserRecord | null>(null)
+  const [changePasswordText, setChangePasswordText] = useState('')
+  const [changePasswordMsg, setChangePasswordMsg] = useState('')
   const [savedName,  setSavedName]  = useState('')
   const [savedEmail, setSavedEmail] = useState(prefillEmail)
   useEffect(() => { if (prefillEmail) setSavedEmail(prefillEmail) }, [prefillEmail])
@@ -7780,6 +7859,16 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
       setError(data.error); return
     }
     onDbg('flowDiagram', '9-תוכנית תקפה (עבר) => 17-כניסה מוצלחת')
+    // [Claude Code 13.09.2026, לפי הנחיית המשתמש] סיסמה זמנית שהמנהל קבע - לפני סגירת הכניסה, מציגים כרטיסיה
+    // לבחירת סיסמה חדשה. הכניסה בפועל (onClose/onLogin) מתבצעת רק אחרי שהלקוח קבע סיסמה משלו.
+    if (data.user?.temp_password) {
+      onDbg('handleLogin', `temp_password=true => showing must-change-password card`)
+      setPendingLoginUser(data.user)
+      setChangePasswordText('')
+      setChangePasswordMsg('')
+      setPhase('must-change-password')
+      return
+    }
     onDbg('handleLogin', `success user.id=${data.user?.id} email="${data.user?.email}" last_ip="${data.user?.last_ip}" => onClose => onLogin`)
     setSavedName('')
     setSavedEmail('')
@@ -7884,7 +7973,34 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
           <div style={{ color: '#999', fontSize: '13px', marginTop: '2px', fontFamily: 'Arial, sans-serif' }}>M Finance</div>
         </div>
 
-        {phase === 'default' ? (
+        {phase === 'must-change-password' ? (
+          <>
+            <div style={{ position: 'relative', border: '2px solid #555', borderRadius: '10px', padding: '16px', paddingTop: '22px', marginBottom: '10px' }}>
+              <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: '#2a2a2a', padding: '0 10px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', direction: dir }}>נא לבחור סיסמא חדשה</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input type={showPass ? 'text' : 'password'} autoComplete="new-password" placeholder={c.passPh} value={changePasswordText} onChange={e => setChangePasswordText(e.target.value)} style={{ ...regInput }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}>
+                <button onClick={async () => {
+                  if (!changePasswordText || !pendingLoginUser) { setChangePasswordMsg(c.errPassLen); return }
+                  onDbg('changePassword', `נשלחה בקשה email="${pendingLoginUser.email}"`)
+                  try {
+                    const r = await fetch('/api/change-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: pendingLoginUser.email, newPassword: changePasswordText }) })
+                    const d = await r.json()
+                    if (!d.success) { onDbg('changePassword', `נכשל: ${d.error || 'שגיאה'}`); setChangePasswordMsg(d.error || 'שגיאה'); return }
+                    onDbg('changePassword', `הצלחה email="${pendingLoginUser.email}" => טוען את המשתמש`)
+                    const finalUser = { ...pendingLoginUser, temp_password: false }
+                    setSavedName(''); setSavedEmail(''); setSavedPass(''); setSavedConf('')
+                    setPhase('default'); setRegistered(false); setPendingLoginUser(null)
+                    onClose()
+                    onLogin(finalUser as UserRecord)
+                  } catch (e) { onDbg('changePassword', `שגיאת רשת: ${String(e)}`); setChangePasswordMsg('שגיאה: ' + String(e)) }
+                }} style={{ ...regBtn, padding: '5px 18px', fontSize: '13px' }}>{c.register}</button>
+              </div>
+              {changePasswordMsg && <div style={{ color: '#ff6b6b', fontSize: '13px', marginTop: '8px', textAlign: 'center' }}>{changePasswordMsg}</div>}
+            </div>
+          </>
+        ) : phase === 'default' ? (
           <>
             <div style={{ position: 'relative', border: '2px solid #555', borderRadius: '10px', padding: '16px', paddingTop: '22px', marginBottom: '10px' }}>
               <div style={{ position: 'absolute', top: '-11px', left: '50%', transform: 'translateX(-50%)', background: '#2a2a2a', padding: '0 10px', color: '#FFD700', fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', direction: dir }}>{c.existingCustomer}</div>
