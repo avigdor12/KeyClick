@@ -1342,11 +1342,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'Arial, sans-serif', overflow: 'hidden' }}>
-      <PageHeader subtitle={lang.system.adminButton} lang={lang} extra={viewSubtitle[view] ? (
-        <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px' }}>
-          {viewSubtitle[view]}
+      <PageHeader subtitle={lang.system.adminButton} lang={lang} extra={
+        <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', background: 'linear-gradient(180deg, #d3213a, #8e0f22)', color: '#ffffff', padding: '8px 26px', borderRadius: '999px', boxShadow: '0 8px 18px -8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15)', fontFamily: 'Arial, sans-serif', fontWeight: 'normal', fontSize: '20px', visibility: viewSubtitle[view] ? 'visible' : 'hidden' }}>
+          {viewSubtitle[view] || ' '}
         </div>
-      ) : undefined} />
+      } />
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
       {/* Main content */}
@@ -2166,15 +2166,15 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
       </div>
 
       {/* Right sidebar */}
-      <aside style={{ width: '140px', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, margin: '10px 6px 10px 0', borderRadius: '10px 0 0 10px', overflow: 'hidden', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
+      <aside style={{ width: '140px', background: '#555', display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, alignSelf: 'flex-start', maxHeight: '100%', margin: '-9px 6px 10px 0', borderRadius: '10px 0 0 10px', overflowY: 'auto', overflowX: 'hidden', scrollbarGutter: 'stable', boxShadow: '-2px 0 6px rgba(0,0,0,0.3)' }}>
         <div style={{ background: '#444', padding: '8px 4px 6px', textAlign: 'center', borderBottom: '2px solid #333', width: '100%' }}>
           <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontSize: '22px', color: '#FFD700', fontWeight: 'bold', textShadow: '1px 1px 3px #000' }}>KeyClick</div>
           <div style={{ color: '#FFD700', fontSize: '11px', fontWeight: 'bold', letterSpacing: 1, textShadow: '1px 1px 2px #000' }}>{lang.system.systemLabel}</div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', padding: '14px 6px', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(6px, 2vh, 18px)', padding: 'clamp(4px, 1.5vh, 14px) 6px', width: '100%', boxSizing: 'border-box' }}>
 
           {/* monitor */}
-          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
+          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: 'clamp(4px, 1.2vh, 10px) 4px clamp(3px, 0.8vh, 6px)' }}>
             <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.monitor}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm, fontSize: '13px' }} onClick={() => { onOpenDebug(); setDebugOpen(prev => !prev) }}>{lang.system.debug}</button>
@@ -2184,7 +2184,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           </div>
 
           {/* lab */}
-          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
+          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: 'clamp(4px, 1.2vh, 10px) 4px clamp(3px, 0.8vh, 6px)' }}>
             <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.lab}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
               <button style={{ ...sysBtnSm, fontSize: '14px' }} onClick={() => setView(view === 'tests' ? 'none' : 'tests')}>{lang.system.labTests}</button>
@@ -2193,7 +2193,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           </div>
 
           {/* systemData */}
-          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
+          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: 'clamp(4px, 1.2vh, 10px) 4px clamp(3px, 0.8vh, 6px)' }}>
             <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.systemData}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm }} onClick={handleUsers}>{lang.system.users}</button>
@@ -2205,7 +2205,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           </div>
 
           {/* dataCollection */}
-          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
+          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: 'clamp(4px, 1.2vh, 10px) 4px clamp(3px, 0.8vh, 6px)' }}>
             <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.dataCollection}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'data' ? 'none' : 'data')}>{lang.system.data}</button>
@@ -2214,7 +2214,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           </div>
 
           {/* pr */}
-          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: '10px 4px 6px' }}>
+          <div style={{ position: 'relative', border: '1px solid #cc9900', borderRadius: '8px', padding: 'clamp(4px, 1.2vh, 10px) 4px clamp(3px, 0.8vh, 6px)' }}>
             <div style={{ position: 'absolute', top: '-9px', left: '50%', transform: 'translateX(-50%)', background: '#555', padding: '0 8px', color: '#e02020', fontSize: '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>{lang.system.pr}</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'pr' ? 'none' : 'pr')}>{lang.system.announcements}</button>
@@ -3778,8 +3778,8 @@ const PAGE_HEADER_CSS = `
     align-items:center;
     justify-content:center;
     gap:16px;
-    padding-top:28px;
-    padding-bottom:26px;
+    padding-top:10px;
+    padding-bottom:10px;
   }
 
   .page-header-block.stack{
@@ -3853,6 +3853,8 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
   const [paused, setPaused] = useState(false)
   const [frozenVisits, setFrozenVisits] = useState<VisitRecord[]>(liveVisits)
   const [justRefreshed, setJustRefreshed] = useState(false)
+  const [scrollLocked, setScrollLocked] = useState(false)
+  const tableScrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     onDbg('VisitsTable', `liveVisits changed count=${liveVisits.length} paused=${paused}`)
@@ -3860,6 +3862,15 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
   }, [liveVisits, paused])
 
   const visits = frozenVisits
+
+  // [Claude Code 13.09.2026, לפי הנחיית המשתמש] גלילה אוטומטית לשורה החדשה כשמתקבלת, אלא אם המשתמש הקפיא את מיקום הגלילה
+  useEffect(() => {
+    if (scrollLocked) return
+    if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight
+  }, [visits.length, scrollLocked])
+
+  const scrollToTop = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = 0 }
+  const scrollToBottom = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight }
 
   const handleReset = async () => {
     onDbg('VisitsTable.handleReset', 'DELETE /api/visits')
@@ -3933,7 +3944,7 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
 
   return (
     <div style={{ padding: '16px', display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'flex-start', height: '100%', boxSizing: 'border-box' }}>
-      <div style={{ height: '100%', overflowY: 'auto' }}>
+      <div ref={tableScrollRef} style={{ height: '100%', overflowY: 'auto' }}>
       <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'rtl' }}>
         <thead>
           <tr>
@@ -3966,6 +3977,12 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
         <button onClick={handleReset} style={{ padding: '6px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{lang.system.reset}</button>
         <button onClick={handleRefresh} style={{ padding: '6px 14px', background: justRefreshed ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{lang.system.refresh}</button>
         <button onClick={handleTogglePause} style={{ padding: '6px 14px', background: paused ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{paused ? lang.system.resume : lang.system.pause}</button>
+        {/* [Claude Code 13.09.2026, לפי הנחיית המשתמש] קפיצה לקצוות הטבלה + הקפאת מיקום גלילה */}
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button onClick={scrollToTop} style={{ padding: '6px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 14 }}>↑</button>
+          <button onClick={scrollToBottom} style={{ padding: '6px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 14 }}>↓</button>
+        </div>
+        <button onClick={() => setScrollLocked(v => !v)} style={{ padding: '6px 14px', background: scrollLocked ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>❄</button>
 
         <div style={{ textAlign: 'right', marginTop: -12, marginLeft: 150, fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 32, color: '#cc0000', fontWeight: 'bold' }}>
           {samplingConfig.runEnabled ? lang.system.runStatusRunning : lang.system.runStatusStopped}
