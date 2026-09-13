@@ -1125,9 +1125,10 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [newPasswordText, setNewPasswordText] = useState('')
   const [passwordResetMsg, setPasswordResetMsg] = useState('')
   const [resetPasswordLight, setResetPasswordLight] = useState<'off' | 'red' | 'green'>('off')
-  // [Claude Code 13.09.2026, לפי הנחיית המשתמש] כשהלקוח מסיים להחליף סיסמה (temp_password יורד ל-false בשרת) - לכבות את הנורית ולנקות את הלוח אוטומטית
+  // [Claude Code 13.09.2026, לפי הנחיית המשתמש] כשהלקוח מסיים להחליף סיסמה (temp_password יורד ל-false בשרת) - לכבות את הנורית ולנקות את הלוח אוטומטית.
+  // הבדיקה רצה רק אחרי שה"שלח" כבר הצליח (נורית ירוקה) - אחרת היא הייתה מוחקת מיד לקוח שנבחר לפני שהסיסמה בכלל נשלחה
   useEffect(() => {
-    if (!resetPasswordUser) return
+    if (!resetPasswordUser || resetPasswordLight !== 'green') return
     const email = resetPasswordUser.email
     const interval = setInterval(async () => {
       try {
@@ -1146,7 +1147,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
       } catch { /* ignore */ }
     }, 5000)
     return () => clearInterval(interval)
-  }, [resetPasswordUser, onDbg])
+  }, [resetPasswordUser, resetPasswordLight, onDbg])
   const [prTxText, setPrTxText] = useState('')
   const [bankingData, setBankingData] = useState<{ connections: Record<string,unknown>[]; accounts: Record<string,unknown>[]; transactions: Record<string,unknown>[] } | null>(null)
   const [bankingStatus, setBankingStatus] = useState<{ nordigen: boolean; plaid: boolean; il: boolean; groq: boolean } | null>(null)
