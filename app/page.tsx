@@ -1023,6 +1023,7 @@ function UuidEffectFire({ onDbg, onResult }: { onDbg: (func: string, msg: string
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking' | 'data' | 'statistics' | 'billing' | 'institutions'>('none')
+  const mainContentRef = useRef<HTMLDivElement>(null)
   const [devBypassLogin, setDevBypassLogin] = useState(false)
   useEffect(() => {
     if (view !== 'sensitive') return
@@ -1109,12 +1110,43 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const buildWinRef = React.useRef<Window | null>(null)
   const [dbTables, setDbTables] = useState<{ name: string; rows: Record<string, unknown>[] }[]>([])
   const [users, setUsers] = useState<UserRecord[]>([])
+  // [Claude Code 13.09.2026, לפי הנחיית המשתמש] בפתיחת מסך המשתמשים - לגלול אוטומטית עד הסוף ימינה, אחרי שהטבלה נטענת עם הנתונים (לא לפני)
+  useEffect(() => {
+    if (view !== 'users') return
+    const id = requestAnimationFrame(() => {
+      const el = mainContentRef.current
+      if (el) el.scrollLeft = el.scrollWidth
+    })
+    return () => cancelAnimationFrame(id)
+  }, [view, users])
   const [expandedUser, setExpandedUser] = useState<number | null>(null)
   // [Claude Code 13.09.2026, לפי הנחיית המשתמש] איפוס סיסמה למשתמש - כפתור לכל לקוח + תיבת טקסט משותפת + כפתור ביצוע
   const [resetPasswordUser, setResetPasswordUser] = useState<UserRecord | null>(null)
   const [newPasswordText, setNewPasswordText] = useState('')
   const [passwordResetMsg, setPasswordResetMsg] = useState('')
   const [resetPasswordLight, setResetPasswordLight] = useState<'off' | 'red' | 'green'>('off')
+  // [Claude Code 13.09.2026, לפי הנחיית המשתמש] כשהלקוח מסיים להחליף סיסמה (temp_password יורד ל-false בשרת) - לכבות את הנורית ולנקות את הלוח אוטומטית
+  useEffect(() => {
+    if (!resetPasswordUser) return
+    const email = resetPasswordUser.email
+    const interval = setInterval(async () => {
+      try {
+        const r = await fetch('/api/system/users')
+        const d = await r.json()
+        const list: UserRecord[] = d.users ?? []
+        setUsers(list)
+        const match = list.find(u => u.email === email)
+        if (match && !match.temp_password) {
+          onDbg('resetPassword', `זוהתה החלפת סיסמה ע"י הלקוח email="${email}" => איפוס נורית ולוח`)
+          setResetPasswordUser(null)
+          setNewPasswordText('')
+          setPasswordResetMsg('')
+          setResetPasswordLight('off')
+        }
+      } catch { /* ignore */ }
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [resetPasswordUser, onDbg])
   const [prTxText, setPrTxText] = useState('')
   const [bankingData, setBankingData] = useState<{ connections: Record<string,unknown>[]; accounts: Record<string,unknown>[]; transactions: Record<string,unknown>[] } | null>(null)
   const [bankingStatus, setBankingStatus] = useState<{ nordigen: boolean; plaid: boolean; il: boolean; groq: boolean } | null>(null)
@@ -1355,7 +1387,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
       {/* Main content */}
-      <div style={{ flex: 1, overflow: 'auto', padding: view === 'messages' ? 0 : view === 'statistics' ? '0 20px 16px' : '16px 20px', ...GRANITE_BG }}>
+      <div ref={mainContentRef} style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: view === 'messages' ? 0 : view === 'statistics' ? '0 20px 16px' : '16px 20px', ...GRANITE_BG }}>
         {view === 'none' && (
           <div style={{ color: '#aaa', fontSize: 16, marginTop: 40, textAlign: 'center' }}>{lang.system.selectAction}</div>
         )}
@@ -1802,8 +1834,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         )}
 
 {view === 'users' && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ width: 'fit-content', marginRight: '113px' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{ width: 'fit-content', marginLeft: '0px' }}>
             <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>{lang.system.users}</div>
             <div style={{ display: 'flex', alignItems: 'flex-start', direction: 'ltr' }}>
             <table style={{ borderCollapse: 'collapse', fontSize: 12, flexShrink: 0 }}>
@@ -2011,7 +2043,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                 נקה לוח
               </button>
               <input value={newPasswordText} onChange={e => setNewPasswordText(e.target.value)} placeholder="לוח"
-                style={{ fontSize: 12, border: '1px solid #003399', borderRadius: 4, padding: '4px 8px', width: 160, color: 'red', fontWeight: 'bold' }} />
+                style={{ fontSize: 12, border: '1px solid #003399', borderRadius: 4, padding: '4px 8px', width: 160, color: 'red', fontWeight: 'bold', background: '#fff' }} />
               <button
                 onClick={async () => {
                   if (!newPasswordText || !resetPasswordUser) { setPasswordResetMsg('בחר לקוח והקלד סיסמה'); return }
