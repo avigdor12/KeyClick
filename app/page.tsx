@@ -533,13 +533,22 @@ export default function Home() {
     const origin = mfAppOrigin()
     if (origin && mfFrameRef.current?.contentWindow) mfFrameRef.current.contentWindow.postMessage(msg, origin)
   }
+  // הערכים העדכניים לשימוש בתוך מאזין ההודעות (שנרשם פעם אחת לכל כתובת אפליקציה)
+  const langIdxRef = useRef(langIdx)
+  langIdxRef.current = langIdx
+  const changeLangRef = useRef<(i: number) => void>(() => {})
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       if (!mfAppUrl || e.origin !== mfAppOrigin()) return
-      const d = e.data as { type?: string } | null
+      const d = e.data as { type?: string; code?: string } | null
       dbg('mfApp', `message type=${d?.type ?? 'none'}`)
       // "צא" באפליקציה: סוגרים את המסגרת וחוזרים לשער של KeyClick
       if (d?.type === 'mf:exit') { setActivePage(null); setMfAppUrl(null) }
+      // [23.09.2026] שפה אחת לכל הפרויקט: שפה שנבחרה באפליקציה מוחלפת כאן ונשמרת ברשומת המשתמש (כמו בחירה ב-KeyClick). שפה שכבר פעילה - מתעלמים
+      if (d?.type === 'mf:lang') {
+        const i = languages.findIndex(l => l.code === d.code)
+        if (i >= 0 && i !== langIdxRef.current) changeLangRef.current(i)
+      }
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
@@ -583,6 +592,7 @@ export default function Home() {
       set_Current_User_Pointer_to_DB({ ...Current_User_Pointer_to_DB, language: newLang })
     }
   }
+  changeLangRef.current = changeLang
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif', overflow: 'hidden', position: 'relative' }}>
@@ -659,9 +669,10 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : activePage === 'mf-app' && mfAppUrl ? (
-            // אפליקציית ניהול תקציב בית, מוטמעת באזור התוכן (23.09.2026). נכנסת מחוברת עם אסימון הכניסה שבכתובת
+            // אפליקציית ניהול תקציב בית (23.09.2026): נפתחת על כל החלון, מעל הדגלים והסרגל של KeyClick. נכנסת מחוברת עם אסימון הכניסה שבכתובת.
+            // השפה נבחרת בדגלים של האפליקציה ונשמרת גם כאן; "צא" באפליקציה סוגר אותה וחוזר ל-KeyClick
             <iframe ref={mfFrameRef} src={mfAppUrl} title="M Finance" allow="fullscreen"
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', background: '#000' }} />
+              style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', border: 'none', background: '#000', zIndex: 5000 }} />
           ) : (
             <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
               set_Current_User_Pointer_to_DB(user)
