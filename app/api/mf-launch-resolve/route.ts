@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   if (!tk.rows[0]) return NextResponse.json({ error: 'invalid or expired token' }, { status: 401 })
 
   const result = await pool.query(
-    'SELECT id, name, email, language, currency, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, created_at, plan_start, plan_end, system_force FROM users WHERE id = $1',
+    'SELECT id, name, email, language, currency, license_type AS "M_Finance_license_type", is_active, last_ip, created_at, plan_start, plan_end, system_force FROM users WHERE id = $1',
     [tk.rows[0].user_id]
   )
   const user = result.rows[0]

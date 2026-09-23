@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { Pool } from 'pg'
-import bcrypt from 'bcryptjs'
+import { verifyPassword } from './password'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
         if (!user) return null
 
         if (user.password_hash) {
-          const valid = await bcrypt.compare(credentials.password ?? '', user.password_hash)
+          const valid = await verifyPassword(credentials.password ?? '', user.password_hash)
           if (!valid) return null
         }
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { syncUsersToApp } from '@/lib/mf-sync'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -13,6 +14,7 @@ export async function POST(req: NextRequest) {
       'UPDATE users SET currency=$1 WHERE id=$2',
       [currency ?? null, userId]
     )
+    await syncUsersToApp([Number(userId)])
     return NextResponse.json({ ok: true })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })

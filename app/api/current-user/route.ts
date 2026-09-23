@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     if (ip !== 'unknown') {
       try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT`) } catch { /* ignore */ }
       const byIp = await pool.query(
-        'SELECT id, name, email, language, country, currency, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, created_at, plan_start, plan_end, system_force FROM users WHERE last_ip=$1 LIMIT 1',
+        'SELECT id, name, email, language, country, currency, license_type AS "M_Finance_license_type", is_active, last_ip, created_at, plan_start, plan_end, system_force FROM users WHERE last_ip=$1 LIMIT 1',
         [ip]
       )
       if (byIp.rows.length > 0) {

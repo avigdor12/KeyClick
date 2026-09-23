@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { syncUsersToApp } from '@/lib/mf-sync'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -18,10 +19,11 @@ export async function POST(req: NextRequest) {
     const result = await pool.query(
       `UPDATE users SET license_type=$1, user_plan=$2, plan_start=$3, plan_end=$4, is_active=$5
        WHERE id=$6
-       RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, plan_start, plan_end`,
+       RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, last_ip, plan_start, plan_end`,
       [licenseType, licenseType, planStart ?? null, planEnd ?? null, isActive, userId]
     )
     if (result.rowCount === 0) return NextResponse.json({ error: 'user not found' }, { status: 404 })
+    await syncUsersToApp([Number(userId)])
     return NextResponse.json({ user: result.rows[0] })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })

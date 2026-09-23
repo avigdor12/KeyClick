@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
-import bcrypt from 'bcryptjs'
+import { syncUsersToApp } from '@/lib/mf-sync'
+import { hashPassword } from '@/lib/password'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -34,15 +35,17 @@ export async function POST(req: NextRequest) {
   const isLoopback = !rawIp || rawIp === '::1' || rawIp === '127.0.0.1'
   const ip = isLoopback ? (clientIp || rawIp || 'localhost') : rawIp
 
-  const hash = password ? await bcrypt.hash(password, 10) : null
+  const hash = password ? hashPassword(password) : null
   try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT`) } catch { /* ignore */ }
+  try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP, ADD COLUMN IF NOT EXISTS login_count INTEGER NOT NULL DEFAULT 0, ADD COLUMN IF NOT EXISTS source TEXT`) } catch { /* ignore */ }
   const country = await lookupCountry(ip)
   const inserted = await pool.query(
-    `INSERT INTO users (name, email, password_hash, language, license_type, last_ip, ip_registration, country)
-     VALUES ($1,$2,$3,$4,$5,$6,$6,$7)
-     RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, is_m_finance_installed AS "is_M_Finance_installed", last_ip, ip_registration, country`,
-    [name || null, email, hash, language || 'English', 'תקופת הרצה', ip, country]
+    `INSERT INTO users (name, email, password_hash, language, license_type, last_ip, ip_registration, country, source, last_login_at, login_count)
+     VALUES ($1,$2,$3,$4,$5,$6,$6,$7,'KeyClick',now(),1)
+     RETURNING id, name, email, language, license_type AS "M_Finance_license_type", is_active, last_ip, ip_registration, country`,
+    [name || null, email, hash, language || 'he', 'תקופת הרצה', ip, country]
   )
 
+  await syncUsersToApp([inserted.rows[0].id])
   return NextResponse.json({ success: true, status: 'created', user: inserted.rows[0] })
 }

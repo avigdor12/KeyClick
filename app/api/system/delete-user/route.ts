@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { syncDeleteToApp } from '@/lib/mf-sync'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -24,6 +25,7 @@ export async function POST(req: NextRequest) {
     } finally {
       client.release()
     }
+    await syncDeleteToApp([id])
     return NextResponse.json({ ok: true })
   } catch (e) {
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })

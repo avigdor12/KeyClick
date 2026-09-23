@@ -12,7 +12,6 @@ async function initDB() {
       name          VARCHAR(255),
       password_hash VARCHAR(255),
       license_type  VARCHAR(50)  DEFAULT 'תקופת הרצה',
-      license_until DATE,
       created_at    TIMESTAMP    DEFAULT NOW(),
       language      VARCHAR(20)  DEFAULT 'English',
       cancelled_at  TIMESTAMP,

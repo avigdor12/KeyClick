@@ -145,7 +145,12 @@ const GRANITE_BG: React.CSSProperties = {
   backgroundSize: '180px 180px',
 }
 
-type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; is_M_Finance_installed: boolean; last_ip?: string; ip_registration?: string; UUID_Local_BIOS?: string; country?: string; created_at?: string; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null; temp_password?: boolean }
+// שפת המשתמש נשמרת כקוד שפה (he, en...) כמו ב-M_Finance_app. רשומות ישנות עם שם השפה (עברית, English...) עדיין מזוהות
+function langIndexOf(value: string | null | undefined): number {
+  return languages.findIndex(l => l.code === value || l.name === value)
+}
+
+type UserRecord = { id: number; name: string; last_name?: string; email: string; language: string; M_Finance_license_type: string; is_active: boolean; last_ip?: string; ip_registration?: string; country?: string; created_at?: string; last_login_at?: string | null; login_count?: number | null; source?: string | null; plan_start?: string; plan_end?: string; system_force?: string | null; currency?: string | null; notes?: string | null; weighted_score?: number | null; temp_password?: boolean }
 
 const _txCache = new Map<string, string>()
 function _mmLc(code: string): string { return code === 'zh' ? 'zh-CN' : code }
@@ -226,16 +231,15 @@ function playNotifSound(override?: string, customOverride?: string) {
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
+  // אפליקציית ניהול תקציב בית המוטמעת (23.09.2026): כתובת עם אסימון כניסה, והמסגרת שבה היא נטענת
+  const [mfAppUrl, setMfAppUrl] = useState<string | null>(null)
+  const mfFrameRef = useRef<HTMLIFrameElement>(null)
   const [bankingDirect, setBankingDirect] = useState(false)
   const [pendingBankSession, setPendingBankSession] = useState<string | null>(null)
   const [systemMessage, setSystemMessage] = useState('')
   const [prText, setPrText] = useState('')
   const [prDate, setPrDate] = useState('')
   const [popupMsg, setPopupMsg] = useState<{ title: string; subtitle?: string; body: string; bodyColor?: string } | null>(null)
-  // דף ההסבר לתהליך ההתקנה - נפתח כ-overlay מעל המסך הנוכחי, ממש לפני שההורדה האמיתית
-  // מתחילה (בתוך handleInstall), לא בכניסה לאתר. ראה handleInstall/resolveInstallConfirm.
-  const [installConfirmOpen, setInstallConfirmOpen] = useState(false)
-  const installConfirmResolveRef = useRef<((proceed: boolean) => void) | null>(null)
   const [reminderNotif, setReminderNotif] = useState<ReminderRecord[] | null>(null)
   const [siteVersion, setSiteVersion] = useState({ line1: '', line2: '' })
   const [debugLog, setDebugLog]       = useState<string[]>([])
@@ -248,8 +252,6 @@ export default function Home() {
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
   const [isLoggedInExplicit, setIsLoggedInExplicit] = useState(false)
   const [clientIp, setClientIp] = useState('')
-  const [uuidHintEmail, setUuidHintEmail] = useState('') // מייל למילוי מקדים בטופס כניסה, לפי UUID שמור בדפדפן - לא זיהוי/כניסה בפועל
-  const [knownMachineChecked, setKnownMachineChecked] = useState(false) // דגל פנימי: בדיקת identify-by-uuid הסתיימה (או שאין UUID שמור, אז אין מה לבדוק)
   const [hasUnreadMsg, setHasUnreadMsg] = useState(false)
   const [hasNewCustomerMsg, setHasNewCustomerMsg] = useState(false)
   const lang = languages[langIdx]
@@ -322,7 +324,7 @@ export default function Home() {
   useEffect(() => {
     if (!Current_User_Pointer_to_DB) return
     dbg('userEffect', `id=${Current_User_Pointer_to_DB.id} email="${Current_User_Pointer_to_DB.email}" language="${Current_User_Pointer_to_DB.language}" license="${Current_User_Pointer_to_DB.M_Finance_license_type}" active=${Current_User_Pointer_to_DB.is_active}`)
-    const idx = languages.findIndex(l => l.name === Current_User_Pointer_to_DB.language)
+    const idx = langIndexOf(Current_User_Pointer_to_DB.language)
     dbg('userEffect', `findIndex language="${Current_User_Pointer_to_DB.language}" => idx=${idx}`)
     if (idx !== -1) setLangIdx(idx)
     dbg('userEffect', `user loaded id=${Current_User_Pointer_to_DB.id}`)
@@ -369,21 +371,9 @@ export default function Home() {
         dbg('devBypass', `enabled=${d.enabled}`)
         if (d.enabled) {
           setIsLoggedInExplicit(true)
-          dbg('devBypass', 'resolving UUID to identify System_Owner (localStorage first, then live app)')
-          ;(async () => {
-            let uuid = localStorage.getItem('mf_uuid_local_bios')
-            dbg('devBypass', `localStorage.mf_uuid_local_bios="${uuid ?? 'null'}"`)
-            if (!uuid) uuid = await Get_UUID_BIOS_Code_From_M_Finance(dbg)
-            if (!uuid) { dbg('devBypass', 'no UUID available => cannot identify, staying unidentified'); return }
-            dbg('devBypass', `fetch POST /api/identify-by-uuid uuid="${uuid}"`)
-            fetch('/api/identify-by-uuid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uuidBiosCode: uuid }) })
-              .then(r => r.json())
-              .then(d2 => {
-                dbg('devBypass', `identify-by-uuid found=${d2.found} license="${d2.user?.M_Finance_license_type ?? 'none'}"`)
-                if (d2.found && d2.user) set_Current_User_Pointer_to_DB(d2.user)
-              })
-              .catch(() => {})
-          })()
+          // רשומת מנהל המערכת נטענת ישירות מהמסד (בסביבת פיתוח בלבד) - בלי קוד מחשב
+          dbg('devBypass', `System_Owner user id=${d.user?.id ?? 'none'} license="${d.user?.M_Finance_license_type ?? 'none'}"`)
+          if (d.user) set_Current_User_Pointer_to_DB(d.user)
         }
       }).catch(() => {})
     }
@@ -398,44 +388,7 @@ export default function Home() {
       .then(d => { const ip = d.ip || ''; if (ip) setClientIp(ip); dbg('initEffect', `ipify ok ip="${ip}"`) })
       .catch(e => { dbg('initEffect', `ipify failed/timeout: ${String(e)}`) })
     dbg('initEffect', 'no automatic user identification on page load — customer must log in explicitly')
-    const savedUuid = localStorage.getItem('mf_uuid_local_bios')
-    if (savedUuid) {
-      dbg('initEffect', `fetch POST /api/identify-by-uuid uuid="${savedUuid}" (prefill email+language only, not login)`)
-      fetch('/api/identify-by-uuid', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uuidBiosCode: savedUuid }) })
-        .then(r => r.json())
-        .then(d => {
-          dbg('initEffect', `identify-by-uuid found=${d.found} email="${d.email ?? 'none'}" language="${d.language ?? 'none'}"`)
-          if (!d.found) { setKnownMachineChecked(true); return }
-          setUuidHintEmail(d.email)
-          setKnownMachineChecked(true)
-          const idx = languages.findIndex(l => l.name === d.language)
-          if (idx !== -1) setLangIdx(idx)
-        })
-        .catch(e => { dbg('initEffect', `identify-by-uuid failed err="${String(e)}"`); setKnownMachineChecked(true) })
-    } else {
-      setKnownMachineChecked(true) // אין UUID שמור בכלל - אין מה לבדוק, "לא ידוע" ודאי
-    }
     const params = new URLSearchParams(window.location.search)
-    if (params.get('installed') === '1') {
-      const uuidLocalBios = params.get('uuid') || ''
-      dbg('flowDiagram', '14-בקשת UUID מקומי (מנגנון פסיבי) => 15-רישום UUID ברשומת לקוח')
-      dbg('installCallback', `url="${window.location.href}" uuidLocalBios="${uuidLocalBios}"`)
-      localStorage.setItem('mf_installed', '1')
-      setIsLoggedInExplicit(true)
-      window.history.replaceState({}, '', window.location.pathname)
-      const storedEmail = localStorage.getItem('mf_pending_install_email')
-      dbg('installCallback', `localStorage.mf_pending_install_email="${storedEmail ?? 'null'}" Current_User_Pointer_to_DB?.email="${Current_User_Pointer_to_DB?.email ?? 'null'}"`)
-      const pendingEmail = storedEmail || Current_User_Pointer_to_DB?.email || ''
-      dbg('installCallback', `pendingEmail resolved="${pendingEmail || '(empty)'}" clientIp="${clientIp || '(empty)'}"`)
-      dbg('installCallback', `fetch POST /api/set-mfinance-installed body={email:"${pendingEmail}", clientIp:"${clientIp}", uuidLocalBios:"${uuidLocalBios}"}`)
-      fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: pendingEmail, clientIp, uuidLocalBios }) })
-        .then(r => { dbg('installCallback', `set-mfinance-installed res.status=${r.status}`); return r.json() })
-        .then(d => {
-          dbg('installCallback', `DB updated ok=${d.ok} error="${d.error ?? 'none'}"`)
-          localStorage.removeItem('mf_pending_install_email')
-        })
-        .catch(e => dbg('installCallback', `DB update failed: ${String(e)}`))
-    }
     const bankingParam = params.get('banking')
     if (bankingParam === 'success' || bankingParam === 'direct') {
       const bsessionParam = params.get('bsession')
@@ -456,7 +409,7 @@ export default function Home() {
               dbg('bankingDirect', `kct resolved user id=${d.user.id} email="${d.user.email}" language="${d.user.language}"`)
               set_Current_User_Pointer_to_DB(d.user)
               setIsLoggedInExplicit(true)
-              const idx = languages.findIndex(l => l.name === d.user.language)
+              const idx = langIndexOf(d.user.language)
               if (idx !== -1) setLangIdx(idx)
             } else {
               dbg('bankingDirect', `kct not resolved: ${d.error ?? 'unknown'}`)
@@ -572,91 +525,50 @@ export default function Home() {
     }
   }
 
-  function handleInstall() {
-    // "כבר מותקן" נקבע לפי UUID רשום בפועל - לא לפי הדגל is_M_Finance_installed, שיכול להיות
-    // true בלי UUID (מצב לא-עקבי מבדיקות קודמות) והיה חוסם את ההורדה למי שדווקא צריך להתקין.
-    if (Current_User_Pointer_to_DB?.UUID_Local_BIOS) {
-      dbg('handleInstall', `already installed, UUID_Local_BIOS="${Current_User_Pointer_to_DB.UUID_Local_BIOS}" => skip download`)
-      setPopupMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: lang.card.msgAlreadyInstalled })
-      return
-    }
-    setDebugLog([])
-    dbg('handleInstall', `called user=${Current_User_Pointer_to_DB?.email ?? 'not logged in'} UUID_Local_BIOS=${Current_User_Pointer_to_DB?.UUID_Local_BIOS ?? 'none'}`)
-
-    if (Current_User_Pointer_to_DB?.email) {
-      localStorage.setItem('mf_pending_install_email', Current_User_Pointer_to_DB.email)
-      dbg('handleInstall', `saved mf_pending_install_email="${Current_User_Pointer_to_DB.email}"`)
-    } else {
-      dbg('handleInstall', 'WARNING: no email => mf_pending_install_email NOT saved')
-    }
-    // הורדה ישירה: ה-<a> מצביע על ה-API והדפדפן מוריד תוך כדי stream (מד התקדמות מובנה),
-    // בלי fetch+blob שמאגר את כל 139MB בזיכרון לפני שמשהו קורה.
-    dbg('handleInstall', 'a.href=/api/download-mfinance => a.click()')
-    const a = document.createElement('a')
-    a.href = '/api/download-mfinance'
-    a.download = 'M_Finance_Setup.exe'
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    dbg('handleInstall', 'download triggered')
+  // הודעות בין KeyClick לאפליקציה המוטמעת (postMessage), רק מול הכתובת של האפליקציה עצמה
+  function mfAppOrigin(): string | null {
+    try { return mfAppUrl ? new URL(mfAppUrl).origin : null } catch { return null }
   }
-
-  function resolveInstallConfirm(proceed: boolean) {
-    dbg('resolveInstallConfirm', `proceed=${proceed}`)
-    setInstallConfirmOpen(false)
-    installConfirmResolveRef.current?.(proceed)
-    installConfirmResolveRef.current = null
+  function postToMfApp(msg: { type: string; [k: string]: unknown }) {
+    const origin = mfAppOrigin()
+    if (origin && mfFrameRef.current?.contentWindow) mfFrameRef.current.contentWindow.postMessage(msg, origin)
   }
-
-  // מציגה את דף ההסבר כ-overlay מיד בסיום הרשמה מוצלחת, לפני מסך ההתקנה - לא בתוך
-  // handleInstall (זה גרם לעיכובים לא צפויים כשההורדה מעורבת בבדיקות אחרות).
-  function showInstallExplanation(): Promise<boolean> {
-    dbg('showInstallExplanation', 'showing install explanation screen, waiting for confirm')
-    return new Promise<boolean>(resolve => {
-      installConfirmResolveRef.current = resolve
-      setInstallConfirmOpen(true)
-    })
-  }
-
-  async function handleRun() {
-    dbg('handleRun', 'mfinance:// launch')
-    let launchUrl = 'mfinance://'
-    const uid = Current_User_Pointer_to_DB?.id
-    if (uid) {
-      // ❄ הוקפא 10.09.2026 — הבלוק הזה בונה כתובת חזרה ?banking=direct עבור כפתור "מוסד פיננסי"
-      //   ב-M Finance. הכפתור הוסר והנושא כולו מוקפא, אז שום דבר לא צורך את launchUrl הזה בפועל.
-      //   נשמר, לא נמחק. ראה Doc/AI Claude Code/Removal_Banking_Services.html
-      // הלקוח מחובר כאן ועכשיו - מייצרים טוקן-זהות קצר-טווח ומעבירים לאפליקציה כתובת חזרה
-      // למסך הבנקאות עם הטוקן בתוכה. כשהלקוח ילחץ "מוסד פיננסי" בתוך M Finance, היא תפתח את
-      // הכתובת הזאת, והלשונית שתיפתח תזהה את הלקוח ותיטען מחוברת (במקום מופע אנונימי באנגלית).
-      try {
-        dbg('handleRun', `fetch POST /api/mf-launch-token userId=${uid}`)
-        const r = await fetch('/api/mf-launch-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: uid }) })
-        const d = await r.json()
-        if (d.token) {
-          const ret = `${window.location.origin}/?banking=direct&kct=${encodeURIComponent(d.token)}`
-          launchUrl = `mfinance://launch?return=${encodeURIComponent(ret)}`
-          dbg('handleRun', `launch with return="${ret}"`)
-        } else {
-          dbg('handleRun', `no token returned (${d.error ?? 'unknown'}) => bare mfinance://`)
-        }
-      } catch (e) {
-        dbg('handleRun', `token fetch failed: ${String(e)} => bare mfinance://`)
-      }
+  useEffect(() => {
+    const onMessage = (e: MessageEvent) => {
+      if (!mfAppUrl || e.origin !== mfAppOrigin()) return
+      const d = e.data as { type?: string } | null
+      dbg('mfApp', `message type=${d?.type ?? 'none'}`)
+      // "צא" באפליקציה: סוגרים את המסגרת וחוזרים לשער של KeyClick
+      if (d?.type === 'mf:exit') { setActivePage(null); setMfAppUrl(null) }
     }
-    window.location.href = launchUrl
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [mfAppUrl])
+
+  // פתיחת אפליקציית ניהול תקציב בית בתוך KeyClick: אסימון כניסה חדש, והאפליקציה נטענת באזור התוכן בשפת KeyClick
+  async function openMfApp() {
+    if (!isLoggedInExplicit || !Current_User_Pointer_to_DB?.id) return
+    try {
+      const r = await fetch('/api/mf-app-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: Current_User_Pointer_to_DB.id }) })
+      const d = await r.json()
+      dbg('mfAppToken', `status=${r.status} ok=${!!d.url} error="${d.error ?? 'none'}"`)
+      if (!d.url) return
+      setMfAppUrl(d.url + '#' + lang.code)
+      setActivePage('mf-app')
+    } catch (e) { dbg('mfAppToken', `failed: ${String(e)}`) }
   }
 
   async function changeLang(i: number) {
     dbg('changeLang', `i=${i} code=${languages[i].code} name="${languages[i].name}" userLoggedIn=${!!Current_User_Pointer_to_DB}`)
     setLangIdx(i)
+    postToMfApp({ type: 'kc:lang', code: languages[i].code })
     // בחירה ידנית - נשמרת, כדי שהזיהוי האוטומטי לפי מדינה לא ידרוס אותה בכניסה הבאה
     try {
       localStorage.setItem('kc_lang_chosen', languages[i].code)
       document.cookie = `keyclick_lang=${languages[i].code};path=/;max-age=31536000`
     } catch { /* מתעלמים */ }
     if (Current_User_Pointer_to_DB) {
-      const newLang = languages[i].name
+      const newLang = languages[i].code
       dbg('changeLang', `fetch POST /api/update-language email="${Current_User_Pointer_to_DB.email}" language="${newLang}"`)
       try {
         const r = await fetch('/api/update-language', {
@@ -712,12 +624,6 @@ export default function Home() {
         </div>
       )}
 
-      {installConfirmOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }}>
-          <InstallInfoCard lang={lang} onClose={() => resolveInstallConfirm(false)} onNavigate={() => resolveInstallConfirm(true)} />
-        </div>
-      )}
-
       {/* TOP — Flags bar */}
       <header style={{ background: '#111', padding: '5px 14px', display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
         {languages.map((l, i) => (
@@ -752,16 +658,19 @@ export default function Home() {
         <main style={{ flex: 1, ...GRANITE_BG, position: 'relative', overflow: 'hidden' }}>
           {activePage === null ? (
             <GatePage lang={lang} />
+          ) : activePage === 'mf-app' && mfAppUrl ? (
+            // אפליקציית ניהול תקציב בית, מוטמעת באזור התוכן (23.09.2026). נכנסת מחוברת עם אסימון הכניסה שבכתובת
+            <iframe ref={mfFrameRef} src={mfAppUrl} title="M Finance" allow="fullscreen"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', background: '#000' }} />
           ) : (
-            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} uuidHintEmail={uuidHintEmail} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
+            <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
               set_Current_User_Pointer_to_DB(user)
               setIsLoggedInExplicit(true)
               if (mfChainRef.current) {
                 mfChainRef.current = false
-                if (!user.is_M_Finance_installed) setActivePage('mf-install')
-                else setActivePage(null)
+                setActivePage(null)
               }
-            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onSetLoggedIn={() => setIsLoggedInExplicit(true)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onInstall={handleInstall} onRun={handleRun} onShowInstallExplanation={showInstallExplanation} onOpenDebug={() => {
+            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onSetLoggedIn={() => setIsLoggedInExplicit(true)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -816,7 +725,11 @@ export default function Home() {
                 <div style={{ position: 'absolute', top: '6px', left: '-22px', width: '90px', transform: 'rotate(-45deg)', background: '#c0392b', color: '#fff', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', padding: '1px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.5)', zIndex: 5 }}>{lang.card.locked}</div>
               )}
             </div>
-            <button onClick={() => { dbg('btnClick', `M Finance clicked isLoggedInExplicit=${isLoggedInExplicit}`); if (isLoggedInExplicit) { handleRun() } }}
+            {/* מנותק מאפליקציית ה-EXE (23.09.2026): פותח את אפליקציית האתר בתוך KeyClick, מחוברת באסימון כניסה */}
+            <button onClick={() => {
+                dbg('btnClick', `M Finance clicked isLoggedInExplicit=${isLoggedInExplicit} user=${Current_User_Pointer_to_DB?.id ?? 'none'}`)
+                openMfApp()
+              }}
               style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'normal', fontWeight: 'bold', lineHeight: '1.2', wordBreak: 'normal', overflowWrap: 'normal' }}
               onMouseEnter={e => { if (isLoggedInExplicit) e.currentTarget.style.opacity = '0.75' }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
@@ -1011,27 +924,15 @@ function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof langu
   )
 }
 
-// ניסוי: קומפוננטה שיורה את הטריגר מ-useEffect על ה-mount שלה (כמו InstallCard בתהליך הכניסה),
-// במקום ישירות מ-onClick. משמש את כפתור "קרא UUID" עם התיבה "לירות מ-useEffect".
-function UuidEffectFire({ onDbg, onResult }: { onDbg: (func: string, msg: string) => void; onResult: (code: string | null) => void }) {
-  useEffect(() => {
-    let alive = true
-    ;(async () => {
-      const rid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())
-      const code = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, rid)
-      if (alive) onResult(code)
-    })()
-    return () => { alive = false }
-  }, [])
-  return null
-}
-
-function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate, onInstall, onRun }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void; onInstall: () => void; onRun: () => void }) {
+function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void }) {
   const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'banking' | 'data' | 'statistics' | 'billing' | 'institutions'>('none')
   const mainContentRef = useRef<HTMLDivElement>(null)
   const [devBypassLogin, setDevBypassLogin] = useState(false)
+  const [mfDirectEntry, setMfDirectEntry] = useState(false)
+  const [mfDirectEntryMsg, setMfDirectEntryMsg] = useState('')
   useEffect(() => {
     if (view !== 'sensitive') return
+    fetch('/api/system/mf-direct-entry').then(r => r.json()).then(d => setMfDirectEntry(!!d.enabled)).catch(() => {})
     fetch('/api/system/dev-bypass-login').then(r => r.json()).then(d => setDevBypassLogin(!!d.enabled)).catch(() => {})
   }, [view])
   const [visits, setVisits] = useState<VisitRecord[]>([])
@@ -1095,15 +996,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   ])
   const [activeMfBtnTest, setActiveMfBtnTest] = useState<string | null>(null)
   const [newFolderNameTest, setNewFolderNameTest] = useState('')
-  const [uuidTest, setUuidTest] = useState('')
-  const [uuidTestBusy, setUuidTestBusy] = useState(false)
-  // זחל השהיה לניסוי: כמה זמן ממתינים מרגע הלחיצה עד שיורים את mfinance://get-uuid.
-  // צעדים לא-אחידים: 0-10 בקפיצות של 1, 10-30 בקפיצות של 5, 30-60 בקפיצות של 10.
-  const UUID_DELAY_STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50, 60]
-  const [uuidDelayIdx, setUuidDelayIdx] = useState(0)
-  const uuidDelaySec = UUID_DELAY_STEPS[uuidDelayIdx]
-  const [uuidFireViaEffect, setUuidFireViaEffect] = useState(false)
-  const [uuidEffectMount, setUuidEffectMount] = useState(false)
   const [usersEditMode, setUsersEditMode] = useState(false)
   const [pendingUserEdits, setPendingUserEdits] = useState<Record<string, Record<string, unknown>>>({})
   const [debugOpen, setDebugOpen] = useState(false)
@@ -1491,6 +1383,23 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                       }} />
                     </td>
                   </tr>
+                  {/* [23.09.2026] מתג חירום: כניסה ישירה לאתר האפליקציה. עברית בלבד בשלב הפיתוח - תרגום בסוף */}
+                  <tr>
+                    <td style={{ color: '#ccc', border: '1px solid #555', padding: '6px 10px' }}>M Finance App</td>
+                    <td style={{ color: '#ccc', border: '1px solid #555', padding: '6px 10px' }}>כניסה ישירה (חירום)</td>
+                    <td style={{ color: '#ccc', border: '1px solid #555', padding: '6px 10px' }}>1=מנהל המערכת נכנס ישירות לאתר האפליקציה עם סיסמה, בלי KeyClick{mfDirectEntryMsg ? ` — ${mfDirectEntryMsg}` : ''}</td>
+                    <td style={{ border: '1px solid #555', padding: '6px 10px', textAlign: 'center' }}>
+                      <input type="checkbox" checked={mfDirectEntry} onChange={e => {
+                        const next = e.target.checked
+                        setMfDirectEntry(next)
+                        setMfDirectEntryMsg('')
+                        fetch('/api/system/mf-direct-entry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled: next }) })
+                          .then(r => r.json())
+                          .then(d => { onDbg('mfDirectEntry', `enabled=${next} sentToApp=${d.sentToApp} error="${d.error ?? 'none'}"`); if (!d.sentToApp) setMfDirectEntryMsg('לא נשלח לאפליקציה') })
+                          .catch(() => setMfDirectEntryMsg('לא נשלח לאפליקציה'))
+                      }} />
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -1704,77 +1613,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 
         {view === 'tests' && (
           <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '4px' }}>
-            <fieldset style={{ margin: '8px 6px', border: '1px solid #003399', borderRadius: '6px', padding: '10px 12px', height: 'fit-content', minWidth: '240px' }}>
-              <legend style={{ color: 'red', fontSize: '20px', fontWeight: 'bold', padding: '0 6px', direction: 'rtl' }}>קוד מחשב</legend>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', direction: 'rtl', minWidth: '300px' }}>
-                <div style={{ border: '1px solid #003399', borderRadius: '4px', background: '#eef1fa', color: '#003399', fontSize: '14px', fontWeight: 'bold', wordBreak: 'break-all', minHeight: '34px', padding: '7px 9px', textAlign: 'center' }}>
-                  {uuidTest}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <input
-                    type="range"
-                    min={0}
-                    max={UUID_DELAY_STEPS.length - 1}
-                    step={1}
-                    value={uuidDelayIdx}
-                    onChange={e => setUuidDelayIdx(Number(e.target.value))}
-                    disabled={uuidTestBusy}
-                    style={{ flex: 1, direction: 'ltr' }} />
-                  <div style={{ border: '1px solid #003399', borderRadius: '4px', background: '#fff', color: '#003399', fontSize: '14px', fontWeight: 'bold', padding: '5px 8px', minWidth: '54px', textAlign: 'center' }}>
-                    {uuidDelaySec} ש׳
-                  </div>
-                </div>
-                <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>השהיה מרגע הלחיצה עד שליחת ההודעה</div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#003399', fontWeight: 'bold', justifyContent: 'center' }}>
-                  <input type="checkbox" checked={uuidFireViaEffect} onChange={e => setUuidFireViaEffect(e.target.checked)} disabled={uuidTestBusy} />
-                  לירות מ-useEffect (כמו כניסה)
-                </label>
-                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                  <button
-                    disabled={uuidTestBusy}
-                    onClick={async () => {
-                      setUuidTestBusy(true)
-                      const rid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())
-                      // מדמה את תהליך הכניסה: קודם פנייה לשרת (round-trip אמיתי), כמו login-check
-                      setUuidTest('פונה לשרת…')
-                      try {
-                        await fetch('/api/login-check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: 'uuid-delay-test', password: '-' }) })
-                      } catch { /* מתעלמים מהתוצאה - רק ההשהיה מעניינת */ }
-                      for (let s = uuidDelaySec; s > 0; s--) {
-                        setUuidTest(`ממתין ${s} ש׳ לפני שליחה…`)
-                        await new Promise(r => setTimeout(r, 1000))
-                      }
-                      setUuidTest('שולח בקשה…')
-                      if (uuidFireViaEffect) {
-                        // כמו כניסה: הטריגר יירה מ-useEffect של קומפוננטה חדשה, לא מכאן
-                        setUuidEffectMount(true)
-                      } else {
-                        const code = await Get_UUID_BIOS_Code_From_M_Finance(onDbg, rid)
-                        setUuidTest(code ? code : 'אין תשובה מהאפליקציה')
-                        setUuidTestBusy(false)
-                      }
-                    }}
-                    style={{ background: '#003399', color: '#fff', border: 'none', borderRadius: '4px', padding: '6px 12px', fontSize: '15px', fontWeight: 'bold', cursor: uuidTestBusy ? 'default' : 'pointer', opacity: uuidTestBusy ? 0.6 : 1 }}>
-                    קרא UUID
-                  </button>
-                  <button
-                    disabled={uuidTestBusy}
-                    onClick={() => setUuidTest('')}
-                    style={{ background: '#777', color: '#fff', border: 'none', borderRadius: '4px', padding: '6px 12px', fontSize: '15px', fontWeight: 'bold', cursor: uuidTestBusy ? 'default' : 'pointer', opacity: uuidTestBusy ? 0.6 : 1 }}>
-                    איפוס
-                  </button>
-                </div>
-                {uuidEffectMount && (
-                  <UuidEffectFire
-                    onDbg={onDbg}
-                    onResult={code => {
-                      setUuidTest(code ? code : 'אין תשובה מהאפליקציה')
-                      setUuidTestBusy(false)
-                      setUuidEffectMount(false)
-                    }} />
-                )}
-              </div>
-            </fieldset>
             <fieldset style={{ margin: '8px 6px', border: '1px solid #003399', borderRadius: '6px', padding: '10px 12px', height: 'fit-content' }}>
               <legend style={{ color: 'red', fontSize: '20px', fontWeight: 'bold', padding: '0 6px', direction: 'rtl' }}>{lang.system.testsCreateFolderLegend}</legend>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -1800,17 +1638,9 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                   {lang.card.register}
                 </button>
-                <button onClick={() => { setActiveMfBtnTest(activeMfBtnTest === 'install' ? null : 'install'); onInstall() }}
-                  style={{ background: activeMfBtnTest === 'install' ? '#4a1a6e' : '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
-                  {lang.card.install}
-                </button>
                 <button onClick={() => { onNavigate('mf-login'); setActiveMfBtnTest(null) }}
                   style={{ background: '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
                   {lang.card.login}
-                </button>
-                <button onClick={() => { setActiveMfBtnTest(activeMfBtnTest === 'run' ? null : 'run'); onRun() }}
-                  style={{ background: activeMfBtnTest === 'run' ? '#4a1a6e' : '#2a2a2a', border: '1px solid #555', borderRadius: '4px', color: '#ccc', padding: '6px 4px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', fontWeight: 'bold' }}>
-                  {lang.card.run}
                 </button>
               </div>
             </div>
@@ -1873,16 +1703,16 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'ltr', whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr style={{ background: '#e8eaf6' }}>
-                    <th colSpan={11} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
-                    <th colSpan={7} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
+                    <th colSpan={13} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
+                    <th colSpan={6} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
                     <th style={{ padding: '3px 6px', border: '1px solid #a0a8c0' }}></th>
                   </tr>
                   <tr style={{ background: '#e8eaf6' }}>
-                    {['ID', `${lang.system.weightedScoreTitle} 0-10`, lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.profile.country, lang.system.colCurrency, 'IP Registration', 'Last IP', 'UUID Local BIOS'].map(h => (
+                    {['ID', `${lang.system.weightedScoreTitle} 0-10`, lang.system.colCreated, lang.system.colName, lang.profile.email, lang.profile.language, lang.profile.country, lang.system.colCurrency, 'IP Registration', 'Last IP', 'Last Login', 'Logins', 'Source'].map(h => (
                       <th key={h} style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>{h}</th>
                     ))}
                     <th style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>סיסמה זמנית</th>
-                    {[lang.system.colActive, lang.system.colAppInstalled, lang.profile.planFrom, lang.profile.planTo, lang.system.colLicenceType, lang.system.colSystemForce].map(h => (
+                    {[lang.system.colActive, lang.profile.planFrom, lang.profile.planTo, lang.system.colLicenceType, lang.system.colSystemForce].map(h => (
                       <th key={h} style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>{h}</th>
                     ))}
                     <th style={{ padding: '3px 5px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center', fontSize: 11, whiteSpace: 'normal', wordBreak: 'break-word' }}>איפוס סיסמה</th>
@@ -1912,7 +1742,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                               ? <input value={String(u.email ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, email: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], email: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '130px', backgroundColor: 'yellow' }} />
                               : String(u.email ?? '')}
                           </td>
-                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.language ?? '')}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{langIndexOf(u.language) >= 0 ? languages[langIndexOf(u.language)].name : String(u.language ?? '')}</td>
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             {usersEditMode
                               ? <input value={String(u.country ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, country: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], country: v } })) }} style={{ fontSize: 12, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '90px', backgroundColor: 'yellow' }} />
@@ -1921,11 +1751,9 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.currency ?? '')}</td>
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.ip_registration ?? '')}</td>
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.last_ip ?? '')}</td>
-                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center', fontSize: 11 }}>
-                            {usersEditMode
-                              ? <input value={String(u.UUID_Local_BIOS ?? '')} onChange={e => { const v = e.target.value; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, UUID_Local_BIOS: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], UUID_Local_BIOS: v } })) }} style={{ fontSize: 11, border: '1px solid #ccc', borderRadius: 3, padding: '1px 4px', width: '150px', backgroundColor: 'yellow' }} />
-                              : String(u.UUID_Local_BIOS ?? '')}
-                          </td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{u.last_login_at ? String(u.last_login_at).slice(0, 16).replace('T', ' ') : ''}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.login_count ?? 0)}</td>
+                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{String(u.source ?? '')}</td>
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             {u.temp_password ? '✓' : ''}
                           </td>
@@ -1933,11 +1761,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                             {usersEditMode
                               ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_active} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_active: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_active: v } })) }} /></span>
                               : u.is_active ? '✓' : ''}
-                          </td>
-                          <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
-                            {usersEditMode
-                              ? <span style={{ display: 'inline-block', backgroundColor: 'yellow', padding: '1px 4px', borderRadius: 3 }}><input type="checkbox" checked={!!u.is_M_Finance_installed} onChange={e => { const v = e.target.checked; setUsers(prev => prev.map(usr => String(usr.id) === String(u.id) ? { ...usr, is_M_Finance_installed: v } : usr)); setPendingUserEdits(prev => ({ ...prev, [String(u.id)]: { ...prev[String(u.id)], is_m_finance_installed: v } })) }} /></span>
-                              : u.is_M_Finance_installed ? '✓' : ''}
                           </td>
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>{u.plan_start ? String(u.plan_start).slice(0,10) : ''}</td>
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center', minWidth: '90px' }}>{u.plan_end ? String(u.plan_end).slice(0,10) : ''}</td>
@@ -1962,13 +1785,11 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                           </td>
                           <td style={{ padding: '2px 6px', border: '2px solid #000', borderBottom: 'none', textAlign: 'center' }}>
                             <button onClick={() => {
-                              // [Claude Code 13.09.2026, לפי הנחיית המשתמש] בניית סיסמה זמנית: ID מלא (מינימום 2 ספרות) + 4 ספרות שעה:דקה + 4 ספרות סוף UUID
-                              const idPart = String(u.id).padStart(2, '0')
-                              const now = new Date()
-                              const timePart = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0')
-                              const uuidPart = String(u.UUID_Local_BIOS ?? '').replace(/-/g, '').slice(-4).padStart(4, '0')
+                              // [23.09.2026] סיסמה זמנית כמו ב-M_Finance_app (api/mf-admin.js): 10 תווים אקראיים, בלי תווים שקל לבלבל ביניהם
+                              const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789'
+                              const tempPassword = Array.from(crypto.getRandomValues(new Uint8Array(10)), b => chars[b % chars.length]).join('')
                               onDbg('resetPassword', `נבחר לקוח email="${u.email}" id=${u.id} => נבנתה סיסמה זמנית`)
-                              setResetPasswordUser(u); setNewPasswordText(idPart + timePart + uuidPart); setPasswordResetMsg(''); setResetPasswordLight('red')
+                              setResetPasswordUser(u); setNewPasswordText(tempPassword); setPasswordResetMsg(''); setResetPasswordLight('red')
                             }}
                               style={{ background: '#003399', border: 'none', borderRadius: 4, color: '#FFD700', padding: '3px 8px', fontSize: 11, fontWeight: 'bold', cursor: 'pointer' }}>איפוס סיסמה</button>                          </td>
                         </tr>
@@ -2245,7 +2066,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                         const scores: Record<string, number> = {
                           'לקוח רשום':       u.email ? 1 : 0,
                           'לקוח פעיל':       u.is_active ? 1 : 0,
-                          'אפליקציה מותקנת': u.is_M_Finance_installed ? 1 : 0,
+                          'אפליקציה מותקנת': 0, // שדה ההתקנה הוסר (23.09.2026) - המדד ממתין להחלטה
                           'משוב חיובי':      hasNegative ? 0 : 1,
                           'מתעניין':         msgsThisMonth > 3 ? 1 : 0,
                           'תכנית תקינה':     (u.plan_end && new Date(String(u.plan_end)) > today) ? 1 : 0,
@@ -6072,16 +5893,14 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, uuidHintEmail, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug, onInstall, onRun, onShowInstallExplanation }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; uuidHintEmail: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void; onInstall: () => void; onRun: () => void; onShowInstallExplanation: () => Promise<boolean> }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === '3')           return <RemindersPage user={user} lang={lang} />
-  if (page === 'mf-newinfo')  return <InstallInfoCard lang={lang} onClose={onClose} onNavigate={onNavigate} />
-  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} prefillEmail={uuidHintEmail} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} onShowInstallExplanation={onShowInstallExplanation} />
-  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} onShowInstallExplanation={onShowInstallExplanation} />
-  if (page === 'mf-install')  return <InstallCard lang={lang} email={user?.email} clientIp={clientIp} onInstall={onInstall} onRun={onRun} onSetLoggedIn={onSetLoggedIn} onDbg={onDbg} />
-  if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} onInstall={onInstall} onRun={onRun} />
+  if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
+  if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} />
   // ❄ הוקפא 10.09.2026 — נושא השירותים הבנקאיים הישירים כולו מוקפא (החלטת אביגדור). הניתוב הזה לא-נגיש: אין כפתור/כתובת שמייצרים page==='4'. נשמר, לא נמחק. ראה Doc/AI Claude Code/Removal_Banking_Services.html
   if (page === '4')           return <BankingPage user={user} lang={lang} directInstitutions={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={onConsumeBankSession} onDbg={onDbg} />
   if (page === '5')           return <PersonalPage user={user} lang={lang} onNavigate={onNavigate} onUserUpdate={onUserUpdate} onDbg={onDbg} />
@@ -7335,298 +7154,6 @@ function BankingPage({ user, lang, directInstitutions, pendingBankSession, onCon
 
 }
 
-// טקסטים של תהליך ההרשמה/ההתקנה (InstallCard + InstallInfoCard), ב-11 השפות. fallback ל-en.
-type MfRegTxt = { doneLine1: string; doneLine2: string; runningLine1: string; runningLine2: string; incompleteBtn: string; infoHeading: string; infoBullets: string[]; infoEnterBtn: string }
-const MF_REG_TXT: Record<string, MfRegTxt> = {
-  en: { doneLine1: 'Registration completed successfully', doneLine2: 'Enjoy your browsing', runningLine1: "In a moment you'll be asked to choose an installation folder.", runningLine2: 'After that, watch for the installation file that appears above the page, click it quickly to install', incompleteBtn: 'Download finished, please confirm installation is complete', infoHeading: 'Description of the registration process', infoEnterBtn: 'Click to log in', infoBullets: [
-    'The KeyClick registration process: click the New Customer button, complete a standard registration with name, email and password, and install the home budget management app.',
-    'During installation, Microsoft may show a warning that the app is not recognized. This does not indicate a real problem — it is Microsoft’s caution for new applications.',
-    'The project is in its launch period. Once the project reaches a certain number of users, this message will disappear.',
-    'If such a message appears (usually a blue box), choose ‘More info’ (usually top right) and then click ‘Run anyway’ to continue the installation.',
-    'The installation process includes choosing a download folder on your computer. After that, the installation file will appear above the browser (briefly). Click it to start the installation, then follow the on-screen instructions.',
-    'Finishing the installation actually completes the registration, and from then on there are no restrictions — use of the whole site and the apps installed on it is completely free.',
-    'Note that for data security reasons, the method here is one person per computer. You can only work on the computer you registered with. The project is built exclusively for a computer running a Microsoft operating system.',
-  ] },
-  ru: { doneLine1: 'Регистрация успешно завершена', doneLine2: 'Приятного пользования', runningLine1: 'Через мгновение вам будет предложено выбрать папку для установки.', runningLine2: 'После этого обратите внимание на файл установки, который появится над страницей — нажмите на него, чтобы быстро начать установку', incompleteBtn: 'Загрузка завершена, подтвердите завершение установки', infoHeading: 'Описание процесса регистрации', infoEnterBtn: 'Нажмите, чтобы войти', infoBullets: [
-    'Процесс регистрации в KeyClick: нажатие кнопки «Новый клиент», обычная регистрация с именем, email и паролем, а также установка приложения для управления домашним бюджетом.',
-    'Во время установки Windows может показать предупреждение о том, что приложение не распознано. Это не признак реальной проблемы, а мера предосторожности Microsoft для новых приложений.',
-    'Проект находится в начальном периоде запуска. После достижения определённого числа пользователей это сообщение исчезнет.',
-    'Если появляется такое сообщение (обычно синий прямоугольник), выберите «Дополнительные сведения» (обычно справа сверху), а затем нажмите «Выполнить в любом случае», чтобы продолжить установку.',
-    'Процесс установки включает выбор папки для загрузки на компьютере. После этого над браузером на короткое время появится файл установки. Нажмите на него, чтобы начать установку, затем следуйте указаниям системы.',
-    'Завершение установки фактически завершает регистрацию, и с этого момента никаких ограничений нет — использование всего сайта и установленных приложений полностью свободно.',
-    'Обратите внимание, что из соображений безопасности данных здесь действует правило: один человек — один компьютер. Работать можно только на том компьютере, на котором вы зарегистрировались. Проект предназначен исключительно для компьютеров с операционной системой Microsoft.',
-  ] },
-  de: { doneLine1: 'Registrierung erfolgreich abgeschlossen', doneLine2: 'Viel Spaß beim Surfen', runningLine1: 'Gleich werden Sie gebeten, einen Installationsordner auszuwählen.', runningLine2: 'Danach achten Sie auf die Installationsdatei, die über der Seite erscheint, und klicken Sie schnell darauf, um die Installation zu starten', incompleteBtn: 'Download abgeschlossen, bitte Installation bestätigen', infoHeading: 'Beschreibung des Registrierungsprozesses', infoEnterBtn: 'Zum Anmelden klicken', infoBullets: [
-    'Der Registrierungsprozess bei KeyClick: Klicken Sie auf die Schaltfläche „Neuer Kunde“, führen Sie eine normale Registrierung mit Name, E-Mail und Passwort durch und installieren Sie die App für die Haushaltsbudgetverwaltung.',
-    'Während der Installation kann Windows eine Warnung anzeigen, dass die App nicht erkannt wird. Das ist kein echtes Problem, sondern eine Vorsichtsmaßnahme von Microsoft für neue Anwendungen.',
-    'Das Projekt befindet sich in der Startphase. Sobald eine bestimmte Anzahl an Nutzern erreicht ist, verschwindet diese Meldung.',
-    'Erscheint eine solche Meldung (meist ein blaues Rechteck), wählen Sie „Weitere Informationen“ (meist oben rechts) und klicken Sie dann auf „Trotzdem ausführen“, um mit der Installation fortzufahren.',
-    'Der Installationsvorgang umfasst die Auswahl eines Download-Ordners auf Ihrem Computer. Danach erscheint die Installationsdatei kurz über dem Browser. Klicken Sie darauf, um die Installation zu starten, und folgen Sie anschließend den Anweisungen des Systems.',
-    'Der Abschluss der Installation ist zugleich der Abschluss der Registrierung. Ab diesem Zeitpunkt gibt es keine Einschränkungen mehr — die Nutzung der gesamten Website und der darauf installierten Anwendungen ist völlig frei.',
-    'Beachten Sie, dass aus Datensicherheitsgründen hier das Prinzip „eine Person, ein Computer“ gilt. Sie können nur an dem Computer arbeiten, mit dem Sie sich registriert haben. Das Projekt ist ausschließlich für Computer mit einem Microsoft-Betriebssystem ausgelegt.',
-  ] },
-  fr: { doneLine1: 'Inscription terminée avec succès', doneLine2: 'Bonne navigation', runningLine1: "Dans un instant, il vous sera demandé de choisir un dossier d'installation.", runningLine2: "Ensuite, repérez le fichier d'installation qui apparaîtra au-dessus de la page, cliquez dessus rapidement pour lancer l'installation", incompleteBtn: "Téléchargement terminé, veuillez confirmer la fin de l'installation", infoHeading: "Description du processus d'inscription", infoEnterBtn: 'Cliquez pour vous connecter', infoBullets: [
-    "Le processus d'inscription à KeyClick : cliquez sur le bouton « Nouveau client », effectuez une inscription classique avec nom, e-mail et mot de passe, puis installez l'application de gestion du budget familial.",
-    "Pendant l'installation, Windows peut afficher un avertissement indiquant que l'application n'est pas reconnue. Cela n'indique pas un réel problème, mais une mesure de précaution de Microsoft pour les nouvelles applications.",
-    "Le projet est en période de lancement. Une fois qu'un certain nombre d'utilisateurs sera atteint, ce message disparaîtra.",
-    "Si un tel message apparaît (généralement un rectangle bleu), choisissez « Plus d'infos » (généralement en haut à droite), puis cliquez sur « Exécuter quand même » pour poursuivre l'installation.",
-    "Le processus d'installation inclut le choix d'un dossier de téléchargement sur votre ordinateur. Le fichier d'installation apparaîtra ensuite brièvement au-dessus du navigateur. Cliquez dessus pour démarrer l'installation, puis suivez les instructions du système.",
-    "La fin de l'installation marque en réalité la fin de l'inscription, et dès lors il n'y a plus aucune restriction — l'utilisation de tout le site et des applications qui y sont installées est totalement libre.",
-    "Notez que pour des raisons de sécurité des données, la méthode ici est une personne par ordinateur. Vous ne pourrez travailler que sur l'ordinateur avec lequel vous vous êtes inscrit. Le projet est conçu exclusivement pour un ordinateur fonctionnant sous un système d'exploitation Microsoft.",
-  ] },
-  he: { doneLine1: 'הרישום הסתיים בהצלחה', doneLine2: 'המשך גלישה נעימה', runningLine1: 'עוד רגע תתבקש לבחור תיקיית התקנה.', runningLine2: 'אחרי זה, שים לב לקובץ ההתקנה שיופיע מעל הדף, לחץ עליו מהר להתקנה', incompleteBtn: 'ההורדה הסתיימה, נא לאשר סיום התקנה', infoHeading: 'תיאור תהליך ההרשמה', infoEnterBtn: 'לחץ לכניסה', infoBullets: [
-    'תהליך ההרשמה ל-KeyClick, לחיצה על כפתור לקוח חדש, רישום רגיל הכולל שם, מייל וסיסמא והתקנת האפליקציה לניהול תקציב בית.',
-    'בתהליך ההתקנה, מיקרוסופט עשויה להציג מודעת אזהרה על כך שהאפליקציה אינה מוכרת. הדבר אינו מעיד על בעיה אמיתית אלא על אמצעי זהירות של מיקרוסופט לאפליקציות צעירות.',
-    'הפרויקט נמצא בתקופת הרצה. לאחר כמות מסוימת של משתמשים בפרויקט ההודעה הזאת תיעלם.',
-    'אם הודעת כזאת מופיעה (בד"כ מלבן כחול), יש לבחור על מידע נוסף (בד"כ מימין למעלה) ואז ללחוץ על המשך ההתקנה.',
-    'תהליך ההתקנה כולל בחירת תיקיה להורדה במחשב. אחרי זה יופיע קובץ ההתקנה מעל הדפדפן (לזמן קצר). יש ללחוץ עליו להתחלת ההתקנה. בהמשך יש לשים לב להנחיות המערכת.',
-    'סיום ההתקנה הוא בעצם סיום ההרשמה ומעתה אין מגבלות והשימוש בכל האתר והאפליקציות המותקנות עליו חופשי לגמרי.',
-    'יש לציין שמטעמי בטחון מידע, השיטה כאן היא אדם אחד למחשב אחד. תוכל לעבוד רק במחשב שנרשמת אליו. הפרויקט מותאם אך ורק על מחשב עם מערכת הפעלה של מיקרוסופט.',
-  ] },
-  es: { doneLine1: 'Registro completado con éxito', doneLine2: 'Buena navegación', runningLine1: 'En un momento se le pedirá que elija una carpeta de instalación.', runningLine2: 'Después, preste atención al archivo de instalación que aparecerá encima de la página, haga clic en él rápido para instalar', incompleteBtn: 'Descarga finalizada, confirme que la instalación ha terminado', infoHeading: 'Descripción del proceso de registro', infoEnterBtn: 'Haga clic para iniciar sesión', infoBullets: [
-    'El proceso de registro en KeyClick: hacer clic en el botón «Cliente nuevo», completar un registro normal con nombre, correo electrónico y contraseña, e instalar la aplicación de gestión del presupuesto familiar.',
-    'Durante la instalación, Windows puede mostrar una advertencia de que la aplicación no está reconocida. Esto no indica un problema real, sino una medida de precaución de Microsoft para aplicaciones nuevas.',
-    'El proyecto está en su período de lanzamiento. Una vez que se alcance cierta cantidad de usuarios, este mensaje desaparecerá.',
-    'Si aparece un mensaje así (normalmente un recuadro azul), elija «Más información» (normalmente arriba a la derecha) y luego haga clic en «Ejecutar de todos modos» para continuar con la instalación.',
-    'El proceso de instalación incluye elegir una carpeta de descarga en su computadora. Después, el archivo de instalación aparecerá brevemente encima del navegador. Haga clic en él para comenzar la instalación y luego siga las instrucciones del sistema.',
-    'Finalizar la instalación es en realidad finalizar el registro, y a partir de ese momento no hay restricciones — el uso de todo el sitio y de las aplicaciones instaladas en él es completamente libre.',
-    'Cabe señalar que, por razones de seguridad de la información, el método aquí es una persona por computadora. Solo podrá trabajar en la computadora con la que se registró. El proyecto está diseñado exclusivamente para una computadora con sistema operativo de Microsoft.',
-  ] },
-  ja: { doneLine1: '登録が正常に完了しました', doneLine2: '快適にご利用ください', runningLine1: 'まもなくインストール先のフォルダを選択するよう求められます。', runningLine2: 'その後、ページの上に表示されるインストールファイルに注意し、すばやくクリックしてインストールしてください', incompleteBtn: 'ダウンロードが完了しました。インストールの完了を確認してください', infoHeading: '登録プロセスの説明', infoEnterBtn: 'クリックしてログイン', infoBullets: [
-    'KeyClickの登録プロセス: 「新規顧客」ボタンをクリックし、氏名・メール・パスワードによる通常の登録を行い、家庭予算管理アプリをインストールします。',
-    'インストール中、Windowsがこのアプリを認識できないという警告を表示する場合があります。これは実際の問題ではなく、新しいアプリケーションに対するMicrosoftの注意喚起です。',
-    'このプロジェクトは立ち上げ期間中です。一定数の利用者に達すると、このメッセージは表示されなくなります。',
-    'このようなメッセージ（通常は青い枠）が表示された場合は、「詳細情報」（通常は右上）を選択し、「実行」をクリックしてインストールを続けてください。',
-    'インストール手順にはパソコン上のダウンロードフォルダの選択が含まれます。その後、インストールファイルがブラウザの上に一時的に表示されます。クリックしてインストールを開始し、以降は画面の指示に従ってください。',
-    'インストールの完了は実質的に登録の完了を意味し、以降は制限なく、サイト全体とインストールされたアプリを自由にご利用いただけます。',
-    '情報セキュリティ上の理由から、ここでは「1人につき1台のパソコン」という方式を採用しています。登録したパソコンでのみ作業できます。本プロジェクトはMicrosoftのオペレーティングシステムを搭載したパソコン専用です。',
-  ] },
-  ar: { doneLine1: 'اكتمل التسجيل بنجاح', doneLine2: 'تصفح ممتع', runningLine1: 'خلال لحظات سيُطلب منك اختيار مجلد للتثبيت.', runningLine2: 'بعد ذلك، انتبه لملف التثبيت الذي سيظهر أعلى الصفحة، وانقر عليه بسرعة للتثبيت', incompleteBtn: 'اكتمل التنزيل، يرجى تأكيد اكتمال التثبيت', infoHeading: 'وصف عملية التسجيل', infoEnterBtn: 'انقر للدخول', infoBullets: [
-    'عملية التسجيل في KeyClick: النقر على زر «عميل جديد»، وإجراء تسجيل عادي يتضمن الاسم والبريد الإلكتروني وكلمة المرور، وتثبيت تطبيق إدارة ميزانية المنزل.',
-    'أثناء التثبيت، قد يعرض ويندوز تحذيرًا بأن التطبيق غير معروف. هذا لا يشير إلى مشكلة حقيقية، بل هو إجراء احترازي من مايكروسوفت للتطبيقات الجديدة.',
-    'المشروع في فترة الإطلاق. بعد وصول عدد معين من المستخدمين، ستختفي هذه الرسالة.',
-    'إذا ظهرت رسالة كهذه (عادة مستطيل أزرق)، اختر «مزيد من المعلومات» (عادة أعلى اليمين) ثم انقر على «تشغيل على أي حال» لمتابعة التثبيت.',
-    'تتضمن عملية التثبيت اختيار مجلد للتنزيل على جهازك. بعد ذلك سيظهر ملف التثبيت أعلى المتصفح لفترة قصيرة. انقر عليه لبدء التثبيت، ثم اتبع تعليمات النظام.',
-    'انتهاء التثبيت يعني في الواقع انتهاء التسجيل، ومنذ تلك اللحظة لا توجد أي قيود — استخدام الموقع بالكامل والتطبيقات المثبتة عليه حر تمامًا.',
-    'يُذكر أنه لأسباب تتعلق بأمن المعلومات، فإن الطريقة هنا هي شخص واحد لكل جهاز. يمكنك العمل فقط على الجهاز الذي سجّلت به. المشروع مخصص فقط لجهاز يعمل بنظام تشغيل مايكروسوفت.',
-  ] },
-  zh: { doneLine1: '注册成功完成', doneLine2: '祝浏览愉快', runningLine1: '稍后系统会要求您选择安装文件夹。', runningLine2: '之后，请留意页面上方出现的安装文件，尽快点击它进行安装', incompleteBtn: '下载已完成，请确认安装已完成', infoHeading: '注册流程说明', infoEnterBtn: '点击登录', infoBullets: [
-    'KeyClick 的注册流程：点击「新客户」按钮，完成包含姓名、邮箱和密码的常规注册，并安装家庭预算管理应用程序。',
-    '在安装过程中，Windows 可能会显示该应用程序未被识别的警告。这并不代表存在真正的问题，而只是 Microsoft 对新应用程序采取的一种谨慎措施。',
-    '该项目正处于启动期。达到一定数量的用户后，此消息将会消失。',
-    '如果出现此类消息（通常是蓝色方框），请选择「更多信息」（通常在右上方），然后点击「仍要运行」以继续安装。',
-    '安装过程包括在电脑上选择下载文件夹。之后，安装文件会在浏览器上方短暂出现。点击它以开始安装，随后请按照系统提示操作。',
-    '安装完成实际上也就完成了注册，从此以后不再有任何限制——可以完全自由地使用整个网站及其上安装的应用程序。',
-    '请注意，出于信息安全考虑，这里采用「一人一机」的方式。您只能在注册所用的那台电脑上工作。该项目仅适用于运行 Microsoft 操作系统的电脑。',
-  ] },
-  it: { doneLine1: 'Registrazione completata con successo', doneLine2: 'Buona navigazione', runningLine1: 'Tra un momento ti verrà chiesto di scegliere una cartella di installazione.', runningLine2: 'Poi, fai attenzione al file di installazione che apparirà sopra la pagina, cliccalo rapidamente per installare', incompleteBtn: "Download completato, conferma il completamento dell'installazione", infoHeading: 'Descrizione del processo di registrazione', infoEnterBtn: 'Clicca per accedere', infoBullets: [
-    "Il processo di registrazione a KeyClick: clicca sul pulsante «Nuovo cliente», completa una normale registrazione con nome, email e password, e installa l'app per la gestione del budget familiare.",
-    "Durante l'installazione, Windows potrebbe mostrare un avviso secondo cui l'app non è riconosciuta. Questo non indica un problema reale, ma è una misura precauzionale di Microsoft per le nuove applicazioni.",
-    'Il progetto è nel suo periodo di avvio. Una volta raggiunto un certo numero di utenti, questo messaggio scomparirà.',
-    "Se compare un messaggio del genere (di solito un rettangolo blu), scegli «Ulteriori informazioni» (di solito in alto a destra) e poi clicca su «Esegui comunque» per proseguire con l'installazione.",
-    "Il processo di installazione include la scelta di una cartella di download sul computer. Successivamente, il file di installazione apparirà brevemente sopra il browser. Cliccalo per avviare l'installazione, quindi segui le istruzioni del sistema.",
-    "Il completamento dell'installazione corrisponde di fatto al completamento della registrazione, e da quel momento non ci sono più restrizioni: l'uso dell'intero sito e delle applicazioni installate è completamente libero.",
-    "Va notato che, per motivi di sicurezza dei dati, il metodo qui adottato è una persona per computer. Potrai lavorare solo sul computer con cui ti sei registrato. Il progetto è predisposto esclusivamente per un computer con sistema operativo Microsoft.",
-  ] },
-  hi: { doneLine1: 'पंजीकरण सफलतापूर्वक पूरा हुआ', doneLine2: 'शुभ ब्राउज़िंग', runningLine1: 'थोड़ी देर में आपसे इंस्टॉलेशन फ़ोल्डर चुनने के लिए कहा जाएगा।', runningLine2: 'उसके बाद, पेज के ऊपर दिखाई देने वाली इंस्टॉलेशन फ़ाइल पर ध्यान दें, इंस्टॉल करने के लिए उस पर जल्दी क्लिक करें', incompleteBtn: 'डाउनलोड पूरा हुआ, कृपया इंस्टॉलेशन पूर्ण होने की पुष्टि करें', infoHeading: 'पंजीकरण प्रक्रिया का विवरण', infoEnterBtn: 'लॉग इन करने के लिए क्लिक करें', infoBullets: [
-    'KeyClick में पंजीकरण प्रक्रिया: «नया ग्राहक» बटन पर क्लिक करें, नाम, ईमेल और पासवर्ड के साथ सामान्य पंजीकरण पूरा करें, और घरेलू बजट प्रबंधन ऐप इंस्टॉल करें।',
-    'इंस्टॉलेशन के दौरान, Windows यह चेतावनी दिखा सकता है कि ऐप पहचाना नहीं गया है। यह किसी वास्तविक समस्या का संकेत नहीं है, बल्कि नए एप्लिकेशनों के लिए Microsoft की एक सावधानी है।',
-    'यह प्रोजेक्ट अपनी शुरुआती अवधि में है। उपयोगकर्ताओं की एक निश्चित संख्या तक पहुंचने के बाद, यह संदेश गायब हो जाएगा।',
-    'यदि ऐसा संदेश दिखाई दे (आमतौर पर एक नीला बॉक्स), तो «अधिक जानकारी» चुनें (आमतौर पर ऊपर दाईं ओर) और फिर इंस्टॉलेशन जारी रखने के लिए «फिर भी चलाएं» पर क्लिक करें।',
-    'इंस्टॉलेशन प्रक्रिया में अपने कंप्यूटर पर डाउनलोड फ़ोल्डर चुनना शामिल है। इसके बाद, इंस्टॉलेशन फ़ाइल थोड़ी देर के लिए ब्राउज़र के ऊपर दिखाई देगी। इंस्टॉलेशन शुरू करने के लिए उस पर क्लिक करें, फिर सिस्टम के निर्देशों का पालन करें।',
-    'इंस्टॉलेशन पूरा होना वास्तव में पंजीकरण पूरा होना है, और उसके बाद कोई प्रतिबंध नहीं है — पूरी साइट और उस पर इंस्टॉल किए गए ऐप्स का उपयोग पूरी तरह से स्वतंत्र है।',
-    'ध्यान दें कि डेटा सुरक्षा कारणों से, यहाँ की पद्धति एक व्यक्ति प्रति कंप्यूटर है। आप केवल उसी कंप्यूटर पर काम कर सकते हैं जिससे आपने पंजीकरण किया था। यह प्रोजेक्ट केवल Microsoft ऑपरेटिंग सिस्टम वाले कंप्यूटर के लिए बनाया गया है।',
-  ] },
-}
-
-// מסך הסבר על תהליך ההרשמה וההתקנה, מוצג רק ללקוח שהמחשב שלו לא מזוהה (אין רשומה קיימת).
-function InstallInfoCard({ lang, onClose, onNavigate }: { lang: typeof languages[0]; onClose: () => void; onNavigate: (page: string) => void }) {
-  const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
-  const F = handFont(lang.code)
-  const t = MF_REG_TXT[lang.code] ?? MF_REG_TXT.en
-  const paragraphs = t.infoBullets
-
-  return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
-      <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '28px', overflow: 'auto' }}>
-        <div style={{ position: 'relative', width: '100%', maxWidth: '900px', maxHeight: '100%', overflowY: 'auto', background: '#f5f7fd', border: '2px solid #003399', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.35)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ fontFamily: F, color: '#c62828', fontWeight: 'bold', fontSize: '23px', textAlign: 'center', marginBottom: '4px' }}>{t.infoHeading}</div>
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '8px', paddingRight: '16px' }}>
-            {/* מחיצה כמו בדף הנחיתה (.box::after): פס 4px, gradient זהב-ורוד, לכל גובה הרשימה */}
-            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '4px', background: 'linear-gradient(#d4af37, #c93d7a)' }} />
-            {paragraphs.map((p, i) => (
-              <div key={i} style={{ fontFamily: 'Arial, sans-serif', color: '#003399', fontSize: '18px', lineHeight: 1.35, textAlign: 'right' }}>
-                <span style={{ color: '#d4af37', fontSize: '13px' }}>◆</span> {p}
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-            <button onClick={() => onNavigate('mf-login')} style={{ ...regBtn, fontSize: '16px', padding: '6px 18px', borderRadius: '6px' }}>{t.infoEnterBtn}</button>
-          </div>
-          <div onClick={onClose} style={{ position: 'absolute', right: '12px', bottom: '12px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>{lang.card.cancel}</div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function InstallCard({ lang, email, clientIp, onInstall, onRun, onSetLoggedIn, onDbg }: { lang: typeof languages[0]; email?: string; clientIp?: string; onInstall: () => void; onRun: () => void; onSetLoggedIn: () => void; onDbg: (func: string, msg: string) => void }) {
-  // run_id משותף לכל תהליך ההתקנה - חוט מקשר בין הדפדפן, ה-arg של mfinance:// והאפליקציה.
-  const runIdRef = useRef<string>(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))
-  // running = מסך 1 (מתקינים, בודקים) · done = נרשם בשרת · incomplete = מסך 2 (הכרטיס עם הכפתור)
-  const [phase, setPhase] = useState<'running' | 'done' | 'incomplete'>('running')
-  // קוד מחשב שנתפס בבדיקה הסבלנית (מסלול הרשמה). קיים → הכפתור מאשר מיד, בלי לירות טריגר.
-  const capturedUuidRef = useRef<string | null>(null)
-
-  // כותב שלב ללוג המשותף /api/uuid-log (לא מוצג על המסך).
-  const step = (name: string, msg: string) => uuidLog(runIdRef.current, name, msg)
-
-  // רישום ה-UUID ברשומת הלקוח.
-  const registerUuid = async (uuid: string | null) => {
-    if (!uuid) {
-      step('שגיאה', 'לא התקבל קוד מחשב מהאפליקציה — הרישום לא הושלם')
-      setPhase('incomplete')
-      return
-    }
-    localStorage.setItem('mf_uuid_local_bios', uuid)
-    step('רישום', `שומר קוד מחשב ברשומה: ${uuid}`)
-    try {
-      const res = await fetch('/api/set-mfinance-installed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, clientIp, uuidLocalBios: uuid }) })
-      const d = await res.json()
-      onDbg('InstallCard', `set-mfinance-installed status=${res.status} ok=${d.ok} error="${d.error ?? 'none'}"`)
-      if (d.ok) {
-        step('רישום', 'השרת אישר — קוד המחשב נרשם ברשומה')
-        step('סיום', 'הרישום הושלם — הלקוח יכול להיכנס')
-        setPhase('done')
-        onSetLoggedIn()
-      } else {
-        step('שגיאה', `השרת לא רשם את הקוד: ${d.error ?? '(ללא פירוט)'} — הרישום לא הושלם`)
-        setPhase('incomplete')
-      }
-    } catch (e) {
-      step('שגיאה', `שליחת הקוד לשרת נכשלה: ${String(e)} — הרישום לא הושלם`)
-      setPhase('incomplete')
-    }
-  }
-
-  // בדיקה סבלנית: האם האפליקציה עונה על הפורט המקומי (בלי לוג לכל ניסיון). האפליקציה פותחת
-  // את הפורט ב-OnFirstRun של Velopack ברגע שההתקנה נגמרת.
-  const pollForApp = async (maxMs: number, cancelled: { v: boolean }): Promise<string | null> => {
-    const deadline = Date.now() + maxMs
-    while (Date.now() < deadline && !cancelled.v) {
-      await new Promise(r => setTimeout(r, 1500))
-      if (cancelled.v) return null
-      const controller = new AbortController()
-      const t = setTimeout(() => controller.abort(), 3000)
-      try {
-        const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
-        clearTimeout(t)
-        if (res.ok) {
-          const code = (await res.text()).trim()
-          if (code) return code
-        }
-      } catch { clearTimeout(t) }
-    }
-    return null
-  }
-
-  useEffect(() => {
-    if (uuidCapture) runIdRef.current = uuidCapture.runId
-    onDbg('InstallCard', `mount [run=${runIdRef.current}] uuidCapture=${uuidCapture ? 'yes' : 'no'}`)
-    if (!email) { onDbg('InstallCard', 'no email'); step('שגיאה', 'חסר מייל — לא ניתן לרשום'); setPhase('incomplete'); return }
-    step('רשומה', `רשומת לקוח נוצרה — ${email}. חסר קוד מחשב.`)
-
-    const cancelled = { v: false }
-    ;(async () => {
-      if (uuidCapture) {
-        // כבר ניסינו ליצור קשר עם האפליקציה מהלחיצה שלפני המסך הזה (כניסה או הרשמה).
-        // ממתינים לתוצאה הזו לפני שמחליטים אם בכלל צריך להוריד - אם האפליקציה כבר ענתה,
-        // היא מותקנת בפועל, ואין שום סיבה להוריד ולהתקין אותה מחדש.
-        // חייבת להיות תשובה חיה בלבד כאן - לא ליפול לערך שמור, אחרת נרשם "הותקן" בלי שבאמת
-        // הותקן הפעם (ראה Get_UUID_With_Cache_Fallback - מיועדת רק להשלמת כניסה עם WRONG_DEVICE
-        // כגנן-בטיחות בשרת, לא להחלטה אם להתקין).
-        const uuid = await uuidCapture.promise
-        if (cancelled.v) return
-        if (uuid) {
-          await registerUuid(uuid)
-        } else {
-          // אין תשובה חיה - באמת לא מותקן. מורידים, וממתינים בסבלנות (כמו במסלול הרשמה
-          // רגיל) לפני שמציגים את הכפתור - לא לקפוץ ישר ל"ההורדה הסתיימה" כשהיא רק התחילה.
-          onInstall()
-          step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
-          step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
-          const patientUuid = await pollForApp(30000, cancelled)
-          if (cancelled.v) return
-          if (patientUuid) { capturedUuidRef.current = patientUuid; step('קוד מחשב', 'האפליקציה מגיבה — ההתקנה הסתיימה') }
-          else step('קוד מחשב', 'עברו 30 שניות בלי תשובה — מציג כפתור ידני')
-          setPhase('incomplete')
-        }
-      } else {
-        // מסלול הרשמה בלי ניסיון מוקדם: אין אפליקציה עדיין. מורידים, ובודקים את הפורט
-        // בסבלנות עד 30 שניות. הכפתור (מסך 2) יופיע רק כשהאפליקציה תגיב - כשההתקנה תיגמר.
-        onInstall()
-        step('הורדה', 'קובץ ההתקנה נשלח להורדה בדפדפן')
-        step('קוד מחשב', 'ממתין שההתקנה תיגמר והאפליקציה תגיב')
-        const uuid = await pollForApp(30000, cancelled)
-        if (cancelled.v) return
-        if (uuid) { capturedUuidRef.current = uuid; step('קוד מחשב', 'האפליקציה מגיבה — ההתקנה הסתיימה') }
-        else step('קוד מחשב', 'עברו 30 שניות בלי תשובה — מציג כפתור ידני')
-        setPhase('incomplete')
-      }
-    })()
-    return () => { cancelled.v = true }
-  }, [])
-
-  // לחיצת "אישור סיום התקנה". אם נתפס קוד בבדיקה — רושמים מיד. אחרת (גיבוי) — יורים טריגר טרי.
-  const onConfirmClick = async () => {
-    if (capturedUuidRef.current) { await registerUuid(capturedUuidRef.current); return }
-    setPhase('running')
-    step('קוד מחשב', 'ניסיון ידני — פנייה לאפליקציה')
-    Start_UUID_Capture(onDbg)
-    runIdRef.current = uuidCapture!.runId
-    const uuid = await uuidCapture!.promise // תשובה חיה בלבד - הלקוח בדיוק אמר "סיימתי להתקין"
-    await registerUuid(uuid)
-  }
-
-  const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
-  const t = MF_REG_TXT[lang.code] ?? MF_REG_TXT.en
-
-  return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', ...GRANITE_BG, direction: dir }}>
-      <PageHeader subtitle={`${lang.card.title} - ${lang.card.install}`} lang={lang} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '28px', gap: '18px' }}>
-        {phase === 'done' && (
-          <div style={{ fontFamily: handFont(lang.code), color: '#d32f2f', fontSize: 'clamp(40px, 9vw, 90px)', lineHeight: 1.25, textAlign: 'center', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)' }}>
-            {t.doneLine1}<br />{t.doneLine2}
-          </div>
-        )}
-        {phase === 'running' && (
-          <>
-            <style>{`
-              @keyframes mfProgressSlide { 0% { left: -30%; } 100% { left: 100%; } }
-            `}</style>
-            <div style={{ fontFamily: handFont(lang.code), color: '#003399', fontSize: '59px', lineHeight: 1.25, textAlign: dir === 'rtl' ? 'right' : 'left', maxWidth: '90%', textShadow: '0 2px 4px rgba(0,0,0,.2)', fontWeight: 'bold' }}>
-              {t.runningLine1}<br />{t.runningLine2}
-            </div>
-            <div style={{ position: 'relative', width: '340px', maxWidth: '80%', height: '10px', background: '#ddd', borderRadius: '5px', overflow: 'hidden', marginTop: '18px' }}>
-              <div style={{ position: 'absolute', top: 0, left: '-30%', width: '30%', height: '100%', background: '#111', borderRadius: '5px', animation: 'mfProgressSlide 1.3s linear infinite' }} />
-            </div>
-          </>
-        )}
-        {phase === 'incomplete' && (
-          <div style={{ background: '#2a2a2a', border: '2px solid #FFD700', borderRadius: '14px', padding: '32px 36px', boxShadow: '0 8px 32px rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <button
-              onClick={onConfirmClick}
-              style={{ ...regBtn, fontFamily: handFont(lang.code), fontSize: '22px', padding: '12px 40px', borderRadius: '10px' }}
-            >{t.incompleteBtn}</button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
 export function handFont(code: string) {
   if (code === 'he') return '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif'
   if (code === 'ru') return 'var(--font-caveat),"Caveat",cursive'
@@ -7646,112 +7173,7 @@ function EyeIcon({ open }: { open: boolean }) {
   )
 }
 
-const M_FINANCE_LOCAL_UUID_SERVER_PORT = 57891
-
-// לוג משותף לתהליך ה-UUID handshake — נשלח ל-/api/uuid-log עם run_id משותף לדפדפן ולאפליקציה.
-// fire-and-forget, keepalive כדי לשרוד ניווט. ראה app/api/uuid-log/route.ts.
-function uuidLog(runId: string | undefined, step: string, msg: string) {
-  if (!runId) return
-  try {
-    fetch('/api/uuid-log', {
-      method: 'POST',
-      keepalive: true,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ run_id: runId, actor: 'BROWSER', step, msg, ts_client: new Date().toISOString() }),
-    }).catch(() => {})
-  } catch { /* לא נוגעים בזרימה */ }
-}
-
-async function Get_UUID_BIOS_Code_From_M_Finance(onDbg: (func: string, msg: string) => void, runId?: string): Promise<string | null> {
-  const trigger = `mfinance://get-uuid${runId ? `?run=${encodeURIComponent(runId)}` : ''}`
-  onDbg('Get_UUID_BIOS_Code_From_M_Finance', `triggering ${trigger}`)
-  uuidLog(runId, 'פנייה', `פותח קשר עם האפליקציה — ${trigger}`)
-  window.location.href = trigger
-
-  await new Promise(r => setTimeout(r, 800))
-
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 8000)
-  try {
-    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `fetch GET http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`)
-    uuidLog(runId, 'קריאה', `קורא את קוד המחשב מ-localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}`)
-    const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
-    clearTimeout(timeoutId)
-    if (!res.ok) {
-      onDbg('Get_UUID_BIOS_Code_From_M_Finance', `res.ok=false status=${res.status}`)
-      uuidLog(runId, 'קריאה', `האפליקציה החזירה שגיאה ${res.status}`)
-      return null
-    }
-    const code = (await res.text()).trim()
-    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `received code="${code}"`)
-    uuidLog(runId, 'UUID', `התקבל קוד מחשב: ${code}`)
-    return code || null
-  } catch (err) {
-    clearTimeout(timeoutId)
-    onDbg('Get_UUID_BIOS_Code_From_M_Finance', `no response from M_Finance — err="${String(err)}"`)
-    uuidLog(runId, 'קריאה', `אין תשובה מהאפליקציה (${String(err)})`)
-    return null
-  }
-}
-
-// לכידת UUID לתהליך הכניסה/הרשמה. הטריגר mfinance://get-uuid חייב להיירות מתוך handler של לחיצה
-// (הדפדפן מפעיל אפליקציה חיצונית רק כשהקריאה יורדת משרשרת של אירוע משתמש). לכן Start_UUID_Capture
-// נקראת סינכרונית ב-handleLogin/handleUpdate, לפני כל await. המשיכה מ-localhost נעשית ברקע
-// ונשמרת ב-uuidCapture; InstallCard קורא משם במקום לירות טריגר בעצמו מ-useEffect.
-let uuidCapture: { runId: string; promise: Promise<string | null> } | null = null
-
-function Start_UUID_Capture(onDbg: (func: string, msg: string) => void): string {
-  const runId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())
-  const trigger = `mfinance://get-uuid?run=${encodeURIComponent(runId)}`
-  onDbg('Start_UUID_Capture', `triggering ${trigger}`)
-  uuidLog(runId, 'פנייה', `פותח קשר עם האפליקציה — ${trigger}`)
-  window.location.href = trigger
-  uuidCapture = { runId, promise: Poll_UUID_From_Local(onDbg, runId, 5000) }
-  return runId
-}
-
-async function Poll_UUID_From_Local(onDbg: (func: string, msg: string) => void, runId: string, maxMs: number): Promise<string | null> {
-  const deadline = Date.now() + maxMs
-  let first = true
-  while (Date.now() < deadline) {
-    await new Promise(r => setTimeout(r, first ? 800 : 700))
-    first = false
-    const controller = new AbortController()
-    const t = setTimeout(() => controller.abort(), 3000)
-    try {
-      uuidLog(runId, 'קריאה', `קורא את קוד המחשב מ-localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}`)
-      const res = await fetch(`http://localhost:${M_FINANCE_LOCAL_UUID_SERVER_PORT}/`, { signal: controller.signal })
-      clearTimeout(t)
-      if (res.ok) {
-        const code = (await res.text()).trim()
-        if (code) {
-          onDbg('Poll_UUID_From_Local', `received "${code}"`)
-          uuidLog(runId, 'UUID', `התקבל קוד מחשב: ${code}`)
-          try { localStorage.setItem('mf_uuid_local_bios', code) } catch { /* לא נוגעים בזרימה */ }
-          return code
-        }
-      }
-    } catch { clearTimeout(t) }
-  }
-  onDbg('Poll_UUID_From_Local', 'no response within window')
-  uuidLog(runId, 'קריאה', 'אין תשובה מהאפליקציה בחלון הזמן')
-  return null
-}
-
-// עוטפת כל מקום שמחכה לתוצאה של Start_UUID_Capture. קודם מחכים לקריאה החיה כרגיל (עד המועד
-// שנקבע לה) - רק אם היא לא ענתה בכלל, נופלים לערך השמור מהפעם האחרונה שהתקבל קוד בהצלחה
-// (localStorage, ראה Poll_UUID_From_Local). לא אוטומטי - תמיד מנסים את הקריאה האמיתית קודם.
-async function Get_UUID_With_Cache_Fallback(onDbg: (func: string, msg: string) => void, capture: { runId: string; promise: Promise<string | null> } | null): Promise<string | null> {
-  const uuid = capture ? await capture.promise : null
-  if (uuid) return uuid
-  try {
-    const cached = localStorage.getItem('mf_uuid_local_bios')
-    if (cached) { onDbg('Get_UUID_With_Cache_Fallback', `no live response => using cached localStorage value "${cached}"`); return cached }
-  } catch { /* לא נוגעים בזרימה */ }
-  return null
-}
-
-function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onShowInstallExplanation }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onShowInstallExplanation: () => Promise<boolean> }) {
+function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = 'default', onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg }: { lang: typeof languages[0]; clientIp?: string; prefillEmail?: string; initialPhase?: 'default' | 'register'; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void }) {
   const c    = lang.card
   const dir  = lang.code === 'ar' ? 'rtl' : 'ltr'
   const font = handFont(lang.code)
@@ -7825,16 +7247,11 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     if (savedPass && savedPass.length < 6)       { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
     if (savedPass !== savedConf)                 { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }
 
-    // ניסיון מהיר: אולי האפליקציה כבר מותקנת על המחשב הזה (התקנה קודמת). הטריגר חייב לצאת
-    // כאן, סינכרונית מתוך הלחיצה, לפני כל await - בדיוק כמו ב-handleLogin. אם לא תהיה תשובה,
-    // InstallCard יפיל את זה חזרה למסלול הרגיל (הורדה + polling סבלני על הפורט).
-    Start_UUID_Capture(onDbg)
-
     onDbg('handleUpdate', `fetch POST /api/register email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: savedName || null, email: savedEmail || null, password: savedPass || null, language: lang.name, clientIp }),
+      body: JSON.stringify({ name: savedName || null, email: savedEmail || null, password: savedPass || null, language: lang.code, clientIp }),
     })
     const data = await res.json()
     onDbg('handleUpdate', `res.status=${res.status} res.ok=${res.ok} code="${data.code}"`)
@@ -7845,55 +7262,33 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     onDbg('flowDiagram', '18-הרשמה מוצלחת')
     onDbg('handleUpdate', `success status="${data.status}"`)
     if (data.status === 'created') {
-      // רשומה נוצרה - אבל ההרשמה לא הסתיימה (חסר קוד מחשב). בלי popup "הרשמה הושלמה":
-      // מציגים מיד את דף ההסבר, ורק בלחיצת "המשך" שם עוברים למסך ההתקנה בפועל.
-      onDbg('handleUpdate', `user="${data.user?.email}" => onUserUpdate, showing install explanation`)
-      onUserUpdate(data.user)
-      onSetLoggedIn() // הרשומה נוצרה - משחררים כפתורים מיד, לפני ההתקנה
-      const proceed = await onShowInstallExplanation()
-      onDbg('handleUpdate', `explanation screen closed proceed=${proceed}`)
-      if (proceed) onNavigate('mf-install')
+      // הרשומה נוצרה - ההרשמה הסתיימה (אין יותר שלב התקנה). הלקוח נכנס מיד
+      onDbg('handleUpdate', `user="${data.user?.email}" => onClose => onLogin`)
+      setSavedName('')
+      setSavedEmail('')
+      setPhase('default')
+      onClose()
+      onLogin(data.user)
     } else {
       // עדכון פרטים של רשומה קיימת - כאן ההודעה כן נכונה
       onMsg({ title: c.mFinance, subtitle: c.title, body: c.msgUpdated })
     }
   }
 
-  async function isComputerAlreadyTakenByAnotherCustomer(): Promise<boolean> {
-    onDbg('flowDiagram', '23-בדיקה: קיים לקוח רשום במחשב?')
-    const newDeviceUuid = uuidCapture ? await uuidCapture.promise : null // בדיקת אבטחה - תשובה חיה בלבד, לא ערך שמור
-    const computerRes = await fetch('/api/check-computer', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uuidBiosCode: newDeviceUuid }),
-    })
-    const computerData = await computerRes.json()
-    onDbg('handleLogin', `check-computer taken=${computerData.taken}`)
-    if (computerData.taken) {
-      onDbg('flowDiagram', '22-כניסה נכשלה (מחשב זה כבר משויך ללקוח אחר)')
-      onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: 'התהליך נכשל. משתמש אחד במחשב אחד. כבר קיים.' })
-    }
-    return computerData.taken
-  }
-
-  // משותף לכל סיום כניסה מוצלח (גם המסלול הרגיל וגם רישום-UUID-ישיר בהמשך) - קריאה ל-/api/login
-  // עם קוד המחשב שכבר בידיים, וטיפול בתוצאה.
-  async function finishLogin(uuidBiosCode: string | null) {
-    onDbg('flowDiagram', '7-בדיקה: רישום UUID = UUID מקומי')
-    onDbg('handleLogin', `fetch POST /api/login email="${savedEmail}" clientIp="${clientIp}" uuidBiosCode="${uuidBiosCode ?? 'null'}"`)
+  // כניסה: מייל + סיסמה בלבד (בלי קוד מחשב) - קריאה ל-/api/login וטיפול בתוצאה.
+  async function finishLogin() {
+    onDbg('handleLogin', `fetch POST /api/login email="${savedEmail}" clientIp="${clientIp}"`)
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: savedEmail, password: savedPass, clientIp, uuidBiosCode }),
+      body: JSON.stringify({ email: savedEmail, password: savedPass, clientIp }),
     })
     const data = await res.json()
     onDbg('handleLogin', `res.status=${res.status} res.ok=${res.ok}`)
     if (!res.ok) {
       onDbg('handleLogin', `res.ok=false err="${data.error}" code="${data.code}"`)
       if (data.code === 'NOT_FOUND') { setShowNotFoundMsg(true); return }
-      if (data.code === 'WRONG_DEVICE') { onDbg('flowDiagram', '8-הלקוח רשום במחשב אחר => 21-כניסה נכשלה'); setError(data.error); return }
       if (data.code === 'NEEDS_PLAN') { onDbg('flowDiagram', '9-תוכנית לא תקפה'); onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: data.error }); return }
-      if (data.code === 'CRITICAL_FAILURE') { onDbg('flowDiagram', '21-כניסה נכשלה (תקלה קריטית)'); onMsg({ title: lang.card.title, subtitle: lang.card.mFinance, body: data.error }); return }
       onDbg('flowDiagram', '21-כניסה נכשלה')
       setError(data.error); return
     }
@@ -7924,72 +7319,8 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     onDbg('handleLogin', `email="${savedEmail}" pass.len=${savedPass.length}`)
     setError('')
     if (!savedPass) { onDbg('handleLogin', 'pass empty => errPassLen'); setError(c.errPassLen); return }
-
-    // הטריגר mfinance://get-uuid חייב לצאת כאן, סינכרונית מתוך הלחיצה, לפני כל await
-    Start_UUID_Capture(onDbg)
-
     onDbg('flowDiagram', '4-בדיקה: קיימת רשומת לקוח (מייל+סיסמה)')
-    onDbg('handleLogin', `fetch POST /api/login-check email="${savedEmail}"`)
-    const checkRes = await fetch('/api/login-check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: savedEmail, password: savedPass }),
-    })
-    const checkData = await checkRes.json()
-    onDbg('flowDiagram', '5-בדיקה: UUID BIOS קיים ברשומה')
-    onDbg('handleLogin', `login-check res.status=${checkRes.status} res.ok=${checkRes.ok}`)
-    if (!checkRes.ok) {
-      onDbg('handleLogin', `login-check failed err="${checkData.error}" code="${checkData.code}"`)
-      if (checkData.code === 'NOT_FOUND') {
-        if (await isComputerAlreadyTakenByAnotherCustomer()) return
-        setShowNotFoundMsg(true)
-        return
-      }
-      if (checkData.code === 'NEEDS_INSTALL') {
-        // ה-UUID כבר בתהליך תפיסה מאז לחיצת הכניסה (Start_UUID_Capture למעלה) - אם האפליקציה
-        // כבר מותקנת ועונה, הקוד יגיע כאן. משתמשים בתוצאה הזו במקום לנחש "לא מותקן" אוטומטית.
-        // תשובה חיה בלבד - זו ההחלטה אם לדלג על מסך ההתקנה, אסור לה להסתמך על ערך שמור מהעבר.
-        const uuidBiosCode = uuidCapture ? await uuidCapture.promise : null
-        onDbg('handleLogin', `NEEDS_INSTALL uuidBiosCode="${uuidBiosCode ?? 'null'}"`)
-        if (await isComputerAlreadyTakenByAnotherCustomer()) return
-        if (!uuidBiosCode) {
-          // אין תשובה מהאפליקציה - באמת לא מותקן. ממשיכים למסך ההתקנה כרגיל.
-          onDbg('flowDiagram', `13-ממשיך בתהליך התקנת M Finance (רשומה קיימת, אין UUID עדיין) user="${checkData.user?.email}"`)
-          onUserUpdate(checkData.user)
-          onSetLoggedIn() // הרשומה קיימת - משחררים כפתורים מיד, לפני ההתקנה
-          onNavigate('mf-install')
-          return
-        }
-        // האפליקציה כבר ענתה - מותקנת בפועל. רושמים את קוד המחשב ומדלגים לגמרי על מסך ההתקנה.
-        onDbg('handleLogin', 'NEEDS_INSTALL app already responded => registering uuid directly, skip install screen')
-        const setRes = await fetch('/api/set-mfinance-installed', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: savedEmail, clientIp, uuidLocalBios: uuidBiosCode }),
-        })
-        const setData = await setRes.json()
-        onDbg('handleLogin', `set-mfinance-installed status=${setRes.status} ok=${setData.ok} error="${setData.error ?? 'none'}"`)
-        if (!setData.ok) {
-          // הרישום נכשל - נופלים חזרה למסך ההתקנה הרגיל, בדיוק כמו לפני התיקון
-          onDbg('handleLogin', 'set-mfinance-installed failed => falling back to install screen')
-          onUserUpdate(checkData.user)
-          onSetLoggedIn()
-          onNavigate('mf-install')
-          return
-        }
-        onDbg('handleLogin', 'uuid registered directly => skipping install screen, finishing login')
-        await finishLogin(uuidBiosCode)
-        return
-      }
-      setError(checkData.error); return
-    }
-
-    onDbg('flowDiagram', '6-בקשת UUID מקומי מהאפליקציה')
-    // המקום היחיד שמותר לו ליפול לערך שמור: יש כבר UUID רשום ברשומה (login-check הצליח), אז
-    // /api/login עדיין משווה בפועל מול הרשומה (WRONG_DEVICE) - ערך שמור שגוי פשוט ייחסם שם,
-    // לא נכתב לשום מקום בלי אימות.
-    const uuidBiosCode = await Get_UUID_With_Cache_Fallback(onDbg, uuidCapture)
-    await finishLogin(uuidBiosCode)
+    await finishLogin()
   }
 
   return (
