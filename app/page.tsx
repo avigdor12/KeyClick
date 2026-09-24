@@ -4540,12 +4540,12 @@ const GUIDES_CSS = `
 
   /* ===== guide document — "ספר הדרכה" ===== */
   .guide-doc{ padding:2px 2px 6px; }
-  .guide-doc .gd-kicker{ font-family:var(--font-frank),Georgia,serif; font-size:12px; letter-spacing:.14em; color:#a9781f; font-weight:700; margin:2px 0 4px; }
-  .guide-doc .gd-title{ font-family:var(--font-frank),Georgia,serif; font-weight:900; font-size:26px; line-height:1.2; color:#e02020; margin:0 0 10px; text-wrap:balance; }
+  .guide-doc .gd-kicker{ font-family:Arial,Helvetica,sans-serif; font-size:12px; letter-spacing:.14em; color:#a9781f; font-weight:700; margin:2px 0 4px; }
+  .guide-doc .gd-title{ font-family:Arial,Helvetica,sans-serif; font-weight:900; font-size:26px; line-height:1.2; color:#e02020; margin:0 0 10px; text-wrap:balance; }
   .guide-doc .gd-title-rule{ height:0; border-top:2px solid #c9a24a; margin:0 0 18px; }
   .guide-doc .gd-lede{ margin:0 0 22px; color:#3f4666; line-height:1.8; font-size:15.5px; white-space:pre-line; }
   .guide-doc .gd-toc{ border:1px solid #ddc79a; background:#faf8f2; border-radius:5px; padding:14px 18px; margin:0 0 26px; }
-  .guide-doc .gd-toc h4{ font-family:var(--font-frank),Georgia,serif; margin:0 0 9px; font-size:14px; letter-spacing:.1em; color:#a9781f; font-weight:700; }
+  .guide-doc .gd-toc h4{ font-family:Arial,Helvetica,sans-serif; margin:0 0 9px; font-size:14px; letter-spacing:.1em; color:#a9781f; font-weight:700; }
   .guide-doc .gd-toc ol{ margin:0; padding:0; list-style:none; column-width:180px; column-gap:26px; }
   .guide-doc .gd-toc li{ break-inside:avoid; padding:2px 0; font-size:12.5px; line-height:1.45; }
   .guide-doc .gd-toc button{ appearance:none; background:none; border:0; font:inherit; text-align:inherit; cursor:pointer; color:#4a5372; display:flex; gap:6px; align-items:baseline; width:100%; padding:0; }
@@ -4555,9 +4555,9 @@ const GUIDES_CSS = `
   .guide-doc .gd-ch{ margin-top:30px; scroll-margin-top:12px; }
   .guide-doc .gd-ch:first-of-type{ margin-top:6px; }
   .guide-doc .gd-ch-head{ display:flex; align-items:stretch; gap:0; background:#1c3d94; border-radius:6px; overflow:hidden; margin:0 0 12px; }
-  .guide-doc .gd-ch-num{ flex:none; width:42px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.14); color:#f2cf7d; font-family:var(--font-frank),Georgia,serif; font-weight:700; font-size:17px; font-variant-numeric:tabular-nums; }
-  .guide-doc h3.gd-ch-title{ font-family:var(--font-frank),Georgia,serif; font-weight:700; font-size:19px; margin:0; padding:9px 14px; color:#fff; text-wrap:balance; }
-  .guide-doc .gd-sub{ font-family:var(--font-frank),Georgia,serif; font-weight:700; font-size:16px; color:#fff; background:#1c3d94; margin:22px 0 8px; padding:5px 12px; border-radius:5px; display:inline-block; }
+  .guide-doc .gd-ch-num{ flex:none; width:42px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.14); color:#f2cf7d; font-family:Arial,Helvetica,sans-serif; font-weight:700; font-size:17px; font-variant-numeric:tabular-nums; }
+  .guide-doc h3.gd-ch-title{ font-family:Arial,Helvetica,sans-serif; font-weight:700; font-size:19px; margin:0; padding:9px 14px; color:#fff; text-wrap:balance; }
+  .guide-doc .gd-sub{ font-family:Arial,Helvetica,sans-serif; font-weight:700; font-size:16px; color:#fff; background:#1c3d94; margin:22px 0 8px; padding:5px 12px; border-radius:5px; display:inline-block; }
   .guide-doc .gd-body{ margin:0; white-space:pre-line; color:#20264a; font-size:15.5px; font-weight:500; line-height:1.85; }
   .guide-doc .gd-body + .gd-sub{ margin-top:20px; }
   .guide-doc.gd-fs .gd-title{ font-size:38px; }
