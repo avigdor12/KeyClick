@@ -535,6 +535,20 @@ export default function Home() {
     const origin = mfAppOrigin()
     if (origin && mfFrameRef.current?.contentWindow) mfFrameRef.current.contentWindow.postMessage(msg, origin)
   }
+  // ניתוק אחרי שעה בלי שום פעולה (עכבר, מקלדת, גלילה, מגע - באתר או בתוך האפליקציה): חוזרים למסך הפתיחה בלי הודעה.
+  // טעינה מחדש של הדף מאפסת הכל: המשתמש לא מחובר (אין זיהוי אוטומטי) והאפליקציה נסגרת. (תוקף החיבור בשרת האפליקציה: 4 שעות)
+  const IDLE_LOGOUT_MS = 1 * 60 * 60 * 1000
+  const lastActivityRef = useRef(Date.now())
+  useEffect(() => {
+    const mark = () => { lastActivityRef.current = Date.now() }
+    const evs = ['mousedown', 'mousemove', 'keydown', 'wheel', 'touchstart', 'scroll']
+    evs.forEach(ev => window.addEventListener(ev, mark, { passive: true, capture: true }))
+    const timer = setInterval(() => {
+      if (isLoggedInExplicit && Date.now() - lastActivityRef.current > IDLE_LOGOUT_MS) window.location.reload()
+    }, 60000)
+    return () => { evs.forEach(ev => window.removeEventListener(ev, mark, { capture: true })); clearInterval(timer) }
+  }, [isLoggedInExplicit])
+
   // הערכים העדכניים לשימוש בתוך מאזין ההודעות (שנרשם פעם אחת לכל כתובת אפליקציה)
   const langIdxRef = useRef(langIdx)
   langIdxRef.current = langIdx
@@ -543,6 +557,7 @@ export default function Home() {
     const onMessage = (e: MessageEvent) => {
       if (!mfAppUrl || e.origin !== mfAppOrigin()) return
       const d = e.data as { type?: string; code?: string } | null
+      if (d?.type === 'mf:activity') { lastActivityRef.current = Date.now(); return }   // הלקוח פעיל בתוך האפליקציה (פעם בדקה לכל היותר)
       dbg('mfApp', `message type=${d?.type ?? 'none'}`)
       // "צא" באפליקציה: סוגרים את המסגרת וחוזרים לשער של KeyClick
       if (d?.type === 'mf:exit') { setActivePage(null); setMfAppUrl(null) }
