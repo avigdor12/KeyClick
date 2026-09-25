@@ -304,7 +304,9 @@ export default function Home() {
         .catch(() => {})
     }
     checkUnread()
-    const interval = setInterval(checkUnread, 60000)
+    // בדף המשוב ('0') בודקים כל 10 שניות, כדי שההתראה על תשובת המנהל תגיע כמעט יחד עם התשובה עצמה (הרשימה מתרעננת כל 5 שניות).
+    // בשאר הדפים פעם בדקה. בכל מעבר דף הבדיקה רצה מיד והקצב מתעדכן (activePage ברשימת התלויות)
+    const interval = setInterval(checkUnread, activePage === '0' ? 10000 : 60000)
     return () => clearInterval(interval)
   }, [Current_User_Pointer_to_DB?.id, activePage])
 
