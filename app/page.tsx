@@ -612,7 +612,7 @@ export default function Home() {
   changeLangRef.current = changeLang
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif', overflow: 'hidden', position: 'relative' }}>
+    <div className="kc-root" style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif', overflow: 'hidden', position: 'relative' }}>
 
       {reminderNotif && reminderNotif.length > 0 && (
         <div style={{ position: 'fixed', top: '70px', insetInlineEnd: '20px', zIndex: 9000, minWidth: '280px', maxWidth: '360px', direction: 'rtl', fontFamily: 'Arial, sans-serif', animation: 'slideIn 0.3s ease' }}>
@@ -694,7 +694,7 @@ export default function Home() {
           ) : activePage === 'mf-app' && mfAppUrl ? (
             // אפליקציית ניהול תקציב בית (23.09.2026): נפתחת על כל החלון, מעל הדגלים והסרגל של KeyClick. נכנסת מחוברת עם אסימון הכניסה שבכתובת.
             // השפה נבחרת בדגלים של האפליקציה ונשמרת גם כאן; "צא" באפליקציה סוגר אותה וחוזר ל-KeyClick
-            <iframe ref={mfFrameRef} src={mfAppUrl} title="M Finance" allow="fullscreen"
+            <iframe className="kc-app-frame" ref={mfFrameRef} src={mfAppUrl} title="M Finance" allow="fullscreen"
               style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', border: 'none', background: '#000', zIndex: 5000 }} />
           ) : (
             <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
@@ -3858,7 +3858,8 @@ const GUIDES_CSS = `
   .guides-page .side-caption.right .cap-line{ border-bottom:none; padding-bottom:0; transform:none; }
   .guides-page .side-caption.left{ left:0; width:calc(50% - 270px); }
 
-  @media (max-width:1100px){
+  /* לא בטלפון (הצד הקצר של המסך קטן מ-500): שם האתר מוצג בגודל מינימום (kc-root ב-globals.css) והכיתובים נשארים */
+  @media (max-width:1100px) and (min-width:500px) and (min-height:500px){
     .guides-page .side-caption{ display:none; }
   }
 
@@ -4119,7 +4120,8 @@ const GUIDES_CSS = `
     .guides-page .d-front, .guides-page .drawer-tray{ transition:none; }
   }
 
-  @media (max-width:480px){
+  /* לא בטלפון (הצד הקצר של המסך קטן מ-500): שם המגירות מוצגות כמו במחשב. רוחב מתחת ל-480 הוא תמיד טלפון, ולכן הכלל הזה לא פועל יותר */
+  @media (max-width:480px) and (min-width:500px) and (min-height:500px){
     .guides-page .columns{ gap:14px; }
     .guides-page .column{ gap:12px; }
     .guides-page .drawer-label{ font-size:12px; }
@@ -5298,13 +5300,13 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
       </div>
 
       {navButtons && !isColLayout && (
-        <div style={{ position: 'absolute', top: 83, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        <div className="kc-hide-small" style={{ position: 'absolute', top: 83, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
           {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
         </div>
       )}
 
       {navButtons && isColLayout && (
-        <div dir="ltr" style={{ position: 'absolute', top: 68, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        <div className="kc-hide-small" dir="ltr" style={{ position: 'absolute', top: 68, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
           {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
         </div>
       )}

@@ -54,3 +54,18 @@ input:focus, textarea:focus {
   box-shadow: 0 0 40px rgba(255,215,0,0.85), inset 0 0 0 1px rgba(255,215,0,0.4) !important;
   animation: none;
 }
+
+/* טלפון (הצד הקצר של המסך קטן מ-500): האתר מוצג בגודל מינימום של 1200 על 700, מוקטן ל-65%, והשאר בגלילה.
+   הגלילה בתוך body ולא במסמך כולו - אחרת דפדפן הטלפון מרחיב את כל המסך לרוחב האתר.
+   body מימין לשמאל כדי שהגלילה תתחיל מצד ימין (התפריט), והאתר עצמו נשאר בכיוון של היום.
+   הגובה מחולק בהקטנה כדי שהאתר המוקטן ימלא את כל גובה המסך. במחשב אין שינוי */
+@media (max-width: 499px), (max-height: 499px) {
+  html { overflow: hidden; }
+  body { overflow: auto; height: 100dvh; display: block; direction: rtl; }
+  .kc-root { zoom: 0.65; min-width: 1200px; min-height: 700px; height: calc(100dvh / 0.65) !important; direction: ltr; }
+  .kc-hide-small { display: none !important; }
+  /* חלון האפליקציה נמצא בתוך האתר המוקטן: מבטלים לו את ההקטנה (1 / 0.65) כדי שייפתח על כל המסך */
+  .kc-app-frame { zoom: 1.53846; }
+  /* מסך מלא של התיעוד והסרטונים: גם הוא בתוך האתר המוקטן - מבטלים לו את ההקטנה */
+  .kc-root :fullscreen { zoom: 1.53846; }
+}
