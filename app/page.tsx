@@ -2062,7 +2062,7 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
         KeyClick
       </div>
       <div style={{ position: 'absolute', top: '28%', left: '16%', right: '4%', textAlign: 'center',
-        fontFamily: lang.code === 'he' ? '"Guttman Yad","Levenim MT","Miriam","David",serif' : 'var(--font-dancing),Georgia,serif',
+        fontFamily: lang.code === 'he' ? '"Guttman Yad","Levenim MT","Miriam","David",serif' : lang.code === 'ru' ? 'var(--font-caveat),"Caveat",cursive' : 'var(--font-dancing),Georgia,serif',
         fontWeight: 'bold', fontSize: '88px', color: '#cc00cc', zIndex: 10 }}>
         {lang.welcome}
       </div>
