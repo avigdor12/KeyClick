@@ -2062,8 +2062,8 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
         KeyClick
       </div>
       <div style={{ position: 'absolute', top: '28%', left: '16%', right: '4%', textAlign: 'center',
-        fontFamily: welcomeFont(lang.code), fontStyle: handStyle(lang.code),
-        fontWeight: lang.code === 'he' ? 'normal' : 'bold', fontSize: '88px', color: '#cc00cc', zIndex: 10 }}>
+        fontFamily: lang.code === 'ru' ? "'Great Vibes', cursive" : welcomeFont(lang.code), fontStyle: handStyle(lang.code),   // רוסית: Great Vibes, כמו באפליקציה
+        fontWeight: lang.code === 'he' || lang.code === 'ru' ? 'normal' : 'bold', fontSize: '88px', color: '#cc00cc', zIndex: 10 }}>
         {lang.welcome}
       </div>
       <div style={{ position: 'absolute', top: '56%', left: '14%', right: '4%', textAlign: 'center', fontFamily: 'var(--font-dancing), Georgia, serif', fontWeight: 'bold', fontSize: '94px', color: '#cc00cc', zIndex: 10 }}>

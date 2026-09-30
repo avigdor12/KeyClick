@@ -22,6 +22,8 @@ export default function RootLayout({
         {/* טעינה מראש, כמו שהיה ב-next/font: ארבעת הפונטים הוותיקים (הכתב הלטיני, העברי והרוסי שלהם) ו-Playpen העברי של דף השער,
             כדי שהכיתוב לא יופיע לרגע בפונט אחר ויתחלף */}
         {PRELOAD_FONTS.map(f => <link key={f} rel="preload" href={`/fonts/free/${f}.woff2`} as="font" type="font/woff2" crossOrigin="anonymous" />)}
+        {/* שלב 6 (30.09.2026): השמות Arial ו-Segoe UI טוענים פונטים חופשיים מהפרויקט - הטקסט הרגיל זהה במחשב ובטלפון */}
+        <link rel="stylesheet" href="/fonts/fonts_alias.css" />
         <link rel="stylesheet" href="/fonts/fonts_web.css" />
         <link rel="stylesheet" href="/fonts/fonts_cjk.css" />
       </head>
