@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+/* פונטים (30.09.2026): קבצים בפרויקט - public/fonts/fonts_web.css ו-fonts_cjk.css (ראה layout.tsx) */
+html {
+  --font-dancing: 'Dancing Script';
+  --font-amatic: 'Amatic SC';
+  --font-caveat: 'Caveat';
+  --font-assistant: 'Assistant';
+  --font-playpen-he: 'Playpen Sans Hebrew';
+  --font-caveat-brush: 'Caveat Brush';
+  --font-kalam: 'Kalam';
+  --font-aref-ruqaa: 'Aref Ruqaa';
+  --font-arimo: 'Arimo';
+  --font-noto-deva: 'Noto Sans Devanagari';
+  --font-noto-ar: 'Noto Sans Arabic';
+  --font-yomogi: 'Yomogi';
+  --font-yusei: 'Yusei Magic';
+  --font-longcang: 'Long Cang';
+  --font-mashanzheng: 'Ma Shan Zheng';
+  --font-noto-jp: 'Noto Sans JP';
+  --font-noto-sc: 'Noto Sans SC';
+}
+
 input[type="date"].no-icon::-webkit-calendar-picker-indicator { display: none; }
 input[type="date"].no-icon::-webkit-inner-spin-button { display: none; }
 

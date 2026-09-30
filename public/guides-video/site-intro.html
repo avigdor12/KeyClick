@@ -107,7 +107,7 @@
   </div>
 
 <script>
-  const TOTAL = 13;
+  const TOTAL = 12; // 12 slides (was 13 - an empty 13th slide was shown, 30.09.2026)
   const DURATION = 10000; // fallback timing for slides with no narration
   const NARRATION = {"1":["פרויקט KeyClick  - טכנולוגיה חכמה ומתקדמת בקליק"],"2":["צעד קטן לאדם, צעד גדול לאנושות – אלה אנחנו"],"3":["הפלטפורמה הטכנולוגית המתקדמת לניהול תקציב בית"],"4":["דף הנחיתה המעוצב והמדהים, חלון הראווה של הפרויקט."],"5":["פאנל בקרה אחיד לכל הדפים."],"6":["לקוח רשום מקבל דף אישי."],"7":["נרשמת לתכנית מסוימת ? התאריכים נרשמים ביומן."],"8":["דף חשוב לקשרי לקוחות. שלח משוב"],"9":["אפליקציית ניהול תקציב בית. תיאור מפורט במגירות 4,5,6"],"10":["חוויה שתפיק ממנה תועלת."],"11":["הנה פחות או יותר סיכום עיקרי האתר."],"12":["אז","אל תשכח שיש למי לפנות בכל שאלה ובכל בעיה","תודה רבה."]};
   const DARK_SLIDES = [true, false, false, false, false, false, false, false, false, false, false, false];
@@ -165,7 +165,7 @@
       subtitleText.classList.toggle('on-dark', !!DARK_SLIDES[current]);
       subtitleText.classList.toggle('on-light', !DARK_SLIDES[current]);
       if (!text) return DURATION;
-      const textWidth = subtitleText.getBoundingClientRect().width || 300;
+      const textWidth = subtitleText.offsetWidth || 300; // unscaled width - the stage is scaled, the crawl moves in unscaled px (30.09.2026)
       // the span's natural (untransformed) right edge sits at x=SW (right:0),
       // so its natural left edge sits at (SW - textWidth); translateX(V)
       // shifts it by V from there. Using the *minimal* off-screen bounds

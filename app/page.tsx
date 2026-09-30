@@ -612,7 +612,7 @@ export default function Home() {
   changeLangRef.current = changeLang
 
   return (
-    <div className="kc-root" style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif', overflow: 'hidden', position: 'relative' }}>
+    <div className="kc-root" style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'Arial, sans-serif', overflow: 'hidden', position: 'relative', '--kc-cap': capFont(lang.code), '--kc-cap-style': handStyle(lang.code) } as React.CSSProperties}>
 
       {reminderNotif && reminderNotif.length > 0 && (
         <div style={{ position: 'fixed', top: '70px', insetInlineEnd: '20px', zIndex: 9000, minWidth: '280px', maxWidth: '360px', direction: 'rtl', fontFamily: 'Arial, sans-serif', animation: 'slideIn 0.3s ease' }}>
@@ -643,9 +643,9 @@ export default function Home() {
       {popupMsg && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#1a1a1a', border: '2px solid #FFD700', borderRadius: '16px', padding: '36px 48px 44px', textAlign: 'center', boxShadow: '0 12px 48px rgba(0,0,0,0.7)', minWidth: '300px', position: 'relative' }}>
-            <div style={{ color: '#FFD700', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif' }}>{popupMsg.title}</div>
+            <div style={{ color: '#FFD700', fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)' }}>{popupMsg.title}</div>
             {popupMsg.subtitle && <div style={{ color: '#FFD700', fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>{popupMsg.subtitle}</div>}
-            <div style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', color: popupMsg.bodyColor ?? '#FFD700', fontSize: '32px', lineHeight: '1.4', marginBottom: '8px', whiteSpace: 'pre-line' }}>{popupMsg.body}</div>
+            <div style={{ fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', color: popupMsg.bodyColor ?? '#FFD700', fontSize: '32px', lineHeight: '1.4', marginBottom: '8px', whiteSpace: 'pre-line' }}>{popupMsg.body}</div>
             <div onClick={() => setPopupMsg(null)} style={{ position: 'absolute', right: '12px', bottom: '10px', width: '32px', height: '32px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00aa00', fontSize: '12px', fontWeight: '900', userSelect: 'none', border: '1px solid #ccc' }}>{lang.card.ok}</div>
           </div>
         </div>
@@ -1507,7 +1507,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               </div>
             </fieldset>
             <div style={{ margin: '8px 6px', border: '1px solid #666', borderRadius: '8px', padding: '6px 4px 8px', width: '140px', background: '#1a1a1a' }}>
-              <div style={{ color: '#FFD700', fontSize: '15px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #444', paddingBottom: '5px', marginBottom: '6px', fontFamily: handFont(lang.code) }}>
+              <div style={{ color: '#FFD700', fontSize: '15px', fontWeight: 'bold', textAlign: 'center', borderBottom: '1px solid #444', paddingBottom: '5px', marginBottom: '6px', fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code) }}>
                 {lang.card.title}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
@@ -1783,7 +1783,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                             <div style={{ marginBottom: 6, display: 'flex', gap: 16, justifyContent: 'flex-end', alignItems: 'baseline' }}>
                 <span style={{ fontSize: 15, fontWeight: 'bold', color: '#003399' }}>{lang.system.scheduleTitle}</span>
                 <span style={{ fontSize: 16, color: '#003399' }}>M Finance</span>
-                <span style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 20, color: '#003399', fontWeight: 'bold' }}>{lang.card.title}</span>
+                <span style={{ fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: 20, color: '#003399', fontWeight: 'bold' }}>{lang.card.title}</span>
               </div>
               <div style={{ border: '2px solid #003399', borderRadius: 3 }}>
                 <table style={{ borderCollapse: 'collapse', fontSize: 14, direction: 'rtl', tableLayout: 'fixed', width: colWidths.reduce((a, b) => a + b, 0) }}>
@@ -2062,15 +2062,15 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
         KeyClick
       </div>
       <div style={{ position: 'absolute', top: '28%', left: '16%', right: '4%', textAlign: 'center',
-        fontFamily: lang.code === 'he' ? '"Guttman Yad","Levenim MT","Miriam","David",serif' : lang.code === 'ru' ? 'var(--font-caveat),"Caveat",cursive' : 'var(--font-dancing),Georgia,serif',
-        fontWeight: 'bold', fontSize: '88px', color: '#cc00cc', zIndex: 10 }}>
+        fontFamily: welcomeFont(lang.code), fontStyle: handStyle(lang.code),
+        fontWeight: lang.code === 'he' ? 'normal' : 'bold', fontSize: '88px', color: '#cc00cc', zIndex: 10 }}>
         {lang.welcome}
       </div>
       <div style={{ position: 'absolute', top: '56%', left: '14%', right: '4%', textAlign: 'center', fontFamily: 'var(--font-dancing), Georgia, serif', fontWeight: 'bold', fontSize: '94px', color: '#cc00cc', zIndex: 10 }}>
         M Solution Group
       </div>
       <div style={{ position: 'absolute', top: '85%', right: '-2%', width: '30%', textAlign: 'center',
-        fontFamily: lang.code === 'he' ? '"Guttman Yad","Levenim MT","Miriam","David",serif' : 'var(--font-dancing),Georgia,serif',
+        fontFamily: welcomeFont(lang.code), fontStyle: handStyle(lang.code),
         fontWeight: 'bold', fontSize: '20px', color: '#cc00cc', whiteSpace: 'pre-wrap', zIndex: 10,
         direction: lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr' }}>
         {(lang.code !== 'he' && txGateMsg) || gateMsg}
@@ -2520,7 +2520,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
-        <div style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '26px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', marginBottom: '10px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        <div style={{ fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: '26px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', marginBottom: '10px', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
           {lang.captions.feedbackAboveButton}
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '8px' }}>
@@ -2550,7 +2550,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
             boxShadow: '0 4px 16px rgba(0,0,80,0.2)',
           }}>
             <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
-            <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
+            <span style={{ fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
           </div>
           {user ? (
             <div style={{ flex: 1, textAlign: 'right', paddingBottom: '6px', fontSize: '16px', fontWeight: 'normal', color: '#003399', lineHeight: '1.5' }}>
@@ -2598,7 +2598,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
           <div style={{ fontSize: '15px', fontWeight: 700, color: '#222', marginBottom: '12px' }}>{fb.rating}</div>
           {([[fb.ratingWebsite, selectedMsg ? selectedMsg.rating_site : ratingSite, setRatingSite], [fb.ratingBudget, selectedMsg ? selectedMsg.rating_budget : ratingBudget, setRatingBudget]] as [string, number|null, (n:number)=>void][]).map(([label, val, setVal]) => (
             <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', marginBottom: '10px', border: '1.5px solid #003399', borderRadius: '6px', padding: '6px 12px' }}>
-              <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontWeight: 'bold' }}>{label}</span>
+              <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), fontWeight: 'bold' }}>{label}</span>
               {[1,2,3,4,5,6,7,8,9,10].map(n => (
                 <div key={n} onClick={selectedMsg ? undefined : () => setVal(n)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: selectedMsg ? 'default' : 'pointer', margin: '0 2px' }}>
                   <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2.5px solid #003399', background: val === n ? '#003399' : '#fff', boxShadow: val === n ? '0 0 0 2px #6699ff' : 'none', transition: 'all 0.1s' }} />
@@ -2986,7 +2986,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                 </div>
                 <div style={{ background: '#003399', borderRadius: '12px 12px 0 0', padding: '4px 6px 6px', display: 'inline-flex', alignItems: 'center', gap: '32px', border: '2px solid #FFD700', boxShadow: '0 4px 16px rgba(0,0,80,0.2)' }}>
                   <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
-                  <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
+                  <span style={{ fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
                   <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{msgs.filter(m => m.is_system).length + 1}</div>
@@ -3037,7 +3037,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                   </div>
                   <div style={{ background: '#003399', borderRadius: '12px 12px 0 0', padding: '4px 6px 6px', display: 'inline-flex', alignItems: 'center', gap: '32px', border: '2px solid #FFD700', boxShadow: '0 4px 16px rgba(0,0,80,0.2)' }}>
                     <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
-                    <span style={{ fontFamily: handFont(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
+                    <span style={{ fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), fontSize: '32px', fontWeight: 'bold', color: '#FFD700' }}>{fb.customerRelations}</span>
                   </div>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', color: '#003399' }}>
                     <div style={{ fontSize: '24px', fontWeight: 'normal' }}>{msgIdx + 1}</div>
@@ -3095,7 +3095,7 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                   <div style={{ fontSize: '15px', fontWeight: 700, color: '#222', marginBottom: '12px' }}>{fb.rating}</div>
                   {([[fb.ratingWebsite, msg.rating_site], [fb.ratingBudget, msg.rating_budget]] as [string, number | null][]).map(([label, val]) => (
                     <div key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', marginBottom: '10px', border: '1.5px solid #003399', borderRadius: '6px', padding: '6px 12px' }}>
-                      <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontWeight: 'bold' }}>{label}</span>
+                      <span style={{ minWidth: '140px', fontSize: '18px', color: '#003399', fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), fontWeight: 'bold' }}>{label}</span>
                       {[1,2,3,4,5,6,7,8,9,10].map(n => (
                         <div key={n} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', margin: '0 2px' }}>
                           <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2.5px solid #003399', background: val === n ? '#003399' : '#fff', boxShadow: val === n ? '0 0 0 2px #6699ff' : 'none' }} />
@@ -3211,7 +3211,7 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
     <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'auto', ...GRANITE_BG, padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
       <PageHeader subtitle={`${lang.card.infoServices} - ${lang.menu[1]}`} lang={lang} />
 
-      <div style={{ position: 'absolute', top: '220px', right: 0, width: 'calc(50% - 420px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+      <div style={{ position: 'absolute', top: '220px', right: 0, width: 'calc(50% - 420px)', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
         {lang.captions.updatesWord1}<br/>{lang.captions.updatesWord2}<br/>{lang.captions.updatesWord3}<br/>{lang.captions.updatesWord4}
       </div>
 
@@ -3235,7 +3235,7 @@ function UpdatesPage({ lang }: { lang: typeof languages[0] }) {
               {updates.map((u) => (
                 <tr key={u.id}>
                   <td style={{ ...tdS, whiteSpace: 'nowrap', fontSize: 13 }}>{formatUpdateDate(u.release_date, u.release_time)}</td>
-                  <td style={{ ...tdS, whiteSpace: 'nowrap', fontFamily: handFont(lang.code), fontSize: 16 }}>
+                  <td style={{ ...tdS, whiteSpace: 'nowrap', fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), fontSize: 16 }}>
                     {u.product === 'KeyClick Site' ? lang.updates.productKeyClick : u.product === 'M Finance' ? lang.updates.productMFinance : u.product}
                   </td>
                   <td style={{ ...tdS, whiteSpace: 'nowrap', fontSize: 13 }}>{(u.version ?? '').replace(/^ver\s*/i, '')}</td>
@@ -3465,7 +3465,7 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
         </div>
         <button onClick={() => setScrollLocked(v => !v)} style={{ padding: '6px 14px', background: scrollLocked ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>❄</button>
 
-        <div style={{ textAlign: 'right', marginTop: -12, marginLeft: 150, fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 32, color: '#cc0000', fontWeight: 'bold' }}>
+        <div style={{ textAlign: 'right', marginTop: -12, marginLeft: 150, fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: 32, color: '#cc0000', fontWeight: 'bold' }}>
           {samplingConfig.runEnabled ? lang.system.runStatusRunning : lang.system.runStatusStopped}
         </div>
         <fieldset style={{ marginTop: 4, border: '2px solid #003399', borderRadius: 6, padding: '10px 12px 12px' }}>
@@ -3675,7 +3675,7 @@ function ProcessingPage({ lang, visits: liveVisits, reload, onDbg, samplingConfi
   return (
     <div style={{ padding: '0 16px 16px 16px', width: '100%', position: 'relative' }}>
       <style>{PROC_CSS}</style>
-      <div style={{ position: 'absolute', top: 0, right: 12, fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 32, color: '#cc0000', fontWeight: 'bold' }}>
+      <div style={{ position: 'absolute', top: 0, right: 12, fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: 32, color: '#cc0000', fontWeight: 'bold' }}>
         {samplingConfig.runEnabled ? lang.system.runStatusRunning : lang.system.runStatusStopped}
       </div>
       <div style={{ display: 'flex', flexDirection: 'row-reverse', gap: 0 }}>
@@ -3839,7 +3839,8 @@ const GUIDES_CSS = `
     position:absolute;
     top:62%;
     transform:translateY(-50%);
-    font-family:"Guttman Yad Brush","Guttman Yad","Levenim MT",serif;
+    font-family:var(--kc-cap);
+    font-style:var(--kc-cap-style);
     font-size:40px;
     line-height:1.15;
     color:#c31432;
@@ -3854,9 +3855,9 @@ const GUIDES_CSS = `
     transform:rotate(10deg);
   }
   .guides-page .side-caption .cap-line:last-child{ margin-bottom:0; }
-  .guides-page .side-caption.right{ right:0; width:calc(50% - 270px); font-size:32px; }
+  .guides-page .side-caption.right{ right:0; width:calc(50% - var(--cab-w, 520px) / 2 - 10px); font-size:32px; }
   .guides-page .side-caption.right .cap-line{ border-bottom:none; padding-bottom:0; transform:none; }
-  .guides-page .side-caption.left{ left:0; width:calc(50% - 270px); }
+  .guides-page .side-caption.left{ left:0; width:calc(50% - var(--cab-w, 520px) / 2 - 10px); }
 
   /* לא בטלפון (הצד הקצר של המסך קטן מ-500): שם האתר מוצג בגודל מינימום (kc-root ב-globals.css) והכיתובים נשארים */
   @media (max-width:1100px) and (min-width:500px) and (min-height:500px){
@@ -3890,7 +3891,7 @@ const GUIDES_CSS = `
 
   .guides-page .cap{
     position:relative;
-    width:calc(min(520px,92vw) + 20px);
+    width:calc(min(var(--cab-w, 520px),92vw) + 20px);
     height:30px;
     background:linear-gradient(180deg, #f3dd94, #b6892c 55%, #7c5c1c);
     border-radius:10px 10px 3px 3px;
@@ -3915,7 +3916,7 @@ const GUIDES_CSS = `
 
   .guides-page .cabinet{
     position:relative;
-    width:min(520px,92vw);
+    width:min(var(--cab-w, 520px),92vw);
     margin-top:-4px;
     padding:22px 20px 26px;
     border-radius:5px;
@@ -3939,7 +3940,7 @@ const GUIDES_CSS = `
   .guides-page .feet{
     display:flex;
     justify-content:space-between;
-    width:calc(min(520px,92vw) - 34px);
+    width:calc(min(var(--cab-w, 520px),92vw) - 34px);
     margin-top:0;
   }
   .guides-page .foot{
@@ -4156,8 +4157,37 @@ function GuidesPage({ lang, onNavigate }: { lang: typeof languages[0]; onNavigat
 
   const g = lang.guides
 
+  // שלטי הכותרת מעל השידה (30.09.2026): אם הכותרת לא נכנסת בשורה אחת - קודם מקטינים את הפונט (30 עד 24),
+  // אחר כך מרחיבים את השידה (520 עד 600), ואם עדיין לא נכנס - שתי שורות, ושני השלטים באותו גובה (סימטרי)
+  const pageRef = useRef<HTMLDivElement>(null)
+  const plateRefs = useRef<(HTMLDivElement | null)[]>([])
+  useLayoutEffect(() => {
+    const page = pageRef.current
+    const plates = plateRefs.current.filter((p): p is HTMLDivElement => !!p)
+    if (!page || plates.length < 2) return
+    const lines = (el: HTMLElement) => {
+      const r = document.createRange(); r.selectNodeContents(el)
+      return new Set(Array.from(r.getClientRects()).map(x => Math.round(x.top))).size
+    }
+    const fit = () => {
+      page.style.removeProperty('--cab-w')
+      plates.forEach(p => { p.style.fontSize = ''; p.style.minHeight = '' })
+      const oneLine = () => plates.every(p => lines(p) <= 1)
+      let size = 30
+      while (!oneLine() && size > 24) { size -= 1; plates.forEach(p => { p.style.fontSize = size + 'px' }) }
+      let w = 520
+      while (!oneLine() && w < 600) { w += 10; page.style.setProperty('--cab-w', w + 'px') }
+      const h = Math.max(...plates.map(p => p.getBoundingClientRect().height))
+      plates.forEach(p => { p.style.minHeight = h + 'px' })
+    }
+    fit()
+    document.fonts?.ready.then(fit)
+    window.addEventListener('resize', fit)
+    return () => window.removeEventListener('resize', fit)
+  }, [lang.code])
+
   return (
-    <div className="guides-page" dir="rtl">
+    <div className="guides-page" dir="rtl" ref={pageRef}>
       <style>{GUIDES_CSS}</style>
 
       <PageHeader subtitle={lang.card.guidesAndVideos} layout="column" lang={lang} />
@@ -4167,7 +4197,7 @@ function GuidesPage({ lang, onNavigate }: { lang: typeof languages[0]; onNavigat
         <div className="cap-line">{lang.captions.guidesRight2}</div>
       </div>
       <div className="side-caption left">
-        <div className="cap-line">{lang.captions.guidesLeft}</div>
+        <div className="cap-line" dir={lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'}>{lang.captions.guidesLeft}</div>
       </div>
 
       <div className="furniture">
@@ -4177,14 +4207,14 @@ function GuidesPage({ lang, onNavigate }: { lang: typeof languages[0]; onNavigat
           <div className="columns">
 
             <div className="column">
-              <div className="col-plate script">{lang.card.title}</div>
+              <div className="col-plate script" ref={el => { plateRefs.current[0] = el }}>{lang.card.title}</div>
               <GuidesDrawer id="fin-overview" label={`4 ${g.overview}`} title={g.financeOverviewTitle} desc={g.financeOverviewDesc} comingSoon={lang.profile.comingSoon} openId={openFin} setOpenId={setOpenFin} onOpen={() => onNavigate('guides-fin-overview')} />
               <GuidesDrawer id="fin-guide" label={`5 ${g.userGuide}`} title={g.financeGuideTitle} desc={g.financeGuideDesc} comingSoon={lang.profile.comingSoon} openId={openFin} setOpenId={setOpenFin} onOpen={() => onNavigate('guides-fin-guide')} />
               <GuidesDrawer id="fin-videos" label={`6 ${lang.card.videos}`} title={g.financeVideosTitle} desc={g.financeVideosDesc} comingSoon={lang.profile.comingSoon} openId={openFin} setOpenId={setOpenFin} onOpen={() => onNavigate('guides-fin-videos')} />
             </div>
 
             <div className="column">
-              <div className="col-plate script">{lang.card.theWebsite}</div>
+              <div className="col-plate script" ref={el => { plateRefs.current[1] = el }}>{lang.card.theWebsite}</div>
               <GuidesDrawer id="site-overview" label={`1 ${g.overview}`} title={g.siteOverviewTitle} desc={g.siteOverviewDesc} comingSoon={lang.profile.comingSoon} openId={openSite} setOpenId={setOpenSite} onOpen={() => onNavigate('guides-site-overview')} />
               <GuidesDrawer id="site-guide" label={`2 ${g.userGuide}`} title={g.siteGuideTitle} desc={g.siteGuideDesc} comingSoon={lang.profile.comingSoon} openId={openSite} setOpenId={setOpenSite} onOpen={() => onNavigate('guides-site-guide')} />
               <GuidesDrawer id="site-videos" label={`3 ${lang.card.videos}`} title={g.siteVideosTitle} desc={g.siteVideosDesc} comingSoon={lang.profile.comingSoon} openId={openSite} setOpenId={setOpenSite} onOpen={() => onNavigate('guides-site-videos')} />
@@ -5300,13 +5330,13 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
       </div>
 
       {navButtons && !isColLayout && (
-        <div className="kc-hide-small" style={{ position: 'absolute', top: 83, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        <div className="kc-hide-small" style={{ position: 'absolute', top: 83, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
           {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
         </div>
       )}
 
       {navButtons && isColLayout && (
-        <div className="kc-hide-small" dir="ltr" style={{ position: 'absolute', top: 68, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+        <div className="kc-hide-small" dir="ltr" style={{ position: 'absolute', top: 68, right: 24, zIndex: 5, textAlign: 'center', lineHeight: 1.25, transform: 'rotate(20deg)', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: 30, color: '#c31432', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
           {lang.captions.guidesDrawersLine1}<br/>{lang.captions.guidesDrawersLine2}
         </div>
       )}
@@ -5391,10 +5421,10 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
     <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'auto', ...GRANITE_BG, padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
       <PageHeader subtitle={`${lang.card.infoServices} - ${lang.menu[3]}`} lang={lang} />
 
-      <div style={{ position: 'absolute', top: 'calc(30% + 70px)', transform: 'translateY(-50%)', right: 0, width: 'calc(50% - 300px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+      <div style={{ position: 'absolute', top: 'calc(30% + 70px)', transform: 'translateY(-50%)', right: 0, width: 'calc(50% - 300px)', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
         {lang.captions.remindersRight1}<br/>{lang.captions.remindersRight2}
       </div>
-      <div style={{ position: 'absolute', top: 'calc(30% + 70px)', transform: 'translateY(-50%)', left: 0, width: 'calc(50% - 300px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+      <div style={{ position: 'absolute', top: 'calc(30% + 70px)', transform: 'translateY(-50%)', left: 0, width: 'calc(50% - 300px)', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: '28px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
         {lang.captions.remindersLeft1}<br/>{lang.captions.remindersLeft2}<br/>{lang.captions.remindersLeft3}
       </div>
 
@@ -5473,10 +5503,35 @@ function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, system
   )
 }
 
+// פונטים חופשיים שנשמרים בשרת (30.09.2026): לכל שפה פונט כתב יד עם האותיות שלה, כדי שייראה אותו דבר בכל מכשיר.
+// עברית: Playpen Sans Hebrew מוטה, במקום Guttman המוגן. handStyle מחזיר את ההטיה
+export function handStyle(code: string) { return code === 'he' ? 'italic' : 'normal' }
+// כותרות בכתב יד (טוש)
 export function handFont(code: string) {
-  if (code === 'he') return '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif'
+  if (code === 'he') return 'var(--font-playpen-he),cursive'
   if (code === 'ru') return 'var(--font-caveat),"Caveat",cursive'
+  if (code === 'ja') return 'var(--font-yusei),cursive'
+  if (code === 'zh') return 'var(--font-mashanzheng),cursive'
+  if (code === 'hi') return 'var(--font-kalam),cursive'
+  if (code === 'ar') return 'var(--font-aref-ruqaa),cursive'
   return 'var(--font-dancing),"Dancing Script",Georgia,serif'
+}
+// "ברוכים הבאים" והשורה שמתחתיו (כתב יד בעט)
+export function welcomeFont(code: string) {
+  if (code === 'he') return 'var(--font-playpen-he),cursive'
+  if (code === 'ru') return 'var(--font-caveat),"Caveat",cursive'
+  if (code === 'ja') return 'var(--font-yomogi),cursive'
+  if (code === 'zh') return 'var(--font-longcang),cursive'
+  if (code === 'hi') return 'var(--font-kalam),cursive'
+  if (code === 'ar') return 'var(--font-aref-ruqaa),cursive'
+  return 'var(--font-dancing),Georgia,serif'
+}
+// הכיתובים האדומים (כתב יד בטוש) - מוגדרים פעם אחת על kc-root כמשתנה --kc-cap
+export function capFont(code: string) {
+  if (code === 'he') return 'var(--font-playpen-he),cursive'
+  if (code === 'ru') return 'var(--font-caveat),"Caveat",cursive'
+  if (code === 'ja' || code === 'zh' || code === 'hi' || code === 'ar') return handFont(code)
+  return 'var(--font-caveat-brush),cursive'
 }
 
 function EyeIcon({ open }: { open: boolean }) {
@@ -5646,7 +5701,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     <div style={{ width: '100%', height: '100%', position: 'relative', ...GRANITE_BG }}>
       <PageHeader subtitle={`${lang.card.title} - ${lang.card.login}`} lang={lang} />
 
-      <div style={{ position: 'absolute', top: '50%', right: 0, transform: 'translateY(-50%)', width: 'calc(50% - 200px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '32px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
+      <div style={{ position: 'absolute', top: '50%', right: 0, transform: 'translateY(-50%)', width: 'calc(50% - 200px)', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: '32px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }}>
         {lang.captions.registerRight1}<br/>{lang.captions.registerRight2}
       </div>
 
@@ -5658,7 +5713,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
 
         <div onMouseDown={onDragStart} style={{ textAlign: 'center', marginBottom: '28px', cursor: 'grab', userSelect: 'none' }}>
           <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#FFD700', fontStyle: 'italic', fontFamily: 'var(--font-dancing), Georgia, serif' }}>KeyClick</div>
-          <div style={{ fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', color: '#FFD700', fontSize: '22px', marginTop: '6px' }}>{c.title}</div>
+          <div style={{ fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', color: '#FFD700', fontSize: '22px', marginTop: '6px' }}>{c.title}</div>
           <div style={{ color: '#999', fontSize: '13px', marginTop: '2px', fontFamily: 'Arial, sans-serif' }}>M Finance</div>
         </div>
 
@@ -5742,7 +5797,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
               </div>
             </div>
             {error && <div style={{ color: '#ff6b6b', fontSize: '13px', marginTop: '8px', textAlign: 'center' }}>{error}</div>}
-            <div style={{ marginTop: '18px', textAlign: 'center', fontFamily: font, color: '#ffffff', fontWeight: 'bold' }}>
+            <div style={{ marginTop: '18px', textAlign: 'center', fontFamily: font, fontStyle: handStyle(lang.code), color: '#ffffff', fontWeight: 'bold' }}>
               <div style={{ fontSize: '22px' }}>{c.line1}</div>
               <div style={{ fontSize: '32px' }}>{c.line2}</div>
             </div>
@@ -5937,7 +5992,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
 
   const outerWrap: React.CSSProperties = { width: '100%', height: '100%', position: 'relative', ...GRANITE_BG, overflow: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '0 20px 28px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }
 
-  const sideCaptionStyle: React.CSSProperties = { position: 'absolute', right: 0, width: 'calc(50% - 400px)', fontFamily: '"Guttman Yad Brush","Guttman Yad","Levenim MT",serif', fontSize: '30px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }
+  const sideCaptionStyle: React.CSSProperties = { position: 'absolute', right: 0, width: 'calc(50% - 400px)', fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: '30px', lineHeight: 1.3, color: '#c31432', textAlign: 'center', textShadow: '0 2px 4px rgba(0,0,0,.15)' }
   const cardBox:  React.CSSProperties  = { width: '100%', maxWidth: '780px', background: '#fff', border: '2px solid #003399', borderRadius: '12px', padding: '32px 36px', boxShadow: '0 4px 16px rgba(0,0,60,0.08)' }
   const thStyle:  React.CSSProperties  = { padding: '8px 12px', textAlign: 'right', color: '#003399', fontWeight: 'bold', border: '1px solid #ccd' }
   const tdStyle:  React.CSSProperties  = { padding: '9px 12px', border: '1px solid #ccd' }
@@ -6116,7 +6171,7 @@ function PersonalPage({ user, lang, onNavigate, onUserUpdate, onDbg }: { user: U
                   </button>
                 </td>
                 <td style={tdP}>
-                  <div style={{ fontWeight: 'bold', fontFamily: handFont(lang.code), fontSize: '17px' }}>{lang.card.title}</div>
+                  <div style={{ fontWeight: 'bold', fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), fontSize: '17px' }}>{lang.card.title}</div>
                   <div style={{ color: '#888', fontSize: '12px' }}>M Finance</div>
                 </td>
                 <td style={{ ...tdP, color: '#003399', fontWeight: 'bold' }}>

@@ -54,7 +54,7 @@ export default function LoginPage() {
         width: '360px', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', direction: lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr',
       }}>
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#FFD700', fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#FFD700', fontFamily: "'Gelasio', Georgia, serif", fontStyle: 'italic' }}>
             KeyClick
           </div>
           <div style={{ color: '#aaa', fontSize: '14px', marginTop: '6px' }}>{c.loginSubtitle}</div>

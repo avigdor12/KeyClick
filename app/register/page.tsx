@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { languages, handFont } from '../page'
+import { languages, handFont, handStyle } from '../page'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -55,7 +55,7 @@ export default function RegisterPage() {
 
         {/* כותרת */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#FFD700', fontFamily: 'Georgia, serif', fontStyle: 'italic' }}>
+          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#FFD700', fontFamily: "'Gelasio', Georgia, serif", fontStyle: 'italic' }}>
             KeyClick
           </div>
           <div style={{ color: '#bbb', fontSize: '13px', marginTop: '5px', fontWeight: 'bold' }}>{c.title}</div>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
         </form>
 
         {/* שימוש חינם */}
-        <div style={{ marginTop: '18px', textAlign: 'center', fontFamily: handFont(lang.code), color: '#ffffff', fontWeight: 'bold' }}>
+        <div style={{ marginTop: '18px', textAlign: 'center', fontFamily: handFont(lang.code), fontStyle: handStyle(lang.code), color: '#ffffff', fontWeight: 'bold' }}>
           <div style={{ fontSize: '22px' }}>{c.line1}</div>
           <div style={{ fontSize: '32px' }}>{c.line2}</div>
         </div>
