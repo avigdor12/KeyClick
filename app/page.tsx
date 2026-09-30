@@ -5095,7 +5095,7 @@ function GuidesMusicBar({ langCode }: { langCode: string }) {
   }, [])
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 12px', background: '#3E2712', borderRadius: 8, direction: 'ltr' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '2px 8px', background: '#3E2712', borderRadius: 8, direction: 'ltr' }}>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F1E9D8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
         <path d="M11 5 6 9H2v6h4l5 4V5z" fill="#F1E9D8" />
         <path d="M15.5 8.5a5 5 0 0 1 0 7" />
@@ -5113,9 +5113,9 @@ function GuidesMusicBar({ langCode }: { langCode: string }) {
         title="רצועה הבאה"
         style={{ width: 26, height: 26, borderRadius: '50%', background: '#5C3A1E', border: '1px solid #8A5A32', color: '#F1E9D8', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 12, flexShrink: 0 }}
       >⏭</div>
-      <span style={{ color: '#F1E9D8', fontSize: 11, whiteSpace: 'nowrap', flexShrink: 0 }}>{GUIDES_MUSIC_LABEL[langCode] ?? GUIDES_MUSIC_LABEL.he}</span>
+      <span className="kc-music-extra" style={{ color: '#F1E9D8', fontSize: 11, whiteSpace: 'nowrap', flexShrink: 0 }}>{GUIDES_MUSIC_LABEL[langCode] ?? GUIDES_MUSIC_LABEL.he}</span>
       <input
-        type="range" min={0} max={100} defaultValue={70}
+        type="range" min={0} max={100} defaultValue={70} className="kc-music-extra"
         onChange={e => { if (audioRef.current) audioRef.current.volume = Number(e.target.value) / 100 }}
         style={{ width: 60, height: 4, accentColor: '#8A5A32', cursor: 'pointer', flexShrink: 0 }}
       />
@@ -5247,6 +5247,7 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
           )}
           {videoSrc ? (
             <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: 6, background: '#0d0d2b' }}>
+              {/* שורה אחת (30.09.2026): פס המוזיקה יושב בקצה השמאלי של שורת הכפתורים של הסרטון; כפתורי הווידאו בקצה הימני */}
               <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                 <iframe
                   key={videoSrc}
@@ -5257,8 +5258,8 @@ function GuidesDetailPage({ lang, category, drawerLabel, contentTitle, contentDe
                   allow="autoplay; fullscreen"
                   allowFullScreen
                 />
+                <div style={{ position: 'absolute', left: 8, bottom: 7, zIndex: 2 }}><GuidesMusicBar langCode={lang.code} /></div>
               </div>
-              <GuidesMusicBar langCode={lang.code} />
             </div>
           ) : sections && sections.length > 0 ? (
             (() => {

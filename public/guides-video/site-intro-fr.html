@@ -29,7 +29,7 @@
   .viewport { padding-bottom: 40px; }
   .controls {
     position:fixed; left:0; right:0; bottom:0; height:40px;
-    background:#3E2712; display:flex; align-items:center; justify-content:center; gap:8px;
+    background:#3E2712; display:flex; align-items:center; justify-content:flex-end; gap:8px; padding:0 12px; /* video buttons at the right end; the site music bar sits at the left end (30.09.2026) */
     z-index:1000; box-shadow: 0 -2px 10px rgba(0,0,0,.35);
   }
   .ctrl-btn {
@@ -39,6 +39,7 @@
     cursor:pointer; font-size:12px; user-select:none; transition:background .15s;
   }
   .ctrl-btn:hover { background:#8A5A32; }
+  .ctrl-label { color:#F1E9D8; font:600 11px 'Segoe UI',sans-serif; white-space:nowrap; margin:0 4px; }
   .ctrl-btn.wide { width:auto; padding:0 10px; border-radius:13px; font-size:10px; font-family:'Segoe UI',sans-serif; }
   .progress-track { position:absolute; top:0; left:0; right:0; height:4px; background:rgba(255,255,255,.12); }
   .progress-fill { height:100%; width:0%; background:#F1E9D8; }
@@ -99,6 +100,7 @@
   </div>
   <div class="controls">
     <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
+    <div class="ctrl-label">Vidéo</div>
     <div class="ctrl-btn wide" id="btnStart" title="Début">⏮ Début</div>
     <div class="ctrl-btn" id="btnBack" title="Retour">‹</div>
     <div class="ctrl-btn" id="btnStop" title="Pause">⏸</div>
@@ -122,12 +124,59 @@
   try { isEmbedded = window.self !== window.top; } catch (e) { isEmbedded = true; }
   if (isEmbedded) document.body.classList.add('embedded');
 
+  // הגדלה באצבעות (30.09.2026): צביטה בשתי אצבעות מגדילה את השקף עד פי 4, אצבע אחת מזיזה אותו כשהוא מוגדל,
+  // הקשה כפולה מחזירה לגודל רגיל. עובד גם במסך מלא, שבו הדפדפן חוסם הגדלה משלו. רק במגע - בעכבר לא משתנה כלום
+  let zoomZ = 1, panX = 0, panY = 0, baseSX = 1, baseSY = 1;
+  function clampPan() {
+    if (zoomZ <= 1.001) { zoomZ = 1; panX = 0; panY = 0; return; }
+    const mx = (zoomZ - 1) * 1280 * baseSX / 2, my = (zoomZ - 1) * 720 * baseSY / 2;
+    panX = Math.max(-mx, Math.min(mx, panX)); panY = Math.max(-my, Math.min(my, panY));
+  }
+  function setStageTransform(sx, sy) {
+    baseSX = sx; baseSY = sy;
+    clampPan();
+    stage.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${sx * zoomZ}, ${sy * zoomZ})`;
+  }
+  (function pinchZoom() {
+    let pinch = null, drag = null, lastTap = 0;
+    const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const mid = t => ({ x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 });
+    const center = () => { const r = stage.getBoundingClientRect(); return { x: r.left + r.width / 2 - panX, y: r.top + r.height / 2 - panY }; };
+    const onButton = e => e.target && e.target.closest && e.target.closest('button');
+    document.addEventListener('touchstart', e => {
+      if (onButton(e)) return;
+      if (e.touches.length === 2) {
+        pinch = { d: dist(e.touches) || 1, z: zoomZ, px: panX, py: panY, m: mid(e.touches), c: center() }; drag = null;
+      } else if (e.touches.length === 1) {
+        const now = Date.now();
+        if (zoomZ > 1 && now - lastTap < 300) { zoomZ = 1; setStageTransform(baseSX, baseSY); lastTap = 0; drag = null; e.preventDefault(); return; }
+        lastTap = now;
+        drag = zoomZ > 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY, px: panX, py: panY } : null;
+      }
+    }, { passive: false });
+    document.addEventListener('touchmove', e => {
+      if (pinch && e.touches.length === 2) {
+        e.preventDefault();
+        const z = Math.max(1, Math.min(4, pinch.z * dist(e.touches) / pinch.d)), m = mid(e.touches), c = pinch.c;
+        panX = m.x - c.x - (pinch.m.x - c.x - pinch.px) * z / pinch.z;
+        panY = m.y - c.y - (pinch.m.y - c.y - pinch.py) * z / pinch.z;
+        zoomZ = z; setStageTransform(baseSX, baseSY);
+      } else if (drag && e.touches.length === 1) {
+        e.preventDefault();
+        panX = drag.px + e.touches[0].clientX - drag.x; panY = drag.py + e.touches[0].clientY - drag.y;
+        setStageTransform(baseSX, baseSY);
+      }
+    }, { passive: false });
+    document.addEventListener('touchend', e => { if (e.touches.length < 2) pinch = null; if (e.touches.length === 0) drag = null; });
+    document.addEventListener('touchcancel', () => { pinch = null; drag = null; });
+  })();
+
   function scaleStage() {
     const vw = window.innerWidth, vh = window.innerHeight - 40;
     // always stretch to exactly fill the given frame (no letterboxing,
     // no conditional detection that could silently fail)
     const sx = vw / SW, sy = vh / SH;
-    stage.style.transform = `translate(-50%, -50%) scale(${sx}, ${sy})`;
+    setStageTransform(sx, sy);
   }
   window.addEventListener('resize', scaleStage);
   scaleStage();
