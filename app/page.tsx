@@ -4177,7 +4177,7 @@ function GuidesPage({ lang, onNavigate }: { lang: typeof languages[0]; onNavigat
       while (!oneLine() && size > 24) { size -= 1; plates.forEach(p => { p.style.fontSize = size + 'px' }) }
       let w = 520
       while (!oneLine() && w < 600) { w += 10; page.style.setProperty('--cab-w', w + 'px') }
-      const h = Math.max(...plates.map(p => p.getBoundingClientRect().height))
+      const h = Math.max(...plates.map(p => p.offsetHeight))   // offsetHeight: בלי הקטנת הטלפון (zoom), באותן יחידות של minHeight
       plates.forEach(p => { p.style.minHeight = h + 'px' })
     }
     fit()
