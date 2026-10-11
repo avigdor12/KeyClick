@@ -570,7 +570,9 @@ export default function Home() {
       if (d?.type === 'mf:activity') { lastActivityRef.current = Date.now(); return }   // הלקוח פעיל בתוך האפליקציה (פעם בדקה לכל היותר)
       dbg('mfApp', `message type=${d?.type ?? 'none'}`)
       // "צא" באפליקציה: סוגרים את המסגרת וחוזרים לשער של KeyClick
-      if (d?.type === 'mf:exit') { setActivePage(null); setMfAppUrl(null) }
+      if (d?.type === 'mf:exit') { clearMfRevealTimer(); setActivePage(null); setMfAppUrl(null) }
+      // [12.10.2026] כניסה שנייה: האפליקציה נטענה מאחורי המסך הנוכחי ומודיעה שהיא מוכנה - רק עכשיו עוברים אליה
+      if (d?.type === 'mf:ready') { clearMfRevealTimer(); setActivePage('mf-app') }
       // [23.09.2026] שפה אחת לכל הפרויקט: שפה שנבחרה באפליקציה מוחלפת כאן ונשמרת ברשומת המשתמש (כמו בחירה ב-KeyClick). שפה שכבר פעילה - מתעלמים
       if (d?.type === 'mf:lang') {
         const i = languages.findIndex(l => l.code === d.code)
@@ -584,6 +586,10 @@ export default function Home() {
   // [12.10.2026] דף השער של האפליקציה רק בכניסה הראשונה: מהפעם השנייה נשלח nogate=1 והאפליקציה נכנסת לבד.
   // נשמר בזיכרון הדף בלבד - סגירת הלשונית או טעינה מחדש (גם ניתוק אחרי שעה) מחזירות את השער
   const mfGateSeenRef = useRef(false)
+  // [12.10.2026] כניסה שנייה: עד שהאפליקציה מודיעה mf:ready נשאר המסך הנוכחי. לא הודיעה תוך 10 שניות - עוברים אליה בכל מקרה
+  const MF_REVEAL_TIMEOUT_MS = 10000
+  const mfRevealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  function clearMfRevealTimer() { if (mfRevealTimerRef.current) { clearTimeout(mfRevealTimerRef.current); mfRevealTimerRef.current = null } }
 
   // פתיחת אפליקציית ניהול תקציב בית בתוך KeyClick: אסימון כניסה חדש, והאפליקציה נטענת באזור התוכן בשפת KeyClick
   async function openMfApp() {
@@ -594,11 +600,14 @@ export default function Home() {
       dbg('mfAppToken', `status=${r.status} ok=${!!d.url} error="${d.error ?? 'none'}"`)
       if (!d.url) return
       const appUrl = new URL(d.url)
-      if (mfGateSeenRef.current) appUrl.searchParams.set('nogate', '1')
+      const noGate = mfGateSeenRef.current
+      if (noGate) appUrl.searchParams.set('nogate', '1')
       mfGateSeenRef.current = true
-      dbg('mfAppToken', `nogate=${appUrl.searchParams.get('nogate') === '1'}`)
+      dbg('mfAppToken', `nogate=${noGate}`)
       setMfAppUrl(appUrl.toString() + '#' + lang.code)
-      setActivePage('mf-app')
+      clearMfRevealTimer()
+      if (noGate) mfRevealTimerRef.current = setTimeout(() => { mfRevealTimerRef.current = null; setActivePage('mf-app') }, MF_REVEAL_TIMEOUT_MS)
+      else setActivePage('mf-app')
     } catch (e) { dbg('mfAppToken', `failed: ${String(e)}`) }
   }
 
@@ -710,10 +719,8 @@ export default function Home() {
           {activePage === null ? (
             <GatePage lang={lang} />
           ) : activePage === 'mf-app' && mfAppUrl ? (
-            // אפליקציית ניהול תקציב בית (23.09.2026): נפתחת על כל החלון, מעל הדגלים והסרגל של KeyClick. נכנסת מחוברת עם אסימון הכניסה שבכתובת.
-            // השפה נבחרת בדגלים של האפליקציה ונשמרת גם כאן; "צא" באפליקציה סוגר אותה וחוזר ל-KeyClick
-            <iframe className="kc-app-frame" ref={mfFrameRef} src={mfAppUrl} title="M Finance" allow="fullscreen"
-              style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', border: 'none', background: '#000', zIndex: 5000 }} />
+            // האפליקציה עצמה מוצגת במסגרת שלמטה (מחוץ לבחירת הדף, כדי שלא תיטען מחדש כשעוברים אליה)
+            null
           ) : (
             <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
               set_Current_User_Pointer_to_DB(user)
@@ -726,6 +733,23 @@ export default function Home() {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
+          )}
+          {/* אפליקציית ניהול תקציב בית (23.09.2026): נפתחת על כל החלון, מעל הדגלים והסרגל של KeyClick. נכנסת מחוברת עם אסימון הכניסה שבכתובת.
+              השפה נבחרת בדגלים של האפליקציה ונשמרת גם כאן; "צא" באפליקציה סוגר אותה וחוזר ל-KeyClick.
+              [12.10.2026] נטענת כבר כשיש כתובת, אבל מוסתרת עד שעוברים אליה (activePage) - בכניסה השנייה זה קורה רק כשהאפליקציה מודיעה mf:ready */}
+          {mfAppUrl && (
+            <iframe className="kc-app-frame" ref={mfFrameRef} src={mfAppUrl} title="M Finance" allow="fullscreen"
+              style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', border: 'none', background: '#000', zIndex: 5000, visibility: activePage === 'mf-app' ? 'visible' : 'hidden' }} />
+          )}
+          {/* [12.10.2026] בזמן שהאפליקציה נטענת מאחורי המסך (כניסה שנייה): עיגול זהב מסתובב, כדי שיהיה ברור שהלחיצה נקלטה. בלי טקסט */}
+          {mfAppUrl && activePage !== 'mf-app' && (
+            <div style={{ position: 'fixed', inset: 0, zIndex: 4999, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+              <style>{'@keyframes kcMfSpin { to { transform: rotate(360deg) } }'}</style>
+              {/* רקע כהה עגול מתחת לעיגול, כדי שייראה גם על רקע לבן */}
+              <div style={{ width: '92px', height: '92px', borderRadius: '50%', background: 'rgba(10,20,50,0.88)', boxShadow: '0 4px 16px rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', border: '6px solid rgba(255,215,0,0.25)', borderTopColor: '#FFD700', animation: 'kcMfSpin 0.9s linear infinite' }} />
+              </div>
+            </div>
           )}
         </main>
 
