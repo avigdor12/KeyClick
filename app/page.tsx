@@ -536,15 +536,25 @@ export default function Home() {
     if (origin && mfFrameRef.current?.contentWindow) mfFrameRef.current.contentWindow.postMessage(msg, origin)
   }
   // ניתוק אחרי שעה בלי שום פעולה (עכבר, מקלדת, גלילה, מגע - באתר או בתוך האפליקציה): חוזרים למסך הפתיחה בלי הודעה.
-  // טעינה מחדש של הדף מאפסת הכל: המשתמש לא מחובר (אין זיהוי אוטומטי) והאפליקציה נסגרת. (תוקף החיבור בשרת האפליקציה: 4 שעות)
+  // טעינה מחדש של הדף מאפסת הכל: המשתמש לא מחובר (אין זיהוי אוטומטי) והאפליקציה נסגרת.
+  // [11.10.2026] אם האפליקציה פתוחה: קודם היא יוצאת מהשרת שלה (מחיקת החיבור והעוגייה, כמו "צא"), ורק אז טוענים מחדש -
+  // כדי שלא יישאר חיבור פתוח בשרת האפליקציה. לא ענתה תוך 5 שניות - טוענים מחדש בכל זאת
   const IDLE_LOGOUT_MS = 1 * 60 * 60 * 1000
   const lastActivityRef = useRef(Date.now())
+  const idleLogoutStartedRef = useRef(false)
   useEffect(() => {
     const mark = () => { lastActivityRef.current = Date.now() }
     const evs = ['mousedown', 'mousemove', 'keydown', 'wheel', 'touchstart', 'scroll']
     evs.forEach(ev => window.addEventListener(ev, mark, { passive: true, capture: true }))
     const timer = setInterval(() => {
-      if (isLoggedInExplicit && Date.now() - lastActivityRef.current > IDLE_LOGOUT_MS) window.location.reload()
+      if (!isLoggedInExplicit || Date.now() - lastActivityRef.current <= IDLE_LOGOUT_MS || idleLogoutStartedRef.current) return
+      idleLogoutStartedRef.current = true
+      const reload = () => window.location.reload()
+      const frame = mfFrameRef.current
+      if (!frame?.contentWindow) { reload(); return }
+      window.addEventListener('message', e => { if (e.source === frame.contentWindow && (e.data as { type?: string } | null)?.type === 'mf:logged-out') reload() })
+      setTimeout(reload, 5000)
+      try { frame.contentWindow.postMessage({ type: 'kc:logout' }, new URL(frame.src).origin) } catch { reload() }
     }, 60000)
     return () => { evs.forEach(ev => window.removeEventListener(ev, mark, { capture: true })); clearInterval(timer) }
   }, [isLoggedInExplicit])
