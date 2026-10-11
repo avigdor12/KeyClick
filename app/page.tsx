@@ -581,6 +581,10 @@ export default function Home() {
     return () => window.removeEventListener('message', onMessage)
   }, [mfAppUrl])
 
+  // [12.10.2026] דף השער של האפליקציה רק בכניסה הראשונה: מהפעם השנייה נשלח nogate=1 והאפליקציה נכנסת לבד.
+  // נשמר בזיכרון הדף בלבד - סגירת הלשונית או טעינה מחדש (גם ניתוק אחרי שעה) מחזירות את השער
+  const mfGateSeenRef = useRef(false)
+
   // פתיחת אפליקציית ניהול תקציב בית בתוך KeyClick: אסימון כניסה חדש, והאפליקציה נטענת באזור התוכן בשפת KeyClick
   async function openMfApp() {
     if (!isLoggedInExplicit || !Current_User_Pointer_to_DB?.id) return
@@ -589,7 +593,11 @@ export default function Home() {
       const d = await r.json()
       dbg('mfAppToken', `status=${r.status} ok=${!!d.url} error="${d.error ?? 'none'}"`)
       if (!d.url) return
-      setMfAppUrl(d.url + '#' + lang.code)
+      const appUrl = new URL(d.url)
+      if (mfGateSeenRef.current) appUrl.searchParams.set('nogate', '1')
+      mfGateSeenRef.current = true
+      dbg('mfAppToken', `nogate=${appUrl.searchParams.get('nogate') === '1'}`)
+      setMfAppUrl(appUrl.toString() + '#' + lang.code)
       setActivePage('mf-app')
     } catch (e) { dbg('mfAppToken', `failed: ${String(e)}`) }
   }

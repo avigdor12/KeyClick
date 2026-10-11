@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <!-- 30.09.2026: הפונטים מהפרויקט - הטקסט נראה בכל מכשיר כמו היום במחשב (Arial/Segoe UI מ-fonts_alias, והפונטים שהיו מותקנים רק במחשב מ-fonts_video) -->
+  <link rel="stylesheet" href="/fonts/fonts_alias.css">
+  <link rel="stylesheet" href="/fonts/fonts_video.css">
+<meta charset="utf-8">
+<title>KeyClick — סרטון M Finance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Dancing+Script:wght@500..700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; height:100%; background:#E9DFC9; overflow:hidden; }
+  * { box-sizing: border-box; }
+  .viewport { position:relative; width:100vw; height:100vh; overflow:hidden;
+    background: radial-gradient(ellipse at center, #F1E9D8 0%, #DFD2B4 100%); }
+  .stage { position:absolute; top:calc(50% - 20px); left:50%; width:1280.0px; height:720.0px; transform-origin: center center;
+    box-shadow:
+      0 0 0 16px #F6EFDD,
+      0 0 0 22px #8A5A32,
+      0 0 0 24px #5C3A1E,
+      0 22px 60px rgba(0,0,0,.5);
+    border-radius: 2px;
+  }
+  /* embedded in an iframe on the site: no decorative mat/frame or wasted
+     margin - the video should fill exactly whatever space the host gives it */
+  body.embedded { background:#0d0d2b; }
+  body.embedded .viewport { background:none; }
+  body.embedded .stage { box-shadow: none; border-radius: 0; }
+  .slide { position:absolute; inset:0; width:1280.0px; height:720.0px; overflow:hidden; opacity:0; transition:opacity .7s ease; }
+  .slide.active { opacity:1; }
+  .viewport { padding-bottom: 40px; }
+  .controls {
+    position:fixed; left:0; right:0; bottom:0; height:40px;
+    background:#3E2712; display:flex; align-items:center; justify-content:flex-start; gap:8px; padding:0 12px; /* video buttons at the right end; the site music bar sits at the left end (30.09.2026) */
+    z-index:1000; box-shadow: 0 -2px 10px rgba(0,0,0,.35);
+  }
+  .ctrl-btn {
+    width:26px; height:26px; border-radius:50%;
+    background:#5C3A1E; border:1px solid #8A5A32; color:#F1E9D8;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:12px; user-select:none; transition:background .15s;
+  }
+  .ctrl-btn:hover { background:#8A5A32; }
+  .ctrl-label { color:#F1E9D8; font:600 11px 'Segoe UI',Arial,sans-serif; white-space:nowrap; margin:0 4px; }
+  .ctrl-btn.wide { width:auto; padding:0 10px; border-radius:13px; font-size:10px; font-family:'Segoe UI',Arial,sans-serif; }
+  .progress-track { position:absolute; top:0; left:0; right:0; height:4px; background:rgba(255,255,255,.12); }
+  .progress-fill { height:100%; width:0%; background:#F1E9D8; }
+  .subtitle-bar {
+    position:absolute; left:0; right:0; bottom:20px; height:76px;
+    overflow:hidden; z-index:5000; pointer-events:none;
+  }
+  .subtitle-bar span {
+    position:absolute; top:0; right:0; white-space:nowrap;
+    font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;
+    font-size:52px; font-weight:700;
+  }
+  /* dark slide (e.g. slide 1): green text, white outline */
+  .subtitle-bar span.on-dark {
+    color:#0F4C33;
+    text-shadow: -1.5px -1.5px 0 #fff, 1.5px -1.5px 0 #fff, -1.5px 1.5px 0 #fff, 1.5px 1.5px 0 #fff, 0 2px 4px rgba(0,0,0,.35);
+  }
+  /* light/white slide: white text, strong red outline */
+  .subtitle-bar span.on-light {
+    color:#fff;
+    text-shadow: -2px -2px 0 #D0021B, 2px -2px 0 #D0021B, -2px 2px 0 #D0021B, 2px 2px 0 #D0021B, 0 2px 4px rgba(0,0,0,.35);
+  }
+  .slide-num {
+    position:absolute; left:16px; top:16px; z-index:6000;
+    width:76px; height:76px; border-radius:50%;
+    background:linear-gradient(135deg,#0F4C33,#1a7a54);
+    border:4px solid #F1E9D8;
+    display:flex; align-items:center; justify-content:center;
+    color:#F1E9D8; font-family:'Segoe UI',Arial,sans-serif; font-weight:700; font-size:34px;
+    box-shadow:0 3px 10px rgba(0,0,0,.35);
+  }
+  .brand-tag {
+    position:absolute; right:20px; top:14px; z-index:6000;
+    font-family:'Dancing Script',cursive; font-style:italic; font-weight:700;
+    font-size:32px; color:#D4AF37;
+    text-shadow:-1px -1px 0 #1a1a1a, 1px -1px 0 #1a1a1a, -1px 1px 0 #1a1a1a, 1px 1px 0 #1a1a1a, 0 2px 5px rgba(0,0,0,.4);
+    pointer-events:none;
+  }
+  /* עברית: Playpen Sans Hebrew במקום Guttman Yad-Brush - מוטה, כמו בשאר האתר (30.09.2026) */
+  [style*="Guttman Yad-Brush"], .subtitle-bar span { font-style: italic; }
+</style>
+</head>
+<body>
+  <div class="viewport">
+    <div class="stage" id="stage">
+<div class="slide active" style="background:#FFFFFF"><img src="finance_images_v6/s1_p1.png" style="position:absolute;left:0.0px;top:0.0px;width:1280.0px;height:720.0px;z-index:0;object-fit:fill;" draggable="false"><img src="finance_images_v6/s1_p2.png" style="position:absolute;left:796.0px;top:145.66px;width:404.0px;height:51.0px;z-index:1;object-fit:fill;" draggable="false"><img src="finance_images_v6/s1_p3.png" style="position:absolute;left:83.94px;top:64.97px;width:1170.0px;height:630.0px;z-index:2;object-fit:fill;" draggable="false"><div style="position:absolute;left:191.91px;top:67.19px;width:934.26px;min-height:233.2px;z-index:3;background:transparent;border-radius:0px;display:flex;flex-direction:column;justify-content:flex-start;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.25"><span style="font-size:66.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:72.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:700;font-style:normal">ניהול</span><span style="font-size:72.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:700;font-style:normal"> </span><span style="font-size:72.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:700;font-style:normal">תקציב</span><span style="font-size:72.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:700;font-style:normal"> בית</span></div><div dir="rtl" style="text-align:center, line-height:1.25">&nbsp;</div><div dir="rtl" style="text-align:center;line-height:1.25"><span style="font-size:66.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:88.0px;color:#FF0000;font-family:'Forte Forward','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">M</span><span style="font-size:66.0px;color:#38BDF8;font-family:'Forte Forward','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:88.0px;color:#FF0000;font-family:'Forte Forward','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">Finance</span></div></div><div style="position:absolute;left:118.56px;top:414.2px;width:1080.96px;min-height:117.13px;z-index:4;background:transparent;border-radius:0px;display:flex;flex-direction:column;justify-content:flex-start;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.25"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">ניהול תקציב בית, האפליקציה</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">החכמה</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">והמקיפה</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">המרכזת</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">את</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">כל</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">ההוצאות</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">, </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">ההכנסות</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">, </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">חשבונות</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">הבנק</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">וכרטיסי</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">האשראי</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">למקום</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">אחד</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">.</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">ניתוח</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">מלא</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">של</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">העבר</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">, </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">שליטה</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">בהווה</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">ותכנון</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">מדויק</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">של</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">העתיד</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">בממשק</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> </span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">נגיש</span><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">.</span></div></div><div style="position:absolute;left:539.48px;top:347.45px;width:273.92px;min-height:54.93px;z-index:9;background:transparent;border-radius:0px;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.25"><span style="font-size:32.0px;color:#FFFF00;font-family:'Informal Roman','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">M </span><span style="font-size:37.33px;color:#FFFF00;font-family:'Informal Roman','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">Solution</span><span style="font-size:32.0px;color:#FFFF00;font-family:'Informal Roman','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal"> Group</span></div></div><div style="position:absolute;left:90px;top:577px;width:1100px;z-index:20;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px;" dir="rtl"><span style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.28);color:#cdd8e8;font-family:'Heebo','Segoe UI',Arial,sans-serif;font-weight:700;font-size:18px;white-space:nowrap;">עוגת תקציב חיה</span><span style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.28);color:#cdd8e8;font-family:'Heebo','Segoe UI',Arial,sans-serif;font-weight:700;font-size:18px;white-space:nowrap;">בינה מלאכותית לומדת</span><span style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.28);color:#cdd8e8;font-family:'Heebo','Segoe UI',Arial,sans-serif;font-weight:700;font-size:18px;white-space:nowrap;">תמיכה ב-11 שפות</span></div></div><div class="slide" style="background:#FFFFFF"><img src="finance_images_v6/s1_p1.png" style="position:absolute;left:0.0px;top:0.0px;width:1280.0px;height:720.0px;z-index:0;object-fit:fill;" draggable="false"><img src="finance_images_v6/s1_p3.png" style="position:absolute;left:83.94px;top:64.97px;width:1170.0px;height:630.0px;z-index:2;object-fit:fill;" draggable="false"><div style="position:absolute;left:84px;top:95px;width:1170px;min-height:90px;z-index:3;background:transparent;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.35"><span style="font-size:72.0px;white-space:nowrap;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:700;font-style:normal">חווית משתמש, נגישות וריבוי שפות</span></div></div><div style="position:absolute;left:173px;top:215px;width:934px;min-height:260px;z-index:3;background:transparent;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.35"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">מסלולי טעינה גמישים</span></div><div dir="rtl" style="text-align:center;line-height:1.35"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">הגנה מכפילויות</span></div><div dir="rtl" style="text-align:center;line-height:1.35"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">תכנון עתידי</span></div><div dir="rtl" style="text-align:center;line-height:1.35"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">עוגת תקציב חייה</span></div></div><div style="position:absolute;left:140px;top:530px;width:1050px;z-index:20;display:flex;justify-content:center;align-items:center;" dir="rtl"><span style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.28);color:#cdd8e8;font-family:'Heebo','Segoe UI',Arial,sans-serif;font-weight:700;font-size:18px;white-space:nowrap;">אלגוריתמים חכמים המבוססים על בינה מלאכותית</span></div></div><div class="slide" style="background:#FFFFFF"><img src="finance_images_v6/s1_p1.png" style="position:absolute;left:0.0px;top:0.0px;width:1280.0px;height:720.0px;z-index:0;object-fit:fill;" draggable="false"><img src="finance_images_v6/s1_p3.png" style="position:absolute;left:83.94px;top:64.97px;width:1170.0px;height:630.0px;z-index:2;object-fit:fill;" draggable="false"><div style="position:absolute;left:110px;top:95px;width:1060px;min-height:90px;z-index:3;background:transparent;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.6"><span style="font-size:72.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:700;font-style:normal">מיפוי וזכרון נלמד</span></div></div><div style="position:absolute;left:110px;top:215px;width:1060px;min-height:260px;z-index:3;background:transparent;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.6"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal;white-space:nowrap">תהליך אוטומטי לזיהוי סוג קובץ הטעינה</span></div><div dir="rtl" style="text-align:center;line-height:1.6"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal;white-space:nowrap">סיווג אוטומטי של ההוצאות וההכנסות ושמירה בזכרון סווג נלמד</span></div><div dir="rtl" style="text-align:center;line-height:1.6"><span style="font-size:32.0px;color:#CBD5E1;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal;white-space:nowrap">מיפוי הקבצים הנטענים ושמירה בזכרון מיפוי נלמד</span></div></div><div style="position:absolute;left:140px;top:530px;width:1050px;z-index:20;display:flex;justify-content:center;align-items:center;" dir="rtl"><span style="display:inline-flex;align-items:center;padding:8px 18px;border-radius:9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.28);color:#cdd8e8;font-family:'Heebo','Segoe UI',Arial,sans-serif;font-weight:700;font-size:18px;white-space:nowrap;">למידת הסביבה לביצועים חוזרים מהירים</span></div></div><div class="slide" style="background:#FFFFFF"><img src="finance_images_v6/s1_p1.png" style="position:absolute;left:0.0px;top:0.0px;width:1280.0px;height:720.0px;z-index:0;object-fit:fill;" draggable="false"><img src="finance_images_v6/s1_p3.png" style="position:absolute;left:83.94px;top:64.97px;width:1170.0px;height:630.0px;z-index:2;object-fit:fill;" draggable="false"><div style="position:absolute;left:173px;top:120px;width:934px;min-height:180px;z-index:5;background:transparent;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.25"><span style="font-size:72.0px;color:#FFFFFF;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">להתחלת שמוש בתוכנה עבור לכתובת האתר הרשום מטה</span></div></div><div style="position:absolute;left:173px;top:350px;width:934px;min-height:90px;z-index:5;background:transparent;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="ltr" style="text-align:center;line-height:1.25"><span style="font-size:72.0px;color:#FFFF00;font-family:'Rubik ExtraBold','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">landing.keyclick.org</span></div></div><div style="position:absolute;left:173px;top:500px;width:934px;min-height:90px;z-index:5;background:transparent;display:flex;flex-direction:column;justify-content:center;overflow:visible;padding:2px;box-sizing:border-box;"><div dir="rtl" style="text-align:center;line-height:1.25"><span style="font-size:32.0px;color:#38BDF8;font-family:'Guttman Yad-Brush','Segoe UI',Arial,sans-serif;font-weight:400;font-style:normal">עבודה נעימה</span></div></div></div>
+      <div class="subtitle-bar" id="subtitleBar" dir="rtl"><span id="subtitleText"></span></div>
+      <div class="slide-num" id="slideNum"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
+    <div class="ctrl-label">וידאו</div>
+    <div class="ctrl-btn wide" id="btnStart" title="התחלה">⏮ התחלה</div>
+    <div class="ctrl-btn" id="btnBack" title="אחורה">‹</div>
+    <div class="ctrl-btn" id="btnStop" title="עצור">⏸</div>
+    <div class="ctrl-btn" id="btnPlay" title="נגן">▶</div>
+    <div class="ctrl-btn" id="btnFwd" title="קדימה">›</div>
+  </div>
+
+<script>
+  const TOTAL = 4;
+  const DURATION = 10000; // fallback timing for slides with no narration
+  const NARRATION = {"1": ["ניהול תקציב בית, נבחן מה שהיה ומה שיהיה בידינו"], "2": ["רב לשוני, כלים מתקדמים לנוחות השימוש באפליקציה"], "3": ["ביצועים גבוהים. פסגת הטכנולוגיה. זיהוי, מיפוי, סיווג, זכרון נלמד"]};
+  const DARK_SLIDES = [false, false, false, false];
+  const stage = document.getElementById('stage');
+  const fill = document.getElementById('fill');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const SW = 1280.0, SH = 720.0;
+  const subtitleText = document.getElementById('subtitleText');
+  const slideNum = document.getElementById('slideNum');
+
+  let isEmbedded = false;
+  try { isEmbedded = window.self !== window.top; } catch (e) { isEmbedded = true; }
+  if (isEmbedded) document.body.classList.add('embedded');
+
+  let currentScaleX = 1;
+  // הגדלה באצבעות (30.09.2026): צביטה בשתי אצבעות מגדילה את השקף עד פי 4, אצבע אחת מזיזה אותו כשהוא מוגדל,
+  // הקשה כפולה מחזירה לגודל רגיל. עובד גם במסך מלא, שבו הדפדפן חוסם הגדלה משלו. רק במגע - בעכבר לא משתנה כלום
+  let zoomZ = 1, panX = 0, panY = 0, baseSX = 1, baseSY = 1;
+  function clampPan() {
+    if (zoomZ <= 1.001) { zoomZ = 1; panX = 0; panY = 0; return; }
+    const mx = (zoomZ - 1) * 1280 * baseSX / 2, my = (zoomZ - 1) * 720 * baseSY / 2;
+    panX = Math.max(-mx, Math.min(mx, panX)); panY = Math.max(-my, Math.min(my, panY));
+  }
+  function setStageTransform(sx, sy) {
+    baseSX = sx; baseSY = sy;
+    clampPan();
+    stage.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${sx * zoomZ}, ${sy * zoomZ})`;
+  }
+  (function pinchZoom() {
+    let pinch = null, drag = null, lastTap = 0;
+    const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const mid = t => ({ x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 });
+    const center = () => { const r = stage.getBoundingClientRect(); return { x: r.left + r.width / 2 - panX, y: r.top + r.height / 2 - panY }; };
+    const onButton = e => e.target && e.target.closest && e.target.closest('button');
+    document.addEventListener('touchstart', e => {
+      if (onButton(e)) return;
+      if (e.touches.length === 2) {
+        pinch = { d: dist(e.touches) || 1, z: zoomZ, px: panX, py: panY, m: mid(e.touches), c: center() }; drag = null;
+      } else if (e.touches.length === 1) {
+        const now = Date.now();
+        if (zoomZ > 1 && now - lastTap < 300) { zoomZ = 1; setStageTransform(baseSX, baseSY); lastTap = 0; drag = null; e.preventDefault(); return; }
+        lastTap = now;
+        drag = zoomZ > 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY, px: panX, py: panY } : null;
+      }
+    }, { passive: false });
+    document.addEventListener('touchmove', e => {
+      if (pinch && e.touches.length === 2) {
+        e.preventDefault();
+        const z = Math.max(1, Math.min(4, pinch.z * dist(e.touches) / pinch.d)), m = mid(e.touches), c = pinch.c;
+        panX = m.x - c.x - (pinch.m.x - c.x - pinch.px) * z / pinch.z;
+        panY = m.y - c.y - (pinch.m.y - c.y - pinch.py) * z / pinch.z;
+        zoomZ = z; setStageTransform(baseSX, baseSY);
+      } else if (drag && e.touches.length === 1) {
+        e.preventDefault();
+        panX = drag.px + e.touches[0].clientX - drag.x; panY = drag.py + e.touches[0].clientY - drag.y;
+        setStageTransform(baseSX, baseSY);
+      }
+    }, { passive: false });
+    document.addEventListener('touchend', e => { if (e.touches.length < 2) pinch = null; if (e.touches.length === 0) drag = null; });
+    document.addEventListener('touchcancel', () => { pinch = null; drag = null; });
+  })();
+
+  function scaleStage() {
+    const vw = window.innerWidth, vh = window.innerHeight - 40;
+    // always stretch to exactly fill the given frame (no letterboxing,
+    // no conditional detection that could silently fail)
+    const sx = vw / SW, sy = vh / SH;
+    currentScaleX = sx;
+    setStageTransform(sx, sy);
+  }
+  window.addEventListener('resize', scaleStage);
+  scaleStage();
+  // the host page's own layout (flex/fonts/images) can keep settling for a
+  // bit after this script first runs, changing the iframe's effective size
+  // without firing a `resize` event on window - so keep re-checking for a
+  // few seconds, and also watch documentElement directly as a fallback
+  [0, 100, 300, 600, 1000, 2000, 3000].forEach(t => setTimeout(scaleStage, t));
+  if (window.ResizeObserver) {
+    new ResizeObserver(scaleStage).observe(document.documentElement);
+  }
+
+  let current = 0, playing = true, elapsed = 0, lastTs = null;
+  function setPlaying(v) {
+    playing = v;
+    try { window.parent.videoPlaying = v; } catch (e) {}
+  }
+  setPlaying(true);
+  let estDuration = DURATION;
+  let ended = false;
+
+  const CRAWL_SPEED_PX_PER_SEC = 180; // comfortable reading pace
+  const HOLD_MS = 3000; // pause once it reaches the far edge
+  let crawlAnim = null;
+  let crawlGen = 0;
+
+  function runCrawl(text) {
+    // wrapped defensively: whatever goes wrong here, it must never prevent
+    // the plain elapsed-time timer (in tick(), the real driver of advance())
+    // from working - this function only owns the *visual* crawl now
+    try {
+      subtitleText.getAnimations().forEach(a => a.cancel());
+      crawlAnim = null;
+      subtitleText.textContent = text;
+      subtitleText.classList.toggle('on-dark', !!DARK_SLIDES[current]);
+      subtitleText.classList.toggle('on-light', !DARK_SLIDES[current]);
+      if (!text) return DURATION;
+      // getBoundingClientRect() returns on-screen (post-.stage-scale) pixels, but the
+      // translateX() below moves the element in its own local (pre-scale, 1280-space)
+      // coordinates - normalize by the current scale factor so the two match, otherwise
+      // the "stop" position lands wherever the viewport happens to be scaled to.
+      const textWidth = subtitleText.offsetWidth || 300; // unscaled width - not affected by the stage scale or by finger zoom (30.09.2026)
+      // the span's natural (untransformed) right edge sits at x=SW (right:0),
+      // so its natural left edge sits at (SW - textWidth); translateX(V)
+      // shifts it by V from there. Using the *minimal* off-screen bounds
+      // (rather than a fixed SW) keeps the travel distance - and so the
+      // duration - proportional to the actual text, in both directions:
+      const startPx = textWidth;      // left edge exactly at x=SW (just past the right edge, hidden)
+      const restPx = textWidth - SW;  // left edge exactly at x=0 (fully visible)
+      const endPx = -SW;              // right edge exactly at x=0 (just past the left edge, hidden)
+
+      const _rtl = document.documentElement.dir === 'rtl';
+      const _p0 = _rtl ? endPx : startPx;
+      const _p1 = _rtl ? startPx : endPx;
+      const enterMs = Math.max(800, (Math.abs(_p0 - restPx) / CRAWL_SPEED_PX_PER_SEC) * 1000);
+      const exitMs = Math.max(800, (Math.abs(restPx - _p1) / CRAWL_SPEED_PX_PER_SEC) * 1000);
+      const durationMs = enterMs + HOLD_MS + exitMs;
+      const holdStartFrac = enterMs / durationMs;
+      const holdEndFrac = (enterMs + HOLD_MS) / durationMs;
+
+      crawlAnim = subtitleText.animate(
+        [
+          { offset: 0,             transform: `translateX(${_p0}px)` },
+          { offset: holdStartFrac, transform: `translateX(${restPx}px)` },
+          { offset: holdEndFrac,   transform: `translateX(${restPx}px)` },
+          { offset: 1,             transform: `translateX(${_p1}px)` },
+        ],
+        { duration: durationMs, easing: 'linear', fill: 'forwards' }
+      );
+      if (!playing) crawlAnim.pause();
+      return durationMs;
+    } catch (err) {
+      return Math.max(5000, (text || '').length * 160);
+    }
+  }
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    slideNum.textContent = String(current + 1);
+    const lines = NARRATION[current + 1];
+    const text = lines ? lines.join('   •   ') : '';
+    estDuration = runCrawl(text);
+  }
+
+  function advance() {
+    if (current === TOTAL - 1) {
+      setPlaying(false);
+      ended = true;
+      return;
+    }
+    current += 1;
+    startSlide();
+  }
+
+  function startSlide() {
+    elapsed = 0;
+    lastTs = null;
+    ended = false;
+    render();
+  }
+
+  function goTo(i) {
+    current = (i + TOTAL) % TOTAL;
+    setPlaying(true);
+    startSlide();
+  }
+
+  function tick(ts) {
+    if (lastTs === null) lastTs = ts;
+    const dt = ts - lastTs;
+    lastTs = ts;
+    if (playing) {
+      elapsed += dt;
+      fill.style.width = Math.min(100, (elapsed / estDuration) * 100) + '%';
+      if (elapsed >= estDuration) {
+        advance();
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+  // wait for the custom subtitle font to actually load before the first crawl measures
+  // its own width - otherwise it measures against a fallback font, computes the wrong
+  // travel distance, and the "stop at the edge" hold lands in the wrong place
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(startSlide);
+  } else {
+    startSlide();
+  }
+
+  document.getElementById('btnStart').addEventListener('click', () => { goTo(0); });
+  document.getElementById('btnBack').addEventListener('click', () => { goTo(current - 1); });
+  document.getElementById('btnStop').addEventListener('click', () => {
+    setPlaying(false);
+    if (crawlAnim) crawlAnim.pause();
+  });
+  document.getElementById('btnPlay').addEventListener('click', () => {
+    if (ended) { goTo(0); return; }
+    setPlaying(true);
+    if (crawlAnim) crawlAnim.play();
+  });
+  document.getElementById('btnFwd').addEventListener('click', () => { goTo(current + 1); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') goTo(current + 1);
+    if (e.key === 'ArrowRight') goTo(current - 1);
+    if (e.key === ' ') { e.preventDefault(); document.getElementById(playing ? 'btnStop' : 'btnPlay').click(); }
+  });
+</script>
+</body>
+</html>
