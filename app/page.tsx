@@ -1000,7 +1000,7 @@ function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof langu
 }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing' | 'landing'>('none')
   const mainContentRef = useRef<HTMLDivElement>(null)
   const [devBypassLogin, setDevBypassLogin] = useState(false)
   const [mfDirectEntry, setMfDirectEntry] = useState(false)
@@ -1344,6 +1344,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     data: `${lang.system.dataCollection} - ${lang.system.data}`,
     statistics: `${lang.system.dataCollection} - ${lang.system.statistics}`,
     billing: `${lang.system.systemData} - ${lang.system.billing}`,
+    landing: `${lang.system.dataCollection} - דף נחיתה`,
   }
 
   return (
@@ -1491,6 +1492,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
 
         {view === 'data' && <VisitsTable lang={lang} visits={visits} reload={reloadVisits} samplingConfig={samplingConfig} onUpdateSamplingConfig={updateSamplingConfig} onDbg={onDbg} />}
         {view === 'statistics' && <ProcessingPage lang={lang} visits={visits} reload={reloadVisits} onDbg={onDbg} samplingConfig={samplingConfig} />}
+        {view === 'landing' && <LandingVisitsTable lang={lang} onDbg={onDbg} />}
 
         {showResetConfirm && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2061,6 +2063,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px' }}>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'data' ? 'none' : 'data')}>{lang.system.data}</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'statistics' ? 'none' : 'statistics')}>{lang.system.statistics}</button>
+              <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'landing' ? 'none' : 'landing')}>דף נחיתה</button>
             </div>
           </div>
 
@@ -3369,6 +3372,195 @@ function PageHeader({ subtitle, layout = 'row', lang, extra }: { subtitle: strin
 
 type VisitRecord = { id: number; ip: string | null; user_name: string | null; entered_at: string; last_seen_at: string; country: string | null; region: string | null }
 type SamplingConfig = { runEnabled: boolean; startDate: string | null; endDate: string | null; endEnabled: boolean }
+
+// [Claude Code 12.10.2026, לפי הנחיית המשתמש] איסוף נתונים > דף נחיתה: כניסות ל-landing.keyclick.org. עברית בלבד עד סבב תרגום
+type LandingVisitRecord = { id: number; ip: string | null; entered_at: string; country: string | null; lang: string | null; source: string | null }
+// קישור מתויג utm_source לכל דף פייסבוק -> שם הדף בעמודה "דף פייסבוק"
+const LANDING_FB_PAGE: Record<string, string> = { fb_keyclick: 'KeyClick', fb_avigdor_meir: 'Avigdor Meir' }
+const LANDING_SOURCE_LABEL: Record<string, string> = { fb_keyclick: 'פייסבוק', fb_avigdor_meir: 'פייסבוק', facebook: 'פייסבוק', instagram: 'אינסטגרם', whatsapp: 'ווטסאפ', google: 'גוגל', keyclick: 'KeyClick', direct: 'ישיר', other: 'אחר' }
+
+function LandingVisitsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
+  // מחרוזות חדשות - עברית בלבד עד סבב התרגום
+  const S = { colCountry: 'מדינה', colLang: 'שפה', colSource: 'מקור הגעה', colFbPage: 'דף פייסבוק', noVisits: 'אין כניסות', total: 'סה״כ' }
+  const [liveVisits, setLiveVisits] = useState<LandingVisitRecord[]>([])
+  const [frozenVisits, setFrozenVisits] = useState<LandingVisitRecord[]>([])
+  const [paused, setPaused] = useState(false)
+  const [justRefreshed, setJustRefreshed] = useState(false)
+  const [scrollLocked, setScrollLocked] = useState(false)
+  const [sortField, setSortField] = useState<'num' | 'entered' | 'ip' | 'country' | 'lang' | 'source' | 'fbpage' | null>(null)
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const [cfg, setCfg] = useState<SamplingConfig>({ runEnabled: false, startDate: null, endDate: null, endEnabled: true })
+  const cfgRef = useRef(cfg)
+  useEffect(() => { cfgRef.current = cfg }, [cfg])
+  const tableScrollRef = useRef<HTMLDivElement>(null)
+
+  const load = () => {
+    onDbg('LandingVisitsTable.load', 'fetch GET /api/landing-visits')
+    fetch('/api/landing-visits').then(r => r.json()).then(d => {
+      if (Array.isArray(d.visits)) setLiveVisits(d.visits)
+      if (d.error) onDbg('LandingVisitsTable.load', `error: ${d.error}`)
+    }).catch(e => onDbg('LandingVisitsTable.load', `error: ${String(e)}`))
+  }
+
+  // הגדרות איסוף נתונים עצמאיות של דף הנחיתה (landing_sampling_config)
+  useEffect(() => {
+    load()
+    fetch('/api/landing-visits/sampling-config').then(r => r.json()).then(d => {
+      if (d.config) setCfg({ runEnabled: !!d.config.run_enabled, startDate: d.config.start_date ?? null, endDate: d.config.end_date ?? null, endEnabled: d.config.end_enabled !== false })
+      if (d.error) onDbg('LandingVisitsTable.cfg', `error: ${d.error}`)
+    }).catch(e => onDbg('LandingVisitsTable.cfg', `error: ${String(e)}`))
+    const interval = setInterval(() => {
+      const c = cfgRef.current
+      if (!c.runEnabled) return
+      const now = new Date()
+      if (c.startDate && now < new Date(c.startDate)) return
+      if (c.endEnabled && c.endDate && now > new Date(c.endDate)) return
+      load()
+    }, 300000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const updateCfg = (next: SamplingConfig) => {
+    onDbg('LandingVisitsTable.updateCfg', `runEnabled=${next.runEnabled} start=${next.startDate} end=${next.endDate} endEnabled=${next.endEnabled}`)
+    setCfg(next)
+    fetch('/api/landing-visits/sampling-config', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(next) })
+      .catch(e => onDbg('LandingVisitsTable.updateCfg', `error: ${String(e)}`))
+  }
+
+  useEffect(() => { if (!paused) setFrozenVisits(liveVisits) }, [liveVisits, paused])
+  const visits = frozenVisits
+
+  // בפתיחה ובכל שורה חדשה - נצמד לתחתית, אלא אם מיקום הגלילה הוקפא
+  useEffect(() => {
+    if (scrollLocked) return
+    if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight
+  }, [visits.length, scrollLocked])
+
+  const scrollToTop = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = 0 }
+  const scrollToBottom = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight }
+
+  const handleReset = async () => {
+    onDbg('LandingVisitsTable.handleReset', 'DELETE /api/landing-visits')
+    await fetch('/api/landing-visits', { method: 'DELETE' }).catch(e => onDbg('LandingVisitsTable.handleReset', `error: ${String(e)}`))
+    load()
+  }
+  const handleRefresh = () => {
+    load()
+    setJustRefreshed(true)
+    setTimeout(() => setJustRefreshed(false), 1000)
+  }
+  const handleTogglePause = () => {
+    const next = !paused
+    setPaused(next)
+    if (!next) setFrozenVisits(liveVisits)
+  }
+
+  function toggleSort(field: typeof sortField) {
+    if (sortField === field) { setSortDir(d => d === 'asc' ? 'desc' : 'asc') }
+    else { setSortField(field); setSortDir('asc') }
+  }
+
+  const fmtDateTime = (iso: string) => {
+    const d = new Date(iso)
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    return <span style={{ direction: 'ltr', unicodeBidi: 'bidi-override', display: 'inline-block' }}>{date} {time}</span>
+  }
+  const sourceLabel = (v: LandingVisitRecord) => v.source ? (LANDING_SOURCE_LABEL[v.source] ?? v.source) : ''
+  const fbPage = (v: LandingVisitRecord) => v.source ? (LANDING_FB_PAGE[v.source] ?? '') : ''
+
+  const numbered = visits.map((v, i) => ({ v, num: i + 1 }))
+  const sorted = [...numbered].sort((a, b) => {
+    let cmp = 0
+    if (sortField === 'num') cmp = a.num - b.num
+    else if (sortField === 'entered') cmp = new Date(a.v.entered_at).getTime() - new Date(b.v.entered_at).getTime()
+    else if (sortField === 'ip') cmp = (a.v.ip || '').localeCompare(b.v.ip || '')
+    else if (sortField === 'country') cmp = (a.v.country || '').localeCompare(b.v.country || '')
+    else if (sortField === 'lang') cmp = (a.v.lang || '').localeCompare(b.v.lang || '')
+    else if (sortField === 'source') cmp = sourceLabel(a.v).localeCompare(sourceLabel(b.v))
+    else if (sortField === 'fbpage') cmp = fbPage(a.v).localeCompare(fbPage(b.v))
+    return sortDir === 'asc' ? cmp : -cmp
+  })
+
+  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #1144aa', textAlign: 'center', cursor: 'pointer', userSelect: 'none' }
+  const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, border: '1px solid #c0c8e0', whiteSpace: 'nowrap', textAlign: 'center' }
+
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'flex-start', height: '100%', boxSizing: 'border-box' }}>
+      <div ref={tableScrollRef} style={{ height: '100%', overflowY: 'auto' }}>
+      <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'rtl' }}>
+        <thead>
+          <tr>
+            <th style={thS} onClick={() => toggleSort('num')}></th>
+            <th style={{ ...thS, minWidth: '140px' }} onClick={() => toggleSort('entered')}>{lang.system.colEntered}</th>
+            <th style={{ ...thS, minWidth: '140px' }} onClick={() => toggleSort('ip')}>{lang.system.colIp}</th>
+            <th style={thS} onClick={() => toggleSort('country')}>{S.colCountry}</th>
+            <th style={thS} onClick={() => toggleSort('lang')}>{S.colLang}</th>
+            <th style={{ ...thS, minWidth: '100px' }} onClick={() => toggleSort('source')}>{S.colSource}</th>
+            <th style={{ ...thS, minWidth: '110px' }} onClick={() => toggleSort('fbpage')}>{S.colFbPage}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map(({ v, num }, i) => (
+            <tr key={v.id} style={{ background: i % 2 === 0 ? '#fff' : '#f4f6ff' }}>
+              <td style={tdS}>{num}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{fmtDateTime(v.entered_at)}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{v.ip || ''}</td>
+              <td style={tdS}>{v.country || ''}</td>
+              <td style={tdS}>{v.lang || ''}</td>
+              <td style={tdS}>{sourceLabel(v)}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{fbPage(v)}</td>
+            </tr>
+          ))}
+          {visits.length === 0 && (
+            <tr><td colSpan={7} style={{ ...tdS, padding: 20, color: '#888' }}>{S.noVisits}</td></tr>
+          )}
+        </tbody>
+      </table>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+        <button onClick={handleReset} style={{ padding: '6px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{lang.system.reset}</button>
+        <button onClick={handleRefresh} style={{ padding: '6px 14px', background: justRefreshed ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{lang.system.refresh}</button>
+        <button onClick={handleTogglePause} style={{ padding: '6px 14px', background: paused ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>{paused ? lang.system.resume : lang.system.pause}</button>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button onClick={scrollToTop} style={{ padding: '6px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 14 }}>↑</button>
+          <button onClick={scrollToBottom} style={{ padding: '6px 10px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 14 }}>↓</button>
+        </div>
+        <button onClick={() => setScrollLocked(v => !v)} style={{ padding: '6px 14px', background: scrollLocked ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>❄</button>
+        <div style={{ fontSize: 14, fontWeight: 'bold', color: '#003399' }}>{S.total}: {visits.length}</div>
+
+        <div style={{ textAlign: 'right', marginTop: -12, marginLeft: 150, fontFamily: 'var(--kc-cap)', fontStyle: 'var(--kc-cap-style)', fontSize: 32, color: '#cc0000', fontWeight: 'bold' }}>
+          {cfg.runEnabled ? lang.system.runStatusRunning : lang.system.runStatusStopped}
+        </div>
+        <fieldset style={{ marginTop: 4, border: '2px solid #003399', borderRadius: 6, padding: '10px 12px 12px' }}>
+          <legend style={{ fontSize: 16, fontWeight: 'bold', color: '#003399', padding: '0 6px' }}>{lang.system.dataCollectionLegend}</legend>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '14px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <label style={{ fontSize: 16, fontWeight: 'bold', color: '#003399' }}>{lang.system.collectionEnd}</label>
+              <input type="datetime-local" value={cfg.endDate ?? ''} disabled={!cfg.endEnabled}
+                onChange={e => updateCfg({ ...cfg, endDate: e.target.value || null })}
+                style={{ fontSize: 15, padding: '6px 8px', border: '1px solid #6688bb', borderRadius: 5, background: cfg.endEnabled ? '#006600' : '#888', color: '#FFD700', direction: 'ltr' }} />
+              <button onClick={() => updateCfg({ ...cfg, endEnabled: !cfg.endEnabled })}
+                style={{ padding: '6px 10px', background: cfg.endEnabled ? '#006600' : '#cc0000', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>
+                {cfg.endEnabled ? lang.system.endToggleActive : lang.system.endToggleInactive}
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <label style={{ fontSize: 16, fontWeight: 'bold', color: '#003399' }}>{lang.system.collectionStart}</label>
+              <input type="datetime-local" value={cfg.startDate ?? ''}
+                onChange={e => updateCfg({ ...cfg, startDate: e.target.value || null })}
+                style={{ fontSize: 15, padding: '6px 8px', border: '1px solid #6688bb', borderRadius: 5, background: '#006600', color: '#FFD700', direction: 'ltr' }} />
+            </div>
+          </div>
+        </fieldset>
+        <button onClick={() => updateCfg({ ...cfg, runEnabled: !cfg.runEnabled })}
+          style={{ marginTop: 8, padding: '6px 14px', background: cfg.runEnabled ? '#cc0000' : '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }}>
+          {cfg.runEnabled ? lang.system.runToggleActive : lang.system.runToggleInactive}
+        </button>
+      </div>
+    </div>
+  )
+}
 
 function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdateSamplingConfig, onDbg }: { lang: typeof languages[0]; visits: VisitRecord[]; reload: () => void; samplingConfig: SamplingConfig; onUpdateSamplingConfig: (next: SamplingConfig) => void; onDbg: (func: string, msg: string) => void }) {
   const [sortField, setSortField] = useState<'num' | 'ip' | 'entered' | 'exited' | 'duration' | 'name' | null>(null)
