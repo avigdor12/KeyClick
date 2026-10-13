@@ -725,6 +725,11 @@ export default function Home() {
             <PageContent page={activePage} lang={lang} langIdx={langIdx} onChangeLang={changeLang} clientIp={clientIp} user={Current_User_Pointer_to_DB} systemMessage={systemMessage} onSetSystemMessage={setSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} bankingDirect={bankingDirect} pendingBankSession={pendingBankSession} onConsumeBankSession={() => setPendingBankSession(null)} onClose={() => setActivePage(null)} onLogin={(user) => {
               set_Current_User_Pointer_to_DB(user)
               setIsLoggedInExplicit(true)
+              // התחברות עם סיסמה: השם נרשם בשורת הביקור הפתוחה, לא משנה מאיזה IP
+              if (visitIdRef.current && user?.id) {
+                dbg('visits', `login => name on visit id=${visitIdRef.current} user.id=${user.id}`)
+                fetch('/api/visits', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: visitIdRef.current, userId: user.id }) }).catch(() => {})
+              }
               if (mfChainRef.current) {
                 mfChainRef.current = false
                 setActivePage(null)

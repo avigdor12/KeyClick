@@ -77,6 +77,18 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// משתמש התחבר עם סיסמה - כותבים את שמו בשורת הביקור הפתוחה (השם נלקח מטבלת המשתמשים לפי המספר, לא מהדפדפן)
+export async function PATCH(req: NextRequest) {
+  try {
+    const { id, userId } = await req.json()
+    if (!id || !userId) return NextResponse.json({ ok: false })
+    await pool.query('UPDATE visits SET user_name=(SELECT name FROM users WHERE id=$2) WHERE id=$1', [id, userId])
+    return NextResponse.json({ ok: true })
+  } catch (e) {
+    return NextResponse.json({ ok: false, error: String(e) })
+  }
+}
+
 export async function DELETE() {
   try {
     await ensureTable()
