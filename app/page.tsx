@@ -228,6 +228,17 @@ function playNotifSound(override?: string, customOverride?: string) {
   } catch { /* audio blocked / unsupported */ }
 }
 
+// [15.10.2026] כפתורי לוח הבקרה במראה של כפתור תלת-ממדי בגוונים כהים: מואר למעלה וכהה למטה, שוליים תחתונים עבים כמו בסיס,
+// וצל מתחת. בלחיצה הכפתור "יורד" (kc-panel-btn:active ב-PANEL_BTN_CSS)
+const PANEL_BTN: React.CSSProperties = {
+  border: '1px solid rgba(255,215,0,0.35)', borderTopColor: 'rgba(255,255,255,0.28)', borderBottomColor: 'rgba(0,0,0,0.7)', borderRadius: '7px',
+  boxShadow: '0 4px 0 #05081a, 0 6px 8px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -2px 3px rgba(0,0,0,0.35)',
+  margin: '5px 0 9px', transition: 'transform 0.08s, box-shadow 0.08s',
+}
+const PANEL_BTN_BG = 'linear-gradient(180deg, #3a4378 0%, #222a5c 45%, #141a42 100%)'
+const PANEL_BTN_BG_ON = 'linear-gradient(180deg, #5a5230 0%, #3e3820 45%, #2a2614 100%)'
+const PANEL_BTN_CSS = '.kc-panel-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #05081a, 0 2px 3px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 2px rgba(0,0,0,0.3) !important; }'
+
 export default function Home() {
   const [langIdx, setLangIdx]       = useState(0)
   const [activePage, setActivePage] = useState<string | null>(null)
@@ -717,7 +728,18 @@ export default function Home() {
         {/* CENTER */}
         <main style={{ flex: 1, ...GRANITE_BG, position: 'relative', overflow: 'hidden' }}>
           {activePage === null ? (
-            <GatePage lang={lang} />
+            <GatePage lang={lang}
+              loggedInName={isLoggedInExplicit ? (Current_User_Pointer_to_DB?.name || '') : null}
+              onLogin={() => {
+                dbg('flowDiagram', '2-לקוח לחץ על כניסה')
+                mfChainRef.current = true
+                setActivePage('mf-login')
+              }}
+              onRegister={() => {
+                dbg('flowDiagram', '11-לקוח לחץ על הרשמה')
+                mfChainRef.current = true
+                setActivePage('mf-register')
+              }} />
           ) : activePage === 'mf-app' && mfAppUrl ? (
             // האפליקציה עצמה מוצגת במסגרת שלמטה (מחוץ לבחירת הדף, כדי שלא תיטען מחדש כשעוברים אליה)
             null
@@ -768,28 +790,14 @@ export default function Home() {
               <Image src={`/flags/${lang.code}1.png`} alt={lang.flag} width={55} height={55} />
             </div>
           </div>
-          {/* שער כניסה לקבוצת השרותים הפיננסיים - אימות + בדיקת תכנית/התקנה, בלי הפעלה אוטומטית */}
-          <div style={{ position: 'relative', width: '120px', margin: '6px auto 4px', overflow: 'hidden', borderRadius: '10px' }}>
-            {isLoggedInExplicit && (
-              <div style={{ position: 'absolute', top: '4px', left: '-22px', width: '90px', transform: 'rotate(-45deg)', background: '#2f9e5c', color: '#fff', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', padding: '1px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.5)', zIndex: 5, pointerEvents: 'none' }}>{lang.card.registered}</div>
-            )}
-            <button onClick={() => {
-                if (isLoggedInExplicit) return
-                dbg('flowDiagram', '2-לקוח לחץ על כניסה')
-                mfChainRef.current = true
-                // תמיד ישר לטופס הכניסה - בלי ניתוב אוטומטי לדף הסבר לפי זיהוי מקומי.
-                setActivePage('mf-login')
-              }}
-              style={{ display: 'block', width: '100%', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px', cursor: 'pointer', fontSize: '20px', fontWeight: 'bold' }}>
-              {lang.card.login}
-            </button>
-          </div>
+          {/* [15.10.2026] כרטיס הכניסה הוסר מלוח הבקרה - הכניסה וההרשמה הם שני כפתורים בעמוד השער */}
+          <style>{PANEL_BTN_CSS}</style>
           {/* 1. מדריכים וסרטונים */}
           <div className="mf-luxury-btn" style={{ position: 'relative', display: 'block', margin: '10px auto 20px', width: '120px', background: 'linear-gradient(to bottom, #0d0d2b, #001a4a)', border: '2px solid #FFD700', borderRadius: '10px', color: '#FFD700', textAlign: 'center', padding: '10px 6px 8px', overflow: 'visible' }}>
-            <button onClick={() => setActivePage(activePage === 'guides' ? null : 'guides')}
+            <button className="kc-panel-btn" onClick={() => setActivePage(activePage === 'guides' ? null : 'guides')}
               style={{
-                display: 'block', width: '100%', background: activePage === 'guides' ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
-                border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
+                display: 'block', width: '100%', background: activePage === 'guides' ? PANEL_BTN_BG_ON : PANEL_BTN_BG,
+                ...PANEL_BTN,
                 color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
                 fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3',
               }}
@@ -807,11 +815,11 @@ export default function Home() {
               )}
             </div>
             {/* מנותק מאפליקציית ה-EXE (23.09.2026): פותח את אפליקציית האתר בתוך KeyClick, מחוברת באסימון כניסה */}
-            <button onClick={() => {
+            <button className="kc-panel-btn" onClick={() => {
                 dbg('btnClick', `M Finance clicked isLoggedInExplicit=${isLoggedInExplicit} user=${Current_User_Pointer_to_DB?.id ?? 'none'}`)
                 openMfApp()
               }}
-              style={{ display: 'block', width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)', color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'normal', fontWeight: 'bold', lineHeight: '1.2', wordBreak: 'normal', overflowWrap: 'normal' }}
+              style={{ display: 'block', width: '100%', background: PANEL_BTN_BG, ...PANEL_BTN, color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center', fontSize: lang.code === 'he' || lang.code === 'ar' ? '22px' : '18px', fontStyle: 'normal', fontWeight: 'bold', lineHeight: '1.2', wordBreak: 'normal', overflowWrap: 'normal' }}
               onMouseEnter={e => { if (isLoggedInExplicit) e.currentTarget.style.opacity = '0.75' }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
             >{lang.code === 'de' && lang.card.title === 'Haushaltsverwaltung' ? <>Haushalts<br />verwaltung</> : lang.card.title}</button>
@@ -825,10 +833,10 @@ export default function Home() {
                 {!isLoggedInExplicit && (
                   <div style={{ position: 'absolute', top: '2px', left: '-22px', width: '90px', transform: 'rotate(-45deg)', background: '#c0392b', color: '#fff', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', padding: '1px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.5)', zIndex: 5, pointerEvents: 'none' }}>{lang.card.locked}</div>
                 )}
-              <button onClick={() => { dbg('btnClick', `menu[${idx}] clicked isLoggedInExplicit=${isLoggedInExplicit}`); if (!isLoggedInExplicit) { return } setActivePage(String(idx) === activePage ? null : String(idx)) }}
+              <button className="kc-panel-btn" onClick={() => { dbg('btnClick', `menu[${idx}] clicked isLoggedInExplicit=${isLoggedInExplicit}`); if (!isLoggedInExplicit) { return } setActivePage(String(idx) === activePage ? null : String(idx)) }}
                 style={{
-                  display: 'block', width: '100%', background: activePage === String(idx) ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
-                  border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
+                  display: 'block', width: '100%', background: activePage === String(idx) ? PANEL_BTN_BG_ON : PANEL_BTN_BG,
+                  ...PANEL_BTN,
                   color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
                   fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3', wordBreak: 'break-word',
                 }}
@@ -847,10 +855,10 @@ export default function Home() {
                 {!isLoggedInExplicit && (
                   <div style={{ position: 'absolute', top: '2px', left: '-22px', width: '90px', transform: 'rotate(-45deg)', background: '#c0392b', color: '#fff', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', padding: '1px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.5)', zIndex: 5, pointerEvents: 'none' }}>{lang.card.locked}</div>
                 )}
-              <button onClick={() => { dbg('btnClick', `menu[${idx}] clicked isLoggedInExplicit=${isLoggedInExplicit}`); if (!isLoggedInExplicit) { return } setActivePage(String(idx) === activePage ? null : String(idx)) }}
+              <button className="kc-panel-btn" onClick={() => { dbg('btnClick', `menu[${idx}] clicked isLoggedInExplicit=${isLoggedInExplicit}`); if (!isLoggedInExplicit) { return } setActivePage(String(idx) === activePage ? null : String(idx)) }}
                 style={{
-                  display: 'block', width: '100%', background: activePage === String(idx) ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)',
-                  border: 'none', borderTop: '1px solid rgba(255,215,0,0.25)',
+                  display: 'block', width: '100%', background: activePage === String(idx) ? PANEL_BTN_BG_ON : PANEL_BTN_BG,
+                  ...PANEL_BTN,
                   color: '#FFD700', padding: '7px 4px', cursor: 'pointer', textAlign: 'center',
                   fontSize: lang.code === 'he' || lang.code === 'ar' ? '17px' : '14px', fontStyle: 'normal', fontWeight: 'normal', lineHeight: '1.3', wordBreak: 'break-word',
                 }}
@@ -2089,7 +2097,42 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   )
 }
 
-function GatePage({ lang }: { lang: typeof languages[0] }) {
+// [15.10.2026] טקסטי עמוד השער החדש (במקום דף הנחיתה) - הועתקו מקבצי דף הנחיתה בכל שפה, בלי שינוי ניסוח.
+// title: שורות הכותרת, המילה בסוגריים מסולסלים מודגשת בזהב. cards: מוצרים, קשרי לקוחות, מדריכים וסרטונים, שרותי מידע
+type GateText = { title: string[]; count: string; phil: string; pie: string; cards: { t: string; d: string }[] }
+const GATE_TEXT: Record<string, GateText> = {
+  he: {"title":["הכלים שהיו שמורים {למומחים}","עכשיו בלחיצה אחת"],"count":"ב- 11 שפות","phil":"טכנולוגיה טובה לא צריכה תואר בהנדסה כדי להשתמש בה","pie":"עוגת התקציב","cards":[{"t":"ניהול תקציב בית — M Finance","d":"אפליקציה שרואה את כל התמונה הפיננסית שלך במקום אחד, פיתוח אלגוריתמים חכמים בשימוש בינה מלאכותית ובדגש על חוויית המשתמש."},{"t":"קשרי לקוחות","d":"מערכת משוב ומנגון הודעות מובנה, ייעל ומודרני, בא כהשלמה לחוויית המשתמש במערכת."},{"t":"מדריכים וסרטונים","d":"שידה ובה 4 מגירות של ספרי מדריך למשתמש."},{"t":"שרותי מידע","d":"מידע על גרסאות התוכנה, ויומן תזכורות אוטומטי לאירועי האתר — עם אפשרות להוסיף גם אירועים פרטיים משלך."}]},
+  en: {"title":["Tools for {experts}","now one click away"],"count":"In 11 languages","phil":"Good technology needs no engineering degree","pie":"The Budget Pie","cards":[{"t":"Home budget — M Finance","d":"An app that sees your whole financial picture in one place — smart algorithms powered by AI, with a focus on user experience."},{"t":"Customer relations","d":"A built-in feedback and messaging system, efficient and modern, complementing the in-system user experience."},{"t":"Guides and videos","d":"A chest with 4 drawers of user guide books and 2 drawers of usage and training videos, with pleasant background music."},{"t":"Information services","d":"Software version info and an automatic reminder log for site events — with the option to add your own private events too."}]},
+  ru: {"title":["Инструменты {экспертов}","теперь в один клик"],"count":"На 11 языках","phil":"Хорошая технология не требует диплома инженера","pie":"Бюджетный пирог","cards":[{"t":"Домашний бюджет — M Finance","d":"Приложение: вся финансовая картина в одном месте — умные алгоритмы на базе ИИ и упор на удобство."},{"t":"Отношения с клиентами","d":"Встроенная система обратной связи и сообщений — удобная и современная, как дополнение к работе в системе."},{"t":"Руководства и видео","d":"Комод: 4 ящика с книгами-руководствами и 2 ящика с обучающими видео, под приятную фоновую музыку."},{"t":"Информационные услуги","d":"Версии ПО и дневник напоминаний о событиях сайта — с возможностью добавить и свои личные события."}]},
+  de: {"title":["Werkzeuge für {Experten}","jetzt einen Klick entfernt"],"count":"In 11 Sprachen","phil":"Gute Technik braucht kein Ingenieurstudium","pie":"Der Budget-Kuchen","cards":[{"t":"Haushaltsbudget — M Finance","d":"Eine App, die Ihr gesamtes Finanzbild an einem Ort zeigt — intelligente Algorithmen mit KI und Fokus auf Bedienkomfort."},{"t":"Kundenbeziehungen","d":"Ein integriertes Feedback- und Nachrichtensystem, effizient und modern, als Ergänzung zum Nutzererlebnis."},{"t":"Anleitungen und Videos","d":"Eine Kommode mit 4 Schubladen Handbücher und 2 mit Nutzungs- und Schulungsvideos, dazu Hintergrundmusik."},{"t":"Informationsdienste","d":"Software-Versionen und ein automatisches Erinnerungslog für Website-Ereignisse — auch eigene private Termine möglich."}]},
+  fr: {"title":["Outils pour {experts}","désormais à un clic"],"count":"En 11 langues","phil":"Une bonne technologie n'exige pas de diplôme d'ingénieur","pie":"Le camembert du budget","cards":[{"t":"Budget familial — M Finance","d":"Une appli qui montre toute votre situation financière au même endroit — des algorithmes intelligents utilisant l'IA, avec l'accent sur le confort d'usage."},{"t":"Relations clients","d":"Un système intégré de retours et de messages, efficace et moderne, en complément de l'expérience utilisateur."},{"t":"Guides et vidéos","d":"Une commode : 4 tiroirs de manuels et 2 tiroirs de vidéos d'usage et de formation, sur une musique de fond agréable."},{"t":"Services d'information","d":"Versions du logiciel et rappels automatiques des événements du site — avec l'ajout de vos propres événements privés."}]},
+  es: {"title":["Herramientas de {expertos}","a un clic"],"count":"En 11 idiomas","phil":"La buena tecnología no exige un título de ingeniería","pie":"La tarta del presupuesto","cards":[{"t":"Presupuesto del hogar — M Finance","d":"Una app que ve toda tu situación financiera en un solo lugar — algoritmos inteligentes con IA y foco en la comodidad de uso."},{"t":"Relación con clientes","d":"Un sistema integrado de comentarios y mensajes, eficiente y moderno, como complemento a la experiencia de usuario."},{"t":"Guías y vídeos","d":"Una cómoda: 4 cajones con manuales de usuario y 2 cajones con vídeos de uso y formación, con música de fondo agradable."},{"t":"Servicios de información","d":"Versiones del software y recordatorios automáticos de eventos del sitio — con la opción de añadir tus eventos privados."}]},
+  ja: {"title":["{専門家}のツールが、いまワンクリックで"],"count":"11言語対応","phil":"良い技術に工学の学位はいらない","pie":"予算のパイ","cards":[{"t":"家計簿 — M Finance","d":"AIを活用したスマートなアルゴリズムと、使いやすさを重視して、財務全体を一か所で見渡せるアプリ。"},{"t":"カスタマーリレーション","d":"効率的でモダンな、組み込みのフィードバックとメッセージのシステム。ユーザー体験を補完します。"},{"t":"ガイドと動画","d":"引き出し4段にユーザーガイド、2段に使い方と操作の動画。心地よい BGM 付き。"},{"t":"情報サービス","d":"ソフトウェアのバージョン情報と、サイトのイベントの自動リマインダーログ — 自分専用の予定も追加できます。"}]},
+  ar: {"title":["الأدوات التي كانت {للخبراء}","الآن بنقرة واحدة"],"count":"بـ 11 لغة","phil":"التقنية الجيدة لا تتطلب شهادة هندسة لاستخدامها","pie":"كعكة الميزانية","cards":[{"t":"ميزانية المنزل — M Finance","d":"تطبيق يرى صورتك المالية كاملة في مكان واحد، بخوارزميات ذكية تعتمد على الذكاء الاصطناعي وتركيز على تجربة المستخدم."},{"t":"علاقات العملاء","d":"نظام تعليقات ورسائل مدمج، فعّال وعصري، يأتي كإكمال لتجربة المستخدم في النظام."},{"t":"أدلة ومقاطع فيديو","d":"خزانة بأربعة أدراج من كتب دليل المستخدم ودرجين من مقاطع فيديو الاستخدام والتدريب، مع موسيقى خلفية لطيفة."},{"t":"خدمات المعلومات","d":"معلومات عن إصدارات البرنامج، وسجل تذكيرات تلقائي لأحداث الموقع — مع إمكانية إضافة أحداثك الخاصة أيضًا."}]},
+  zh: {"title":["曾经只属于{专家}的工具","如今一键即得"],"count":"支持 11 种语言","phil":"好技术不需要工程学位","pie":"预算饼图","cards":[{"t":"家庭预算 — M Finance","d":"一款应用，运用 AI 智能算法并注重使用体验，在一处纵览你的全部财务状况。"},{"t":"客户关系","d":"内置的反馈与消息系统，高效而现代，作为系统内用户体验的补充。"},{"t":"指南与视频","d":"一个抽屉柜：4 个抽屉放用户指南，2 个抽屉放使用与培训视频，配有舒适的背景音乐。"},{"t":"信息服务","d":"软件版本信息，以及网站事件的自动提醒日志 — 还可添加你自己的私人事件。"}]},
+  it: {"title":["Strumenti per {esperti}","ora a un clic"],"count":"In 11 lingue","phil":"Una buona tecnologia non richiede una laurea in ingegneria","pie":"La torta del budget","cards":[{"t":"Budget familiare — M Finance","d":"Un'app che mostra tutto il quadro finanziario in un unico posto — algoritmi intelligenti con l'IA e attenzione all'usabilità."},{"t":"Relazioni con i clienti","d":"Un sistema integrato di feedback e messaggi, efficiente e moderno, a complemento dell'esperienza utente."},{"t":"Guide e video","d":"Una cassettiera: 4 cassetti di manuali utente e 2 di video d'uso e formazione, con una piacevole musica di sottofondo."},{"t":"Servizi informativi","d":"Versioni del software e un registro promemoria automatico per gli eventi del sito — con l'aggiunta dei tuoi eventi privati."}]},
+  hi: {"title":["{विशेषज्ञों} के उपकरण","अब एक क्लिक पर"],"count":"11 भाषाओं में","phil":"अच्छी तकनीक के लिए इंजीनियरिंग की डिग्री ज़रूरी नहीं","pie":"बजट पाई","cards":[{"t":"घरेलू बजट — M Finance","d":"एक ऐप जो AI-आधारित स्मार्ट एल्गोरिदम की मदद से और उपयोग-अनुभव पर ध्यान देते हुए आपकी पूरी वित्तीय तस्वीर एक जगह दिखाता है।"},{"t":"ग्राहक संबंध","d":"एक अंतर्निहित फ़ीडबैक और संदेश प्रणाली, कुशल और आधुनिक, उपयोगकर्ता अनुभव के पूरक के रूप में।"},{"t":"गाइड और वीडियो","d":"एक दराज़दान: 4 दराज़ों में उपयोगकर्ता गाइड और 2 में उपयोग व प्रशिक्षण वीडियो, सुखद पृष्ठभूमि संगीत के साथ।"},{"t":"सूचना सेवाएं","d":"सॉफ़्टवेयर संस्करण जानकारी, और साइट इवेंट्स के लिए स्वचालित रिमाइंडर लॉग — अपने निजी इवेंट्स जोड़ने की सुविधा के साथ।"}]},
+}
+// שם המחבר בשורה התחתונה, בכתב של כל שפה (בשפות בכתב לטיני - Avigdor Meir)
+const GATE_AUTHOR: Record<string, string> = { he: 'אביגדור מאיר', ru: 'Авигдор Меир', ja: 'アビグドール・メイール', ar: 'أفيغدور مئير', zh: '阿维格多·梅尔', hi: 'अविग्दोर मेयर' }
+// [15.10.2026] למשתמש מחובר, במקום הכפתורים: כותרת מעל הכרטיסיות
+const GATE_TOPICS: Record<string, string> = {
+  he: 'הנושאים באתר',
+  en: 'Topics on the site',
+  ru: 'Разделы сайта',
+  de: 'Themen der Website',
+  fr: 'Les thèmes du site',
+  es: 'Temas del sitio',
+  ja: 'サイトのトピック',
+  ar: 'مواضيع الموقع',
+  zh: '网站主题',
+  it: 'Argomenti del sito',
+  hi: 'साइट के विषय',
+}
+
+// [15.10.2026] עמוד השער: כותרת, משפט הפילוסופיה, כפתורי כניסה והרשמה (במקום כרטיס הכניסה שבלוח הבקרה) ו-4 כרטיסיות.
+// אחרי כניסה עם סיסמה - במקום הכפתורים ברכה אישית. הודעת השער שמנהל המערכת כותב מוצגת מתחת לכרטיסיות
+function GatePage({ lang, loggedInName, onLogin, onRegister }: { lang: typeof languages[0]; loggedInName: string | null; onLogin: () => void; onRegister: () => void }) {
   const [gateMsg, setGateMsg] = useState('')
   const [txGateMsg, setTxGateMsg] = useState('')
 
@@ -2102,28 +2145,61 @@ function GatePage({ lang }: { lang: typeof languages[0] }) {
     translateFromHe(gateMsg, lang.code).then(t => setTxGateMsg(t))
   }, [gateMsg, lang.code])
 
+  const g = GATE_TEXT[lang.code] ?? GATE_TEXT.he
+  const topics = GATE_TOPICS[lang.code] ?? GATE_TOPICS.he
+  const dir = lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'
+  const shownMsg = (lang.code !== 'he' && txGateMsg) || gateMsg
+  // מילה בסוגריים מסולסלים - בזהב
+  const titleLine = (s: string) => s.split(/[{}]/).map((part, i) => i % 2 ? <span key={i} style={{ color: '#f0cf6b' }}>{part}</span> : part)
+
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <Image src="/Pictures/Welcome Label1.jpg" alt="scroll" fill style={{ objectFit: 'fill' }} priority />
-      <div style={{ position: 'absolute', left: '5%', top: '42%', transform: 'translateY(-50%)', zIndex: 10 }}>
-        <Image src={`/flags/${lang.code}1.png`} alt={lang.flag} width={100} height={100} style={{ display: 'block' }} />
-      </div>
-      <div style={{ position: 'absolute', left: '1%', top: '62%', width: '15%', textAlign: 'center', fontFamily: 'var(--font-dancing), Georgia, serif', fontWeight: 'bold', fontSize: '36px', color: '#cc00cc', zIndex: 10 }}>
-        KeyClick
-      </div>
-      <div style={{ position: 'absolute', top: '28%', left: '16%', right: '4%', textAlign: 'center',
-        fontFamily: lang.code === 'ru' ? "'Great Vibes', cursive" : welcomeFont(lang.code), fontStyle: handStyle(lang.code),   // רוסית: Great Vibes, כמו באפליקציה
-        fontWeight: lang.code === 'he' || lang.code === 'ru' ? 'normal' : 'bold', fontSize: '88px', color: '#cc00cc', zIndex: 10 }}>
-        {lang.welcome}
-      </div>
-      <div style={{ position: 'absolute', top: '56%', left: '14%', right: '4%', textAlign: 'center', fontFamily: 'var(--font-dancing), Georgia, serif', fontWeight: 'bold', fontSize: '94px', color: '#cc00cc', zIndex: 10 }}>
-        M Solution Group
-      </div>
-      <div style={{ position: 'absolute', top: '85%', right: '-2%', width: '30%', textAlign: 'center',
-        fontFamily: welcomeFont(lang.code), fontStyle: handStyle(lang.code),
-        fontWeight: 'bold', fontSize: '20px', color: '#cc00cc', whiteSpace: 'pre-wrap', zIndex: 10,
-        direction: lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr' }}>
-        {(lang.code !== 'he' && txGateMsg) || gateMsg}
+    <div className="kc-gate" style={{ position: 'absolute', inset: 0, overflowY: 'auto', containerType: 'inline-size', background: 'radial-gradient(ellipse at 80% 10%, #1b2466 0%, #0a0e27 60%)', display: 'flex', padding: '16px' }}>
+      <style>{`
+        .kc-gate-frame { position: relative; margin: auto; width: 100%; max-width: 1200px; border: 2px solid #d4af37; border-radius: 28px; padding: 26px 40px 20px; background: rgba(10,14,39,.55); box-shadow: 0 0 40px rgba(212,175,55,.12); }
+        .kc-gate-frame::before { content: ""; position: absolute; inset: 0; border-radius: 28px; pointer-events: none; background: repeating-radial-gradient(circle at 85% 10%, transparent 0 60px, rgba(212,175,55,.05) 60px 61px); }
+        .kc-gate-frame > * { position: relative; }
+        .kc-gate-title { font-family: 'Assistant', Arial, sans-serif; font-weight: 800; font-size: clamp(30px, 5.2cqi, 62px); line-height: 1.15; color: #fbf8ef; margin: 0; }
+        .kc-gate-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; direction: rtl; }
+        .kc-gate-btn { font-family: 'Assistant', Arial, sans-serif; font-weight: 800; font-size: 20px; border-radius: 14px; padding: 12px 38px; cursor: pointer; }
+        .kc-gate-btn:hover { opacity: .85; }
+        @container (max-width: 900px) { .kc-gate-cards { grid-template-columns: 1fr 1fr; } }
+        @container (max-width: 560px) { .kc-gate-cards { grid-template-columns: 1fr; } .kc-gate-frame { padding: 20px 16px 16px; } }
+      `}</style>
+      <div className="kc-gate-frame">
+        <div style={{ fontFamily: 'var(--font-dancing), Georgia, serif', fontWeight: 'bold', fontSize: '48px', color: '#d4af37', lineHeight: 1, textAlign: 'center' }}>KeyClick</div>
+
+        <div style={{ textAlign: 'center', margin: '18px 0 6px', direction: dir }}>
+          <h1 className="kc-gate-title">{g.title.map((line, i) => <span key={i}>{i > 0 && <br />}{titleLine(line)}</span>)}</h1>
+          <div style={{ fontFamily: "'Assistant', Arial, sans-serif", fontWeight: 800, fontSize: '28px', color: '#f0cf6b', marginTop: '10px' }}>{g.count}</div>
+          <p style={{ fontFamily: "'Assistant', Arial, sans-serif", fontSize: '20px', color: '#b9bfe0', margin: '12px 0 0' }}>{g.phil}</p>
+        </div>
+
+        {loggedInName !== null ? (
+          <div style={{ textAlign: 'center', margin: '22px 0 26px', direction: dir }}>
+            <div dir="auto" style={{ fontFamily: "'Assistant', Arial, sans-serif", fontWeight: 800, fontSize: '26px', color: '#f0cf6b' }}>{topics}</div>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap', margin: '22px 0 26px', direction: dir }}>
+            <button className="kc-gate-btn" onClick={onLogin} style={{ background: 'linear-gradient(180deg, #f0cf6b, #d4af37)', color: '#0a0e27', border: 'none', boxShadow: '0 6px 20px rgba(212,175,55,.3)' }}>{lang.card.login}</button>
+            <button className="kc-gate-btn" onClick={onRegister} style={{ background: 'transparent', color: '#f0cf6b', border: '2px solid #d4af37' }}>{lang.card.register}</button>
+          </div>
+        )}
+
+        <div className="kc-gate-cards">
+          {g.cards.map((c, i) => (
+            <div key={i} style={{ direction: dir, background: 'linear-gradient(180deg, #131a4a, #0e1338)', border: '1px solid rgba(255,255,255,.08)', borderRadius: '16px', padding: '18px', boxShadow: 'inset -4px 0 0 #d4af37' }}>
+              <div style={{ fontFamily: "'Assistant', Arial, sans-serif", fontWeight: 800, fontSize: '19px', color: '#fbf8ef', marginBottom: '8px' }}>{c.t}</div>
+              <div style={{ fontFamily: "'Assistant', Arial, sans-serif", fontSize: '15px', lineHeight: 1.5, color: '#dde0f2' }}>{c.d}</div>
+              {i === 0 && <div style={{ fontFamily: "'Assistant', Arial, sans-serif", fontSize: '15px', lineHeight: 1.5, color: '#dde0f2', marginTop: '6px' }}>{g.pie}</div>}
+            </div>
+          ))}
+        </div>
+
+        {shownMsg && (
+          <div style={{ textAlign: 'center', marginTop: '18px', fontFamily: welcomeFont(lang.code), fontStyle: handStyle(lang.code), fontWeight: 'bold', fontSize: '20px', color: '#f0cf6b', whiteSpace: 'pre-wrap', direction: dir }}>{shownMsg}</div>
+        )}
+
+        <div style={{ textAlign: 'center', color: '#b9bfe0', fontSize: '14px', marginTop: '20px', direction: 'ltr' }}>KeyClick — M Solution Group · {GATE_AUTHOR[lang.code] ?? 'Avigdor Meir'} · keyclick.org</div>
       </div>
     </div>
   )

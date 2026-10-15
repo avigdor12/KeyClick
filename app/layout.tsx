@@ -26,6 +26,18 @@ export default function RootLayout({
         <link rel="stylesheet" href="/fonts/fonts_alias.css" />
         <link rel="stylesheet" href="/fonts/fonts_web.css" />
         <link rel="stylesheet" href="/fonts/fonts_cjk.css" />
+        {/* [15.10.2026] תמונת תצוגה לפייסבוק/ווטסאפ כשמשתפים את כתובת האתר (במקום דף הנחיתה) - public/og.jpg. הטקסטים כמו בדף הנחיתה */}
+        <title>KeyClick — כלים דיגיטליים לכל אחד</title>
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://keyclick.org/" />
+        <meta property="og:title" content="KeyClick — כלים דיגיטליים לכל אחד" />
+        <meta property="og:description" content="טכנולוגיה טובה לא צריכה תואר בהנדסה כדי להשתמש בה" />
+        <meta property="og:image" content="https://keyclick.org/og.jpg" />
+        <meta property="og:image:width" content="2400" />
+        <meta property="og:image:height" content="1260" />
+        <meta property="og:locale" content="he_IL" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://keyclick.org/og.jpg" />
       </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>{children}</SessionProvider>
