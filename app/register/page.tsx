@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { languages, handFont, handStyle } from '../page'
+import { languages, handFont, handStyle } from '../HomeClient'
 
 export default function RegisterPage() {
   const router = useRouter()
