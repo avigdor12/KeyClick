@@ -5939,6 +5939,7 @@ function RegisterCard({ lang, clientIp = '', prefillEmail = '', initialPhase = '
     onDbg('flowDiagram', '12-לקוח ממלא פרטי הרשמה ולוחץ הרשמה')
     onDbg('handleUpdate', `name="${savedName}" email="${savedEmail}" pass.len=${savedPass.length} clientIp="${clientIp}"`)
     setError('')
+    if (!savedName.trim())                       { onDbg('handleUpdate', 'name empty => errName'); setError('נא להקליד שם'); return }
     if (savedEmail && !savedEmail.includes('@')) { onDbg('handleUpdate', `email="${savedEmail}" invalid => errEmail`); setError(c.errEmail); return }
     if (savedPass && savedPass.length < 6)       { onDbg('handleUpdate', `pass.len=${savedPass.length} < 6 => errPassLen`); setError(c.errPassLen); return }
     if (savedPass !== savedConf)                 { onDbg('handleUpdate', 'pass !== conf => errPassMatch'); setError(c.errPassMatch); return }

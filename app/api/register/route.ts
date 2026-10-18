@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
   const { name, email, password, language, clientIp } = await req.json()
 
   if (!email) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
+  if (!name || !String(name).trim()) return NextResponse.json({ error: 'נא להקליד שם' }, { status: 400 })
   if (password && password.length < 6) {
     return NextResponse.json({ error: 'סיסמה חייבת להכיל לפחות 6 תווים' }, { status: 400 })
   }
