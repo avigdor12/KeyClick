@@ -306,6 +306,54 @@ export default function Home() {
     return () => window.removeEventListener('pagehide', onPageHide)
   }, [])
 
+  // [Claude Code 19.10.2026, לפי הנחיית המשתמש] איסוף נתונים > צפיה במדריכים: כל כניסה לדף מדריכים וסרטונים או למגירה נרשמת,
+  // ביציאה (מעבר דף, החלפת שפה או סגירה) נשלחים זמן היציאה, עומק הגלילה המרבי והאם הופעל מסך מלא
+  const prevPageRef = useRef<string | null>(null)
+  useEffect(() => {
+    const fromPage = prevPageRef.current
+    prevPageRef.current = activePage
+    if (!activePage || !activePage.startsWith('guides')) return
+    const view = { id: null as number | null, maxScroll: 0, fullscreen: false, ended: false, sent: false }
+    const sendExit = () => {
+      view.ended = true
+      if (view.sent || !view.id) return
+      view.sent = true
+      navigator.sendBeacon('/api/guide-views/exit', JSON.stringify({ id: view.id, maxScroll: view.maxScroll, fullscreen: view.fullscreen }))
+    }
+    // גדלים אמיתיים בנקודות מסך: הדפדפן מודד ביחידות שתלויות בהגדלת הדף (Ctrl +/-) ובקנה המידה של מערכת ההפעלה.
+    // devicePixelRatio = הגדלה × קנה מידה. ההגדלה מוערכת מיחס החלון החיצוני לפנימי ומעוגלת לרמת הגדלה של דפדפן
+    const dpr = window.devicePixelRatio || 1
+    const ZOOM_LEVELS = [0.25, 0.33, 0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4, 5]
+    const rawZoom = window.outerWidth && window.innerWidth ? window.outerWidth / window.innerWidth : 1
+    const zoom = ZOOM_LEVELS.reduce((best, z) => Math.abs(z - rawZoom) < Math.abs(best - rawZoom) ? z : best, 1)
+    const osScale = Math.round(dpr / zoom * 100) / 100
+    fetch('/api/guide-views', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+      page: activePage, lang: lang.code, userId: Current_User_Pointer_to_DB?.id ?? null, visitId: visitIdRef.current, fromPage, clientIp,
+      screenW: Math.round(window.screen.width * osScale), screenH: Math.round(window.screen.height * osScale),
+      viewportW: Math.round(window.innerWidth * dpr), viewportH: Math.round(window.innerHeight * dpr),
+      zoom: Math.round(zoom * 100), osScale: Math.round(osScale * 100),
+    }) }).then(r => r.json()).then(d => {
+      if (d.ok) { view.id = d.id; if (view.ended) sendExit() }
+      else if (d.error) dbg('guideViews', `error: ${d.error}`)
+    }).catch(e => dbg('guideViews', `error: ${String(e)}`))
+    const onScroll = (e: Event) => {
+      const el = e.target instanceof Element ? e.target : document.scrollingElement
+      if (!el) return
+      const range = el.scrollHeight - el.clientHeight
+      if (range > 50) view.maxScroll = Math.max(view.maxScroll, Math.round(el.scrollTop / range * 100))
+    }
+    const onFullscreen = () => { if (document.fullscreenElement) view.fullscreen = true }
+    document.addEventListener('scroll', onScroll, true)
+    document.addEventListener('fullscreenchange', onFullscreen)
+    window.addEventListener('pagehide', sendExit)
+    return () => {
+      document.removeEventListener('scroll', onScroll, true)
+      document.removeEventListener('fullscreenchange', onFullscreen)
+      window.removeEventListener('pagehide', sendExit)
+      sendExit()
+    }
+  }, [activePage, lang.code])
+
   useEffect(() => {
     if (!Current_User_Pointer_to_DB?.id) { setHasUnreadMsg(false); return }
     const checkUnread = () => {
@@ -1019,7 +1067,7 @@ function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof langu
 }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing' | 'landing'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing' | 'landing' | 'guideViews'>('none')
   const mainContentRef = useRef<HTMLDivElement>(null)
   const [devBypassLogin, setDevBypassLogin] = useState(false)
   const [mfDirectEntry, setMfDirectEntry] = useState(false)
@@ -1364,6 +1412,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     statistics: `${lang.system.dataCollection} - ${lang.system.statistics}`,
     billing: `${lang.system.systemData} - ${lang.system.billing}`,
     landing: `${lang.system.dataCollection} - דף נחיתה`,
+    guideViews: `${lang.system.dataCollection} - צפיה במדריכים`,
   }
 
   return (
@@ -1512,6 +1561,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         {view === 'data' && <VisitsTable lang={lang} visits={visits} reload={reloadVisits} samplingConfig={samplingConfig} onUpdateSamplingConfig={updateSamplingConfig} onDbg={onDbg} />}
         {view === 'statistics' && <ProcessingPage lang={lang} visits={visits} reload={reloadVisits} onDbg={onDbg} samplingConfig={samplingConfig} />}
         {view === 'landing' && <LandingVisitsTable lang={lang} onDbg={onDbg} />}
+        {view === 'guideViews' && <GuideViewsTable lang={lang} onDbg={onDbg} />}
 
         {showResetConfirm && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2083,6 +2133,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'data' ? 'none' : 'data')}>{lang.system.data}</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'statistics' ? 'none' : 'statistics')}>{lang.system.statistics}</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'landing' ? 'none' : 'landing')}>דף נחיתה</button>
+              <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'guideViews' ? 'none' : 'guideViews')}>צפיה במדריכים</button>
             </div>
           </div>
 
@@ -3466,6 +3517,153 @@ type LandingVisitRecord = { id: number; ip: string | null; entered_at: string; c
 const LANDING_FB_PAGE: Record<string, string> = { fb_keyclick: 'KeyClick', fb_avigdor_meir: 'Avigdor Meir' }
 const LANDING_SOURCE_LABEL: Record<string, string> = { fb_keyclick: 'פייסבוק', fb_avigdor_meir: 'פייסבוק', facebook: 'פייסבוק', instagram: 'אינסטגרם', whatsapp: 'ווטסאפ', google: 'גוגל', keyclick: 'KeyClick', direct: 'ישיר', other: 'אחר' }
 
+// [Claude Code 19.10.2026, לפי הנחיית המשתמש] איסוף נתונים > צפיה במדריכים: כניסות לדף מדריכים וסרטונים ול-6 המגירות. עברית בלבד עד סבב תרגום
+type GuideViewRecord = { id: number; entered_at: string; left_at: string | null; page: string; lang: string | null; user_name: string | null; user_email: string | null; visit_id: number | null; from_page: string | null; ip: string | null; country: string | null; region: string | null; city: string | null; device: string | null; os: string | null; browser: string | null; screen: string | null; viewport: string | null; zoom: number | null; os_scale: number | null; max_scroll: number | null; fullscreen: boolean | null }
+const GUIDE_PAGE_LABEL: Record<string, string> = {
+  guides: 'ארון המגירות',
+  'guides-site-overview': '1 אתר - כללי', 'guides-site-guide': '2 אתר - מדריך', 'guides-site-videos': '3 אתר - סרטון',
+  'guides-fin-overview': '4 תקציב בית - כללי', 'guides-fin-guide': '5 תקציב בית - מדריך', 'guides-fin-videos': '6 תקציב בית - סרטון',
+}
+
+// כתובת IP בטבלאות איסוף נתונים - בהקסה בלבד (לפי הנחיית המשתמש 19.10.2026); כתובת שאינה IPv4 מוצגת כמו שהיא
+const ipDisplay = (ip: string | null) => {
+  if (!ip) return ''
+  const parts = ip.split('.')
+  return parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2, '0').toUpperCase()).join('-') : ip
+}
+
+function GuideViewsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
+  // מחרוזות חדשות - עברית בלבד עד סבב התרגום
+  const S = { colPage: 'מגירה', colLang: 'שפה',colEmail: 'מייל', colFrom: 'הגיע מ', colScroll: 'גלילה', colFs: 'מסך מלא', colDevice: 'מכשיר', colOs: 'מערכת', colBrowser: 'דפדפן', colScreen: 'מסך',colCountry: 'מדינה', colRegion: 'אזור', colCity: 'עיר', colVisit: 'ביקור', siteEntry: 'כניסה לאתר', yes: 'כן', noViews: 'אין צפיות', total: 'סה״כ' }
+  const [views, setViews] = useState<GuideViewRecord[]>([])
+  const [justRefreshed, setJustRefreshed] = useState(false)
+  const [sortField, setSortField] = useState<keyof GuideViewRecord | 'num' | 'duration' | null>(null)
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const tableScrollRef = useRef<HTMLDivElement>(null)
+
+  const load = () => {
+    onDbg('GuideViewsTable.load', 'fetch GET /api/guide-views')
+    fetch('/api/guide-views').then(r => r.json()).then(d => {
+      if (Array.isArray(d.views)) setViews(d.views)
+      if (d.error) onDbg('GuideViewsTable.load', `error: ${d.error}`)
+    }).catch(e => onDbg('GuideViewsTable.load', `error: ${String(e)}`))
+  }
+  useEffect(() => { load() }, [])
+
+  // בפתיחה ובכל שורה חדשה - נצמד לתחתית
+  useEffect(() => {
+    if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight
+  }, [views.length])
+
+  const handleReset = async () => {
+    onDbg('GuideViewsTable.handleReset', 'DELETE /api/guide-views')
+    await fetch('/api/guide-views', { method: 'DELETE' }).catch(e => onDbg('GuideViewsTable.handleReset', `error: ${String(e)}`))
+    load()
+  }
+  const handleRefresh = () => {
+    load()
+    setJustRefreshed(true)
+    setTimeout(() => setJustRefreshed(false), 1000)
+  }
+  const scrollToTop = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = 0 }
+  const scrollToBottom = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight }
+
+  function toggleSort(field: typeof sortField) {
+    if (sortField === field) { setSortDir(d => d === 'asc' ? 'desc' : 'asc') }
+    else { setSortField(field); setSortDir('asc') }
+  }
+
+  const fmtDateTime = (iso: string | null) => {
+    if (!iso) return ''
+    const d = new Date(iso)
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
+    return <span style={{ direction: 'ltr', unicodeBidi: 'bidi-override', display: 'inline-block' }}>{date} {time}</span>
+  }
+  const durationSec = (v: GuideViewRecord) => v.left_at ? Math.max(0, Math.round((new Date(v.left_at).getTime() - new Date(v.entered_at).getTime()) / 1000)) : -1
+  const fmtDuration = (v: GuideViewRecord) => {
+    const s = durationSec(v)
+    if (s < 0) return ''
+    return s >= 60 ? `${Math.floor(s / 60)} ${lang.system.durationMin} ${s % 60} ${lang.system.durationSec}` : `${s} ${lang.system.durationSec}`
+  }
+  const pageLabel = (p: string | null) => p ? (GUIDE_PAGE_LABEL[p] ?? p) : S.siteEntry
+
+  const numbered = views.map((v, i) => ({ v, num: i + 1 }))
+  const sorted = [...numbered].sort((a, b) => {
+    let cmp = 0
+    if (sortField === 'num') cmp = a.num - b.num
+    else if (sortField === 'duration') cmp = durationSec(a.v) - durationSec(b.v)
+    else if (sortField === 'entered_at' || sortField === 'left_at') cmp = new Date(a.v[sortField] || 0).getTime() - new Date(b.v[sortField] || 0).getTime()
+    else if (sortField === 'max_scroll' || sortField === 'visit_id' || sortField === 'zoom' || sortField === 'os_scale') cmp = (a.v[sortField] ?? -1) - (b.v[sortField] ?? -1)
+    else if (sortField === 'page' || sortField === 'from_page') cmp = pageLabel(a.v[sortField]).localeCompare(pageLabel(b.v[sortField]))
+    else if (sortField) cmp = String(a.v[sortField] ?? '').localeCompare(String(b.v[sortField] ?? ''))
+    return sortDir === 'asc' ? cmp : -cmp
+  })
+
+  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #1144aa', textAlign: 'center', cursor: 'pointer', userSelect: 'none', position: 'sticky', top: 0, zIndex: 1 }
+  const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, border: '1px solid #c0c8e0', whiteSpace: 'nowrap', textAlign: 'center' }
+  const btnS: React.CSSProperties = { padding: '6px 14px', background: '#003399', color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }
+  const cols: { field: typeof sortField; label: string }[] = [
+    // סדר העמודות הראשונות כמו בטבלת "חי", אחריהן העמודות החדשות
+    { field: 'num', label: '' }, { field: 'ip', label: lang.system.colIp }, { field: 'entered_at', label: lang.system.colEntered }, { field: 'left_at', label: lang.system.colExited },
+    { field: 'duration', label: lang.system.colDuration }, { field: 'user_name', label: lang.system.colName },
+    { field: 'page', label: S.colPage }, { field: 'lang', label: S.colLang }, { field: 'user_email', label: S.colEmail },
+    { field: 'from_page', label: S.colFrom }, { field: 'max_scroll', label: S.colScroll }, { field: 'fullscreen', label: S.colFs },
+    { field: 'device', label: S.colDevice }, { field: 'os', label: S.colOs }, { field: 'browser', label: S.colBrowser }, { field: 'screen', label: S.colScreen },
+    { field: 'country', label: S.colCountry }, { field: 'region', label: S.colRegion }, { field: 'city', label: S.colCity }, { field: 'visit_id', label: S.colVisit },
+  ]
+
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'flex-start', height: '100%', boxSizing: 'border-box' }}>
+      <div ref={tableScrollRef} style={{ height: '100%', overflow: 'auto', minWidth: 0 }}>
+      <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'rtl' }}>
+        <thead>
+          <tr>{cols.map(c => <th key={c.field ?? ''} style={thS} onClick={() => toggleSort(c.field)}>{c.label}</th>)}</tr>
+        </thead>
+        <tbody>
+          {sorted.map(({ v, num }, i) => (
+            <tr key={v.id} style={{ background: i % 2 === 0 ? '#fff' : '#f4f6ff' }}>
+              <td style={tdS}>{num}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{ipDisplay(v.ip)}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{fmtDateTime(v.entered_at)}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{fmtDateTime(v.left_at)}</td>
+              <td style={tdS}>{fmtDuration(v)}</td>
+              <td style={tdS}>{v.user_name || ''}</td>
+              <td style={tdS}>{pageLabel(v.page)}</td>
+              <td style={tdS}>{v.lang || ''}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{v.user_email || ''}</td>
+              <td style={tdS}>{pageLabel(v.from_page)}</td>
+              <td style={tdS}>{v.max_scroll != null && v.left_at ? `${v.max_scroll}%` : ''}</td>
+              <td style={tdS}>{v.fullscreen ? S.yes : ''}</td>
+              <td style={tdS}>{v.device || ''}</td>
+              <td style={tdS}>{v.os || ''}</td>
+              <td style={tdS}>{v.browser || ''}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{v.screen || ''}</td>
+              <td style={tdS}>{v.country || ''}</td>
+              <td style={tdS}>{v.region || ''}</td>
+              <td style={tdS}>{v.city || ''}</td>
+              <td style={tdS}>{v.visit_id ?? ''}</td>
+            </tr>
+          ))}
+          {views.length === 0 && (
+            <tr><td colSpan={cols.length} style={{ ...tdS, padding: 20, color: '#888' }}>{S.noViews}</td></tr>
+          )}
+        </tbody>
+      </table>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+        <button onClick={handleReset} style={btnS}>{lang.system.reset}</button>
+        <button onClick={handleRefresh} style={{ ...btnS, background: justRefreshed ? '#006600' : '#003399' }}>{lang.system.refresh}</button>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button onClick={scrollToTop} style={{ ...btnS, padding: '6px 10px', fontSize: 14 }}>↑</button>
+          <button onClick={scrollToBottom} style={{ ...btnS, padding: '6px 10px', fontSize: 14 }}>↓</button>
+        </div>
+        <div style={{ fontSize: 14, fontWeight: 'bold', color: '#003399' }}>{S.total}: {views.length}</div>
+      </div>
+    </div>
+  )
+}
+
 function LandingVisitsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
   // מחרוזות חדשות - עברית בלבד עד סבב התרגום
   const S = { colCountry: 'מדינה', colLang: 'שפה', colSource: 'מקור הגעה', colFbPage: 'דף פייסבוק', noVisits: 'אין כניסות', total: 'סה״כ' }
@@ -3569,7 +3767,7 @@ function LandingVisitsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg:
     return sortDir === 'asc' ? cmp : -cmp
   })
 
-  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #1144aa', textAlign: 'center', cursor: 'pointer', userSelect: 'none' }
+  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #1144aa', textAlign: 'center', cursor: 'pointer', userSelect: 'none', position: 'sticky', top: 0, zIndex: 1 }
   const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, border: '1px solid #c0c8e0', whiteSpace: 'nowrap', textAlign: 'center' }
 
   return (
@@ -3592,7 +3790,7 @@ function LandingVisitsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg:
             <tr key={v.id} style={{ background: i % 2 === 0 ? '#fff' : '#f4f6ff' }}>
               <td style={tdS}>{num}</td>
               <td style={{ ...tdS, direction: 'ltr' }}>{fmtDateTime(v.entered_at)}</td>
-              <td style={{ ...tdS, direction: 'ltr' }}>{v.ip || ''}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{ipDisplay(v.ip)}</td>
               <td style={tdS}>{v.country || ''}</td>
               <td style={tdS}>{v.lang || ''}</td>
               <td style={tdS}>{sourceLabel(v)}</td>
@@ -3705,11 +3903,6 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
     else { setSortField(field); setSortDir('asc') }
   }
 
-  const ipHex = (ip: string | null) => {
-    if (!ip) return ''
-    const parts = ip.split('.')
-    return parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2, '0').toUpperCase()).join('') : ''
-  }
   const fmtDateTime = (iso: string) => {
     const d = new Date(iso)
     const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -3741,7 +3934,7 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
     return sortDir === 'asc' ? cmp : -cmp
   })
 
-  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #1144aa', textAlign: 'center', cursor: 'pointer', userSelect: 'none' }
+  const thS: React.CSSProperties = { padding: '6px 8px', background: '#003399', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #1144aa', textAlign: 'center', cursor: 'pointer', userSelect: 'none', position: 'sticky', top: 0, zIndex: 1 }
   const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, border: '1px solid #c0c8e0', whiteSpace: 'nowrap', textAlign: 'center' }
 
   return (
@@ -3762,7 +3955,7 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
           {sorted.map(({ v, num }, i) => (
             <tr key={v.id} style={{ background: i % 2 === 0 ? '#fff' : '#f4f6ff' }}>
               <td style={tdS}>{num}</td>
-              <td style={{ ...tdS, minWidth: '160px', direction: 'ltr' }}>{v.ip || ''}{v.ip && ipHex(v.ip) ? ` (${ipHex(v.ip)})` : ''}</td>
+              <td style={{ ...tdS, minWidth: '160px', direction: 'ltr' }}>{ipDisplay(v.ip)}</td>
               <td style={{ ...tdS, direction: 'ltr' }}>{fmtDateTime(v.entered_at)}</td>
               <td style={{ ...tdS, direction: 'ltr' }}>{hasExited(v) ? fmtDateTime(v.last_seen_at) : ''}</td>
               <td style={tdS}>{fmtDuration(liveDurationMs(v))}</td>
