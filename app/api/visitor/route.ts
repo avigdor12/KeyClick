@@ -27,8 +27,9 @@ export async function POST(req: NextRequest) {
     const tempEmail = 'visitor_' + crypto.randomBytes(8).toString('hex') + VISITOR_EMAIL_DOMAIN
     const inserted = await pool.query(
       `INSERT INTO users (name, email, password_hash, language, license_type, user_plan, ip_registration, country, source, last_login_at, login_count, visitor_key)
-       VALUES ('visitor', $1, NULL, $2, $3, $3, $4, $5, 'Visitor', now(), 1, $6) RETURNING id`,
-      [tempEmail, language || 'he', LICENSE_TYPES.System_Free_Run, ip, country, hashVisitorKey(key)]
+       VALUES ('visitor', $1, NULL, $2, $3, $4, $5, $6, 'Visitor', now(), 1, $7) RETURNING id`,
+      // license_type ו-user_plan בפרמטרים נפרדים: סוגי העמודות שונים, ופרמטר אחד לשתיהן נכשל ב-Postgres
+      [tempEmail, language || 'he', LICENSE_TYPES.System_Free_Run, LICENSE_TYPES.System_Free_Run, ip, country, hashVisitorKey(key)]
     )
     const id = inserted.rows[0].id
     const updated = await pool.query(

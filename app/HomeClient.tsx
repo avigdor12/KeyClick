@@ -689,22 +689,26 @@ export default function Home() {
   const mfRevealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   function clearMfRevealTimer() { if (mfRevealTimerRef.current) { clearTimeout(mfRevealTimerRef.current); mfRevealTimerRef.current = null } }
 
+  // [Claude Code 19.10.2026, לפי הנחיית המשתמש] המשתמש הנוכחי, ולמבקר לא רשום - רשומת אורח (visitor_<id>, תקופת הרצה) שנוצרת
+  // בפעולה הראשונה שצריכה רשומה (ניהול תקציב בית, הוספת תזכורת). מחזיר את הרשומה, או null אם היצירה נכשלה
+  async function ensureUser(): Promise<UserRecord | null> {
+    if (isLoggedInExplicit && Current_User_Pointer_to_DB?.id) return Current_User_Pointer_to_DB
+    const vr = await fetch('/api/visitor', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ language: lang.code, clientIp }) })
+    const vd = await vr.json()
+    dbg('visitor', `status=${vr.status} id=${vd.user?.id ?? 'none'} error="${vd.error ?? 'none'}"`)
+    if (!vd.user?.id) return null
+    visitorRef.current = { id: vd.user.id, key: vd.key }
+    set_Current_User_Pointer_to_DB(vd.user)
+    setIsLoggedInExplicit(true)
+    if (visitIdRef.current) fetch('/api/visits', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: visitIdRef.current, userId: vd.user.id }) }).catch(() => {})
+    return vd.user
+  }
+
   // פתיחת אפליקציית ניהול תקציב בית בתוך KeyClick: אסימון כניסה חדש, והאפליקציה נטענת באזור התוכן בשפת KeyClick
   async function openMfApp() {
     try {
-      // [Claude Code 19.10.2026, לפי הנחיית המשתמש] מבקר לא רשום: נוצרת לו רשומת אורח (visitor_<id>, תקופת הרצה) רק לצורך הרצת האפליקציה
-      let userId = isLoggedInExplicit ? Current_User_Pointer_to_DB?.id : undefined
-      if (!userId) {
-        const vr = await fetch('/api/visitor', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ language: lang.code, clientIp }) })
-        const vd = await vr.json()
-        dbg('visitor', `status=${vr.status} id=${vd.user?.id ?? 'none'} error="${vd.error ?? 'none'}"`)
-        if (!vd.user?.id) return
-        userId = vd.user.id
-        visitorRef.current = { id: vd.user.id, key: vd.key }
-        set_Current_User_Pointer_to_DB(vd.user)
-        setIsLoggedInExplicit(true)
-        if (visitIdRef.current) fetch('/api/visits', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: visitIdRef.current, userId }) }).catch(() => {})
-      }
+      const userId = (await ensureUser())?.id
+      if (!userId) return
       const r = await fetch('/api/mf-app-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId }) })
       const d = await r.json()
       dbg('mfAppToken', `status=${r.status} ok=${!!d.url} error="${d.error ?? 'none'}"`)
@@ -855,7 +859,7 @@ export default function Home() {
                 mfChainRef.current = false
                 setActivePage(null)
               }
-            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onSetLoggedIn={() => setIsLoggedInExplicit(true)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onOpenDebug={() => {
+            }} onUserUpdate={(user) => set_Current_User_Pointer_to_DB(user)} onSetLoggedIn={() => setIsLoggedInExplicit(true)} onNavigate={(p) => setActivePage(p)} onMsg={setPopupMsg} onDbg={dbg} onEnsureUser={ensureUser} onOpenDebug={() => {
               if (debugWinRef.current && !debugWinRef.current.closed) { debugWinRef.current.close(); debugWinRef.current = null }
               else openDebugWin()
             }} />
@@ -5933,7 +5937,7 @@ function buildGuideNavButtons(lang: typeof languages[0]) {
 
 type ReminderRecord = { id: number; user_id: number; title: string; date: string; time: string | null; type: string }
 
-function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof languages[0] }) {
+function RemindersPage({ user, lang, onEnsureUser }: { user: UserRecord | null; lang: typeof languages[0]; onEnsureUser: () => Promise<UserRecord | null> }) {
   const [reminders, setReminders] = useState<ReminderRecord[]>([])
   const [loading, setLoading]     = useState(true)
   const [title, setTitle]         = useState('')
@@ -5949,9 +5953,12 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   useEffect(() => { fetchReminders() }, [user])
 
   const handleAdd = async () => {
-    if (!user || !title.trim() || !date) return
+    if (!title.trim() || !date) return
     setSaving(true)
-    await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: user.id, title: title.trim(), date, time: time || null, type: 'manual' }) })
+    // [Claude Code 19.10.2026, לפי הנחיית המשתמש] מבקר בלי רשומה: התזכורת הראשונה יוצרת רשומת אורח (הרשימה נטענת מחדש כשהמשתמש מתעדכן)
+    const u = user ?? await onEnsureUser()
+    if (!u) { setSaving(false); return }
+    await fetch('/api/reminders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: u.id, title: title.trim(), date, time: time || null, type: 'manual' }) })
     setTitle(''); setDate(''); setTime('')
     setSaving(false)
     fetchReminders()
@@ -5968,12 +5975,7 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   const thS: React.CSSProperties = { padding: '10px 16px', fontWeight: 700, fontSize: 15, color: '#FFD700', fontStyle: 'italic', background: '#003399', border: '2px solid #003399', textAlign: 'center', whiteSpace: 'nowrap' }
   const tdS: React.CSSProperties = { padding: '10px 16px', fontSize: 14, color: '#003399', fontWeight: 700, border: '2px solid #003399', textAlign: 'center', verticalAlign: 'middle' }
 
-  if (!user) return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: 15 }}>
-      {lang.reminders.loginRequired}
-    </div>
-  )
-
+  // [Claude Code 19.10.2026, לפי הנחיית המשתמש] מבקר בלי רשומה: הדף נפתח כרגיל עם רשימה ריקה (במקום הודעת "נדרשת כניסה")
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'auto', ...GRANITE_BG, padding: '32px 28px', boxSizing: 'border-box', direction: 'rtl' }}>
       <PageHeader subtitle={`${lang.card.infoServices} - ${lang.menu[3]}`} lang={lang} />
@@ -6034,11 +6036,11 @@ function RemindersPage({ user, lang }: { user: UserRecord | null; lang: typeof l
   )
 }
 
-function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onOpenDebug }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onOpenDebug: () => void }) {
+function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onEnsureUser, onOpenDebug }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onEnsureUser: () => Promise<UserRecord | null>; onOpenDebug: () => void }) {
   if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
-  if (page === '3')           return <RemindersPage user={user} lang={lang} />
+  if (page === '3')           return <RemindersPage user={user} lang={lang} onEnsureUser={onEnsureUser} />
   if (page === 'mf-login')    return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='default'  onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'mf-register') return <RegisterCard lang={lang} clientIp={clientIp} initialPhase='register' onClose={onClose} onLogin={onLogin} onUserUpdate={onUserUpdate} onSetLoggedIn={onSetLoggedIn} onNavigate={onNavigate} onMsg={onMsg} onDbg={onDbg} />
   if (page === 'system')      return <SystemPage user={user} lang={lang} langIdx={langIdx} onChangeLang={onChangeLang} onOpenDebug={onOpenDebug} onDbg={onDbg} onUserUpdate={onUserUpdate} onSetSystemMessage={onSetSystemMessage} prText={prText} setPrText={setPrText} prDate={prDate} setPrDate={setPrDate} onNavigate={onNavigate} />
