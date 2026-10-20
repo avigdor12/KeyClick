@@ -1,7 +1,9 @@
 // [20.10.2026] מבקש מפייסבוק לקרוא מחדש את תגיות התצוגה של כל 11 הכתובות (עברית - בלי lang).
 // משמש את app/api/og-refresh (Vercel Cron בלילה) ואת app/api/system/og-message (לחיצת "עדכון" במסך יחסי ציבור).
 // FB_APP_TOKEN = "APP_ID|APP_SECRET" של אפליקציית פייסבוק
-const URLS = ['https://keyclick.org/', ...['en', 'ru', 'de', 'fr', 'es', 'ja', 'ar', 'zh', 'it', 'hi'].map(l => `https://keyclick.org/?lang=${l}`)]
+// גם עם www: האתר מפנה את keyclick.org ל-www.keyclick.org, ופייסבוק עלול לשמור את שתי הכתובות בנפרד
+const PATHS = ['/', ...['en', 'ru', 'de', 'fr', 'es', 'ja', 'ar', 'zh', 'it', 'hi'].map(l => `/?lang=${l}`)]
+const URLS = ['https://keyclick.org', 'https://www.keyclick.org'].flatMap(h => PATHS.map(p => h + p))
 
 export type OgRefreshResult = { url: string; ok: boolean; image: string | null; error: string | null }
 
