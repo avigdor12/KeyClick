@@ -1238,6 +1238,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [ogMsgText, setOgMsgText] = useState('')
   const [ogMsgDate, setOgMsgDate] = useState('')
   const [ogMsgState, setOgMsgState] = useState<'' | 'saving' | 'saved' | 'fbFail'>('')
+  const [ogFbError, setOgFbError] = useState('')   // השגיאה שפייסבוק/השרת החזירו, מוצגת ליד "פייסבוק לא רוענן"
   const [pendingForce, setPendingForce] = useState<Record<string, string>>({})
   const [scheduleRows, setScheduleRows] = useState<ScheduleRow[]>(
     SCHEDULE_SUBJECTS.map(() => ({ price: '', months: '', fromDate: '', toDate: '', notes: '' }))
@@ -1557,7 +1558,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               {lang.system.publishedDate} <input type="date" value={ogMsgDate} onChange={e => setOgMsgDate(e.target.value)} style={{ border: 'none', borderBottom: '1px solid #999', fontSize: '13px', outline: 'none', background: 'transparent', color: '#333' }} />
             </div>
             <div style={{ marginTop: '6px', width: '730px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '6px' }}>
-              {ogMsgState === 'fbFail' && <span style={{ fontSize: '12px', color: '#cc0000' }}>{lang.system.ogFbNotRefreshed}</span>}
+              {ogMsgState === 'fbFail' && <span dir="auto" style={{ fontSize: '12px', color: '#cc0000', maxWidth: '520px', overflowWrap: 'anywhere' }}>{lang.system.ogFbNotRefreshed}{ogFbError && ` (${ogFbError})`}</span>}
               {(() => {
                 const saveOg = async (text: string) => {
                   setOgMsgState('saving')
@@ -1569,12 +1570,14 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   }
                   try {
                     const r = await fetch('/api/system/og-message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: text.trim(), tx, date }) })
-                    const d = await r.json()
-                    if (!d.ok) { setOgMsgState(''); return }
-                    if (!d.fb?.ok) { setOgMsgState('fbFail'); return }
+                    const d = await r.json().catch(() => null)
+                    if (!d) { setOgFbError(`HTTP ${r.status}`); setOgMsgState('fbFail'); return }
+                    if (!d.ok) { setOgFbError(String(d.error ?? '')); setOgMsgState('fbFail'); return }
+                    if (!d.fb?.ok) { setOgFbError(String(d.fb?.error ?? '')); setOgMsgState('fbFail'); return }
+                    setOgFbError('')
                     setOgMsgState('saved')
                     setTimeout(() => setOgMsgState(''), 2000)
-                  } catch { setOgMsgState('') }
+                  } catch (e) { setOgFbError(String(e)); setOgMsgState('fbFail') }
                 }
                 return (<>
                   <button disabled={ogMsgState === 'saving'} onClick={() => { saveOg(ogMsgText) }} style={{ fontSize: '11px', padding: '2px 10px', background: ogMsgState === 'saved' ? '#006600' : '#003399', color: '#FFD700', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>{ogMsgState === 'saving' ? '…' : ogMsgState === 'saved' ? '✓ ' + lang.system.saved : lang.card.update}</button>

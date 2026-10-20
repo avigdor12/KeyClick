@@ -11,15 +11,15 @@ export async function refreshFacebookOg(): Promise<{ ok: boolean; error?: string
   const token = process.env.FB_APP_TOKEN
   if (!token) return { ok: false, error: 'FB_APP_TOKEN missing', results: [] }
 
-  const results: OgRefreshResult[] = []
-  for (const u of URLS) {
+  // כל הכתובות במקביל - אחת אחרי השנייה לקח יותר מדקה וחצי
+  const results: OgRefreshResult[] = await Promise.all(URLS.map(async (u): Promise<OgRefreshResult> => {
     try {
       const r = await fetch(`https://graph.facebook.com/?id=${encodeURIComponent(u)}&scrape=true&access_token=${encodeURIComponent(token)}`, { method: 'POST' })
-      const body = await r.json()
-      results.push({ url: u, ok: r.ok, image: body?.image?.[0]?.url ?? null, error: body?.error?.message ?? null })
+      const body = await r.json().catch(() => null)
+      return { url: u, ok: r.ok, image: body?.image?.[0]?.url ?? null, error: r.ok ? null : (body?.error?.message ?? `HTTP ${r.status}`) }
     } catch (e) {
-      results.push({ url: u, ok: false, image: null, error: String(e) })
+      return { url: u, ok: false, image: null, error: String(e) }
     }
-  }
+  }))
   return { ok: results.every(x => x.ok), results }
 }

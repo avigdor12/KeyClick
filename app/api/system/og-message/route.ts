@@ -6,6 +6,7 @@ import { refreshFacebookOg } from '@/lib/og-refresh'
 // text = הנוסח בעברית, tx = התרגומים לשאר השפות (מתורגמים בדפדפן בלחיצת "עדכון"). ריק = הכותרת הקבועה ב-app/page.tsx.
 // אחרי שמירה מבקש מפייסבוק לרענן מיד (lib/og-refresh).
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+export const maxDuration = 60   // פייסבוק עונה לפעמים לאט על הרענון
 
 export async function GET() {
   try {
@@ -30,7 +31,8 @@ export async function POST(req: NextRequest) {
       ['KeyClick_OG_Message', JSON.stringify({ text: text ?? '', tx: tx ?? {}, date: date ?? '' })]
     )
     const fb = await refreshFacebookOg()
-    return NextResponse.json({ ok: true, fb: { ok: fb.ok, error: fb.error ?? fb.results.find(r => r.error)?.error ?? null } })
+    const bad = fb.results.find(r => !r.ok)
+    return NextResponse.json({ ok: true, fb: { ok: fb.ok, error: fb.error ?? (bad ? `${bad.url}: ${bad.error}` : null) } })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
