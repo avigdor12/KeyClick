@@ -66,7 +66,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const day = israelWeekday()
   const rot = OG_ROTATE[code] ? { topic: OG_TOPICS[day], text: OG_ROTATE[code][day] } : undefined
   const suffix = code === 'he' ? '' : `-${code}`
-  const imageUrl = rot ? `https://keyclick.org/og/${rot.topic}${suffix}.jpg` : `https://keyclick.org/og${suffix}.jpg`
+  // [22.10.2026] כתובת התמונה עם www - keyclick.org מפנה ב-308 ל-www, וייתכן שווטסאפ לא עוקב אחרי הפניה בהורדת התמונה
+  const imageUrl = rot ? `https://www.keyclick.org/og/${rot.topic}${suffix}.jpg` : `https://www.keyclick.org/og${suffix}.jpg`
   const image = { url: imageUrl, width: 2400, height: 1260 }
   const description = rot ? rot.text : m.description
   const ogTitle = (await ogMessage(code)) || m.title
