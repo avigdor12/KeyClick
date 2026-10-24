@@ -681,6 +681,26 @@ export default function Home() {
     return () => window.removeEventListener('message', onMessage)
   }, [mfAppUrl])
 
+  // [24.10.2026] חצי אחורה/קדימה של הדפדפן עוברים בין חלקי האתר: כל מעבר נרשם בהיסטוריה (הכתובת לא משתנה).
+  // מעבר שבא מהחצים עצמם כבר תואם את הרשומה הנוכחית ולכן לא נרשם שוב. דפי ניהול תקציב בית נרשמים מתוך האפליקציה (js/shell.js)
+  const histFirstRef = useRef(true)
+  const mfAppUrlRef = useRef(mfAppUrl)
+  mfAppUrlRef.current = mfAppUrl
+  useEffect(() => {
+    const st = { kcPage: activePage }
+    if (histFirstRef.current) { histFirstRef.current = false; window.history.replaceState(st, ''); return }
+    if ((window.history.state?.kcPage ?? null) !== activePage) window.history.pushState(st, '')
+  }, [activePage])
+  useEffect(() => {
+    const onPop = (e: PopStateEvent) => {
+      let p: string | null = e.state?.kcPage ?? null
+      if (p === 'mf-app' && !mfAppUrlRef.current) p = null   // האפליקציה כבר נסגרה ("צא") - חוזרים לשער
+      setActivePage(p)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   // [12.10.2026] דף השער של האפליקציה רק בכניסה הראשונה: מהפעם השנייה נשלח nogate=1 והאפליקציה נכנסת לבד.
   // נשמר בזיכרון הדף בלבד - סגירת הלשונית או טעינה מחדש (גם ניתוק אחרי שעה) מחזירות את השער
   const mfGateSeenRef = useRef(false)
