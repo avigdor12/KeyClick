@@ -686,6 +686,8 @@ export default function Home() {
   const histFirstRef = useRef(true)
   const mfAppUrlRef = useRef(mfAppUrl)
   mfAppUrlRef.current = mfAppUrl
+  const openMfAppRef = useRef<() => void>(() => {})
+  openMfAppRef.current = openMfApp
   useEffect(() => {
     const st = { kcPage: activePage }
     if (histFirstRef.current) { histFirstRef.current = false; window.history.replaceState(st, ''); return }
@@ -694,7 +696,8 @@ export default function Home() {
   useEffect(() => {
     const onPop = (e: PopStateEvent) => {
       let p: string | null = e.state?.kcPage ?? null
-      if (p === 'mf-app' && !mfAppUrlRef.current) p = null   // האפליקציה כבר נסגרה ("צא") - חוזרים לשער
+      // [25.10.2026] האפליקציה כבר נסגרה ("צא"): נפתחת מחדש כמו לחיצה על הכפתור, ונכנסת לדף האחרון שהיה פתוח בה
+      if (p === 'mf-app' && !mfAppUrlRef.current) { openMfAppRef.current(); return }
       setActivePage(p)
     }
     window.addEventListener('popstate', onPop)
@@ -707,7 +710,9 @@ export default function Home() {
   // [12.10.2026] כניסה שנייה: עד שהאפליקציה מודיעה mf:ready נשאר המסך הנוכחי. לא הודיעה תוך 10 שניות - עוברים אליה בכל מקרה
   const MF_REVEAL_TIMEOUT_MS = 10000
   const mfRevealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  function clearMfRevealTimer() { if (mfRevealTimerRef.current) { clearTimeout(mfRevealTimerRef.current); mfRevealTimerRef.current = null } }
+  // [25.10.2026] עיגול הטעינה רק בזמן ההמתנה ל-mf:ready, לא כשהאפליקציה רק מוסתרת (למשל אחרי לחיצה על התראת הודעה)
+  const [mfLoading, setMfLoading] = useState(false)
+  function clearMfRevealTimer() { setMfLoading(false); if (mfRevealTimerRef.current) { clearTimeout(mfRevealTimerRef.current); mfRevealTimerRef.current = null } }
 
   // [Claude Code 19.10.2026, לפי הנחיית המשתמש] המשתמש הנוכחי, ולמבקר לא רשום - רשומת אורח (visitor_<id>, תקופת הרצה) שנוצרת
   // בפעולה הראשונה שצריכה רשומה (ניהול תקציב בית, הוספת תזכורת). מחזיר את הרשומה, או null אם היצירה נכשלה
@@ -740,7 +745,7 @@ export default function Home() {
       dbg('mfAppToken', `nogate=${noGate}`)
       setMfAppUrl(appUrl.toString() + '#' + lang.code)
       clearMfRevealTimer()
-      if (noGate) mfRevealTimerRef.current = setTimeout(() => { mfRevealTimerRef.current = null; setActivePage('mf-app') }, MF_REVEAL_TIMEOUT_MS)
+      if (noGate) { setMfLoading(true); mfRevealTimerRef.current = setTimeout(() => { mfRevealTimerRef.current = null; setMfLoading(false); setActivePage('mf-app') }, MF_REVEAL_TIMEOUT_MS) }
       else setActivePage('mf-app')
     } catch (e) { dbg('mfAppToken', `failed: ${String(e)}`) }
   }
@@ -822,6 +827,8 @@ export default function Home() {
             <span style={{ fontSize: '9px', color: langIdx === i ? '#fff' : '#aaa', whiteSpace: 'nowrap', marginTop: l.code === 'hi' ? '2px' : '0px', display: 'block' }}>{l.name}</span>
           </button>
         ))}
+        {/* [25.10.2026] הכפתור מוצג מעל הכל (zIndex מעל מסגרת האפליקציה 5000), כדי שייראה גם כשניהול תקציב בית פתוח.
+            הלחיצה מעבירה לדף המשוב והאפליקציה רק מוסתרת - חץ אחורה מחזיר אליה באותו מצב */}
         {hasUnreadMsg && (
           <>
             <style>{`@keyframes blinkNotif { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }`}</style>
@@ -832,7 +839,7 @@ export default function Home() {
                 }
                 setActivePage('0')
               }}
-              style={{ marginLeft: 'auto', background: '#cc0000', color: '#fff', border: 'none', borderRadius: '6px', padding: '8px 18px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', animation: 'blinkNotif 1s infinite', whiteSpace: 'nowrap' }}>
+              style={{ marginLeft: 'auto', position: 'relative', zIndex: 5001, background: '#cc0000', color: '#fff', border: 'none', borderRadius: '6px', padding: '8px 18px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', animation: 'blinkNotif 1s infinite', whiteSpace: 'nowrap' }}>
               {lang.system.newMessageNotif}
             </button>
           </>
@@ -892,7 +899,7 @@ export default function Home() {
               style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', border: 'none', background: '#000', zIndex: 5000, visibility: activePage === 'mf-app' ? 'visible' : 'hidden' }} />
           )}
           {/* [12.10.2026] בזמן שהאפליקציה נטענת מאחורי המסך (כניסה שנייה): עיגול זהב מסתובב, כדי שיהיה ברור שהלחיצה נקלטה. בלי טקסט */}
-          {mfAppUrl && activePage !== 'mf-app' && (
+          {mfAppUrl && mfLoading && activePage !== 'mf-app' && (
             <div style={{ position: 'fixed', inset: 0, zIndex: 4999, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
               <style>{'@keyframes kcMfSpin { to { transform: rotate(360deg) } }'}</style>
               {/* רקע כהה עגול מתחת לעיגול, כדי שייראה גם על רקע לבן */}
@@ -4488,7 +4495,6 @@ const GUIDES_CSS = `
   .guides-page .side-caption .cap-line:last-child{ margin-bottom:0; }
   .guides-page .side-caption.right{ right:0; width:calc(50% - var(--cab-w, 520px) / 2 - 10px); font-size:32px; }
   .guides-page .side-caption.right .cap-line{ border-bottom:none; padding-bottom:0; transform:none; }
-  .guides-page .side-caption.left{ left:0; width:calc(50% - var(--cab-w, 520px) / 2 - 10px); }
 
   /* לא בטלפון (הצד הקצר של המסך קטן מ-500): שם האתר מוצג בגודל מינימום (kc-root ב-globals.css) והכיתובים נשארים */
   @media (max-width:1100px) and (min-width:500px) and (min-height:500px){
@@ -4826,9 +4832,6 @@ function GuidesPage({ lang, onNavigate }: { lang: typeof languages[0]; onNavigat
       <div className="side-caption right">
         <div className="cap-line">{lang.captions.guidesRight1}</div>
         <div className="cap-line">{lang.captions.guidesRight2}</div>
-      </div>
-      <div className="side-caption left">
-        <div className="cap-line" dir={lang.code === 'he' || lang.code === 'ar' ? 'rtl' : 'ltr'}>{lang.captions.guidesLeft}</div>
       </div>
 
       <div className="furniture">
