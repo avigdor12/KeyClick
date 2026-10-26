@@ -26,6 +26,9 @@ async function ensureTable() {
   await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS deleted_by_admin BOOLEAN DEFAULT false`)
   await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS body_lang TEXT`)
   await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT`)
+  // [Claude Code 26.10.2026, לפי הנחיית המשתמש] השם וה-IP שהלקוח ראה מעל הטופס ברגע השליחה, כדי שהמנהל יראה בדיוק אותו דבר
+  await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS header_name TEXT`)
+  await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS header_ip TEXT`)
 }
 
 export async function GET(req: NextRequest) {
@@ -66,7 +69,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     await ensureTable()
-    const { userId, userName, sentDate, title, body, ratingSite, ratingBudget, sessionId, bodyLang } = await req.json()
+    const { userId, userName, sentDate, title, body, ratingSite, ratingBudget, sessionId, bodyLang, headerName, headerIp } = await req.json()
     // שפת ההודעה: מה שהלקוח שלח, אחרת שפת המשתמש מהמסד, אחרת עברית
     let msgLang: string = bodyLang || 'he'
     if (!bodyLang && userId) {
@@ -76,9 +79,9 @@ export async function POST(req: NextRequest) {
       } catch { /* keep default */ }
     }
     const result = await pool.query(
-      `INSERT INTO feedback_messages (user_id, user_name, sent_date, title, body, rating_site, rating_budget, session_id, body_lang)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
-      [userId ?? null, userName ?? null, sentDate ?? null, title ?? null, body ?? null, ratingSite ?? null, ratingBudget ?? null, sessionId ?? null, msgLang]
+      `INSERT INTO feedback_messages (user_id, user_name, sent_date, title, body, rating_site, rating_budget, session_id, body_lang, header_name, header_ip)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
+      [userId ?? null, userName ?? null, sentDate ?? null, title ?? null, body ?? null, ratingSite ?? null, ratingBudget ?? null, sessionId ?? null, msgLang, headerName ?? '', headerIp ?? '']
     )
     return NextResponse.json({ ok: true, id: result.rows[0].id })
   } catch (e) {

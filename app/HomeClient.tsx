@@ -1046,7 +1046,7 @@ export default function Home() {
 const SCHEDULE_SUBJECTS = ['יום ה-X ההפצה', 'תקופת הרצה', 'תקופת ניסיון', 'VIP', 'חודשי', 'שנתי', 'חד פעמי'] as const
 function fmtDate(d: string) { const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}` }
 type ScheduleRow = { price: string; months: string; fromDate: string; toDate: string; notes: string }
-type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null; is_system?: boolean; is_broadcast?: boolean; body_lang?: string | null; sender_country?: string | null; sender_language?: string | null }
+type FeedbackMessage = { id: number; user_id: number | null; user_name: string | null; sent_date: string | null; title: string | null; body: string | null; rating_site: number | null; rating_budget: number | null; reply_text: string | null; reply_date: string | null; is_read: boolean; created_at: string; sender_ip?: string | null; is_system?: boolean; is_broadcast?: boolean; body_lang?: string | null; sender_country?: string | null; sender_language?: string | null; header_name?: string | null; header_ip?: string | null }
 type PaymentRecord = { id: number; user_id: number; amount: number | null; currency: string | null; plan: string | null; payment_date: string; status: string }
 
 function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof languages[0] }) {
@@ -2380,7 +2380,7 @@ function GatePage({ lang, loggedInName, onLogin, onRegister }: { lang: typeof la
 }
 
 
-function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord | null; lang: typeof languages[0]; systemMessage: string; onDbg: (func: string, msg: string) => void }) {
+function FeedbackPage({ user, lang, systemMessage, onDbg, onEnsureUser }: { user: UserRecord | null; lang: typeof languages[0]; systemMessage: string; onDbg: (func: string, msg: string) => void; onEnsureUser: () => Promise<UserRecord | null> }) {
   const [ratingSite,   setRatingSite]   = useState<number | null>(null)
   const [ratingBudget, setRatingBudget] = useState<number | null>(null)
   const [userDate,  setUserDate]  = useState(new Date().toISOString().slice(0, 10))
@@ -2469,7 +2469,8 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
   }, [showCompose, expandedMsgId, user?.id, lang.code])
 
   useEffect(() => {
-    if (!user?.id) return
+    // [Claude Code 26.10.2026, לפי הנחיית המשתמש] מבקר לא רשום: פתיחת המשוב יוצרת רשומת אורח, כמו ניהול תקציב בית; האפקט רץ שוב כשהרשומה מגיעה
+    if (!user?.id) { onEnsureUser().then(u => onDbg('FeedbackPage.init', `visitor record id=${u?.id ?? 'none'}`)); return }
     onDbg('FeedbackPage.init', `mount isAdmin=${isAdmin} sessionId=${sessionId}`)
     if (isAdmin) {
       onDbg('FeedbackPage.init', 'admin path — fetching session and messages')
@@ -2652,7 +2653,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg }: { user: UserRecord |
       const postRes = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id ?? null, userName: user?.name || userFrom || null, sentDate: userDate || null, title: userTitle || null, body: fullBody, ratingSite: ratingSite, ratingBudget: ratingBudget, sessionId: effectiveSid, bodyLang: lang.code })
+        body: JSON.stringify({ userId: user?.id ?? null, userName: user?.name || userFrom || null, sentDate: userDate || null, title: userTitle || null, body: fullBody, ratingSite: ratingSite, ratingBudget: ratingBudget, sessionId: effectiveSid, bodyLang: lang.code, headerName: user ? [user.name, user.last_name].filter(Boolean).join(' ') : '', headerIp: user?.last_ip ?? '' })
       })
       const postData = await postRes.json()
       onDbg('FeedbackPage.send', `POST response ok=${postData.ok} id=${postData.id ?? 'null'} error=${postData.error ?? 'none'}`)
@@ -3332,8 +3333,16 @@ function MessagesPage({ user, lang, onDbg }: { user: UserRecord | null; lang: ty
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'flex-end' }}>
                   <div style={{ flex: 1, textAlign: 'right', paddingBottom: '6px', fontSize: '16px', fontWeight: 'normal', color: '#003399', lineHeight: '1.5' }}>
-                    <div>{msg.user_name || '—'}</div>
-                    <div style={{ fontSize: '10px' }}>{(() => { if (!msg.sender_ip) return ''; const parts = msg.sender_ip.split('.'); const hex = parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') : ''; return `IP: ${msg.sender_ip}${hex ? ` (${hex})` : ''}` })()}</div>
+                    {/* [Claude Code 26.10.2026, לפי הנחיית המשתמש] מה שהלקוח ראה מעל הטופס ברגע השליחה; הודעות ישנות (בלי header_name) - כמו קודם */}
+                    {(() => {
+                      const snap = msg.header_name != null
+                      const hName = snap ? msg.header_name : (msg.user_name || '—')
+                      const hIp = snap ? msg.header_ip : msg.sender_ip
+                      return <>
+                        <div>{hName}</div>
+                        <div style={{ fontSize: '10px' }}>{(() => { if (!hIp) return ''; const parts = hIp.split('.'); const hex = parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2,'0').toUpperCase()).join('') : ''; return `IP: ${hIp}${hex ? ` (${hex})` : ''}` })()}</div>
+                      </>
+                    })()}
                   </div>
                   <div style={{ background: '#003399', borderRadius: '12px 12px 0 0', padding: '4px 6px 6px', display: 'inline-flex', alignItems: 'center', gap: '32px', border: '2px solid #FFD700', boxShadow: '0 4px 16px rgba(0,0,80,0.2)' }}>
                     <span style={{ fontFamily: 'var(--font-dancing),"Dancing Script",Georgia,serif', fontSize: '46px', fontWeight: 'bold', fontStyle: 'italic', color: '#FFD700' }}>KeyClick</span>
@@ -6111,7 +6120,7 @@ function RemindersPage({ user, lang, onEnsureUser }: { user: UserRecord | null; 
 }
 
 function PageContent({ page, lang, langIdx, onChangeLang, clientIp, user, systemMessage, onSetSystemMessage, prText, setPrText, prDate, setPrDate, bankingDirect, pendingBankSession, onConsumeBankSession, onClose, onLogin, onUserUpdate, onSetLoggedIn, onNavigate, onMsg, onDbg, onEnsureUser, onOpenDebug }: { page: string; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; clientIp: string; user: UserRecord | null; systemMessage: string; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; bankingDirect: boolean; pendingBankSession: string | null; onConsumeBankSession: () => void; onClose: () => void; onLogin: (user: UserRecord) => void; onUserUpdate: (user: UserRecord) => void; onSetLoggedIn: () => void; onNavigate: (page: string) => void; onMsg: (m: { title: string; subtitle?: string; body: string; bodyColor?: string }) => void; onDbg: (func: string, msg: string) => void; onEnsureUser: () => Promise<UserRecord | null>; onOpenDebug: () => void }) {
-  if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} />
+  if (page === '0')           return <FeedbackPage user={user} lang={lang} systemMessage={systemMessage} onDbg={onDbg} onEnsureUser={onEnsureUser} />
   if (page === '1')           return <UpdatesPage lang={lang} />
   if (page === '2')           return <MessagesPage user={user} lang={lang} onDbg={onDbg} />
   if (page === '3')           return <RemindersPage user={user} lang={lang} onEnsureUser={onEnsureUser} />
