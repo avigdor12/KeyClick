@@ -5657,12 +5657,12 @@ function GuidesMusicBar({ langCode }: { langCode: string }) {
   const filesRef = useRef<string[]>([])
   const queueRef = useRef<string[]>([])
   const indexRef = useRef(-1)
-  const enabledRef = useRef(true)
-  const [musicEnabled, setMusicEnabled] = useState(true)
+  const enabledRef = useRef(false)
+  const [musicEnabled, setMusicEnabled] = useState(false)
   const [trackName, setTrackName] = useState('')
 
   useEffect(() => {
-    const saved = localStorage.getItem('guidesMusicEnabled')
+    const saved = sessionStorage.getItem('guidesMusicEnabled')
     if (saved !== null) setMusicEnabled(saved === '1')
   }, [])
 
@@ -5671,7 +5671,7 @@ function GuidesMusicBar({ langCode }: { langCode: string }) {
   function toggleMusicEnabled() {
     setMusicEnabled(v => {
       const next = !v
-      localStorage.setItem('guidesMusicEnabled', next ? '1' : '0')
+      sessionStorage.setItem('guidesMusicEnabled', next ? '1' : '0')
       return next
     })
   }
