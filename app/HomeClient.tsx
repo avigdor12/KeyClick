@@ -1205,6 +1205,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const [activeMfBtnTest, setActiveMfBtnTest] = useState<string | null>(null)
   const [newFolderNameTest, setNewFolderNameTest] = useState('')
   const [usersEditMode, setUsersEditMode] = useState(false)
+  const [purgingVisitors, setPurgingVisitors] = useState(false)
   const [pendingUserEdits, setPendingUserEdits] = useState<Record<string, Record<string, unknown>>>({})
   const [debugOpen, setDebugOpen] = useState(false)
   const [buildOpen, setBuildOpen] = useState(false)
@@ -1500,7 +1501,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
       {/* Main content */}
-      <div ref={mainContentRef} style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: view === 'messages' ? 0 : view === 'statistics' ? '0 20px 16px' : '16px 20px', ...GRANITE_BG }}>
+      <div ref={mainContentRef} style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: view === 'messages' ? 0 : (view === 'statistics' || view === 'users') ? '0 20px 16px' : '16px 20px', ...GRANITE_BG }}>
         {view === 'none' && (
           <div style={{ color: '#aaa', fontSize: 16, marginTop: 40, textAlign: 'center' }}>{lang.system.selectAction}</div>
         )}
@@ -1777,12 +1778,122 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         )}
 
 {view === 'users' && (
-          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <div style={{ width: 'fit-content', marginLeft: '0px' }}>
-            <div style={{ fontWeight: 'bold', fontSize: 17, marginBottom: 10, color: '#003399', textAlign: 'right' }}>{lang.system.users}</div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', direction: 'ltr' }}>
+          // [Claude Code 27.10.2026, לפי הנחיית המשתמש] גובה מלא: הכותרת והכפתורים קבועים למעלה, רק הטבלה נגללת
+          <div style={{ display: 'flex', justifyContent: 'flex-start', height: '100%' }}>
+            <div style={{ width: 'fit-content', maxWidth: '100%', marginLeft: '0px', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+            <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'flex-end', alignItems: 'stretch', gap: 14 }}>
+            {/* [Claude Code 27.10.2026, לפי הנחיית המשתמש] מחוץ למסגרות: מוחק רשומות visitor שהדף שלהן לא פעיל (בלי סימן חיים יותר מ-20 דקות) */}
+            {/* אותו מבנה כמו המסגרות (שורת כותרת + תיבה) בלי מסגרת נראית, כדי שהכפתור יהיה באותה שורה של שאר הכפתורים */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <span style={{ fontWeight: 'bold', fontSize: 12, marginBottom: 4, visibility: 'hidden' }}>&nbsp;</span>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid transparent', borderRadius: 6, padding: '8px 0' }}>
+            <button
+              onClick={async () => {
+                if (purgingVisitors) return
+                setPurgingVisitors(true)
+                try {
+                  const d = await fetch('/api/system/purge-visitors', { method: 'POST' }).then(r => r.json())
+                  onDbg('purgeVisitors', d.ok ? `נמחקו ${d.deleted.length}: ${d.deleted.join(', ')}` : `נכשל: ${d.error}`)
+                } catch (e) { onDbg('purgeVisitors', `שגיאת רשת: ${String(e)}`) }
+                await fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
+                setPurgingVisitors(false)
+              }}
+              style={{ background: purgingVisitors ? '#cc6600' : '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: purgingVisitors ? 'default' : 'pointer', fontWeight: 'bold' }}>
+              איפוס משתמשים
+            </button>
+            </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <span style={{ color: 'red', fontWeight: 'bold', fontSize: 12, marginBottom: 4 }}>שינוי נתוני משתמש</span>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid #003399', borderRadius: 6, padding: '8px 12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
+              <button
+                onClick={() => { fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {}) }}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                רענן
+              </button>
+              <button
+                onClick={() => { setUsersEditMode(m => !m); if (usersEditMode) { setPendingUserEdits({}); setPendingForce({}) } }}
+                style={{ background: usersEditMode ? '#cc6600' : '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                {lang.system.editButton}
+              </button>
+              <button
+                onClick={async () => {
+                  const forceEntries = Object.entries(pendingForce)
+                  await Promise.all(forceEntries.map(async ([userId, systemForce]) => {
+                    try {
+                      await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) })
+                    } catch { /* */ }
+                  }))
+                  const editEntries = Object.entries(pendingUserEdits)
+                  await Promise.all(editEntries.map(async ([userId, fields]) => {
+                    await Promise.all(Object.entries(fields).map(async ([field, value]) => {
+                      try {
+                        await fetch('/api/system/update-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, field, value }) })
+                      } catch { /* */ }
+                    }))
+                  }))
+                  setPendingForce({})
+                  setPendingUserEdits({})
+                  if (Object.keys(pendingUserEdits).length > 0) setUsersEditMode(false)
+                  fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
+                }}
+                disabled={Object.keys(pendingForce).length === 0 && Object.keys(pendingUserEdits).length === 0}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 16px', fontSize: 13, fontWeight: 'bold', cursor: (Object.keys(pendingForce).length > 0 || Object.keys(pendingUserEdits).length > 0) ? 'pointer' : 'default', opacity: (Object.keys(pendingForce).length > 0 || Object.keys(pendingUserEdits).length > 0) ? 1 : 0.4 }}>
+                {lang.card.update}
+              </button>
+            </div>
+            </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <span style={{ width: 18, height: 18, borderRadius: '50%', display: 'inline-block', border: '1px solid #888', background: resetPasswordLight === 'red' ? '#cc0000' : resetPasswordLight === 'green' ? '#00aa00' : '#ccc' }} />
+                <span style={{ color: 'red', fontWeight: 'bold', fontSize: 12 }}>איפוס סיסמת משתמש</span>
+              </div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid #003399', borderRadius: 6, padding: '8px 12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 6 }}>
+              {resetPasswordUser && <span style={{ fontSize: 12, color: '#003399', fontWeight: 'bold' }}>{resetPasswordUser.email}</span>}
+              <button
+                onClick={() => { onDbg('resetPassword', `בוטל email="${resetPasswordUser?.email ?? ''}"`); setResetPasswordUser(null); setNewPasswordText(''); setPasswordResetMsg(''); setResetPasswordLight('off') }}
+                style={{ background: '#cc0000', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                בטל
+              </button>
+              <button
+                onClick={() => { onDbg('resetPassword', 'נקה לוח נלחץ'); setNewPasswordText(''); setPasswordResetMsg('') }}
+                style={{ background: '#888', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                נקה לוח
+              </button>
+              <input value={newPasswordText} onChange={e => setNewPasswordText(e.target.value)} placeholder="לוח"
+                style={{ fontSize: 12, border: '1px solid #003399', borderRadius: 4, padding: '4px 8px', width: 160, color: 'red', fontWeight: 'bold', background: '#fff' }} />
+              <button
+                onClick={async () => {
+                  if (!newPasswordText || !resetPasswordUser) { setPasswordResetMsg('נא לבחור לקוח ולהקליד סיסמה'); return }
+                  onDbg('resetPassword', `שלח נלחץ email="${resetPasswordUser.email}"`)
+                  try {
+                    const r = await fetch('/api/system/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: resetPasswordUser.email, newPassword: newPasswordText }) })
+                    const d = await r.json()
+                    onDbg('resetPassword', d.success ? `הצלחה email="${resetPasswordUser.email}"` : `נכשל: ${d.error || 'שגיאה'}`)
+                    if (d.success) setResetPasswordLight('green')
+                    setPasswordResetMsg(d.success ? 'הסיסמה עודכנה בהצלחה' : (d.error || 'שגיאה'))
+                  } catch (e) { onDbg('resetPassword', `שגיאת רשת: ${String(e)}`); setPasswordResetMsg('שגיאה: ' + String(e)) }
+                }}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                שלח
+              </button>
+              <button
+                onClick={() => { onDbg('resetPassword', 'העתק נלחץ'); navigator.clipboard?.writeText(newPasswordText).catch(() => {}) }}
+                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
+                העתק
+              </button>
+              {passwordResetMsg && <span style={{ fontSize: 11, color: passwordResetMsg.includes('בהצלחה') ? '#006600' : '#cc0000' }}>{passwordResetMsg}</span>}
+            </div>
+            </div>
+            </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', direction: 'ltr', flex: 1, minHeight: 0, overflow: 'auto' }}>
             <table style={{ borderCollapse: 'collapse', fontSize: 12, flexShrink: 0 }}>
-              <thead>
+              {/* [Claude Code 27.10.2026, לפי הנחיית המשתמש] הכותרות נשארות למעלה בגלילה */}
+              <thead style={{ position: 'sticky', top: 0, zIndex: 2 }}>
                 <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '3px 6px', border: '1px solid transparent', color: '#003399' }}>&nbsp;</th></tr>
                 <tr style={{ background: '#e8eaf6' }}><th style={{ padding: '3px 5px', border: '1px solid transparent' }}>&nbsp;</th></tr>
               </thead>
@@ -1808,7 +1919,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
             </table>
             <div style={{ border: '2px solid #003399', borderRadius: 3, flexShrink: 0 }}>
               <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'ltr', whiteSpace: 'nowrap' }}>
-                <thead>
+                <thead style={{ position: 'sticky', top: 0, zIndex: 2 }}>
                   <tr style={{ background: '#e8eaf6' }}>
                     <th colSpan={13} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>{lang.system.generalGroup}</th>
                     <th colSpan={6} style={{ padding: '3px 6px', border: '1px solid #a0a8c0', color: '#003399', fontWeight: 'bold', textAlign: 'center' }}>M Finance</th>
@@ -1913,94 +2024,6 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                   })}
                 </tbody>
               </table>
-            </div>
-            </div>
-            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', alignItems: 'stretch', gap: 14 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <span style={{ color: 'red', fontWeight: 'bold', fontSize: 12, marginBottom: 4 }}>שינוי נתוני משתמש</span>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid #003399', borderRadius: 6, padding: '8px 12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
-              <button
-                onClick={() => { fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {}) }}
-                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
-                רענן
-              </button>
-              <button
-                onClick={() => { setUsersEditMode(m => !m); if (usersEditMode) { setPendingUserEdits({}); setPendingForce({}) } }}
-                style={{ background: usersEditMode ? '#cc6600' : '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
-                {lang.system.editButton}
-              </button>
-              <button
-                onClick={async () => {
-                  const forceEntries = Object.entries(pendingForce)
-                  await Promise.all(forceEntries.map(async ([userId, systemForce]) => {
-                    try {
-                      await fetch('/api/system/force-plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, systemForce }) })
-                    } catch { /* */ }
-                  }))
-                  const editEntries = Object.entries(pendingUserEdits)
-                  await Promise.all(editEntries.map(async ([userId, fields]) => {
-                    await Promise.all(Object.entries(fields).map(async ([field, value]) => {
-                      try {
-                        await fetch('/api/system/update-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, field, value }) })
-                      } catch { /* */ }
-                    }))
-                  }))
-                  setPendingForce({})
-                  setPendingUserEdits({})
-                  if (Object.keys(pendingUserEdits).length > 0) setUsersEditMode(false)
-                  fetch('/api/system/users').then(r => r.json()).then(d => setUsers(d.users ?? [])).catch(() => {})
-                }}
-                disabled={Object.keys(pendingForce).length === 0 && Object.keys(pendingUserEdits).length === 0}
-                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 16px', fontSize: 13, fontWeight: 'bold', cursor: (Object.keys(pendingForce).length > 0 || Object.keys(pendingUserEdits).length > 0) ? 'pointer' : 'default', opacity: (Object.keys(pendingForce).length > 0 || Object.keys(pendingUserEdits).length > 0) ? 1 : 0.4 }}>
-                {lang.card.update}
-              </button>
-            </div>
-            </div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                <span style={{ width: 18, height: 18, borderRadius: '50%', display: 'inline-block', border: '1px solid #888', background: resetPasswordLight === 'red' ? '#cc0000' : resetPasswordLight === 'green' ? '#00aa00' : '#ccc' }} />
-                <span style={{ color: 'red', fontWeight: 'bold', fontSize: 12 }}>איפוס סיסמת משתמש</span>
-              </div>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid #003399', borderRadius: 6, padding: '8px 12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 6 }}>
-              {resetPasswordUser && <span style={{ fontSize: 12, color: '#003399', fontWeight: 'bold' }}>{resetPasswordUser.email}</span>}
-              <button
-                onClick={() => { onDbg('resetPassword', `בוטל email="${resetPasswordUser?.email ?? ''}"`); setResetPasswordUser(null); setNewPasswordText(''); setPasswordResetMsg(''); setResetPasswordLight('off') }}
-                style={{ background: '#cc0000', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
-                בטל
-              </button>
-              <button
-                onClick={() => { onDbg('resetPassword', 'נקה לוח נלחץ'); setNewPasswordText(''); setPasswordResetMsg('') }}
-                style={{ background: '#888', border: 'none', borderRadius: 5, color: '#fff', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
-                נקה לוח
-              </button>
-              <input value={newPasswordText} onChange={e => setNewPasswordText(e.target.value)} placeholder="לוח"
-                style={{ fontSize: 12, border: '1px solid #003399', borderRadius: 4, padding: '4px 8px', width: 160, color: 'red', fontWeight: 'bold', background: '#fff' }} />
-              <button
-                onClick={async () => {
-                  if (!newPasswordText || !resetPasswordUser) { setPasswordResetMsg('נא לבחור לקוח ולהקליד סיסמה'); return }
-                  onDbg('resetPassword', `שלח נלחץ email="${resetPasswordUser.email}"`)
-                  try {
-                    const r = await fetch('/api/system/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: resetPasswordUser.email, newPassword: newPasswordText }) })
-                    const d = await r.json()
-                    onDbg('resetPassword', d.success ? `הצלחה email="${resetPasswordUser.email}"` : `נכשל: ${d.error || 'שגיאה'}`)
-                    if (d.success) setResetPasswordLight('green')
-                    setPasswordResetMsg(d.success ? 'הסיסמה עודכנה בהצלחה' : (d.error || 'שגיאה'))
-                  } catch (e) { onDbg('resetPassword', `שגיאת רשת: ${String(e)}`); setPasswordResetMsg('שגיאה: ' + String(e)) }
-                }}
-                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
-                שלח
-              </button>
-              <button
-                onClick={() => { onDbg('resetPassword', 'העתק נלחץ'); navigator.clipboard?.writeText(newPasswordText).catch(() => {}) }}
-                style={{ background: '#003399', border: 'none', borderRadius: 5, color: '#FFD700', padding: '5px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 'bold' }}>
-                העתק
-              </button>
-              {passwordResetMsg && <span style={{ fontSize: 11, color: passwordResetMsg.includes('בהצלחה') ? '#006600' : '#cc0000' }}>{passwordResetMsg}</span>}
-            </div>
-            </div>
             </div>
             </div>
             </div>
