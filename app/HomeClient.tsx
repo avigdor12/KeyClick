@@ -991,6 +991,8 @@ export default function Home() {
 
 
           <div style={{ flex: 1 }} />
+          {/* [28.10.2026] כפתור "בשימוש המערכת" מוצג לבעל המערכת בלבד (הערת לקוח) */}
+          {isAdminAccount && (
           <div style={{ position: 'relative', overflow: 'hidden' }}>
             {!isAdminAccount && (
               <div style={{ position: 'absolute', top: '6px', left: '-22px', width: '90px', transform: 'rotate(-45deg)', background: '#c0392b', color: '#fff', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', padding: '1px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.5)', zIndex: 5, pointerEvents: 'none' }}>{lang.card.locked}</div>
@@ -1013,6 +1015,7 @@ export default function Home() {
               }}
             >{lang.system.adminButton}</button>
           </div>
+          )}
           {hasNewCustomerMsg && (
             <button onClick={async () => {
                 setHasNewCustomerMsg(false)
