@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { detectSource } from '@/lib/traffic-source'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -15,6 +16,9 @@ async function ensureTable() {
   `)
   await pool.query(`ALTER TABLE visits ADD COLUMN IF NOT EXISTS country TEXT`)
   await pool.query(`ALTER TABLE visits ADD COLUMN IF NOT EXISTS region TEXT`)
+  // [Claude Code 03.11.2026, לפי הנחיית המשתמש] מקור הגעה + דף ההפניה (כמו ביומן דף נחיתה)
+  await pool.query(`ALTER TABLE visits ADD COLUMN IF NOT EXISTS source TEXT`)
+  await pool.query(`ALTER TABLE visits ADD COLUMN IF NOT EXISTS referrer TEXT`)
 }
 
 function isPublicIp(ip: string): boolean {
@@ -38,7 +42,7 @@ async function lookupGeo(ip: string): Promise<{ country: string | null; region: 
 export async function GET() {
   try {
     await ensureTable()
-    const result = await pool.query('SELECT id, ip, user_name, entered_at, last_seen_at, country, region FROM visits ORDER BY entered_at ASC')
+    const result = await pool.query('SELECT id, ip, user_name, entered_at, last_seen_at, country, region, source FROM visits ORDER BY entered_at ASC')
     return NextResponse.json({ visits: result.rows })
   } catch (e) {
     return NextResponse.json({ visits: [], error: String(e) })
@@ -48,7 +52,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     await ensureTable()
-    const { clientIp } = await req.json().catch(() => ({ clientIp: '' }))
+    const body: { clientIp?: string; referrer?: string; search?: string } = await req.json().catch(() => ({}))
+    const clientIp = body.clientIp || ''
     const rawIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
                 ?? req.headers.get('x-real-ip')
                 ?? (req as NextRequest & { ip?: string }).ip
@@ -67,9 +72,11 @@ export async function POST(req: NextRequest) {
     const matched = await pool.query('SELECT name FROM users WHERE last_ip=$1 LIMIT 1', [ip])
     const userName = matched.rows[0]?.name ?? null
     const geo = await lookupGeo(ip)
+    const referrer = String(body.referrer || '').slice(0, 300)
+    const source = detectSource(referrer, String(body.search || ''))
     const result = await pool.query(
-      'INSERT INTO visits (ip, user_name, country, region) VALUES ($1,$2,$3,$4) RETURNING id',
-      [ip, userName, geo.country, geo.region]
+      'INSERT INTO visits (ip, user_name, country, region, source, referrer) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id',
+      [ip, userName, geo.country, geo.region, source, referrer || null]
     )
     return NextResponse.json({ ok: true, id: result.rows[0].id })
   } catch (e) {

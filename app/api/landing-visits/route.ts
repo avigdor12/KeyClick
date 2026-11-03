@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { detectSource } from '@/lib/traffic-source'
 
 // [Claude Code 12.10.2026, לפי הנחיית המשתמש] כניסות לדף הנחיתה (landing.keyclick.org).
 // דף הנחיתה שולח sendBeacon בכל כניסה; מוצג בבשימוש המערכת > איסוף נתונים > דף נחיתה.
@@ -20,22 +21,7 @@ async function ensureTable() {
   `)
 }
 
-// מקור הגעה: utm_source בקישור, אחרת fbclid (פייסבוק מוסיפה לקישורים יוצאים), אחרת לפי דף ההפניה
-function detectSource(referrer: string, search: string): string {
-  const params = new URLSearchParams(search || '')
-  const utm = params.get('utm_source')
-  if (utm) return utm.toLowerCase().slice(0, 40)
-  if (params.get('fbclid')) return 'facebook'
-  if (!referrer) return 'direct'
-  let host = ''
-  try { host = new URL(referrer).hostname.toLowerCase() } catch { return 'other' }
-  if (/(^|\.)(facebook\.com|fb\.com|fb\.me)$/.test(host)) return 'facebook'
-  if (/(^|\.)instagram\.com$/.test(host)) return 'instagram'
-  if (/(^|\.)(whatsapp\.com|wa\.me)$/.test(host)) return 'whatsapp'
-  if (/(^|\.)google\./.test(host)) return 'google'
-  if (/(^|\.)keyclick\.org$/.test(host)) return 'keyclick'
-  return host.slice(0, 60)
-}
+// מקור הגעה: lib/traffic-source.ts (משותף עם יומן "חי", 03.11.2026)
 
 export async function GET() {
   try {

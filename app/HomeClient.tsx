@@ -463,7 +463,8 @@ export default function Home() {
       }).catch(() => {})
     }
     dbg('flowDiagram', '1/10-לקוח נכנס לאתר, הקלט IP לסטטיסטיקה')
-    fetch('/api/visits', { method: 'POST' })
+    // [Claude Code 03.11.2026, לפי הנחיית המשתמש] שולחים דף הפניה + פרמטרי הכתובת (utm_source/fbclid) לזיהוי מקור הגעה ביומן "חי"
+    fetch('/api/visits', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ referrer: document.referrer || '', search: window.location.search || '' }) })
       .then(r => r.json())
       .then(rd => { if (rd.ok) visitIdRef.current = rd.id })
       .catch(() => {})
@@ -3660,7 +3661,7 @@ function PageHeader({ subtitle, layout = 'row', lang, extra }: { subtitle: strin
   )
 }
 
-type VisitRecord = { id: number; ip: string | null; user_name: string | null; entered_at: string; last_seen_at: string; country: string | null; region: string | null }
+type VisitRecord = { id: number; ip: string | null; user_name: string | null; entered_at: string; last_seen_at: string; country: string | null; region: string | null; source: string | null }
 type SamplingConfig = { runEnabled: boolean; startDate: string | null; endDate: string | null; endEnabled: boolean }
 
 // [Claude Code 12.10.2026, לפי הנחיית המשתמש] איסוף נתונים > דף נחיתה: כניסות ל-landing.keyclick.org. עברית בלבד עד סבב תרגום
@@ -4007,10 +4008,14 @@ function LandingVisitsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg:
 }
 
 function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdateSamplingConfig, onDbg }: { lang: typeof languages[0]; visits: VisitRecord[]; reload: () => void; samplingConfig: SamplingConfig; onUpdateSamplingConfig: (next: SamplingConfig) => void; onDbg: (func: string, msg: string) => void }) {
-  const [sortField, setSortField] = useState<'num' | 'ip' | 'entered' | 'exited' | 'duration' | 'name' | null>(null)
+  const [sortField, setSortField] = useState<'num' | 'ip' | 'entered' | 'exited' | 'duration' | 'name' | 'source' | 'fbpage' | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [paused, setPaused] = useState(false)
   const [frozenVisits, setFrozenVisits] = useState<VisitRecord[]>(liveVisits)
+  // [Claude Code 03.11.2026, לפי הנחיית המשתמש] מקור הגעה + דף פייסבוק, כמו ביומן דף נחיתה. עברית בלבד
+  const S_SRC = { colSource: 'מקור הגעה', colFbPage: 'דף פייסבוק' }
+  const sourceLabel = (v: VisitRecord) => v.source ? (LANDING_SOURCE_LABEL[v.source] ?? v.source) : ''
+  const fbPage = (v: VisitRecord) => v.source ? (LANDING_FB_PAGE[v.source] ?? '') : ''
   const [justRefreshed, setJustRefreshed] = useState(false)
   const [scrollLocked, setScrollLocked] = useState(false)
   const tableScrollRef = useRef<HTMLDivElement>(null)
@@ -4090,6 +4095,8 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
     else if (sortField === 'exited') cmp = new Date(a.v.last_seen_at).getTime() - new Date(b.v.last_seen_at).getTime()
     else if (sortField === 'duration') cmp = liveDurationMs(a.v) - liveDurationMs(b.v)
     else if (sortField === 'name') cmp = (a.v.user_name || '').localeCompare(b.v.user_name || '')
+    else if (sortField === 'source') cmp = sourceLabel(a.v).localeCompare(sourceLabel(b.v))
+    else if (sortField === 'fbpage') cmp = fbPage(a.v).localeCompare(fbPage(b.v))
     return sortDir === 'asc' ? cmp : -cmp
   })
 
@@ -4108,6 +4115,8 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
             <th style={{ ...thS, minWidth: '140px' }} onClick={() => toggleSort('exited')}>{lang.system.colExited}</th>
             <th style={thS} onClick={() => toggleSort('duration')}>{lang.system.colDuration}</th>
             <th style={{ ...thS, minWidth: '160px' }} onClick={() => toggleSort('name')}>{lang.system.colName}</th>
+            <th style={{ ...thS, minWidth: '100px' }} onClick={() => toggleSort('source')}>{S_SRC.colSource}</th>
+            <th style={{ ...thS, minWidth: '110px' }} onClick={() => toggleSort('fbpage')}>{S_SRC.colFbPage}</th>
           </tr>
         </thead>
         <tbody>
@@ -4119,10 +4128,12 @@ function VisitsTable({ lang, visits: liveVisits, reload, samplingConfig, onUpdat
               <td style={{ ...tdS, direction: 'ltr' }}>{hasExited(v) ? fmtDateTime(v.last_seen_at) : ''}</td>
               <td style={tdS}>{fmtDuration(liveDurationMs(v))}</td>
               <td style={{ ...tdS, minWidth: '160px' }}>{v.user_name || ''}</td>
+              <td style={tdS}>{sourceLabel(v)}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{fbPage(v)}</td>
             </tr>
           ))}
           {visits.length === 0 && (
-            <tr><td colSpan={6} style={{ ...tdS, padding: 20, color: '#888' }}>{lang.system.noMessages}</td></tr>
+            <tr><td colSpan={8} style={{ ...tdS, padding: 20, color: '#888' }}>{lang.system.noMessages}</td></tr>
           )}
         </tbody>
       </table>
