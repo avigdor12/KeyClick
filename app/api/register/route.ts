@@ -3,6 +3,7 @@ import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
 import { hashPassword } from '@/lib/password'
 import { withKcToken } from '@/lib/kc-auth'
+import { signupLimited } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -22,6 +23,8 @@ export async function POST(req: NextRequest) {
 
   if (!email) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
   if (!name || !String(name).trim()) return NextResponse.json({ error: 'נא להקליד שם' }, { status: 400 })
+  // [22.11.2026] הגבלת הרשמות מאותה כתובת IP (lib/kc-security.ts)
+  const limited = await signupLimited(req, 'register'); if (limited) return limited
   if (password && password.length < 6) {
     return NextResponse.json({ error: 'סיסמה חייבת להכיל לפחות 6 תווים' }, { status: 400 })
   }

@@ -5,6 +5,7 @@ import { syncUsersToApp } from '@/lib/mf-sync'
 import { LICENSE_TYPES } from '@/lib/license-types'
 import { VISITOR_EMAIL_DOMAIN, ensureVisitorColumns, hashVisitorKey, purgeStaleVisitors } from '@/lib/visitor'
 import { withKcToken } from '@/lib/kc-auth'
+import { signupLimited } from '@/lib/kc-security'
 
 // [Claude Code 19.10.2026, לפי הנחיית המשתמש] רשומת אורח: מבקר לא רשום שפותח את ניהול תקציב בית מקבל רשומת משתמש visitor_<id>
 // בתוכנית תקופת הרצה, רק לצורך הרצת האפליקציה. בלי סיסמה, ונמחקת ביציאה מהאתר (ראה lib/visitor.ts).
@@ -15,6 +16,8 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 export async function POST(req: NextRequest) {
   try {
     const { language, clientIp } = await req.json().catch(() => ({})) as { language?: string; clientIp?: string }
+    // [22.11.2026] הגבלת רשומות מבקר מאותה כתובת IP (lib/kc-security.ts)
+    const limited = await signupLimited(req, 'visitor'); if (limited) return limited
     await ensureVisitorColumns()
     await purgeStaleVisitors()
     const rawIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim()

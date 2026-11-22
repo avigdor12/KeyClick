@@ -192,3 +192,28 @@ export async function recordLoginFailure(req: Request, email: string) {
 export async function clearLoginFailures(email: string) {
   try { await ensureFails(); await pool.query('DELETE FROM login_failures WHERE lower(email) = lower($1)', [email]) } catch { /* ignore */ }
 }
+
+// ---------- הגבלת הרשמות ----------
+// [22.11.2026] מניעת הצפת המסד ברשומות מזויפות: מאותה כתובת IP בשעה - עד 5 הרשמות, ועד 30 רשומות מבקר
+// (מבקר - יותר, כי כמה אנשים יכולים לגלוש מאותה רשת, למשל משרד). מעבר לזה - תשובה 429, בלי רישום רשומה.
+export const SIGNUP_LIMITS = { register: 5, visitor: 30 } as const
+export const SIGNUP_LIMIT_TEXT = 'יותר מדי הרשמות מהכתובת הזו. נסה שוב בעוד שעה'
+let signupReady = false
+export async function signupLimited(req: Request, kind: keyof typeof SIGNUP_LIMITS): Promise<Response | null> {
+  try {
+    if (!signupReady) {
+      await pool.query(`CREATE TABLE IF NOT EXISTS signup_attempts (id SERIAL PRIMARY KEY, kind TEXT NOT NULL, ip TEXT NOT NULL, at TIMESTAMPTZ NOT NULL DEFAULT NOW())`)
+      signupReady = true
+    }
+    const ip = requestIp(req)
+    if (!ip) return null
+    await pool.query(`DELETE FROM signup_attempts WHERE at < NOW() - interval '1 hour'`)
+    const r = await pool.query('SELECT count(*)::int AS n FROM signup_attempts WHERE kind = $1 AND ip = $2', [kind, ip])
+    if ((r.rows[0]?.n ?? 0) >= SIGNUP_LIMITS[kind]) {
+      console.log(`[security] signup limit kind=${kind} ip=${ip}`)
+      return Response.json({ error: SIGNUP_LIMIT_TEXT, code: 'SIGNUP_LIMIT' }, { status: 429 })
+    }
+    await pool.query('INSERT INTO signup_attempts (kind, ip) VALUES ($1, $2)', [kind, ip])
+  } catch (e) { console.log(`[security] signupLimited failed: ${String(e)}`) }
+  return null
+}
