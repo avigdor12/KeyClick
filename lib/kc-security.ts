@@ -77,7 +77,7 @@ export async function logIncident(req: Request, breach: number, measures: number
        geo(req, 'x-vercel-ip-country'), geo(req, 'x-vercel-ip-country-region'), geo(req, 'x-vercel-ip-city'),
        (req.headers.get('user-agent') || '').slice(0, 400)]
     )
-    if (actorId && measures.includes(MEASURE.ACCOUNT_BLOCK)) await pool.query('UPDATE users SET security_blocked = TRUE WHERE id = $1', [actorId])
+    if (actorId && measures.includes(MEASURE.ACCOUNT_BLOCK)) await pool.query('UPDATE users SET security_blocked = TRUE WHERE id = $1 AND license_type IS DISTINCT FROM $2', [actorId, LICENSE_TYPES.System_Owner])
     console.log(`[security] breach=${breach} measures=${measures.join(',')} action="${action}" actor=${actorId ?? 'none'} target=${targetId ?? targetEmail ?? 'none'} ip=${requestIp(req)}`)
   } catch (e) {
     console.log(`[security] logIncident failed: ${String(e)}`)
@@ -151,6 +151,14 @@ export async function requireSelf(req: Request, action: string, target: { id?: n
 // גניבת רשיון: משתמש מזוהה ביקש / החזיק רשיון שאינו שלו
 export async function refuseLicenseTheft(req: Request, action: string, actorId: number | null, targetId?: number | null): Promise<Response> {
   return refuse(req, BREACH.LICENSE_THEFT, action, actorId, targetId)
+}
+
+// משתמש מחובר כלשהו (אישור תקין); אחרת נחסם ונרשם - להודעות מערכת משותפות שאין להן בעלים
+export async function requireLoggedIn(req: Request, action: string): Promise<Response | null> {
+  const uid = readKcUserId(req)
+  const blocked = await blockedState(req, uid); if (blocked) return blocked
+  if (uid) return null
+  return refuse(req, forgedApproval(req, uid) ? BREACH.FAKE_ID : BREACH.UNAUTHORIZED, action, null)
 }
 
 // האם מבקש הוא מנהל (בלי לרשום ובלי לחסום) - לבדיקות משנה בתוך פעולה מותרת

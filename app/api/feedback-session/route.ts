@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { requireSelf } from '@/lib/kc-security'
+// [22.11.2026] שלב 3 בתיקון האבטחה (lib/kc-security.ts): כל פעולה נבדקת מול בעל האישור החתום - לקוח רק על החשבון שלו, מנהל על כולם.
+// ניסיון על חשבון אחר נחסם ונרשם ב"חשד לפריצה".
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -25,6 +28,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const userId = Number(searchParams.get('userId'))
     if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
+    const denied = await requireSelf(req, 'פתיחת שיחת הודעות', { id: userId }, true); if (denied) return denied
 
     let result = await pool.query(
       'SELECT * FROM feedback_sessions WHERE user_id=$1 AND is_active=true ORDER BY created_at DESC LIMIT 1',
@@ -48,6 +52,7 @@ export async function POST(req: NextRequest) {
     await ensureTables()
     const { userId, action } = await req.json()
     if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
+    const denied = await requireSelf(req, 'סגירת שיחת הודעות', { id: userId }, true); if (denied) return denied
 
     if (action === 'close') {
       await pool.query(
