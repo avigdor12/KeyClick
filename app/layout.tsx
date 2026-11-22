@@ -1,6 +1,11 @@
 'use client'
 import type { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
+// [22.11.2026 אביגדור] next-auth מושבת כאן (לא נמחק) - ראה גם שורת ה-body למטה.
+// SessionProvider פנה ל-next-auth (/api/auth/session) בכל טעינת דף. באתר החי לא מוגדר NEXTAUTH_SECRET ב-Vercel,
+// ולכן כל פנייה כזו רשמה שגיאה NO_SECRET ביומן. אף דף באתר לא משתמש בבדיקת החיבור הזו (useSession),
+// והכניסה בדף הבית (/api/login) לא תלויה ב-next-auth. הדף /login (signIn) והקבצים lib/auth.ts, app/api/auth נשארו כמו שהם.
+// להחזרה: להגדיר NEXTAUTH_SECRET ב-Vercel, ולהסיר את סימני ההערה כאן ובשורת ה-body.
+// import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 // פונטים (30.09.2026): כל הפונטים של האתר הם קבצים בפרויקט, ב-public/fonts, ולא next/font:
@@ -29,7 +34,8 @@ export default function RootLayout({
         {/* [15.10.2026] תגיות התצוגה לפייסבוק/ווטסאפ - לפי שפה, ב-app/page.tsx (generateMetadata) */}
       </head>
       <body className="min-h-full flex flex-col">
-        <SessionProvider>{children}</SessionProvider>
+        {/* [22.11.2026] next-auth מושבת - הסבר בראש הקובץ. במקור: <SessionProvider>{children}</SessionProvider> */}
+        {children}
       </body>
     </html>
   );
