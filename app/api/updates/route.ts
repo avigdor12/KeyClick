@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -31,6 +32,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'הוספת עדכון'); if (denied) return denied
   try {
     await ensureTable()
     const { product, version, release_date, release_time, description } = await req.json()
@@ -44,7 +47,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'מחיקת העדכונים'); if (denied) return denied
   try {
     await ensureTable()
     await pool.query('DELETE FROM keyclick_updates')

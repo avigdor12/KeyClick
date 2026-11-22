@@ -3,12 +3,20 @@ import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
 import { verifyPassword } from '@/lib/password'
 import { withKcToken } from '@/lib/kc-auth'
+import { loginLocked, recordLoginFailure, clearLoginFailures, logLoginLocked, LOGIN_LOCKED_TEXT, blockedState, blockedResponse, securityPool } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 export async function POST(req: NextRequest) {
   const { email, password, clientIp } = await req.json()
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
+  // [22.11.2026] כתובת IP חסומה (חסימת גישה מטבלת חשד לפריצה) - אין כניסה
+  const ipBlocked = await blockedState(req, null); if (ipBlocked) return ipBlocked
+  // [22.11.2026] Login כשלים רבים (lib/kc-security.ts): 5 כושלים ב-15 דקות לאותו אימייל -> השהייה ל-15 דקות, ונרשם ב"חשד לפריצה"
+  if (await loginLocked(email)) {
+    await logLoginLocked(req, email)
+    return NextResponse.json({ error: LOGIN_LOCKED_TEXT, code: 'LOGIN_LOCKED' }, { status: 429 })
+  }
 
   try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT`) } catch { /* ignore */ }
   try { await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS temp_password BOOLEAN DEFAULT false`) } catch { /* ignore */ }
@@ -18,12 +26,18 @@ export async function POST(req: NextRequest) {
     [email]
   )
   const user = result.rows[0]
-  if (!user) return NextResponse.json({ error: 'משתמש לא נמצא', code: 'NOT_FOUND' }, { status: 401 })
+  if (!user) { await recordLoginFailure(req, email); return NextResponse.json({ error: 'משתמש לא נמצא', code: 'NOT_FOUND' }, { status: 401 }) }
 
   if (user.password_hash) {
     const valid = await verifyPassword(password, user.password_hash)
-    if (!valid) return NextResponse.json({ error: 'סיסמה שגויה' }, { status: 401 })
+    if (!valid) { await recordLoginFailure(req, email); return NextResponse.json({ error: 'סיסמה שגויה' }, { status: 401 }) }
+    await clearLoginFailures(email)
   }
+
+  // [22.11.2026] חשבון חסום (חסימת חשבון / חסימת גישה מטבלת חשד לפריצה) - אין כניסה עד "שחרור כללי"
+  const sp = await securityPool()
+  const sb = await sp.query('SELECT security_blocked FROM users WHERE id = $1', [user.id])
+  if (sb.rows[0]?.security_blocked) { console.log(`[login] security_blocked email="${email}"`); return blockedResponse() }
 
   if (!user.is_active) {
     return NextResponse.json({ error: 'התהליך לא הצליח. נא לפנות למנהל המערכת.', code: 'NEEDS_PLAN' }, { status: 409 })

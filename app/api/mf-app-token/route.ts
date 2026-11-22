@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import crypto from 'crypto'
+import { requireSelf } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -12,6 +13,8 @@ export async function POST(req: NextRequest) {
     const secret = process.env.MF_SYNC_SECRET, appUrl = process.env.MF_APP_URL
     if (!secret || !appUrl) return NextResponse.json({ error: 'not configured' }, { status: 503 })
     const { userId } = await req.json()
+    // [22.11.2026] רק בעל החשבון מקבל כניסה לניהול תקציב בית שלו (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+    const denied = await requireSelf(req, 'כניסה לניהול תקציב בית', { id: userId }); if (denied) return denied
     const r = await pool.query('SELECT id, email, is_active FROM users WHERE id = $1', [Number(userId)])
     const u = r.rows[0]
     if (!u) return NextResponse.json({ error: 'user not found' }, { status: 404 })

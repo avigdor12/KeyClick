@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUserByEmailToApp } from '@/lib/mf-sync'
 import { hashPassword } from '@/lib/password'
+import { requireSelf } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -12,6 +13,8 @@ export async function POST(req: NextRequest) {
     const { email, newPassword } = await req.json()
     console.log(`[change-password] בקשת החלפת סיסמה מהלקוח email="${email}"`)
     if (!email || !newPassword) { console.log('[change-password] חסר מידע'); return NextResponse.json({ error: 'חסר מידע' }, { status: 400 }) }
+    // [22.11.2026] רק בעל החשבון מחליף את הסיסמה שלו (האישור החתום מהכניסה). אחרת נחסם ונרשם ב"חשד לפריצה"
+    const denied = await requireSelf(req, 'החלפת סיסמה', { email }); if (denied) return denied
 
     const hash = hashPassword(newPassword)
     const result = await pool.query('UPDATE users SET password_hash=$1, temp_password=false WHERE email=$2', [hash, email])

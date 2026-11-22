@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 const ALLOWED = ['is_active', 'name', 'email', 'notes', 'weighted_score', 'country']
 
 export async function POST(req: NextRequest) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'עדכון פרטי משתמש'); if (denied) return denied
   try {
     const { userId, field, value } = await req.json()
     if (!ALLOWED.includes(field)) return NextResponse.json({ ok: false, error: 'field not allowed' }, { status: 400 })

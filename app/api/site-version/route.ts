@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -17,6 +18,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'שינוי גרסת האתר'); if (denied) return denied
   try {
     const { line1, line2 } = await req.json()
     const value = `${line1}|${line2}`

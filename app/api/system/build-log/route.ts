@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-export async function GET() {
+export async function GET(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'קריאת יומן הבנייה'); if (denied) return denied
   try {
     const result = await pool.query(
       "SELECT key, value FROM system_DB_Records WHERE key IN ('KeyClick_Build_Log', 'KeyClick_Site_Version_Id')"

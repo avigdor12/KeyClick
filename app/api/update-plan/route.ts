@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
+import { LICENSE_TYPES } from '@/lib/license-types'
+import { requireSelf, isAdminRequest, refuseLicenseTheft } from '@/lib/kc-security'
+import { readKcUserId } from '@/lib/kc-auth'
+// [22.11.2026] תוכניות שלקוח רשאי לבחור בעצמו (כמו CHANGE_PLAN_OPTIONS בדף הפרופיל). כל תוכנית אחרת (למשל 'מערכת' = מנהל) - רק מנהל
+const CUSTOMER_PLANS: string[] = [LICENSE_TYPES.User_Trial, LICENSE_TYPES.User_Monthly, LICENSE_TYPES.User_Annual, LICENSE_TYPES.User_One_Time]
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -8,6 +13,12 @@ export async function POST(req: NextRequest) {
   try {
     const { userId, licenseType, planStart, planEnd } = await req.json()
     if (!userId || !licenseType) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
+    // [22.11.2026] רק בעל החשבון (או מנהל) משנה תוכנית; לקוח - רק לתוכניות הלקוח. אחרת נחסם ונרשם ב"חשד לפריצה"
+    const denied = await requireSelf(req, 'שינוי תוכנית', { id: userId }, true); if (denied) return denied
+    if (!CUSTOMER_PLANS.includes(licenseType) && !(await isAdminRequest(req))) {
+      // גניבת רשיון -> סגירת האתר, הודעת התרעה, חסימת חשבון
+      return refuseLicenseTheft(req, `בקשה לרשיון "${licenseType}"`, readKcUserId(req), Number(userId))
+    }
 
     await pool.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_start DATE;

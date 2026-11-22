@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { LICENSE_TYPES } from '@/lib/license-types'
+import { BREACH_CODES, BLOCK_CODES, LICENSE_CODES, DECISION_CODES, licenseCode } from '@/lib/kc-security-codes'   // [22.11.2026] טבלאות הקודים של חשד לפריצה
 import '@/lib/kc-auth-client'   // [22.11.2026] אישור כניסה חתום: שומר את האישור בזיכרון הלשונית ושולח אותו בכל פנייה ל-/api (שלב 1 בתיקון האבטחה)
 
 export const languages = [
@@ -262,10 +263,19 @@ export default function Home() {
   const mfChainRef     = useRef(false)
   const visitIdRef     = useRef<number | null>(null)
   const [Current_User_Pointer_to_DB, set_Current_User_Pointer_to_DB] = useState<UserRecord | null>(null)
+  // [22.11.2026] גניבת רשיון: בכל שינוי של הרשיון בזיכרון הדפדפן - בדיקה מול המסד (api/kc-verify-license).
+  // שינוי חוקי מגיע תמיד מהשרת ולכן זהה למסד; רשיון ששונה בדפדפן -> השרת חוסם את החשבון והמשתמש מנותק מהאתר (lib/kc-auth-client.ts)
+  useEffect(() => {
+    const lic = Current_User_Pointer_to_DB?.M_Finance_license_type
+    if (!Current_User_Pointer_to_DB?.id || lic === undefined || lic === null) return
+    fetch('/api/kc-verify-license', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ license: lic }) }).catch(() => {})
+  }, [Current_User_Pointer_to_DB?.id, Current_User_Pointer_to_DB?.M_Finance_license_type])
   const [isLoggedInExplicit, setIsLoggedInExplicit] = useState(false)
   const [clientIp, setClientIp] = useState('')
   const [hasUnreadMsg, setHasUnreadMsg] = useState(false)
   const [hasNewCustomerMsg, setHasNewCustomerMsg] = useState(false)
+  // [22.11.2026] יש מקרה "חשד לפריצה" שלא טופל (api/feedback/admin-unread -> securityAlert): צליל + השורה "הודעה מהשרת" מתחת לכפתור המנהל
+  const [hasSecurityAlert, setHasSecurityAlert] = useState(false)
   const lang = languages[langIdx]
   const isAdminAccount = Current_User_Pointer_to_DB?.M_Finance_license_type === LICENSE_TYPES.System_Owner
 
@@ -389,16 +399,22 @@ export default function Home() {
   }, [Current_User_Pointer_to_DB?.id, activePage])
 
   useEffect(() => {
-    if (!isAdminAccount) { setHasNewCustomerMsg(false); return }
+    if (!isAdminAccount) { setHasNewCustomerMsg(false); setHasSecurityAlert(false); return }
     const checkAdminUnread = () => {
       fetch('/api/feedback/admin-unread')
         .then(r => r.json())
-        .then(d => { if (d.hasUnread) setHasNewCustomerMsg(prev => { if (!prev) playNotifSound(); return true }) })
+        .then(d => {
+          if (d.hasUnread) setHasNewCustomerMsg(prev => { if (!prev) playNotifSound(); return true })
+          if (d.securityAlert) setHasSecurityAlert(prev => { if (!prev) playNotifSound(); return true })
+          else setHasSecurityAlert(false)
+        })
         .catch(() => {})
     }
     checkAdminUnread()
     const interval = setInterval(checkAdminUnread, 60000)
-    return () => clearInterval(interval)
+    // אחרי סימון "טופל" בטבלת חשד לפריצה - בדיקה מיידית (השורה "הודעה מהשרת" נעלמת בלי לחכות דקה)
+    window.addEventListener('kc-security-changed', checkAdminUnread)
+    return () => { clearInterval(interval); window.removeEventListener('kc-security-changed', checkAdminUnread) }
   }, [isAdminAccount, activePage])
 
   useEffect(() => {
@@ -1033,6 +1049,22 @@ export default function Home() {
               }}
             >{lang.system.adminNewMsg}</button>
           )}
+          {hasSecurityAlert && (
+            <button onClick={() => {
+                // פותח את בשימוש המערכת > אבטחת מידע (טבלת חשד לפריצה), וההתראה נעלמת עד מקרה חדש (כמו הודעות הלקוחות)
+                setHasSecurityAlert(false)
+                fetch('/api/system/security-incidents', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ seenAll: true }) }).catch(() => {})
+                kcOpenSecurityView = true
+                window.dispatchEvent(new Event('kc-open-security'))
+                setActivePage('system')
+              }}
+              style={{
+                background: 'none', border: 'none', borderTop: '1px solid #555',
+                color: '#ff3b30', padding: '6px 8px', cursor: 'pointer', textAlign: 'center',
+                fontSize: '12px', fontWeight: 'bold',
+              }}
+            >הודעה מהשרת</button>
+          )}
         </div>
         </div>
         </aside>
@@ -1140,7 +1172,13 @@ function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof langu
 }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing' | 'landing' | 'guideViews'>('none')
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing' | 'landing' | 'guideViews' | 'security'>(() => { if (kcOpenSecurityView) { kcOpenSecurityView = false; return 'security' } return 'none' })
+  // [22.11.2026] לחיצה על "הודעה מהשרת" כשהדף כבר פתוח
+  useEffect(() => {
+    const open = () => { kcOpenSecurityView = false; setView('security') }
+    window.addEventListener('kc-open-security', open)
+    return () => window.removeEventListener('kc-open-security', open)
+  }, [])
   const mainContentRef = useRef<HTMLDivElement>(null)
   const [devBypassLogin, setDevBypassLogin] = useState(false)
   const [mfDirectEntry, setMfDirectEntry] = useState(false)
@@ -1485,6 +1523,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
   const viewSubtitle: Record<typeof view, string | null> = {
     none: null,
     db: `${lang.system.monitor} - ${lang.system.db}`,
+    security: `${lang.system.dataCollection} - אבטחת מידע`,
     users: `${lang.system.systemData} - ${lang.system.users}`,
     schedule: `${lang.system.systemData} - ${lang.system.schedule}`,
     sensitive: `${lang.system.systemData} - ${lang.system.sensitivePoints}`,
@@ -1687,6 +1726,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         {view === 'statistics' && <ProcessingPage lang={lang} visits={visits} reload={reloadVisits} onDbg={onDbg} samplingConfig={samplingConfig} />}
         {view === 'landing' && <LandingVisitsTable lang={lang} onDbg={onDbg} />}
         {view === 'guideViews' && <GuideViewsTable lang={lang} onDbg={onDbg} />}
+        {view === 'security' && <SecurityIncidentsTable lang={lang} onDbg={onDbg} />}
 
         {showResetConfirm && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2283,6 +2323,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'statistics' ? 'none' : 'statistics')}>{lang.system.statistics}</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'landing' ? 'none' : 'landing')}>דף נחיתה</button>
               <button style={{ ...sysBtnSm }} onClick={() => setView(view === 'guideViews' ? 'none' : 'guideViews')}>{lang.system.gvButton}</button>
+              <button style={{ ...sysBtnSm, gridColumn: 'span 2' }} onClick={() => setView(view === 'security' ? 'none' : 'security')}>אבטחת מידע</button>
             </div>
           </div>
 
@@ -3692,6 +3733,208 @@ const ipDisplay = (ip: string | null) => {
   if (!ip) return ''
   const parts = ip.split('.')
   return parts.length === 4 ? parts.map(n => parseInt(n).toString(16).padStart(2, '0').toUpperCase()).join('-') : ip
+}
+
+// [22.11.2026] לחיצה על "הודעה מהשרת" (מתחת לכפתור המנהל) -> SystemPage נפתח ישר בטבלת חשד לפריצה
+let kcOpenSecurityView = false
+
+type SecurityIncident = {
+  id: number; created_at: string; kind: string; action: string
+  actor_id: number | null; target_id: number | null; target_email: string | null
+  ip: string | null; country: string | null; region: string | null; city: string | null; user_agent: string | null; status: string; notes: string | null; breach: number | null; measures: string
+  actor_name: string | null; actor_email: string | null; actor_license: string | null; actor_country: string | null
+  target_user_id: number | null; target_name: string | null; target_user_email: string | null
+  target_license: string | null; target_ip: string | null; target_country: string | null
+}
+
+// [22.11.2026 אביגדור] בשימוש המערכת > איסוף נתונים > אבטחת מידע: טבלת "חשד לפריצה" (api/system/security-incidents).
+// כל פנייה שהשרת חסם (lib/kc-security.ts) - שורה חדשה, גם אם זה אותו פורץ.
+// 3 חלקים: תאור המקרה | פרטי הפורץ | פרטי המשתמש. קוד פריצה / חסימה / רשיון - lib/kc-security-codes.ts.
+// פרטי הפורץ: IP ומדינה - של הפנייה עצמה; ID, מייל, רשיון, שם - לפי אישור הכניסה (ריק = לא מזוהה).
+// פרטי המשתמש: החשבון שעליו ניסו לפעול, מטבלת המשתמשים (IP = הכניסה האחרונה שלו).
+// הערות - הקשה על התא פותחת טופס לרישום הערות המנהל על המקרה.
+// החלטת מנהל - רשימה (קודים 1 בדיקה, 2 המשך חסימה, 3 שחרור) - המנהל בלבד; השרת כותב רק בעמודות שלו. מקרה חדש מתחיל ריק. "הודעה מהשרת" נעלמת בהקשה עליה.
+// עמודות הקודים - מספר בלבד; הפירוש בטבלאות הקודים מימין לטבלה (קוד פריצה, קוד חסימה, קוד רשיון). איפוס - מוחק את כל המקרים. מחרוזות בעברית בלבד בשלב הזה (תרגום ל-11 השפות בסוף).
+function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
+  const [rows, setRows] = useState<SecurityIncident[]>([])
+  const [justRefreshed, setJustRefreshed] = useState(false)
+  const [notesFor, setNotesFor] = useState<{ id: number; num: number; text: string } | null>(null)   // טופס ההערות הפתוח
+  const tableScrollRef = useRef<HTMLDivElement>(null)
+
+  const load = () => {
+    onDbg('SecurityIncidentsTable.load', 'fetch GET /api/system/security-incidents')
+    fetch('/api/system/security-incidents').then(r => r.json()).then(d => {
+      if (Array.isArray(d.incidents)) setRows(d.incidents)
+      if (d.error) onDbg('SecurityIncidentsTable.load', `error: ${d.error}`)
+    }).catch(e => onDbg('SecurityIncidentsTable.load', `error: ${String(e)}`))
+  }
+  useEffect(() => { load() }, [])
+  useEffect(() => {
+    if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight
+  }, [rows.length])
+
+  const setStatus = async (id: number, status: string) => {
+    onDbg('SecurityIncidentsTable.setStatus', `PATCH id=${id} status=${status}`)
+    setRows(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+    await fetch('/api/system/security-incidents', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) })
+      .catch(e => onDbg('SecurityIncidentsTable.setStatus', `error: ${String(e)}`))
+    load()
+    window.dispatchEvent(new Event('kc-security-changed'))
+  }
+  const saveNotes = async () => {
+    if (!notesFor) return
+    const { id, text } = notesFor
+    onDbg('SecurityIncidentsTable.saveNotes', `PATCH id=${id} notes.length=${text.length}`)
+    setRows(prev => prev.map(r => r.id === id ? { ...r, notes: text } : r))
+    setNotesFor(null)
+    await fetch('/api/system/security-incidents', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, notes: text }) })
+      .catch(e => onDbg('SecurityIncidentsTable.saveNotes', `error: ${String(e)}`))
+  }
+  // איפוס - מחיקת כל המקרים (כמו בשאר הטבלאות)
+  const handleReset = async () => {
+    onDbg('SecurityIncidentsTable.handleReset', 'DELETE /api/system/security-incidents')
+    await fetch('/api/system/security-incidents', { method: 'DELETE' }).catch(e => onDbg('SecurityIncidentsTable.handleReset', `error: ${String(e)}`))
+    load()
+    window.dispatchEvent(new Event('kc-security-changed'))
+  }
+  const handleRefresh = () => {
+    load()
+    setJustRefreshed(true)
+    setTimeout(() => setJustRefreshed(false), 1000)
+  }
+  const scrollToTop = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = 0 }
+  const scrollToBottom = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight }
+
+  const fmtDateTime = (iso: string | null) => {
+    if (!iso) return ''
+    const d = new Date(iso)
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
+    return <span style={{ direction: 'ltr', unicodeBidi: 'bidi-override', display: 'inline-block' }}>{date} {time}</span>
+  }
+  // תא קוד - מספר בלבד; לא מזוהה - ריק (בקשת אביגדור)
+  const code = (n: number | null, _raw: string | null) => n ?? ''
+  const STATUS: { v: string; label: string }[] = [{ v: '', label: '' }, ...DECISION_CODES.map(d => ({ v: String(d.code), label: String(d.code) }))]
+
+  const C1 = '#7a0000', C2 = '#5a2a00', C3 = '#00305a'   // צבע כותרת לכל חלק
+  const thBase: React.CSSProperties = { padding: '6px 8px', color: '#FFD700', fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #993333', textAlign: 'center', position: 'sticky' }
+  const thTop = (bg: string): React.CSSProperties => ({ ...thBase, background: bg, top: 0, fontSize: 13 })
+  const thSub = (bg: string): React.CSSProperties => ({ ...thBase, background: bg, top: 28 })
+  const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, border: '1px solid #e0c0c0', whiteSpace: 'nowrap', textAlign: 'center' }
+  const sepS: React.CSSProperties = { borderRight: '3px solid #7a0000' }   // קו מפריד בין החלקים
+  const btnS: React.CSSProperties = { padding: '6px 14px', background: C1, color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }
+  const personCols = ['IP', 'ID', 'מייל', 'קוד רשיון', 'שם', 'מדינה']
+  // [22.11.2026] עמודות הקודים, החלטת מנהל והערות - ברוחב מינימלי; הכותרת יכולה להתפצל לשתי שורות
+  const narrow: React.CSSProperties = { whiteSpace: 'normal', width: 1, lineHeight: 1.15 }
+  const open = rows.filter(r => !r.status).length
+
+  // טבלת קודים קטנה (מימין לטבלה הראשית)
+  const legend = (title: string, items: { code: number; label: string }[]) => (
+    <table style={{ borderCollapse: 'collapse', fontSize: 11, direction: 'rtl', marginBottom: 10 }}>
+      <thead><tr><th colSpan={2} style={{ ...thBase, position: 'static', background: C1 }}>{title}</th></tr></thead>
+      <tbody>
+        {items.map(it => (
+          <tr key={it.code} style={{ background: '#fff' }}><td style={{ ...tdS, fontSize: 11, padding: '2px 6px', fontWeight: 'bold' }}>{it.code}</td><td style={{ ...tdS, fontSize: 11, padding: '2px 6px', textAlign: 'right' }}>{it.label}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  )
+
+  const notesForm = notesFor && (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.5)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setNotesFor(null)}>
+      <div dir='rtl' style={{ background: '#fff', border: `3px solid ${C1}`, borderRadius: 10, padding: 16, width: 460, maxWidth: '90vw' }} onClick={e => e.stopPropagation()}>
+        <div style={{ fontSize: 15, fontWeight: 'bold', color: C1, marginBottom: 8 }}>הערות - מקרה {notesFor.num}</div>
+        <textarea autoFocus value={notesFor.text} onChange={e => setNotesFor({ ...notesFor, text: e.target.value })}
+          style={{ width: '100%', height: 180, boxSizing: 'border-box', fontSize: 14, direction: 'rtl', padding: 6, resize: 'vertical' }} />
+        <div style={{ display: 'flex', gap: 8, marginTop: 10, justifyContent: 'flex-start' }}>
+          <button onClick={saveNotes} style={btnS}>שמור</button>
+          <button onClick={() => setNotesFor(null)} style={{ ...btnS, background: '#777' }}>ביטול</button>
+        </div>
+      </div>
+    </div>
+  )
+
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'flex-start', height: '100%', boxSizing: 'border-box' }}>
+      {notesForm}
+      {/* direction rtl - כשאין מספיק רוחב, הגלילה מסתירה את הצד השמאלי (החלטת מנהל) ולא את תאור המקרה */}
+      <div ref={tableScrollRef} style={{ height: '100%', overflow: 'auto', minWidth: 0, direction: 'rtl' }}>
+      <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'rtl' }}>
+        <thead>
+          <tr>
+            <th colSpan={4} style={thTop(C1)}>תאור המקרה</th>
+            <th colSpan={6} style={{ ...thTop(C2), ...sepS }}>פרטי הפורץ</th>
+            <th colSpan={6} style={{ ...thTop(C3), ...sepS }}>פרטי המשתמש</th>
+            <th colSpan={2} style={{ ...thTop(C1), ...sepS }}></th>
+          </tr>
+          <tr>
+            <th style={thSub(C1)}>#</th>
+            <th style={thSub(C1)}>תאריך ושעה</th>
+            <th style={{ ...thSub(C1), ...narrow }}>קוד פריצה</th>
+            <th style={{ ...thSub(C1), ...narrow }}>קוד חסימה</th>
+            {personCols.map((c, i) => <th key={'a' + i} style={{ ...thSub(C2), ...(i === 0 ? sepS : {}), ...(c === 'קוד רשיון' ? narrow : {}) }}>{c}</th>)}
+            {personCols.map((c, i) => <th key={'t' + i} style={{ ...thSub(C3), ...(i === 0 ? sepS : {}), ...(c === 'קוד רשיון' ? narrow : {}) }}>{c}</th>)}
+            <th style={{ ...thSub(C1), ...sepS, ...narrow }}>החלטת מנהל</th>
+            <th style={{ ...thSub(C1), ...narrow }}>הערות</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* [22.11.2026] שורה ריקה צמודה לכותרת (בקשת אביגדור): 18 תאים ריקים - לא משנה את רוחב העמודות */}
+          <tr style={{ background: '#fff' }}>{Array.from({ length: 18 }, (_, i) => <td key={i} style={tdS}>&nbsp;</td>)}</tr>
+          {rows.map((r, i) => {
+            const hasTarget = !!(r.target_user_id || r.target_user_email || r.target_id)
+            return (
+            <tr key={r.id} style={{ background: r.status === '3' ? '#f3f3f3' : (i % 2 === 0 ? '#fff' : '#fff4f4'), color: r.status === '3' ? '#888' : undefined }}>
+              <td style={tdS}>{i + 1}</td>
+              <td style={tdS}>{fmtDateTime(r.created_at)}</td>
+              <td style={tdS} title={r.action}>{r.breach ?? ''}</td>
+              <td style={tdS}>{(r.measures || '').split(',').filter(Boolean).join(', ')}</td>
+              {/* פרטי הפורץ */}
+              <td style={{ ...tdS, ...sepS, direction: 'ltr' }}>{r.ip || ''}</td>
+              <td style={tdS}>{r.actor_id ?? ''}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{r.actor_email || ''}</td>
+              <td style={tdS}>{code(licenseCode(r.actor_license), r.actor_license)}</td>
+              <td style={tdS}>{r.actor_name || ''}</td>
+              <td style={tdS}>{r.country || r.actor_country || ''}</td>
+              {/* פרטי המשתמש */}
+              <td style={{ ...tdS, ...sepS, direction: 'ltr' }}>{hasTarget ? (r.target_ip || '') : ''}</td>
+              <td style={tdS}>{r.target_user_id ?? r.target_id ?? ''}</td>
+              <td style={{ ...tdS, direction: 'ltr' }}>{r.target_user_email || ''}</td>
+              <td style={tdS}>{code(licenseCode(r.target_license), r.target_license)}</td>
+              <td style={tdS}>{r.target_name || ''}</td>
+              <td style={tdS}>{r.target_country || ''}</td>
+              <td style={{ ...tdS, ...sepS }}>
+                <select value={r.status} onChange={e => setStatus(r.id, e.target.value)} style={{ fontSize: 12, direction: 'rtl', fontWeight: 'bold', appearance: 'none', padding: '1px 3px', border: '1px solid #bbb', borderRadius: 3, cursor: 'pointer', textAlign: 'center', color: r.status === 'no' ? '#c0392b' : r.status === 'in_progress' ? '#b36b00' : '#006600' }}>
+                  {STATUS.map(o => <option key={o.v} value={o.v}>{o.label}</option>)}
+                </select>
+              </td>
+              <td style={{ ...tdS, cursor: 'pointer', maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis', textAlign: 'right' }} title={r.notes || 'הקש לרישום הערות'}
+                onClick={() => setNotesFor({ id: r.id, num: i + 1, text: r.notes || '' })}>{r.notes ? r.notes.replace(/\s+/g, ' ') : <span style={{ color: '#aaa' }}>✎</span>}</td>
+            </tr>
+          )})}
+          {rows.length === 0 && (
+            <tr><td colSpan={18} style={{ ...tdS, padding: 20, color: '#888' }}>אין מקרים</td></tr>
+          )}
+        </tbody>
+      </table>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+        <button onClick={handleReset} style={btnS}>{lang.system.reset}</button>
+        <button onClick={handleRefresh} style={{ ...btnS, background: justRefreshed ? '#006600' : C1 }}>{lang.system.refresh}</button>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button onClick={scrollToTop} style={{ ...btnS, padding: '6px 10px', fontSize: 14 }}>↑</button>
+          <button onClick={scrollToBottom} style={{ ...btnS, padding: '6px 10px', fontSize: 14 }}>↓</button>
+        </div>
+        <div style={{ fontSize: 14, fontWeight: 'bold', color: C1 }}>ללא החלטה: {open}</div>
+        <div style={{ fontSize: 14, fontWeight: 'bold', color: C1 }}>סה"כ: {rows.length}</div>
+      </div>
+      {/* טבלאות הקודים - מסודרות בצורה קומפקטית בשני טורים, אחרי הכפתורים */}
+      <div style={{ flexShrink: 0, display: 'grid', gridTemplateColumns: 'auto auto', gap: '0 10px', alignItems: 'start', direction: 'rtl', maxHeight: '100%', overflow: 'auto' }}>
+        <div>{legend('קוד פריצה', BREACH_CODES)}{legend('החלטת מנהל', DECISION_CODES)}</div>
+        <div>{legend('קוד חסימה', BLOCK_CODES)}{legend('קוד רשיון', LICENSE_CODES)}</div>
+      </div>
+    </div>
+  )
 }
 
 function GuideViewsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {

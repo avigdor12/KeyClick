@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { requireAdmin } from '@/lib/kc-security'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +24,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'שינוי עקיפת שחרור הגרסה'); if (denied) return denied
   try {
     const { bypass } = await req.json()
     await pool.query(

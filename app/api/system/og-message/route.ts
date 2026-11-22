@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { refreshFacebookOg } from '@/lib/og-refresh'
+import { requireAdmin } from '@/lib/kc-security'
 
 // [20.10.2026] "הודעה מתחת לתמונת הפרסום" - השורה שמתחת לתמונה בתצוגה המקדימה (og:title) בפייסבוק/ווטסאפ וכו'.
 // text = הנוסח בעברית, tx = התרגומים לשאר השפות (מתורגמים בדפדפן בלחיצת "עדכון"). ריק = הכותרת הקבועה ב-app/page.tsx.
@@ -23,6 +24,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'שינוי הודעת התצוגה ברשתות'); if (denied) return denied
   try {
     const { text, tx, date } = await req.json()
     await pool.query(

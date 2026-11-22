@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUserByEmailToApp } from '@/lib/mf-sync'
 import { hashPassword } from '@/lib/password'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 export async function POST(req: NextRequest) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'איפוס סיסמה למשתמש'); if (denied) return denied
   try {
     const { email, newPassword } = await req.json()
     console.log(`[reset-password] בקשת איפוס מהמנהל email="${email}"`)

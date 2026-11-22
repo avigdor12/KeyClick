@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const KEY = 'KeyClick_Schedule_Table'
@@ -17,6 +18,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'שינוי טבלת המחירים'); if (denied) return denied
   try {
     const body = await req.json()
     await pool.query(

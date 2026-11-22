@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
+import { requireAdmin } from '@/lib/kc-security'
 
 // [Claude Code 19.10.2026, לפי הנחיית המשתמש] צפיה במדריכים: כל כניסה לדף מדריכים וסרטונים או לאחת מ-6 המגירות.
 // האתר שולח POST בכניסה ו-sendBeacon ל-exit ביציאה; מוצג בבשימוש המערכת > איסוף נתונים > צפיה במדריכים.
@@ -66,7 +67,9 @@ function decodeHeader(v: string | null): string | null {
   try { return decodeURIComponent(v) } catch { return v }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'נתוני צפייה בהדרכות'); if (denied) return denied
   try {
     await ensureTable()
     const result = await pool.query(`SELECT id, entered_at, left_at, page, lang, user_name, user_email, visit_id, from_page, ip, country, region, city,
@@ -78,7 +81,9 @@ export async function GET() {
 }
 
 // ניקוי הטבלה - כפתור איפוס באיסוף נתונים > צפיה במדריכים
-export async function DELETE() {
+export async function DELETE(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'מחיקת נתוני צפייה בהדרכות'); if (denied) return denied
   try {
     await ensureTable()
     await pool.query('DELETE FROM guide_views')

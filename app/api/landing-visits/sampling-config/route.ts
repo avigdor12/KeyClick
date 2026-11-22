@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 // [Claude Code 12.10.2026, לפי הנחיית המשתמש] הגדרות איסוף נתונים של דף הנחיתה - עצמאיות לגמרי מ"חי" (visit_sampling_config)
 import { Pool } from 'pg'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -31,6 +32,8 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'שינוי הגדרות הדגימה בדף הנחיתה'); if (denied) return denied
   try {
     await ensureTable()
     const { runEnabled, startDate, endDate, endEnabled } = await req.json()

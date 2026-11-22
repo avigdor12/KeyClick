@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { detectSource } from '@/lib/traffic-source'
+import { requireAdmin } from '@/lib/kc-security'
 
 // [Claude Code 12.10.2026, לפי הנחיית המשתמש] כניסות לדף הנחיתה (landing.keyclick.org).
 // דף הנחיתה שולח sendBeacon בכל כניסה; מוצג בבשימוש המערכת > איסוף נתונים > דף נחיתה.
@@ -23,7 +24,9 @@ async function ensureTable() {
 
 // מקור הגעה: lib/traffic-source.ts (משותף עם יומן "חי", 03.11.2026)
 
-export async function GET() {
+export async function GET(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'נתוני ביקורים בדף הנחיתה'); if (denied) return denied
   try {
     await ensureTable()
     const result = await pool.query('SELECT id, ip, entered_at, country, lang, source FROM landing_visits ORDER BY entered_at ASC')
@@ -34,7 +37,9 @@ export async function GET() {
 }
 
 // ניקוי הטבלה - כפתור איפוס באיסוף נתונים > דף נחיתה (לפי בקשת המשתמש)
-export async function DELETE() {
+export async function DELETE(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'מחיקת ביקורים בדף הנחיתה'); if (denied) return denied
   try {
     await ensureTable()
     await pool.query('DELETE FROM landing_visits')

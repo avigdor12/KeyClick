@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { detectSource } from '@/lib/traffic-source'
+import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -39,7 +40,9 @@ async function lookupGeo(ip: string): Promise<{ country: string | null; region: 
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'נתוני ביקורים'); if (denied) return denied
   try {
     await ensureTable()
     const result = await pool.query('SELECT id, ip, user_name, entered_at, last_seen_at, country, region, source FROM visits ORDER BY entered_at ASC')
@@ -96,7 +99,9 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
+  // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
+  const denied = await requireAdmin(req, 'מחיקת נתוני ביקורים'); if (denied) return denied
   try {
     await ensureTable()
     await pool.query('DELETE FROM visits')
