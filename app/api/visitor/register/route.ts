@@ -3,6 +3,7 @@ import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
 import { hashPassword } from '@/lib/password'
 import { visitorKeyOk } from '@/lib/visitor'
+import { withKcToken } from '@/lib/kc-auth'
 
 // [Claude Code 19.10.2026, לפי הנחיית המשתמש] הרשמה מאוחרת של אורח (מכרטיסיית האורח באפליקציה): השם, המייל והסיסמה נכתבים
 // לרשומת האורח עצמה במקום visitor_<id>, כך שכל הנתונים שנטענו נשארים. עם סיסמה הרשומה כבר לא נחשבת אורח ולא נמחקת.
@@ -26,7 +27,8 @@ export async function POST(req: NextRequest) {
       [Number(id), cleanName, cleanEmail, hashPassword(String(password)), language || null]
     )
     await syncUsersToApp([Number(id)])
-    return NextResponse.json({ ok: true, user: updated.rows[0] })
+    // [22.11.2026] אורח שנרשם - אישור כניסה חתום חדש בכותרת x-kc-token (lib/kc-auth.ts)
+    return withKcToken(NextResponse.json({ ok: true, user: updated.rows[0] }), updated.rows[0]?.id)
   } catch (e) {
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
   }

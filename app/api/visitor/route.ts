@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import { syncUsersToApp } from '@/lib/mf-sync'
 import { LICENSE_TYPES } from '@/lib/license-types'
 import { VISITOR_EMAIL_DOMAIN, ensureVisitorColumns, hashVisitorKey, purgeStaleVisitors } from '@/lib/visitor'
+import { withKcToken } from '@/lib/kc-auth'
 
 // [Claude Code 19.10.2026, לפי הנחיית המשתמש] רשומת אורח: מבקר לא רשום שפותח את ניהול תקציב בית מקבל רשומת משתמש visitor_<id>
 // בתוכנית תקופת הרצה, רק לצורך הרצת האפליקציה. בלי סיסמה, ונמחקת ביציאה מהאתר (ראה lib/visitor.ts).
@@ -38,7 +39,8 @@ export async function POST(req: NextRequest) {
       [id, `visitor_${id}`, `visitor_${id}${VISITOR_EMAIL_DOMAIN}`]
     )
     await syncUsersToApp([id])
-    return NextResponse.json({ ok: true, user: updated.rows[0], key })
+    // [22.11.2026] גם אורח מקבל אישור כניסה חתום בכותרת x-kc-token (lib/kc-auth.ts)
+    return withKcToken(NextResponse.json({ ok: true, user: updated.rows[0], key }), updated.rows[0]?.id)
   } catch (e) {
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
   }

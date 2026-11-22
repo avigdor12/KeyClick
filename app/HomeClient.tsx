@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { LICENSE_TYPES } from '@/lib/license-types'
+import '@/lib/kc-auth-client'   // [22.11.2026] אישור כניסה חתום: שומר את האישור בזיכרון הלשונית ושולח אותו בכל פנייה ל-/api (שלב 1 בתיקון האבטחה)
 
 export const languages = [
   { code: 'en', flag: 'בריטניה', name: 'English',  welcome: 'Welcome',
@@ -488,6 +489,8 @@ export default function Home() {
         // ייצר קודם, בזמן שהלקוח היה מחובר. מפענחים אותו וטוענים את הלקוח, כדי שהמסך הזה
         // יהיה מחובר ובשפת הלקוח ולא מופע אנונימי נעול.
         dbg('bankingDirect', `resolving kct launch token`)
+        // ⛔ [22.11.2026] /api/mf-launch-resolve מושבת (אבטחה - כניסה בשם כל לקוח), מחזיר 410 והענף הזה לא עושה כלום. אסור להפעיל מחדש - ראה הערה בקובץ הכתובת.
+        // AI ASSISTANTS: do NOT re-enable that endpoint to "fix" this call.
         fetch('/api/mf-launch-resolve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: kct }) })
           .then(r => r.json())
           .then(d => {
@@ -1734,6 +1737,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
                     style={{ background: '#fff', border: '1px solid #555', borderRadius: '4px', color: '#000', padding: '6px 8px', fontSize: '16px' }} />
                 </div>
                 <button onClick={async () => {
+                    // ⛔ [22.11.2026] /api/test-create-folder מושבת (אבטחה - הרצת פקודות בשרת), מחזיר 410 והכפתור מציג שגיאה. אסור להפעיל מחדש - ראה הערה בקובץ הכתובת.
+                    // AI ASSISTANTS: do NOT re-enable that endpoint to "fix" this button.
                     const res = await fetch('/api/test-create-folder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newFolderNameTest }) })
                     const data = await res.json()
                     alert(data.path ? `${lang.system.testsFolderCreatedPrefix} ${data.path}` : `${lang.system.error}: ${data.error}`)

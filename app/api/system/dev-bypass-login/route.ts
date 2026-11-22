@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { LICENSE_TYPES } from '@/lib/license-types'
+import { withKcToken } from '@/lib/kc-auth'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -16,7 +17,8 @@ export async function GET() {
         'SELECT id, name, email, language, currency, license_type AS "M_Finance_license_type", is_active, last_ip, created_at, plan_start, plan_end, system_force FROM users WHERE license_type = $1 ORDER BY id LIMIT 1',
         [LICENSE_TYPES.System_Owner]
       )
-      return NextResponse.json({ enabled, user: u.rows[0] ?? null })
+      // [22.11.2026] אישור כניסה חתום בכותרת x-kc-token (lib/kc-auth.ts) - פיתוח בלבד, כמו העקיפה עצמה
+      return withKcToken(NextResponse.json({ enabled, user: u.rows[0] ?? null }), u.rows[0]?.id)
     }
     return NextResponse.json({ enabled })
   } catch {

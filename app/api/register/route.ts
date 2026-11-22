@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
 import { hashPassword } from '@/lib/password'
+import { withKcToken } from '@/lib/kc-auth'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -48,5 +49,6 @@ export async function POST(req: NextRequest) {
   )
 
   await syncUsersToApp([inserted.rows[0].id])
-  return NextResponse.json({ success: true, status: 'created', user: inserted.rows[0] })
+  // [22.11.2026] אישור כניסה חתום בכותרת x-kc-token (lib/kc-auth.ts)
+  return withKcToken(NextResponse.json({ success: true, status: 'created', user: inserted.rows[0] }), inserted.rows[0]?.id)
 }
