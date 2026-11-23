@@ -93,7 +93,8 @@ export function blockedResponse(kick = false): Response {
 
 // מקרה של משתמש מזוהה -> 1,2,4 (סגירת האתר, הודעת התרעה, חסימת חשבון); לא מזוהה -> 2
 async function refuse(req: Request, breach: number, action: string, actorId: number | null, targetId?: number | null, targetEmail?: string | null): Promise<Response> {
-  const measures = actorId ? [MEASURE.CLOSE_SITE, MEASURE.WARNING, MEASURE.ACCOUNT_BLOCK] : [MEASURE.WARNING]
+  // [23.11.2026] דחיית כניסה (6) נרשמת תמיד - הבקשה נדחתה בלי נתונים
+  const measures = actorId ? [MEASURE.CLOSE_SITE, MEASURE.WARNING, MEASURE.ACCOUNT_BLOCK, MEASURE.REFUSE] : [MEASURE.WARNING, MEASURE.REFUSE]
   await logIncident(req, breach, measures, action, actorId, targetId, targetEmail)
   return blockedResponse(!!actorId)
 }

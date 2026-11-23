@@ -13,21 +13,23 @@ export const BREACH_CODES: { code: number; label: string }[] = [
 ]
 
 // קוד חסימה - האמצעי שהשרת הפעיל (השרת בלבד כותב בעמודה הזו)
-export const MEASURE = { CLOSE_SITE: 1, WARNING: 2, ACCESS_BLOCK: 3, ACCOUNT_BLOCK: 4, SUSPEND: 5 } as const
+export const MEASURE = { CLOSE_SITE: 1, WARNING: 2, ACCESS_BLOCK: 3, ACCOUNT_BLOCK: 4, SUSPEND: 5, REFUSE: 6 } as const
 export const BLOCK_CODES: { code: number; label: string }[] = [
   { code: 1, label: 'סגירת האתר' },
   { code: 2, label: 'הודעת התרעה' },
   { code: 3, label: 'חסימת גישה' },
   { code: 4, label: 'חסימת חשבון קיים' },
   { code: 5, label: 'השהייה' },
+  { code: 6, label: 'דחיית כניסה' },   // [23.11.2026] השרת דחה את הבקשה ולא החזיר נתונים (נרשם בכל דחייה)
 ]
 
 // החלטת מנהל - המנהל בלבד בוחר (עמודה נפרדת מהשרת). שחרור - מסיר את חסימת החשבון ואת חסימת ה-IP של המקרה
-export const DECISION = { CHECK: 1, KEEP_BLOCK: 2, RELEASE: 3 } as const
+export const DECISION = { CHECK: 1, KEEP_BLOCK: 2, RELEASE: 3, NO_CHANGE: 4 } as const
 export const DECISION_CODES: { code: number; label: string }[] = [
   { code: 1, label: 'בדיקה' },
   { code: 2, label: 'המשך חסימה' },
   { code: 3, label: 'שחרור' },
+  { code: 4, label: 'ללא שינוי' },   // [23.11.2026] רישום בלבד - לא משנה חסימות
 ]
 
 // קוד רשיון - לפי הסדר ב-lib/license-types.ts

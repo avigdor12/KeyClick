@@ -3862,7 +3862,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
       <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'rtl' }}>
         <thead>
           <tr>
-            <th colSpan={4} style={thTop(C1)}>תאור המקרה</th>
+            <th colSpan={5} style={thTop(C1)}>תאור המקרה</th>
             <th colSpan={6} style={{ ...thTop(C2), ...sepS }}>פרטי הפורץ</th>
             <th colSpan={6} style={{ ...thTop(C3), ...sepS }}>פרטי המשתמש</th>
             <th colSpan={2} style={{ ...thTop(C1), ...sepS }}></th>
@@ -3872,6 +3872,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
             <th style={thSub(C1)}>תאריך ושעה</th>
             <th style={{ ...thSub(C1), ...narrow }}>קוד פריצה</th>
             <th style={{ ...thSub(C1), ...narrow }}>קוד חסימה</th>
+            <th style={thSub(C1)}>פעולה</th>
             {personCols.map((c, i) => <th key={'a' + i} style={{ ...thSub(C2), ...(i === 0 ? sepS : {}), ...(c === 'קוד רשיון' ? narrow : {}) }}>{c}</th>)}
             {personCols.map((c, i) => <th key={'t' + i} style={{ ...thSub(C3), ...(i === 0 ? sepS : {}), ...(c === 'קוד רשיון' ? narrow : {}) }}>{c}</th>)}
             <th style={{ ...thSub(C1), ...sepS, ...narrow }}>החלטת מנהל</th>
@@ -3880,7 +3881,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
         </thead>
         <tbody>
           {/* [22.11.2026] שורה ריקה צמודה לכותרת (בקשת אביגדור): 18 תאים ריקים - לא משנה את רוחב העמודות */}
-          <tr style={{ background: '#fff' }}>{Array.from({ length: 18 }, (_, i) => <td key={i} style={tdS}>&nbsp;</td>)}</tr>
+          <tr style={{ background: '#fff' }}>{Array.from({ length: 19 }, (_, i) => <td key={i} style={tdS}>&nbsp;</td>)}</tr>
           {rows.map((r, i) => {
             const hasTarget = !!(r.target_user_id || r.target_user_email || r.target_id)
             return (
@@ -3889,6 +3890,8 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
               <td style={tdS}>{fmtDateTime(r.created_at)}</td>
               <td style={tdS} title={r.action}>{r.breach ?? ''}</td>
               <td style={tdS}>{(r.measures || '').split(',').filter(Boolean).join(', ')}</td>
+              {/* [23.11.2026] פעולה - מה ניסו לעשות (נשמר בטקסט במסד, עמודה action) */}
+              <td style={{ ...tdS, textAlign: 'right', whiteSpace: 'nowrap' }}>{r.action || ''}</td>
               {/* פרטי הפורץ */}
               <td style={{ ...tdS, ...sepS, direction: 'ltr' }}>{r.ip || ''}</td>
               <td style={tdS}>{r.actor_id ?? ''}</td>
@@ -3913,7 +3916,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
             </tr>
           )})}
           {rows.length === 0 && (
-            <tr><td colSpan={18} style={{ ...tdS, padding: 20, color: '#888' }}>אין מקרים</td></tr>
+            <tr><td colSpan={19} style={{ ...tdS, padding: 20, color: '#888' }}>אין מקרים</td></tr>
           )}
         </tbody>
       </table>

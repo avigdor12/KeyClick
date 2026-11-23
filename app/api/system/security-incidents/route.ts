@@ -40,7 +40,8 @@ export async function PATCH(req: Request) {
     if (notes !== undefined) {
       await pool.query('UPDATE security_incidents SET notes = $1 WHERE id = $2', [String(notes).slice(0, 4000), Number(id)])
     } else {
-      if (!['', '1', '2', '3'].includes(String(status))) return NextResponse.json({ error: 'bad decision' }, { status: 400 })
+      if (!['', '1', '2', '3', '4'].includes(String(status)))   // [23.11.2026] + 4 ללא שינוי
+      return NextResponse.json({ error: 'bad decision' }, { status: 400 })
       await pool.query('UPDATE security_incidents SET status = $1 WHERE id = $2', [status, Number(id)])
       if (Number(status) === DECISION.RELEASE) {
         const inc = (await pool.query('SELECT actor_id, ip FROM security_incidents WHERE id = $1', [Number(id)])).rows[0]
