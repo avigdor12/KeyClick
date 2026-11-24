@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
@@ -9,7 +10,7 @@ const CUSTOMER_PLANS: string[] = [LICENSE_TYPES.User_Trial, LICENSE_TYPES.User_M
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     const { userId, licenseType, planStart, planEnd } = await req.json()
     if (!userId || !licenseType) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
@@ -40,3 +41,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

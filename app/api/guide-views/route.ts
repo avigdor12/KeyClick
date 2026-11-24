@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin } from '@/lib/kc-security'
@@ -67,7 +68,7 @@ function decodeHeader(v: string | null): string | null {
   try { return decodeURIComponent(v) } catch { return v }
 }
 
-export async function GET(req: Request) {
+async function GET_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'נתוני צפייה בהדרכות'); if (denied) return denied
   try {
@@ -81,7 +82,7 @@ export async function GET(req: Request) {
 }
 
 // ניקוי הטבלה - כפתור איפוס באיסוף נתונים > צפיה במדריכים
-export async function DELETE(req: Request) {
+async function DELETE_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'מחיקת נתוני צפייה בהדרכות'); if (denied) return denied
   try {
@@ -93,7 +94,7 @@ export async function DELETE(req: Request) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     await ensureTable()
     const body = await req.json().catch(() => ({})) as {
@@ -131,3 +132,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const DELETE = withDbQuota(DELETE_handler)
+export const POST = withDbQuota(POST_handler)

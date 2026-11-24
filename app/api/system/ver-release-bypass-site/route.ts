@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin } from '@/lib/kc-security'
@@ -13,7 +14,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 // המתג בטופס הדיבאג של האפליקציה (Ver_Release_Bypass_Site) כותב לכאן. האפליקציה קוראת את זה
 // ב-MyApplication_Startup בכל הפעלה של Release.
 
-export async function GET() {
+async function GET_handler() {
   try {
     const result = await pool.query("SELECT value FROM system_DB_Records WHERE key='Ver_Release_Bypass_Site'")
     const bypass = result.rows[0]?.value === '1'
@@ -23,7 +24,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'שינוי עקיפת שחרור הגרסה'); if (denied) return denied
   try {
@@ -38,3 +39,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const POST = withDbQuota(POST_handler)

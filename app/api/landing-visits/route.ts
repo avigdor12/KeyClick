@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { detectSource } from '@/lib/traffic-source'
@@ -24,7 +25,7 @@ async function ensureTable() {
 
 // מקור הגעה: lib/traffic-source.ts (משותף עם יומן "חי", 03.11.2026)
 
-export async function GET(req: Request) {
+async function GET_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'נתוני ביקורים בדף הנחיתה'); if (denied) return denied
   try {
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
 }
 
 // ניקוי הטבלה - כפתור איפוס באיסוף נתונים > דף נחיתה (לפי בקשת המשתמש)
-export async function DELETE(req: Request) {
+async function DELETE_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'מחיקת ביקורים בדף הנחיתה'); if (denied) return denied
   try {
@@ -49,7 +50,7 @@ export async function DELETE(req: Request) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   // רק דף הנחיתה רושם כניסות
   if (req.headers.get('origin') !== 'https://landing.keyclick.org') {
     return NextResponse.json({ ok: false }, { status: 403 })
@@ -73,3 +74,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const DELETE = withDbQuota(DELETE_handler)
+export const POST = withDbQuota(POST_handler)

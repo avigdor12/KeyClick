@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { deleteVisitors, VISITOR_EMAIL_DOMAIN } from '@/lib/visitor'
@@ -8,7 +9,7 @@ import { requireAdmin } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-export async function POST(req: Request) {
+async function POST_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'מחיקת אורחים'); if (denied) return denied
   try {
@@ -23,3 +24,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

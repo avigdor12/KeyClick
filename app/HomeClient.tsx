@@ -1172,7 +1172,7 @@ function BillingTable({ users, lang }: { users: UserRecord[]; lang: typeof langu
 }
 
 function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onUserUpdate, onSetSystemMessage, prText, setPrText, prDate, setPrDate, onNavigate }: { user: UserRecord | null; lang: typeof languages[0]; langIdx: number; onChangeLang: (i: number) => void; onOpenDebug: () => void; onDbg: (func: string, msg: string) => void; onUserUpdate: (u: UserRecord) => void; onSetSystemMessage: (m: string) => void; prText: string; setPrText: (v: string) => void; prDate: string; setPrDate: (v: string) => void; onNavigate: (page: string) => void }) {
-  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing' | 'landing' | 'guideViews' | 'security'>(() => { if (kcOpenSecurityView) { kcOpenSecurityView = false; return 'security' } return 'none' })
+  const [view, setView] = useState<'none' | 'db' | 'users' | 'schedule' | 'pr' | 'messages' | 'sensitive' | 'tests' | 'data' | 'statistics' | 'billing' | 'landing' | 'guideViews' | 'security' | 'server'>(() => { if (kcOpenSecurityView) { kcOpenSecurityView = false; return 'security' } return 'none' })
   // [22.11.2026] לחיצה על "הודעה מהשרת" כשהדף כבר פתוח
   useEffect(() => {
     const open = () => { kcOpenSecurityView = false; setView('security') }
@@ -1535,6 +1535,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     billing: `${lang.system.systemData} - ${lang.system.billing}`,
     landing: `${lang.system.dataCollection} - דף נחיתה`,
     guideViews: `${lang.system.dataCollection} - ${lang.system.gvButton}`,
+    server: `${lang.system.monitor} - שרת`,   // [24.11.2026] לשונית שרת - יומן השרת (ServerLogTable)
   }
 
   return (
@@ -1727,6 +1728,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
         {view === 'landing' && <LandingVisitsTable lang={lang} onDbg={onDbg} />}
         {view === 'guideViews' && <GuideViewsTable lang={lang} onDbg={onDbg} />}
         {view === 'security' && <SecurityIncidentsTable lang={lang} onDbg={onDbg} />}
+        {view === 'server' && <ServerLogTable lang={lang} onDbg={onDbg} />}
 
         {showResetConfirm && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2293,6 +2295,8 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
               <button style={{ ...sysBtnSm, fontSize: '13px' }} onClick={() => { onOpenDebug(); setDebugOpen(prev => !prev) }}>{lang.system.debug}</button>
               <button style={{ ...sysBtnSm }} onClick={handleDb}>{lang.system.db}</button>
               <button style={{ ...sysBtnSm, gridColumn: 'span 2' }} onClick={() => { handleBuild(); setBuildOpen(prev => !prev) }}>{lang.system.buildMessages}</button>
+              {/* [24.11.2026] שרת */}
+              <button style={{ ...sysBtnSm, gridColumn: 'span 2', fontSize: '13px' }} onClick={() => setView(view === 'server' ? 'none' : 'server')}>שרת</button>
             </div>
           </div>
 
@@ -3741,7 +3745,7 @@ let kcOpenSecurityView = false
 type SecurityIncident = {
   id: number; created_at: string; kind: string; action: string
   actor_id: number | null; target_id: number | null; target_email: string | null
-  ip: string | null; country: string | null; region: string | null; city: string | null; user_agent: string | null; status: string; notes: string | null; breach: number | null; measures: string
+  ip: string | null; country: string | null; region: string | null; city: string | null; user_agent: string | null; status: string; notes: string | null; breach: number | null; measures: string; source: string | null
   actor_name: string | null; actor_email: string | null; actor_license: string | null; actor_country: string | null
   target_user_id: number | null; target_name: string | null; target_user_email: string | null
   target_license: string | null; target_ip: string | null; target_country: string | null
@@ -3755,6 +3759,90 @@ type SecurityIncident = {
 // הערות - הקשה על התא פותחת טופס לרישום הערות המנהל על המקרה.
 // החלטת מנהל - רשימה (קודים 1 בדיקה, 2 המשך חסימה, 3 שחרור) - המנהל בלבד; השרת כותב רק בעמודות שלו. מקרה חדש מתחיל ריק. "הודעה מהשרת" נעלמת בהקשה עליה.
 // עמודות הקודים - מספר בלבד; הפירוש בטבלאות הקודים מימין לטבלה (קוד פריצה, קוד חסימה, קוד רשיון). איפוס - מוחק את כל המקרים. מחרוזות בעברית בלבד בשלב הזה (תרגום ל-11 השפות בסוף).
+// [24.11.2026] יומן השרת: כשלי חיבור למסד הנתונים (lib/kc-server-log.ts, נשמר ב-Vercel Blob - עובד גם כשהמסד מושהה).
+// מתעדכן רק בפתיחה ובלחיצה על "רענן" (מגבלת 2,000 פעולות בחודש בתוכנית החינמית)
+type ServerLogEvent = { first_at: string; last_at: string; code: string; message: string; method: string; path: string; uid: number | null; ip: string; country: string; count: number }
+const SERVER_LOG_CODE_TEXT: Record<string, string> = {
+  '53000': 'המכסה החודשית של המסד נגמרה', '53300': 'יותר מדי חיבורים בבת אחת', '57P01': 'המסד נסגר או מאותחל',
+  '57P02': 'המסד נסגר או מאותחל', '57P03': 'המסד עדיין עולה', '28P01': 'סיסמת המסד שגויה', '28000': 'אין הרשאה למסד',
+  '3D000': 'מסד הנתונים לא קיים', ETIMEDOUT: 'אין תשובה משרת המסד', ECONNREFUSED: 'שרת המסד דחה את החיבור',
+  ENOTFOUND: 'כתובת שרת המסד לא נמצאה', ECONNRESET: 'החיבור נותק', EAI_AGAIN: 'תקלת רשת (DNS)', EHOSTUNREACH: 'אין גישה לשרת המסד',
+  CONN: 'החיבור למסד נפל',
+}
+function ServerLogTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
+  const [rows, setRows] = useState<ServerLogEvent[]>([])
+  const [info, setInfo] = useState('')
+  const [justRefreshed, setJustRefreshed] = useState(false)
+  const tableScrollRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight
+  }, [rows.length])
+  const scrollToTop = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = 0 }
+  const scrollToBottom = () => { if (tableScrollRef.current) tableScrollRef.current.scrollTop = tableScrollRef.current.scrollHeight }
+  // איפוס - מחיקת כל היומן (כמו בשאר הטבלאות)
+  const handleReset = async () => {
+    onDbg('ServerLogTable.handleReset', 'DELETE /api/system/server-log')
+    await fetch('/api/system/server-log', { method: 'DELETE' }).catch(e => onDbg('ServerLogTable.handleReset', `error: ${String(e)}`))
+    load()
+  }
+  const load = () => {
+    onDbg('ServerLogTable.load', 'fetch GET /api/system/server-log')
+    fetch('/api/system/server-log').then(r => r.json()).then(d => {
+      if (Array.isArray(d.events)) setRows(d.events)
+      setInfo(d.dbDown ? 'המסד לא זמין כרגע' : (d.error ? `שגיאה: ${d.error}` : ''))
+      if (d.error) onDbg('ServerLogTable.load', `error: ${d.error}`)
+    }).catch(e => { setInfo(`שגיאה: ${String(e)}`); onDbg('ServerLogTable.load', `error: ${String(e)}`) })
+  }
+  useEffect(() => { load() }, [])
+  const handleRefresh = () => { load(); setJustRefreshed(true); setTimeout(() => setJustRefreshed(false), 1000) }
+  const fmt = (iso: string) => {
+    const d = new Date(iso)
+    const s = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
+    return <span style={{ direction: 'ltr', unicodeBidi: 'bidi-override', display: 'inline-block' }}>{s}</span>
+  }
+  const C1 = '#7a0000'
+  const thS: React.CSSProperties = { padding: '6px 8px', color: '#FFD700', background: C1, fontWeight: 'bold', fontSize: 12, whiteSpace: 'nowrap', border: '1px solid #993333', textAlign: 'center', position: 'sticky', top: 0 }
+  const tdS: React.CSSProperties = { padding: '5px 8px', fontSize: 12, border: '1px solid #e0c0c0', whiteSpace: 'nowrap', textAlign: 'center' }
+  const btnS: React.CSSProperties = { padding: '6px 14px', background: C1, color: '#FFD700', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', fontSize: 12 }
+  const cols = ['#', 'מתאריך ושעה', 'עד תאריך ושעה', 'קוד שגיאה', 'תאור', 'פעולה', 'משתמש', 'IP', 'מדינה', 'חזרות']
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'flex-start', height: '100%', boxSizing: 'border-box' }}>
+      <div ref={tableScrollRef} style={{ height: '100%', overflow: 'auto', minWidth: 0, direction: 'rtl' }}>
+        <table style={{ borderCollapse: 'collapse', fontSize: 12, direction: 'rtl' }}>
+          <thead><tr>{cols.map(c => <th key={c} style={thS}>{c}</th>)}</tr></thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i} style={{ background: i % 2 === 0 ? '#fff' : '#fff4f4' }}>
+                <td style={tdS}>{i + 1}</td>
+                <td style={tdS}>{fmt(r.first_at)}</td>
+                <td style={tdS}>{r.last_at !== r.first_at ? fmt(r.last_at) : ''}</td>
+                <td style={tdS}>{r.code}</td>
+                <td style={{ ...tdS, textAlign: 'right' }} title={r.message}>{SERVER_LOG_CODE_TEXT[r.code] || r.message}</td>
+                <td style={{ ...tdS, direction: 'ltr' }}>{r.method} {r.path}</td>
+                <td style={tdS}>{r.uid ?? ''}</td>
+                <td style={{ ...tdS, direction: 'ltr' }}>{r.ip}</td>
+                <td style={tdS}>{r.country}</td>
+                <td style={tdS}>{r.count}</td>
+              </tr>
+            ))}
+            {rows.length === 0 && <tr><td colSpan={cols.length} style={{ ...tdS, padding: 20, color: '#888' }}>אין אירועים</td></tr>}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start', flexShrink: 0 }}>
+        <button onClick={handleReset} style={btnS}>{lang.system.reset}</button>
+        <button onClick={handleRefresh} style={{ ...btnS, background: justRefreshed ? '#006600' : C1 }}>{lang.system.refresh}</button>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button onClick={scrollToTop} style={{ ...btnS, padding: '6px 10px', fontSize: 14 }}>↑</button>
+          <button onClick={scrollToBottom} style={{ ...btnS, padding: '6px 10px', fontSize: 14 }}>↓</button>
+        </div>
+        {info && <div style={{ fontSize: 14, fontWeight: 'bold', color: C1, maxWidth: 140 }}>{info}</div>}
+        <div style={{ fontSize: 14, fontWeight: 'bold', color: C1 }}>סה&quot;כ: {rows.length}</div>
+      </div>
+    </div>
+  )
+}
+
 function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg: (func: string, msg: string) => void }) {
   const [rows, setRows] = useState<SecurityIncident[]>([])
   const [justRefreshed, setJustRefreshed] = useState(false)
@@ -3863,7 +3951,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
         <thead>
           <tr>
             <th colSpan={5} style={thTop(C1)}>תאור המקרה</th>
-            <th colSpan={6} style={{ ...thTop(C2), ...sepS }}>פרטי הפורץ</th>
+            <th colSpan={7} style={{ ...thTop(C2), ...sepS }}>פרטי הפורץ</th>
             <th colSpan={6} style={{ ...thTop(C3), ...sepS }}>פרטי המשתמש</th>
             <th colSpan={2} style={{ ...thTop(C1), ...sepS }}></th>
           </tr>
@@ -3874,6 +3962,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
             <th style={{ ...thSub(C1), ...narrow }}>קוד חסימה</th>
             <th style={thSub(C1)}>פעולה</th>
             {personCols.map((c, i) => <th key={'a' + i} style={{ ...thSub(C2), ...(i === 0 ? sepS : {}), ...(c === 'קוד רשיון' ? narrow : {}) }}>{c}</th>)}
+            <th style={thSub(C2)}>מקור</th>
             {personCols.map((c, i) => <th key={'t' + i} style={{ ...thSub(C3), ...(i === 0 ? sepS : {}), ...(c === 'קוד רשיון' ? narrow : {}) }}>{c}</th>)}
             <th style={{ ...thSub(C1), ...sepS, ...narrow }}>החלטת מנהל</th>
             <th style={{ ...thSub(C1), ...narrow }}>הערות</th>
@@ -3881,7 +3970,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
         </thead>
         <tbody>
           {/* [22.11.2026] שורה ריקה צמודה לכותרת (בקשת אביגדור): 18 תאים ריקים - לא משנה את רוחב העמודות */}
-          <tr style={{ background: '#fff' }}>{Array.from({ length: 19 }, (_, i) => <td key={i} style={tdS}>&nbsp;</td>)}</tr>
+          <tr style={{ background: '#fff' }}>{Array.from({ length: 20 }, (_, i) => <td key={i} style={tdS}>&nbsp;</td>)}</tr>
           {rows.map((r, i) => {
             const hasTarget = !!(r.target_user_id || r.target_user_email || r.target_id)
             return (
@@ -3899,6 +3988,8 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
               <td style={tdS}>{code(licenseCode(r.actor_license), r.actor_license)}</td>
               <td style={tdS}>{r.actor_name || ''}</td>
               <td style={tdS}>{r.country || r.actor_country || ''}</td>
+              {/* [24.11.2026] מקור - הערכה אוטומטית: משתמש / סורק / בוט / לא ידוע (lib/kc-security.ts classifySource) */}
+              <td style={tdS} title={r.user_agent || ''}>{r.source || ''}</td>
               {/* פרטי המשתמש */}
               <td style={{ ...tdS, ...sepS, direction: 'ltr' }}>{hasTarget ? (r.target_ip || '') : ''}</td>
               <td style={tdS}>{r.target_user_id ?? r.target_id ?? ''}</td>
@@ -3916,7 +4007,7 @@ function SecurityIncidentsTable({ lang, onDbg }: { lang: typeof languages[0]; on
             </tr>
           )})}
           {rows.length === 0 && (
-            <tr><td colSpan={19} style={{ ...tdS, padding: 20, color: '#888' }}>אין מקרים</td></tr>
+            <tr><td colSpan={20} style={{ ...tdS, padding: 20, color: '#888' }}>אין מקרים</td></tr>
           )}
         </tbody>
       </table>

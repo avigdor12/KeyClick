@@ -15,17 +15,20 @@ export function clearKcToken() { kcToken = '' }
 const BLOCKED_HEADER = 'x-kc-blocked'
 const KICK_HEADER = 'x-kc-kick'
 let kicked = false
+const OK_LABEL: Record<string, string> = { he: 'אישור', en: 'OK', ru: 'ОК', de: 'OK', fr: 'OK', es: 'Aceptar', ja: 'OK', ar: 'موافق', zh: '确定', it: 'OK', hi: 'ठीक है' }
 function showBlocked(text: string) {
   if (document.getElementById('kc-blocked-box')) return
   const bg = document.createElement('div')
   bg.id = 'kc-blocked-box'
   bg.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2147483647;display:flex;align-items:center;justify-content:center'
   const box = document.createElement('div')
-  box.dir = 'rtl'
+  // [24.11.2026] כיוון הטקסט וכפתור האישור לפי שפת הלקוח (cookie keyclick_lang) - הודעת התחזוקה מגיעה בשפת הלקוח
+  const lang = (document.cookie.match(/(?:^|;\s*)keyclick_lang=([a-z]{2})/) || [])[1] || 'en'
+  box.dir = lang === 'he' || lang === 'ar' ? 'rtl' : 'ltr'
   box.style.cssText = 'background:#fff;border:3px solid #c0392b;border-radius:10px;padding:24px 32px;font:bold 18px Arial,sans-serif;color:#c0392b;text-align:center;max-width:90vw'
   box.textContent = text
   const ok = document.createElement('button')
-  ok.textContent = 'אישור'
+  ok.textContent = OK_LABEL[lang] || OK_LABEL.en
   ok.style.cssText = 'display:block;margin:18px auto 0;padding:6px 24px;font:bold 14px Arial,sans-serif;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer'
   ok.onclick = () => { if (kicked) window.location.reload(); else bg.remove() }
   box.appendChild(ok)

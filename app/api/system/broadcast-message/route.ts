@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin } from '@/lib/kc-security'
@@ -9,7 +10,7 @@ async function ensureColumn() {
   await pool.query(`ALTER TABLE feedback_messages ADD COLUMN IF NOT EXISTS is_broadcast BOOLEAN DEFAULT false`)
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'שליחת הודעה לכל הלקוחות'); if (denied) return denied
   try {
@@ -43,3 +44,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

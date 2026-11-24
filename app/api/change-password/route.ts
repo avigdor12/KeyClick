@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUserByEmailToApp } from '@/lib/mf-sync'
@@ -8,7 +9,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
 // [Claude Code 13.09.2026, לפי הנחיית המשתמש] הלקוח בוחר סיסמה חדשה בעצמו (אחרי כניסה עם סיסמה זמנית שהמנהל קבע) -
 // מוריד את דגל temp_password בסיום.
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     const { email, newPassword } = await req.json()
     console.log(`[change-password] בקשת החלפת סיסמה מהלקוח email="${email}"`)
@@ -28,3 +29,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

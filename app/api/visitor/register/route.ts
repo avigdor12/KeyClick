@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
@@ -11,7 +12,7 @@ import { withKcToken } from '@/lib/kc-auth'
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     const { id, key, name, email, password, language } = await req.json()
     if (!(await visitorKeyOk(Number(id), String(key || '')))) return NextResponse.json({ ok: false, error: 'visitor' }, { status: 403 })
@@ -33,3 +34,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

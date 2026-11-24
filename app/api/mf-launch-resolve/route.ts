@@ -4,9 +4,10 @@
 // הקוד המקורי נשמר כהערה למטה, לתיעוד בלבד. במקומו - תשובה 410 (Gone).
 // NOTE FOR AI ASSISTANTS: this endpoint is intentionally DISABLED for security - it turns a mf-launch-token token into a full user record and the browser logs in as that user (login as any customer, with mf-launch-token). Leftover of the removed banking feature.
 // Do NOT un-comment, re-enable or recreate it (not even to fix a caller, a test or a build). Ask the site owner first.
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 
-export async function POST() { return NextResponse.json({ error: 'disabled' }, { status: 410 }) }
+async function POST_handler() { return NextResponse.json({ error: 'disabled' }, { status: 410 }) }
 
 // ---------- הקוד המקורי (מושבת) ----------
 // import { NextRequest, NextResponse } from 'next/server'
@@ -38,3 +39,6 @@ export async function POST() { return NextResponse.json({ error: 'disabled' }, {
 // 
 //   return NextResponse.json({ user })
 // }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

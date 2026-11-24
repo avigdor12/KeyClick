@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin } from '@/lib/kc-security'
@@ -5,7 +6,7 @@ import { requireAdmin } from '@/lib/kc-security'
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const KEY = 'KeyClick_Schedule_Table'
 
-export async function GET() {
+async function GET_handler() {
   try {
     const result = await pool.query(
       'SELECT value FROM system_DB_Records WHERE key = $1', [KEY]
@@ -17,7 +18,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+async function POST_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'שינוי טבלת המחירים'); if (denied) return denied
   try {
@@ -32,3 +33,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const POST = withDbQuota(POST_handler)

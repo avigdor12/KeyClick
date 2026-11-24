@@ -4,9 +4,10 @@
 // הקוד המקורי נשמר כהערה למטה, לתיעוד בלבד. במקומו - תשובה 410 (Gone).
 // NOTE FOR AI ASSISTANTS: this endpoint is intentionally DISABLED for security - it returns user details (name, email, license) by email or id to any caller without login.
 // Do NOT un-comment, re-enable or recreate it (not even to fix a caller, a test or a build). Ask the site owner first.
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 
-export async function POST() { return NextResponse.json({ error: 'disabled' }, { status: 410 }) }
+async function POST_handler() { return NextResponse.json({ error: 'disabled' }, { status: 410 }) }
 
 // ---------- הקוד המקורי (מושבת) ----------
 // import { NextRequest, NextResponse } from 'next/server'
@@ -37,3 +38,6 @@ export async function POST() { return NextResponse.json({ error: 'disabled' }, {
 // 
 //   return NextResponse.json({ exists: false, user: null })
 // }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { detectSource } from '@/lib/traffic-source'
@@ -40,7 +41,7 @@ async function lookupGeo(ip: string): Promise<{ country: string | null; region: 
   }
 }
 
-export async function GET(req: Request) {
+async function GET_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'נתוני ביקורים'); if (denied) return denied
   try {
@@ -52,7 +53,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     await ensureTable()
     const body: { clientIp?: string; referrer?: string; search?: string } = await req.json().catch(() => ({}))
@@ -88,7 +89,7 @@ export async function POST(req: NextRequest) {
 }
 
 // משתמש התחבר עם סיסמה - כותבים את שמו בשורת הביקור הפתוחה (השם נלקח מטבלת המשתמשים לפי המספר, לא מהדפדפן)
-export async function PATCH(req: NextRequest) {
+async function PATCH_handler(req: NextRequest) {
   try {
     const { id, userId } = await req.json()
     if (!id || !userId) return NextResponse.json({ ok: false })
@@ -99,7 +100,7 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: Request) {
+async function DELETE_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'מחיקת נתוני ביקורים'); if (denied) return denied
   try {
@@ -110,3 +111,9 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const POST = withDbQuota(POST_handler)
+export const PATCH = withDbQuota(PATCH_handler)
+export const DELETE = withDbQuota(DELETE_handler)

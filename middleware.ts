@@ -27,7 +27,8 @@ export default function middleware(req: NextRequest) {
   if (req.cookies.get('keyclick_lang')) return res
 
   const country = (req.headers.get('x-vercel-ip-country') || '').toUpperCase()
-  const lang = BY_COUNTRY[country] || 'he'
+  // [24.11.2026] מדינה שלא ברשימה -> אנגלית (ברירת המחדל של האתר תמיד אנגלית; ישראל -> עברית לפי BY_COUNTRY)
+  const lang = BY_COUNTRY[country] || 'en'
   res.cookies.set('keyclick_lang', lang, { path: '/', maxAge: 60 * 60 * 24 * 365 })
   return res
 }

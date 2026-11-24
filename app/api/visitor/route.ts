@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import crypto from 'crypto'
@@ -5,7 +6,7 @@ import { syncUsersToApp } from '@/lib/mf-sync'
 import { LICENSE_TYPES } from '@/lib/license-types'
 import { VISITOR_EMAIL_DOMAIN, ensureVisitorColumns, hashVisitorKey, purgeStaleVisitors } from '@/lib/visitor'
 import { withKcToken } from '@/lib/kc-auth'
-import { signupLimited } from '@/lib/kc-security'
+import { signupLimited, dbQuotaResponse } from '@/lib/kc-security'
 
 // [Claude Code 19.10.2026, לפי הנחיית המשתמש] רשומת אורח: מבקר לא רשום שפותח את ניהול תקציב בית מקבל רשומת משתמש visitor_<id>
 // בתוכנית תקופת הרצה, רק לצורך הרצת האפליקציה. בלי סיסמה, ונמחקת ביציאה מהאתר (ראה lib/visitor.ts).
@@ -13,7 +14,7 @@ import { signupLimited } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     const { language, clientIp } = await req.json().catch(() => ({})) as { language?: string; clientIp?: string }
     // [22.11.2026] הגבלת רשומות מבקר מאותה כתובת IP (lib/kc-security.ts)
@@ -45,6 +46,11 @@ export async function POST(req: NextRequest) {
     // [22.11.2026] גם אורח מקבל אישור כניסה חתום בכותרת x-kc-token (lib/kc-auth.ts)
     return withKcToken(NextResponse.json({ ok: true, user: updated.rows[0], key }), updated.rows[0]?.id)
   } catch (e) {
+    // [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח
+    const q = dbQuotaResponse(e, req); if (q) return q
     return NextResponse.json({ ok: false, error: String(e) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

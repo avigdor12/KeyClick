@@ -1,7 +1,9 @@
-import { Pool } from 'pg'
+import pg, { Pool } from 'pg'
+import { AsyncLocalStorage } from 'node:async_hooks'
 import { LICENSE_TYPES } from '@/lib/license-types'
 import { readKcUserId, KC_AUTH_HEADER } from '@/lib/kc-auth'
 import { BREACH, MEASURE } from '@/lib/kc-security-codes'
+import { dbConnErrorCode, recordDbError, knownAdminUid } from '@/lib/kc-server-log'
 
 // [22.11.2026 אביגדור] תיקון האבטחה - בדיקת הרשאה בשרת, רישום "חשד לפריצה" וחסימות.
 // requireAdmin - פעולות ניהול: רק משתמש שהאישור החתום שלו (lib/kc-auth.ts) שייך למנהל (System_Owner לפי המסד, לא לפי הדפדפן).
@@ -52,6 +54,8 @@ async function ensureTable() {
   // קוד פריצה וקודי חסימה (מופרדים בפסיקים, למשל '1,2,4')
   await pool.query(`ALTER TABLE security_incidents ADD COLUMN IF NOT EXISTS breach INTEGER`)
   await pool.query(`ALTER TABLE security_incidents ADD COLUMN IF NOT EXISTS measures TEXT NOT NULL DEFAULT ''`)
+  // [24.11.2026] מקור הבקשה (הערכה אוטומטית): משתמש / סורק / בוט / לא ידוע. ראה classifySource
+  await pool.query(`ALTER TABLE security_incidents ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT ''`)
   await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS security_blocked BOOLEAN NOT NULL DEFAULT FALSE`)
   await pool.query(`CREATE TABLE IF NOT EXISTS security_blocked_ips (ip TEXT PRIMARY KEY, incident_id INTEGER, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`)
   tableReady = true
@@ -67,16 +71,37 @@ function geo(req: Request, h: string): string {
 }
 
 // רישום מקרה. measures - קודי החסימה שהופעלו. חסימת חשבון (4) מבוצעת כאן בפועל
+// [24.11.2026] מקור הבקשה - הערכה לפי סימנים, לא ודאות:
+//   משתמש  - הבקשה הגיעה עם אישור כניסה של משתמש (actorId)
+//   בוט    - הדפדפן מדווח על עצמו ככלי אוטומטי (curl, python, bot, crawler...)
+//   סורק   - כמה בקשות מאותה כתובת IP בתוך 2 שניות, בלי אישור כניסה (מתעדכן אחרי הרישום, כשמגיעה הבקשה השנייה)
+//   לא ידוע - אף כלל לא מתאים
+export const SOURCE = { USER: 'משתמש', SCANNER: 'סורק', BOT: 'בוט', UNKNOWN: 'לא ידוע' }
+const BOT_UA = /bot|crawl|spider|scan|curl|wget|python|httpclient|go-http|java\/|okhttp|axios|node-fetch|libwww|headless|^$/i
+export function classifySource(actorId: number | null, userAgent: string): string {
+  if (actorId) return SOURCE.USER
+  if (BOT_UA.test(userAgent.trim())) return SOURCE.BOT
+  return SOURCE.UNKNOWN
+}
+
 export async function logIncident(req: Request, breach: number, measures: number[], action: string, actorId: number | null, targetId?: number | null, targetEmail?: string | null) {
   try {
     await ensureTable()
+    const ua = (req.headers.get('user-agent') || '').slice(0, 400)
+    const ip = requestIp(req)
     await pool.query(
-      `INSERT INTO security_incidents (kind, breach, measures, action, actor_id, target_id, target_email, ip, country, region, city, user_agent)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-      [String(breach), breach, measures.join(','), action, actorId, targetId ?? null, targetEmail ?? null, requestIp(req),
+      `INSERT INTO security_incidents (kind, breach, measures, action, actor_id, target_id, target_email, ip, country, region, city, user_agent, source)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+      [String(breach), breach, measures.join(','), action, actorId, targetId ?? null, targetEmail ?? null, ip,
        geo(req, 'x-vercel-ip-country'), geo(req, 'x-vercel-ip-country-region'), geo(req, 'x-vercel-ip-city'),
-       (req.headers.get('user-agent') || '').slice(0, 400)]
+       ua, classifySource(actorId, ua)]
     )
+    // סורק: כמה בקשות בלי אישור כניסה מאותה כתובת בתוך 2 שניות -> כולן מסומנות "סורק" (גם אלה שנרשמו לפני)
+    if (!actorId && ip) await pool.query(
+      `UPDATE security_incidents SET source = $2
+       WHERE ip = $1 AND actor_id IS NULL AND source = $3 AND created_at > NOW() - INTERVAL '2 seconds'
+         AND (SELECT count(*) FROM security_incidents WHERE ip = $1 AND actor_id IS NULL AND created_at > NOW() - INTERVAL '2 seconds') >= 2`,
+      [ip, SOURCE.SCANNER, SOURCE.UNKNOWN])
     if (actorId && measures.includes(MEASURE.ACCOUNT_BLOCK)) await pool.query('UPDATE users SET security_blocked = TRUE WHERE id = $1 AND license_type IS DISTINCT FROM $2', [actorId, LICENSE_TYPES.System_Owner])
     console.log(`[security] breach=${breach} measures=${measures.join(',')} action="${action}" actor=${actorId ?? 'none'} target=${targetId ?? targetEmail ?? 'none'} ip=${requestIp(req)}`)
   } catch (e) {
@@ -89,6 +114,108 @@ export function blockedResponse(kick = false): Response {
   const headers: Record<string, string> = { [KC_BLOCKED_HEADER]: encodeURIComponent(BLOCKED_TEXT) }
   if (kick) headers[KC_KICK_HEADER] = '1'
   return Response.json({ error: BLOCKED_TEXT, code: 'KC_BLOCKED' }, { status: 403, headers })
+}
+
+// [24.11.2026] מסד הנתונים מושהה כי נגמרה המכסה החודשית של Neon (קוד שגיאה 53000). המכסה מתחדשת ב-1 לחודש הבא.
+// התשובה עם כותרת x-kc-blocked - הדפדפן מציג את ההודעה בחלון הקיים (lib/kc-auth-client.ts). שגיאה אחרת -> null
+// ההודעה בשפת הלקוח לפי cookie keyclick_lang (נקבע ב-middleware.ts ובבחירת שפה באתר). ברירת מחדל: אנגלית
+const DB_QUOTA_TEXT: Record<string, string> = {
+  he: 'האתר בתחזוקה, יתחדש בתאריך {d}, תודה על ההבנה, איתך הסליחה',
+  en: 'The site is under maintenance and will resume on {d}. Thank you for your understanding, and we apologize for the inconvenience.',
+  ru: 'Сайт на техническом обслуживании и возобновит работу {d}. Спасибо за понимание, приносим свои извинения.',
+  de: 'Die Website wird gewartet und ist ab {d} wieder verfügbar. Vielen Dank für Ihr Verständnis, wir bitten um Entschuldigung.',
+  fr: 'Le site est en maintenance et reprendra le {d}. Merci de votre compréhension, nous vous prions de nous excuser.',
+  es: 'El sitio está en mantenimiento y se reanudará el {d}. Gracias por su comprensión, le pedimos disculpas.',
+  ja: 'サイトはメンテナンス中です。{d}に再開します。ご理解いただきありがとうございます。ご不便をおかけして申し訳ありません。',
+  ar: 'الموقع قيد الصيانة وسيعود للعمل في {d}. شكرًا لتفهمكم، ونعتذر عن الإزعاج.',
+  zh: '网站正在维护，将于{d}恢复。感谢您的理解，给您带来不便，敬请谅解。',
+  it: 'Il sito è in manutenzione e riprenderà il {d}. Grazie per la comprensione, ci scusiamo per il disagio.',
+  hi: 'साइट रखरखाव में है और {d} को फिर से शुरू होगी। आपकी समझ के लिए धन्यवाद, असुविधा के लिए क्षमा करें।',
+}
+// [24.11.2026] לקוח מחובר (באמצע עבודה): משפט נוסף, ואחרי "אישור" הוא מנותק וחוזר לדף הבית (כותרת x-kc-kick)
+const DB_QUOTA_WORK_TEXT: Record<string, string> = {
+  he: 'הנתונים שנשמרו עד עכשיו שמורים, ניתן לחזור לעבודה בתאריך הנ"ל.',
+  en: 'Your data saved so far is safe; you can return to work on that date.',
+  ru: 'Сохранённые данные в безопасности; вы сможете вернуться к работе в указанную дату.',
+  de: 'Ihre bisher gespeicherten Daten sind sicher; Sie können ab dem genannten Datum weiterarbeiten.',
+  fr: 'Vos données enregistrées jusqu\'à présent sont en sécurité ; vous pourrez reprendre le travail à cette date.',
+  es: 'Sus datos guardados hasta ahora están seguros; podrá volver a trabajar en esa fecha.',
+  ja: 'これまでに保存されたデータは安全です。上記の日付から作業を再開できます。',
+  ar: 'البيانات التي تم حفظها حتى الآن آمنة، ويمكنك العودة إلى العمل في التاريخ المذكور.',
+  zh: '目前已保存的数据是安全的，您可以在上述日期恢复工作。',
+  it: 'I dati salvati finora sono al sicuro; potrai riprendere il lavoro in quella data.',
+  hi: 'अब तक सहेजा गया डेटा सुरक्षित है; आप उक्त तारीख को काम पर लौट सकते हैं।',
+}
+export function dbQuotaResponse(e: unknown, req: Request): Response | null {
+  if ((e as { code?: string } | null)?.code !== '53000') return null
+  const m = (req.headers.get('cookie') || '').match(/(?:^|;\s*)keyclick_lang=([a-z]{2})/)
+  const lang = m && DB_QUOTA_TEXT[m[1]] ? m[1] : 'en'
+  const now = new Date()
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
+  const date = lang === 'he'
+    ? `01/${String(d.getUTCMonth() + 1).padStart(2, '0')}/${d.getUTCFullYear()}`
+    : new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d)
+  let text = DB_QUOTA_TEXT[lang].replace('{d}', date).replace('..', '.') // ru: התאריך מסתיים ב-"г."
+  const inWork = !!readKcUserId(req)
+  if (inWork) text += (/[.。]$/.test(text) ? ' ' : '. ') + DB_QUOTA_WORK_TEXT[lang]
+  console.log(`[db] 53000 quota exhausted (inWork=${inWork}): ${(e as Error)?.message ?? ''}`)
+  const headers: Record<string, string> = { [KC_BLOCKED_HEADER]: encodeURIComponent(text) }
+  if (inWork) headers[KC_KICK_HEADER] = '1'
+  return Response.json({ error: text, code: 'DB_QUOTA' }, { status: 503, headers })
+}
+
+// [24.11.2026] עטיפה לכל פעולת שרת (app/api/**/route.ts): אם במהלך הבקשה פנייה כלשהי למסד נכשלה בקוד 53000 (מכסה) -
+// הלקוח מקבל את הודעת התחזוקה, גם אם הפעולה עצמה תפסה את השגיאה והחזירה תשובה אחרת.
+// אין פנייה נוספת למסד ואין בדיקה מראש: רק רישום של קוד השגיאה כשהיא קורית (pg query/connect), לפי הבקשה הנוכחית.
+// [24.11.2026] dbErr - כשל החיבור הראשון בבקשה (כל סוג: מכסה, רשת, חיבור שנפל), נרשם ביומן השרת (lib/kc-server-log.ts)
+type DbReqState = { quota: boolean; dbErr: unknown }
+const dbQuotaStore = new AsyncLocalStorage<DbReqState>()
+function markQuota(s: DbReqState | undefined, err: unknown) {
+  if (!s || !err) return
+  if ((err as { code?: string } | null)?.code === '53000') s.quota = true
+  if (!s.dbErr && dbConnErrorCode(err)) s.dbErr = err
+}
+function patchPg(proto: Record<string, unknown>, name: string) {
+  const orig = proto[name] as ((...a: unknown[]) => unknown) | undefined
+  if (typeof orig !== 'function') return
+  proto[name] = function (this: unknown, ...args: unknown[]) {
+    const s = dbQuotaStore.getStore()
+    const last = args[args.length - 1]
+    if (typeof last === 'function') {
+      args[args.length - 1] = function (this: unknown, err: unknown, ...rest: unknown[]) { markQuota(s, err); return (last as (...a: unknown[]) => unknown).call(this, err, ...rest) }
+      return orig.apply(this, args)
+    }
+    const r = orig.apply(this, args) as { then?: (a: undefined, b: (e: unknown) => void) => unknown } | undefined
+    if (r && typeof r.then === 'function') r.then(undefined, (e: unknown) => markQuota(s, e))
+    return r
+  }
+}
+let pgPatched = false
+function ensurePgPatched() {
+  if (pgPatched) return
+  pgPatched = true
+  patchPg(pg.Pool.prototype as unknown as Record<string, unknown>, 'query')
+  patchPg(pg.Pool.prototype as unknown as Record<string, unknown>, 'connect')
+  patchPg(pg.Client.prototype as unknown as Record<string, unknown>, 'query')
+  patchPg(pg.Client.prototype as unknown as Record<string, unknown>, 'connect')
+}
+export function withDbQuota<R extends Request, A extends unknown[]>(h: (req: R, ...rest: A) => Response | Promise<Response>) {
+  ensurePgPatched()
+  return async (req: R, ...rest: A): Promise<Response> => {
+    const s: DbReqState = { quota: false, dbErr: null }
+    let res: Response | null = null, thrown: unknown = null
+    try { res = await dbQuotaStore.run(s, () => h(req, ...rest)) } catch (e) { thrown = e; markQuota(s, e) }
+    if (s.dbErr) await recordDbError(req, s.dbErr, readKcUserId(req))
+    if (s.quota) return await quotaFor(req)
+    if (thrown) throw thrown
+    return res!
+  }
+}
+// מנהל המערכת (מזוהה בלי המסד, lib/kc-server-log.ts knownAdminUid) לא מנותק ולא מקבל חלון - כדי שיוכל לצפות ביומן השרת
+async function quotaFor(req: Request): Promise<Response> {
+  const uid = readKcUserId(req)
+  if (uid && uid === await knownAdminUid()) return Response.json({ error: 'db_quota', code: 'DB_QUOTA' }, { status: 503 })
+  return dbQuotaResponse({ code: '53000' }, req)!
 }
 
 // מקרה של משתמש מזוהה -> 1,2,4 (סגירת האתר, הודעת התרעה, חסימת חשבון); לא מזוהה -> 2

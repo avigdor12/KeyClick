@@ -1,10 +1,11 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin, securityPool } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-export async function GET(req: Request) {
+async function GET_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'בדיקת הודעות חדשות (מנהל)'); if (denied) return denied
   try {
@@ -26,7 +27,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function PATCH(req: Request) {
+async function PATCH_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'סימון הודעות כנקראו (מנהל)'); if (denied) return denied
   try {
@@ -39,3 +40,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const PATCH = withDbQuota(PATCH_handler)

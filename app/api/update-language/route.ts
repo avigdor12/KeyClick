@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUserByEmailToApp } from '@/lib/mf-sync'
@@ -7,7 +8,7 @@ import { requireSelf } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   const { email, language } = await req.json()
   if (!email || !language) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
   const denied = await requireSelf(req, 'שינוי שפה', { email }, true); if (denied) return denied
@@ -15,3 +16,6 @@ export async function POST(req: NextRequest) {
   await syncUserByEmailToApp(email)
   return NextResponse.json({ success: true })
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

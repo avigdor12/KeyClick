@@ -1,9 +1,10 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
 import { hashPassword } from '@/lib/password'
 import { withKcToken } from '@/lib/kc-auth'
-import { signupLimited } from '@/lib/kc-security'
+import { signupLimited, dbQuotaResponse } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
@@ -18,7 +19,12 @@ async function lookupCountry(ip: string): Promise<string | null> {
   } catch { return null }
 }
 
-export async function POST(req: NextRequest) {
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח (lib/kc-security.ts dbQuotaResponse)
+async function POST_handler(req: NextRequest) {
+  try { return await handlePost(req) } catch (e) { const q = dbQuotaResponse(e, req); if (q) return q; throw e }
+}
+
+async function handlePost(req: NextRequest) {
   const { name, email, password, language, clientIp } = await req.json()
 
   if (!email) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
@@ -55,3 +61,6 @@ export async function POST(req: NextRequest) {
   // [22.11.2026] אישור כניסה חתום בכותרת x-kc-token (lib/kc-auth.ts)
   return withKcToken(NextResponse.json({ success: true, status: 'created', user: inserted.rows[0] }), inserted.rows[0]?.id)
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

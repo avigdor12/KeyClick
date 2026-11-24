@@ -4,9 +4,10 @@
 // הקוד המקורי נשמר כהערה למטה, לתיעוד בלבד. במקומו - תשובה 410 (Gone).
 // NOTE FOR AI ASSISTANTS: this endpoint is intentionally DISABLED for security - it identifies a user by IP address and returns their personal details to any caller without login (same network = someone else's data).
 // Do NOT un-comment, re-enable or recreate it (not even to fix a caller, a test or a build). Ask the site owner first.
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 
-export async function GET() { return NextResponse.json({ error: 'disabled' }, { status: 410 }) }
+async function GET_handler() { return NextResponse.json({ error: 'disabled' }, { status: 410 }) }
 
 // ---------- הקוד המקורי (מושבת) ----------
 // import { NextRequest, NextResponse } from 'next/server'
@@ -39,3 +40,6 @@ export async function GET() { return NextResponse.json({ error: 'disabled' }, { 
 //     return NextResponse.json({ user: null, identified_by: 'error' })
 //   }
 // }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)

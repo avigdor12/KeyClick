@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin } from '@/lib/kc-security'
@@ -18,7 +19,7 @@ async function ensureTable() {
   `)
 }
 
-export async function GET(req: Request) {
+async function GET_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'נתוני גבייה'); if (denied) return denied
   try {
@@ -31,3 +32,6 @@ export async function GET(req: Request) {
     return NextResponse.json({ payments: [], error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)

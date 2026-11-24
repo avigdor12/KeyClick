@@ -1,13 +1,19 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
 import { verifyPassword } from '@/lib/password'
 import { withKcToken } from '@/lib/kc-auth'
-import { loginLocked, recordLoginFailure, clearLoginFailures, logLoginLocked, LOGIN_LOCKED_TEXT, blockedState, blockedResponse, securityPool } from '@/lib/kc-security'
+import { loginLocked, recordLoginFailure, clearLoginFailures, logLoginLocked, LOGIN_LOCKED_TEXT, blockedState, blockedResponse, securityPool, dbQuotaResponse } from '@/lib/kc-security'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 
-export async function POST(req: NextRequest) {
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח (lib/kc-security.ts dbQuotaResponse)
+async function POST_handler(req: NextRequest) {
+  try { return await handlePost(req) } catch (e) { const q = dbQuotaResponse(e, req); if (q) return q; throw e }
+}
+
+async function handlePost(req: NextRequest) {
   const { email, password, clientIp } = await req.json()
   if (!email || !password) return NextResponse.json({ error: 'חסר מידע' }, { status: 400 })
   // [22.11.2026] כתובת IP חסומה (חסימת גישה מטבלת חשד לפריצה) - אין כניסה
@@ -60,3 +66,6 @@ export async function POST(req: NextRequest) {
   // [22.11.2026] אישור כניסה חתום בכותרת x-kc-token (lib/kc-auth.ts)
   return withKcToken(NextResponse.json({ success: true, user: { ...userWithoutPass, last_ip: ip } }), user.id)
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

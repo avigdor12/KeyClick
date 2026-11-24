@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireSelf } from '@/lib/kc-security'
@@ -20,7 +21,7 @@ async function ensureTable() {
   `)
 }
 
-export async function GET(req: NextRequest) {
+async function GET_handler(req: NextRequest) {
   try {
     await ensureTable()
     const userId = req.nextUrl.searchParams.get('user_id')
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     await ensureTable()
     const { user_id, title, date, time, type } = await req.json()
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+async function DELETE_handler(req: NextRequest) {
   try {
     await ensureTable()
     const id     = req.nextUrl.searchParams.get('id')
@@ -73,3 +74,8 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const POST = withDbQuota(POST_handler)
+export const DELETE = withDbQuota(DELETE_handler)

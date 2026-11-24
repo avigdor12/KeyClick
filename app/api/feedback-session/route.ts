@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireSelf } from '@/lib/kc-security'
@@ -22,7 +23,7 @@ async function ensureTables() {
 }
 
 // GET ?userId=X → get active session (create if none)
-export async function GET(req: NextRequest) {
+async function GET_handler(req: NextRequest) {
   try {
     await ensureTables()
     const { searchParams } = new URL(req.url)
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
 }
 
 // POST { userId, action: 'close' } → close active session, return new session
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     await ensureTables()
     const { userId, action } = await req.json()
@@ -70,3 +71,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: String(e) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const POST = withDbQuota(POST_handler)

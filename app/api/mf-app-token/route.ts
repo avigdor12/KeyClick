@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import crypto from 'crypto'
@@ -8,7 +9,7 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 // אסימון כניסה ל-M_Finance_app (23.09.2026): KeyClick מאשר שהלקוח מחובר, והאפליקציה פותחת לו חיבור בלי סיסמה.
 // האסימון: payload.signature (base64url). payload = { uid, email, exp, n }. חתום ב-HMAC-SHA256 במפתח המשותף MF_SYNC_SECRET.
 // תקף לדקה אחת, ולשימוש אחד בלבד (האפליקציה רושמת את n ודוחה שימוש חוזר).
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     const secret = process.env.MF_SYNC_SECRET, appUrl = process.env.MF_APP_URL
     if (!secret || !appUrl) return NextResponse.json({ error: 'not configured' }, { status: 503 })
@@ -27,3 +28,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: String(e) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)

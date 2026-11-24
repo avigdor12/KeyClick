@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin, requireSelf, requireLoggedIn } from '@/lib/kc-security'
@@ -54,7 +55,7 @@ async function ensureTable() {
   await pool.query(`CREATE TABLE IF NOT EXISTS feedback_user_state (user_id INTEGER NOT NULL, message_id INTEGER NOT NULL, hidden BOOLEAN NOT NULL DEFAULT FALSE, read BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY (user_id, message_id))`)
 }
 
-export async function GET(req: NextRequest) {
+async function GET_handler(req: NextRequest) {
   try {
     await ensureTable()
     const { searchParams } = new URL(req.url)
@@ -91,7 +92,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   try {
     await ensureTable()
     const { userId, userName, sentDate, title, body, ratingSite, ratingBudget, sessionId, bodyLang, headerName, headerIp } = await req.json()
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+async function DELETE_handler(req: NextRequest) {
   try {
     await ensureTable()
     const { id, scope } = await req.json()
@@ -133,7 +134,7 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: NextRequest) {
+async function PATCH_handler(req: NextRequest) {
   try {
     await ensureTable()
     const { id, replyText, replyDate, isRead, customerRead } = await req.json()
@@ -160,3 +161,9 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const POST = withDbQuota(POST_handler)
+export const DELETE = withDbQuota(DELETE_handler)
+export const PATCH = withDbQuota(PATCH_handler)

@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextResponse } from 'next/server'
 import { requireAdmin, securityPool } from '@/lib/kc-security'
 import { DECISION } from '@/lib/kc-security-codes'
@@ -9,13 +10,13 @@ import { DECISION } from '@/lib/kc-security-codes'
 // PATCH - { seenAll: true } הקשה על "הודעה מהשרת": כל המקרים סומנו כנראו, וההתראה נעלמת עד מקרה חדש.
 // DELETE - איפוס: מוחק את כל המקרים (כפתור "איפוס", כמו בשאר הטבלאות). מקרה שטופל לא מפעיל את ההתראה "הודעה מהשרת"
 
-export async function GET(req: Request) {
+async function GET_handler(req: Request) {
   const denied = await requireAdmin(req, 'צפייה בטבלת חשד לפריצה'); if (denied) return denied
   try {
     const pool = await securityPool()
     const r = await pool.query(`
       SELECT s.id, s.created_at, s.last_at, s.hits, s.kind, s.action, s.actor_id, s.target_id, s.target_email,
-             s.ip, s.country, s.region, s.city, s.user_agent, s.status, s.notes, s.breach, s.measures,
+             s.ip, s.country, s.region, s.city, s.user_agent, s.status, s.notes, s.breach, s.measures, s.source,
              a.name AS actor_name, a.email AS actor_email, a.license_type AS actor_license,
              a.country AS actor_country,
              t.id AS target_user_id, t.name AS target_name, COALESCE(t.email, s.target_email) AS target_user_email,
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function PATCH(req: Request) {
+async function PATCH_handler(req: Request) {
   const denied = await requireAdmin(req, 'סימון מקרה כטופל'); if (denied) return denied
   try {
     const { id, status, notes, seenAll } = await req.json().catch(() => ({})) as { id?: number; status?: string; notes?: string; seenAll?: boolean }
@@ -56,7 +57,7 @@ export async function PATCH(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
+async function DELETE_handler(req: Request) {
   const denied = await requireAdmin(req, 'איפוס טבלת חשד לפריצה'); if (denied) return denied
   try {
     const pool = await securityPool()
@@ -66,3 +67,8 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const PATCH = withDbQuota(PATCH_handler)
+export const DELETE = withDbQuota(DELETE_handler)

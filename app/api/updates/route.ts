@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { requireAdmin } from '@/lib/kc-security'
@@ -19,7 +20,7 @@ async function ensureTable() {
   await pool.query(`ALTER TABLE keyclick_updates ADD COLUMN IF NOT EXISTS release_time VARCHAR(5)`)
 }
 
-export async function GET() {
+async function GET_handler() {
   try {
     await ensureTable()
     const result = await pool.query(
@@ -31,7 +32,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'הוספת עדכון'); if (denied) return denied
   try {
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: Request) {
+async function DELETE_handler(req: Request) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'מחיקת העדכונים'); if (denied) return denied
   try {
@@ -58,3 +59,8 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ ok: false, error: String(e) })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const GET = withDbQuota(GET_handler)
+export const POST = withDbQuota(POST_handler)
+export const DELETE = withDbQuota(DELETE_handler)

@@ -1,3 +1,4 @@
+import { withDbQuota } from '@/lib/kc-security'
 import { NextRequest, NextResponse } from 'next/server'
 import { Pool } from 'pg'
 import { syncUsersToApp } from '@/lib/mf-sync'
@@ -28,7 +29,7 @@ async function getScheduleMonths(idx: number): Promise<number> {
   return parseInt(rows[idx]?.months ?? '0') || 0
 }
 
-export async function POST(req: NextRequest) {
+async function POST_handler(req: NextRequest) {
   // [22.11.2026] פעולת ניהול - רק מנהל המערכת (lib/kc-security.ts). אחרת נחסם ונרשם ב"חשד לפריצה"
   const denied = await requireAdmin(req, 'כפיית תוכנית למשתמש'); if (denied) return denied
   try {
@@ -82,3 +83,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
 }
+
+// [24.11.2026] מסד מושהה בגלל המכסה (53000) -> הודעת תחזוקה ללקוח בכל פעולה (lib/kc-security.ts withDbQuota)
+export const POST = withDbQuota(POST_handler)
