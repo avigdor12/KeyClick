@@ -1416,7 +1416,9 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
           l.startsWith('char:');
       }
       function load(){
-        fetch('${apiUrl}')
+        // [24.11.2026] הבקשה דרך החלון הראשי: רק בו נמצא אישור הכניסה של המנהל (lib/kc-auth-client.ts).
+        // בלי זה השרת דוחה את הבקשה ורושם אותה כפריצה ("קריאת יומן הבנייה")
+        (window.opener && window.opener.fetch ? window.opener.fetch('${apiUrl}') : fetch('${apiUrl}'))
           .then(r=>r.json())
           .then(data=>{
             log.innerHTML='';
