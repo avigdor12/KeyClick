@@ -4,6 +4,7 @@ import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { LICENSE_TYPES } from '@/lib/license-types'
 import { BREACH_CODES, BLOCK_CODES, LICENSE_CODES, DECISION_CODES, licenseCode } from '@/lib/kc-security-codes'   // [22.11.2026] טבלאות הקודים של חשד לפריצה
+import { pollAllowed, POLL_RESUME_EVENT } from '@/lib/kc-poll'   // [24.11.2026] בדיקות תקופתיות רק כשיש מישהו מול האתר (מכסת Neon)
 import '@/lib/kc-auth-client'   // [22.11.2026] אישור כניסה חתום: שומר את האישור בזיכרון הלשונית ושולח אותו בכל פנייה ל-/api (שלב 1 בתיקון האבטחה)
 
 export const languages = [
@@ -394,8 +395,10 @@ export default function Home() {
     checkUnread()
     // בדף המשוב ('0') בודקים כל 10 שניות, כדי שההתראה על תשובת המנהל תגיע כמעט יחד עם התשובה עצמה (הרשימה מתרעננת כל 5 שניות).
     // בשאר הדפים פעם בדקה. בכל מעבר דף הבדיקה רצה מיד והקצב מתעדכן (activePage ברשימת התלויות)
-    const interval = setInterval(checkUnread, activePage === '0' ? 10000 : 60000)
-    return () => clearInterval(interval)
+    // [24.11.2026] לשונית ברקע / 10 דקות בלי פעילות - מדלגים (lib/kc-poll.ts); בחזרה - בדיקה מיידית
+    const interval = setInterval(() => { if (pollAllowed()) checkUnread() }, activePage === '0' ? 10000 : 60000)
+    window.addEventListener(POLL_RESUME_EVENT, checkUnread)
+    return () => { clearInterval(interval); window.removeEventListener(POLL_RESUME_EVENT, checkUnread) }
   }, [Current_User_Pointer_to_DB?.id, activePage])
 
   useEffect(() => {
@@ -411,10 +414,12 @@ export default function Home() {
         .catch(() => {})
     }
     checkAdminUnread()
-    const interval = setInterval(checkAdminUnread, 60000)
+    // [24.11.2026] לשונית ברקע / 10 דקות בלי פעילות - מדלגים (lib/kc-poll.ts); בחזרה - בדיקה מיידית
+    const interval = setInterval(() => { if (pollAllowed()) checkAdminUnread() }, 60000)
     // אחרי סימון "טופל" בטבלת חשד לפריצה - בדיקה מיידית (השורה "הודעה מהשרת" נעלמת בלי לחכות דקה)
     window.addEventListener('kc-security-changed', checkAdminUnread)
-    return () => { clearInterval(interval); window.removeEventListener('kc-security-changed', checkAdminUnread) }
+    window.addEventListener(POLL_RESUME_EVENT, checkAdminUnread)
+    return () => { clearInterval(interval); window.removeEventListener('kc-security-changed', checkAdminUnread); window.removeEventListener(POLL_RESUME_EVENT, checkAdminUnread) }
   }, [isAdminAccount, activePage])
 
   useEffect(() => {
@@ -1229,6 +1234,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     reloadVisits()
     const interval = setInterval(() => {
       const cfg = samplingConfigRef.current
+      if (!pollAllowed()) { onDbg('samplingTimer', 'tick — skip, tab hidden/idle'); return }   // [24.11.2026] lib/kc-poll.ts
       if (!cfg.runEnabled) { onDbg('samplingTimer', 'tick — skip, runEnabled=false'); return }
       const now = new Date()
       if (cfg.startDate && now < new Date(cfg.startDate)) { onDbg('samplingTimer', `tick — skip, before startDate=${cfg.startDate}`); return }
@@ -1282,6 +1288,7 @@ function SystemPage({ user, lang, langIdx, onChangeLang, onOpenDebug, onDbg, onU
     if (!resetPasswordUser || resetPasswordLight !== 'green') return
     const email = resetPasswordUser.email
     const interval = setInterval(async () => {
+      if (!pollAllowed()) return   // [24.11.2026] לשונית ברקע / בלי פעילות (lib/kc-poll.ts)
       try {
         const r = await fetch('/api/system/users')
         const d = await r.json()
@@ -2614,6 +2621,7 @@ function FeedbackPage({ user, lang, systemMessage, onDbg, onEnsureUser }: { user
     if (!sessionId) { onDbg('FeedbackPage.poll', 'skip — sessionId=null'); return }
     onDbg('FeedbackPage.poll', `polling started sessionId=${sessionId}`)
     const interval = setInterval(() => {
+      if (!pollAllowed()) return   // [24.11.2026] לשונית ברקע / בלי פעילות (lib/kc-poll.ts)
       fetch(`/api/feedback?userId=${user.id}&sessionId=${sessionId}`)
         .then(r => r.json())
         .then(d => {
@@ -4200,6 +4208,7 @@ function LandingVisitsTable({ lang, onDbg }: { lang: typeof languages[0]; onDbg:
     }).catch(e => onDbg('LandingVisitsTable.cfg', `error: ${String(e)}`))
     const interval = setInterval(() => {
       const c = cfgRef.current
+      if (!pollAllowed()) return   // [24.11.2026] לשונית ברקע / בלי פעילות (lib/kc-poll.ts)
       if (!c.runEnabled) return
       const now = new Date()
       if (c.startDate && now < new Date(c.startDate)) return
